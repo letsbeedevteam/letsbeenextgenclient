@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
@@ -40,7 +41,7 @@ class SignUpPage extends StatelessWidget {
                   Padding(padding: EdgeInsets.symmetric(vertical: 8)),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('We\'ll if you have an account', style: TextStyle(fontSize: 18)),
+                    child: Text('We\'ll check if you have an account', style: TextStyle(fontSize: 18)),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 30, right: 30, top: 20),
@@ -69,6 +70,9 @@ class SignUpPage extends StatelessWidget {
                                 autocorrect: false,
                                 obscureText: false,
                                 cursorColor: Colors.black,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.deny(RegExp("[ ]"))
+                                ],
                                 decoration: InputDecoration(
                                   // filled: true,
                                   // fillColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),
@@ -110,6 +114,9 @@ class SignUpPage extends StatelessWidget {
                                 autocorrect: false,
                                 obscureText: false,
                                 cursorColor: Colors.black,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp("[a-z \s]"))
+                                ],
                                 decoration: InputDecoration(
                                   // filled: true,
                                   // fillColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),
@@ -150,6 +157,9 @@ class SignUpPage extends StatelessWidget {
                                 autocorrect: false,
                                 obscureText: true,
                                 cursorColor: Colors.black,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.deny(RegExp('[ ]'))
+                                ],
                                 decoration: InputDecoration(
                                   // filled: true,
                                   // fillColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),

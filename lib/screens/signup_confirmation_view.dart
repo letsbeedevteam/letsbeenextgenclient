@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
 class SignUpConfirmationPage extends StatelessWidget {
@@ -51,6 +52,9 @@ class SignUpConfirmationPage extends StatelessWidget {
                                 obscureText: false,
                                 cursorColor: Colors.black,
                                 maxLength: 4,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
+                                ],
                                 decoration: InputDecoration(
                                   // filled: true,
                                   // fillColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),
