@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "925715888937",
+    "firebase_url": "https://letsbee-client.firebaseio.com",
+    "project_id": "letsbee-client",
+    "storage_bucket": "letsbee-client.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925715888937:android:59aab47e0893e733511538",
+        "android_client_info": {
+          "package_name": "com.letsbee.deliveryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925715888937-jh0nks63nbei43hpd13vlhckdijapbdv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.letsbee.deliveryapp",
+            "certificate_hash": "400712516926e0831dadab33cf7afa07b85e4fce"
+          }
+        },
+        {
+          "client_id": "925715888937-8158j2obdi7eo825qvfch6jrjtch677n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_EFdSFwv1jj1sbmmstuHr1YsHajgDezY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925715888937-8158j2obdi7eo825qvfch6jrjtch677n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

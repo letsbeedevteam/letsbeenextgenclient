@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Let\'s bee</string>
+    <string name="facebook_app_id">829806494451132</string>
+    <string name="fb_login_protocol_scheme">fb829806494451132</string>
+    <string name="native_app_key">kakaod8e1c63b8b60ab02add8dd36935979fe</string>
+    <string name="google_map_key">AIzaSyB_EFdSFwv1jj1sbmmstuHr1YsHajgDezY</string>
+</resources>
