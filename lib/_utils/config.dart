@@ -7,11 +7,9 @@ class Config {
   static const SPLASH_ROUTE = '/splash';
   static const AUTH_ROUTE = '/auth';
   static const SIGNUP_ROUTE = '/signup';
-  static const SIGNUP_CONFIRMATION_ROUTE = '/signup_confirmation';
   static const SETUP_LOCATION_ROUTE = '/setup_location';
   static const MAP_ROUTE = '/map';
   static const VERIFY_NUMBER_ROUTE = '/verify_number';
-  static const CONFIRM_CODE_ROUTE = '/confirm_code';
   static const DASHBOARD_ROUTE = '/dashboard';
 
   // Storage keys
@@ -35,7 +33,6 @@ class Config {
 
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';
-
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

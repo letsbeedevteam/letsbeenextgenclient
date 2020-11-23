@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/controllers/signup/signup_controller.dart';
 
 class SignUpConfirmationPage extends StatelessWidget {
 
-  final _codeController = TextEditingController();
+  final SignUpController _ = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Center(
+    return GetBuilder<SignUpController>(
+      builder: (controller) {
+        return Center(
           child: SingleChildScrollView(
             child: Container(
               child: Column(
@@ -23,9 +22,9 @@ class SignUpConfirmationPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('We send your confirmation code to your email.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
+                    child: Text('We send your confirmation code to your email.', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
                   ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text('Please check your email address', style: TextStyle(fontSize: 18)),
@@ -42,7 +41,7 @@ class SignUpConfirmationPage extends StatelessWidget {
                               width: 200,
                               height: 40,
                               child: TextFormField(
-                                controller: _codeController,
+                                controller: _.codeController,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 18),
                                 keyboardType: TextInputType.number, 
@@ -86,7 +85,10 @@ class SignUpConfirmationPage extends StatelessWidget {
                                 padding: EdgeInsets.all(13),
                                 child: Text('CONFIRM'),
                               ),
-                              onPressed: () => print('Confirm'),
+                              onPressed: () {
+                                // _.validation(currentIndex: 1);
+                                _.goToSetupLocation();
+                              },
                             )
                           )
                         ],
@@ -97,9 +99,8 @@ class SignUpConfirmationPage extends StatelessWidget {
               ),
             ),
           ),
-        )
-      ),
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        );
+      }
     );
   }
 }

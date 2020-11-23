@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/controllers/verify_number/verify_number_controller.dart';
 
 class ConfirmCodePage extends StatelessWidget {
 
-  final GetStorage _box = Get.find();
+  final VerifyNumberController _ = Get.find();
   
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Container(
+    return GetBuilder<VerifyNumberController>(
+      builder: (controller) {
+        return Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,9 +24,13 @@ class ConfirmCodePage extends StatelessWidget {
                 width: Get.width * 0.50,
                 height: 40,
                 child: TextField(
+                  controller: _.codeController,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 18),
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
+                  ],
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -69,7 +71,16 @@ class ConfirmCodePage extends StatelessWidget {
                       padding: EdgeInsets.all(13),
                       child: Text('CONFIRM'),
                     ),
-                    onPressed: _goToDashboardPage,
+                    onPressed: () {
+                      // if (_.codeController.text.isEmpty) {
+                      //   customSnackbar(title: 'Required', message: 'Please input your code');
+                      // } else {
+                      //   dismissKeyboard(context);
+                      //   _.goToDashboardPage();
+                      // }
+                      dismissKeyboard(context);
+                       _.goToDashboardPage();
+                    },
                   ),
                   width: Get.width * 0.80,
                 ),
@@ -98,6 +109,7 @@ class ConfirmCodePage extends StatelessWidget {
                       child: Text('RESEND CONFIRMATION CODE'),
                     ),
                     onPressed: () {
+                      dismissKeyboard(context);
                       print('Resend confirmation code');
                     },
                   ),
@@ -107,14 +119,8 @@ class ConfirmCodePage extends StatelessWidget {
               Padding(padding: EdgeInsets.symmetric(vertical: 30)),
             ],
           ),
-        ),
-      ),
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        );
+      },
     );
-  }
-
-  _goToDashboardPage() {
-    _box.write(Config.IS_SETUP_LOCATION, true);
-    Get.offAllNamed(Config.DASHBOARD_ROUTE);
   }
 }

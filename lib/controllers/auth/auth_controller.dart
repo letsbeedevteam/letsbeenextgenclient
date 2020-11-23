@@ -66,7 +66,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') customSnackbar(error);
+    if (error != 'User cancelled') customSnackbar(title: 'Error', message: error);
     print(error);
   }
 }

@@ -5,12 +5,13 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/link.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
-import 'package:letsbeeclient/screens/splash_view.dart';
+import 'package:letsbeeclient/screens/splash/splash_view.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/routes.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,13 @@ void main() async {
 
 Future initServices() async {
   print('Starting services...');
+  await Get.putAsync<IO.Socket>(() async {
+     final socket = IO.io(Config.BASE_URL, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+    });
+    return socket;
+  });
   await Get.putAsync<SecretLoader>(() async => SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json'));
   await Get.putAsync(() async {
     final secretLoad = await Get.find<SecretLoader>().loadKey();

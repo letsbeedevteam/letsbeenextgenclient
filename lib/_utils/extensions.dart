@@ -9,4 +9,9 @@ extension StringExtension on String {
   Future copyText() => Clipboard.setData(ClipboardData(text: this));
 }
 
-void customSnackbar(String error) => Get.snackbar('Error', error, snackPosition: SnackPosition.BOTTOM, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0));
+void customSnackbar({String title ,String message}) {
+  if (Get.isSnackbarOpen) Get.back();
+  Get.snackbar(title, message, snackPosition: SnackPosition.BOTTOM, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0));
+}
+
+void dismissKeyboard(BuildContext context) => FocusScope.of(context).requestFocus(FocusNode());

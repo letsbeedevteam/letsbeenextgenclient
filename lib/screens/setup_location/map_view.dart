@@ -23,6 +23,7 @@ class MapPage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1),
+            leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Get.back()),
             title: Container(
               height: 40,
               margin: EdgeInsets.only(right: 10),
@@ -116,36 +117,32 @@ class MapPage extends StatelessWidget {
                   );
                 },
               ),
-              Container(
-                margin: EdgeInsets.only(bottom: 35),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 5,
-                      offset: Offset(0,2)
-                    )
-                  ]
-                ),
-                child: SizedBox(
-                  height: 40,
-                  child: GetBuilder<MapController>(
-                    builder: (_) {
-                      return RaisedButton(
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(13),
-                          child: Text('SAVE LOCATION'),
-                        ),
-                        onPressed: () => _.isMapLoading.value ? null : _showDialog(_.userCurrentAddress.value)
-                      );
-                    },
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 5,
+                        offset: Offset(0,2)
+                      )
+                    ]
                   ),
-                  width: Get.width * 0.80,
+                  child: SizedBox(
+                    child: GetBuilder<MapController>(
+                      builder: (_) {
+                        return RaisedButton(
+                          color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                          child: Padding(
+                            padding: EdgeInsets.all(13),
+                            child: Text('SAVE LOCATION'),
+                          ),
+                          onPressed: () => _.isMapLoading.value ? null : _showDialog(_.userCurrentAddress.value)
+                        );
+                      },
+                    ),
+                  ),
                 ),
               )
             ],
@@ -155,7 +152,7 @@ class MapPage extends StatelessWidget {
     );
   }
 
-  _goToVerifyNumberPage() => Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
+  _goToVerifyNumberPage() => Get.toNamed(Config.VERIFY_NUMBER_ROUTE);
 
   _showDialog(String address) {
     Get.defaultDialog(
@@ -176,7 +173,10 @@ class MapPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text('Looks good'), 
-        onPressed: () => _goToVerifyNumberPage()
+        onPressed: () {
+          Get.back();
+          Future.delayed(Duration(seconds: 1)).then((value) => _goToVerifyNumberPage());
+        }
       ),
     );
   }

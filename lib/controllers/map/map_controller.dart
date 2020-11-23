@@ -31,6 +31,7 @@ class MapController extends GetxController {
     final currentLocation = await lct.Location().getLocation();
     final c = await _mapController.future;
     c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
+    isBounced.value = false;
   }
 
   void onMapCreated(GoogleMapController controller) {

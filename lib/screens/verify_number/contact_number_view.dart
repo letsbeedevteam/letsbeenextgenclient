@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/controllers/verify_number/verify_number_controller.dart';
 
-class VerifyNumberPage extends StatelessWidget {
+class ContactNumberPage extends StatelessWidget {
 
-  final _focusNode = FocusNode();
+  final VerifyNumberController _ = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Container(
+    return GetBuilder<VerifyNumberController>(
+      builder: (controller) {
+        return Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -25,12 +24,15 @@ class VerifyNumberPage extends StatelessWidget {
                 width: Get.width * 0.70,
                 height: 40,
                 child: TextField(
-                  focusNode: _focusNode,
+                  controller: _.numberController,
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 18),
                   keyboardType: TextInputType.number, 
                   maxLength: 10,
                   cursorColor: Colors.black,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
+                  ],
                   decoration: InputDecoration(
                     prefixIcon: SizedBox(
                       child: Center(
@@ -74,7 +76,16 @@ class VerifyNumberPage extends StatelessWidget {
                       padding: EdgeInsets.all(13),
                       child: Text('SEND CONFIRMATION CODE'),
                     ),
-                    onPressed: _goToConfirmationCodePage,
+                    onPressed: () {
+                      // if (_.numberController.text.isEmpty) {
+                      //   customSnackbar(title: 'Required', message: 'Please input your mobile number');
+                      // } else {
+                      //   dismissKeyboard(context);
+                      //   _.changeIndex(1);
+                      // }
+                      dismissKeyboard(context);
+                       _.changeIndex(1);
+                    },
                   ),
                   width: Get.width * 0.80,
                 ),
@@ -82,11 +93,8 @@ class VerifyNumberPage extends StatelessWidget {
               Padding(padding: EdgeInsets.symmetric(vertical: 30)),
             ],
           ),
-        ),
-      ),
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        );
+      },
     );
   }
-
-  _goToConfirmationCodePage() => Get.toNamed(Config.CONFIRM_CODE_ROUTE);
 }
