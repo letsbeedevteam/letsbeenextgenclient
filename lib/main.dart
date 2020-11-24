@@ -55,7 +55,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.yellow,
       ),
       enableLog: true,
-      defaultTransition: Transition.fade,
       debugShowCheckedModeBanner: false,
       getPages: routes(),
       initialBinding: SplashBind(),

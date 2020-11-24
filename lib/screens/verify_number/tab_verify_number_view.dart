@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/controllers/verify_number/verify_number_controller.dart';
 import 'package:letsbeeclient/screens/verify_number/confirm_code_view.dart';
@@ -10,10 +11,11 @@ class VerifyNumberPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: GetBuilder<VerifyNumberController>(builder: (_) => IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
+          leading: GetBuilder<VerifyNumberController>(builder: (_) => IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () {
             dismissKeyboard(context);
             if (_.selectedIndex.value == 0) {
               Get.back(closeOverlays: true);

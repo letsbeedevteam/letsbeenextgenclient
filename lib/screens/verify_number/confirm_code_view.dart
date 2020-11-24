@@ -15,9 +15,19 @@ class ConfirmCodePage extends StatelessWidget {
       builder: (controller) {
         return Container(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                child: Center(
+                  child: SizedBox(
+                    height: 180,
+                    width: 180,
+                    child: Image.asset(Config.PNG_PATH + 'frame_number_sent.png'),
+                  ),
+                ),
+              ),
               Center(child: Text('Please enter your confirmation code.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
               SizedBox(
@@ -42,13 +52,15 @@ class ConfirmCodePage extends StatelessWidget {
                     ),
                     hintText: 'Code',
                     counterText: "",
-                    contentPadding: EdgeInsets.all(0)
+                    contentPadding: EdgeInsets.all(0),
+                    fillColor: Colors.grey.shade200,
+                    filled: true
                   ),
                   maxLength: 5,
                   cursorColor: Colors.black,
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 20)),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),

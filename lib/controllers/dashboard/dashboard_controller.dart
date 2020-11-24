@@ -7,7 +7,6 @@ import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
-import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
@@ -15,8 +14,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   static DashboardController get to => Get.find();
 
   final GetStorage box = Get.find();
-
-  final SocketService _socketService = Get.find();
 
   final GoogleSignIn _googleSignIn = Get.find();
 
@@ -28,25 +25,17 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   var userCurrentAddress = ''.obs;
 
+  var isHideAppBar = false.obs;
+
   @override
   void onInit() {
-
-    var socialType = box.read(Config.SOCIAL_LOGIN_TYPE);
-    var token = box.read(Config.USER_TOKEN);
-    print('$socialType: $token');
-    
-    _socketService.createSocketConnection();
-
     userCurrentAddress.value = box.read(Config.USER_CURRENT_ADDRESS);
-
     super.onInit();
   }
 
-  void sendData() {
-    _socketService.sendData();
-  }
-
   void tapped(int tappedIndex) {
+
+    tappedIndex == 1 ? isHideAppBar.value = true : isHideAppBar.value = false; 
     pageIndex.value = tappedIndex;
     update(['pageIndex']);
   }
@@ -63,7 +52,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       break;
       default: _emailSignOut();
     }
-    _socketService.disconnectSocket();
   }
 
   void _facebookSignOut() async {

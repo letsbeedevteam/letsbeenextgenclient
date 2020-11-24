@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>925715888937-eggiq4qljovomc6192fl211engoinosa.apps.googleusercontent.com</string>
+	<string>584985850630-qnr2b171fsf4r1uiclm6h91scsorgq40.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.925715888937-eggiq4qljovomc6192fl211engoinosa</string>
+	<string>com.googleusercontent.apps.584985850630-qnr2b171fsf4r1uiclm6h91scsorgq40</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>925715888937-jh0nks63nbei43hpd13vlhckdijapbdv.apps.googleusercontent.com</string>
+	<string>584985850630-79h0niebictbjvqtfb8qgghuar1j4dc6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDiABY1cJE4P--6sKiyHcc1vVRIHESJt6M</string>
+	<string>AIzaSyCGFXdQSsbgyPR2ulFeEzbIdEsdBoZriZc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>925715888937</string>
+	<string>584985850630</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.letsbee.deliveryapp</string>
 	<key>PROJECT_ID</key>
-	<string>letsbee-client</string>
+	<string>lets-bee-b26ac</string>
 	<key>STORAGE_BUCKET</key>
-	<string>letsbee-client.appspot.com</string>
+	<string>lets-bee-b26ac.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:925715888937:ios:09002035f7daf7fd511538</string>
+	<string>1:584985850630:ios:d258695ac4e77668ac2487</string>
 	<key>DATABASE_URL</key>
-	<string>https://letsbee-client.firebaseio.com</string>
+	<string>https://lets-bee-b26ac.firebaseio.com</string>
 </dict>
 </plist>

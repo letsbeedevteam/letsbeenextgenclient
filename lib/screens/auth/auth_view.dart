@@ -13,11 +13,13 @@ class AuthPage extends StatelessWidget {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-              Center(child: SvgPicture.asset(Config.SVG_PATH + 'letsbee_logo.svg', width: 200, fit: BoxFit.cover),),
-              Padding(padding: EdgeInsets.symmetric(vertical: 30)),
+              SizedBox(
+                height: 130,
+                width: 240,
+                child: Hero(tag: 'splash', child: Image.asset(Config.PNG_PATH + 'splash_logo.png')),
+              ),
               Container(
                 child: Column(
                   children: [

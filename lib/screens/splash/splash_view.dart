@@ -3,25 +3,21 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/controllers/splash/splash_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:lottie/lottie.dart';
 
 class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
       body: GetBuilder<SplashController>(
         builder: (_) {
-          return Lottie.asset(
-              Config.JSONS_PATH + 'splash_animation.json',
-              fit: BoxFit.fill,
-              height:  Get.height,
-              width: Get.width,
-              repeat: false,
-              reverse: false,
-              animate: true
-            );
-          },
+          return Center(
+            child: SizedBox(
+              height: 130,
+              width: 240,
+              child: Hero(tag: 'splash', child: Image.asset(Config.PNG_PATH + 'splash_logo.png')),
+            ),
+          );
+        },
       ),
     );
   }

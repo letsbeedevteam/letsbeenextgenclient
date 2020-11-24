@@ -8,25 +8,25 @@ class SplashController extends GetxController {
 
   @override
   void onInit() {
-    Future.delayed(Duration(seconds: 8)).then((_) {
+    Future.delayed(Duration(seconds: 3)).then((_) {
       if(_box.hasData(Config.IS_LOGGED_IN)) {
 
         if(_box.read(Config.IS_LOGGED_IN)) {
           
           if (_box.hasData(Config.IS_SETUP_LOCATION)) {
             
-             Get.offAllNamed(_box.read(Config.IS_SETUP_LOCATION) ? Config.DASHBOARD_ROUTE : Config.SETUP_LOCATION_ROUTE); 
+             Get.offAndToNamed(_box.read(Config.IS_SETUP_LOCATION) ? Config.DASHBOARD_ROUTE : Config.SETUP_LOCATION_ROUTE); 
           
           } else {
-            Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
+            Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
           }
 
         } else {
-          Get.offAllNamed(Config.AUTH_ROUTE);
+          Get.offAndToNamed(Config.AUTH_ROUTE);
         }
 
       } else {
-        Get.offAllNamed(Config.AUTH_ROUTE);
+        Get.offAndToNamed(Config.AUTH_ROUTE);
       }
     });
     super.onInit();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/controllers/signup/signup_controller.dart';
 import 'package:letsbeeclient/screens/signup/signup_confirmation_view.dart';
@@ -14,7 +15,7 @@ class SignUpPage extends StatelessWidget  {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: GetBuilder<SignUpController>(builder: (_) => IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
+          leading: GetBuilder<SignUpController>(builder: (_) => IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () {
             dismissKeyboard(context);
             if (_.selectedIndex.value == 0) {
               Get.back(closeOverlays: true);

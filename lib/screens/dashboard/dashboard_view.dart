@@ -2,58 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/controllers/dashboard/dashboard_controller.dart';
 
 class DashboardPage extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 60),
-        child: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          titleSpacing: 5,
-          title: GestureDetector(
-            child: Padding(
-              padding: EdgeInsets.only(left: 10, top: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('DELIVERING TO', style: TextStyle(fontSize: 10, color: Colors.yellow.shade700)),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  GetX<DashboardController>(
-                    builder: (_) => Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+    return GetBuilder<DashboardController>(
+      id: 'pageIndex',
+      builder: (_) {
+        var currentIndex = _.pageIndex.value;
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size(Get.width, 80),
+            child: AnimatedContainer(
+              height: _.isHideAppBar.value ? 0 : 80,
+              duration: Duration(seconds: 2),
+              curve: _.isHideAppBar.value ? Curves.fastLinearToSlowEaseIn : Curves.fastLinearToSlowEaseIn,
+              child: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.white,
+                titleSpacing: 0.0,
+                leading: IconButton(icon: Icon(FontAwesomeIcons.chevronDown, size: 15), onPressed: () => print('Location')),
+                title: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('DELIVERING TO', style: TextStyle(fontSize: 12, color: Colors.yellow.shade700)),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                    Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold))
+                  ],
+                ),
+                actions: [
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png', gaplessPlayback: true), onPressed: () => print('Cart')),
                   )
                 ],
               ),
             ),
-            onTap: () => print('Location Settings'),
           ),
-          centerTitle: true,
-          actions: [
-            IconButton(icon: Icon(Icons.shopping_cart_outlined), onPressed: () => print('Cart'))
-          ],
-        ),
-      ),
-      body: Container(
-        child: Column(
-          children: [
-            Divider(thickness: 3, color: Colors.black, indent: 20, endIndent: 20),
-            GetBuilder<DashboardController>(
-              id: 'pageIndex',
-              builder: (_) => Flexible(child: _.widgets[_.pageIndex.value]),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: GetBuilder<DashboardController>(
-        id: 'pageIndex',
-        builder: (_) {
-          var currentIndex = _.pageIndex.value;
-          return BottomNavigationBar(
+          body: Column(
+            children: [
+              if (!_.isHideAppBar.value) Divider(thickness: 3, color: Colors.black, indent: 20, endIndent: 20),
+              Flexible(
+                child: _.widgets[_.pageIndex.value]
+              )
+            ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: currentIndex,
             selectedFontSize: 10.0,
@@ -67,11 +66,11 @@ class DashboardPage extends StatelessWidget {
               customNavigationBarItem('Notification', Icon(Icons.notifications)),
               customNavigationBarItem('Account', Icon(Icons.account_circle_outlined)),
               customNavigationBarItem('Reviews', Icon(FontAwesomeIcons.youtube)),
-              customNavigationBarItem('Order', Icon(Icons.notes))
+              customNavigationBarItem('Order', Icon(Icons.add_shopping_cart))
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
