@@ -3,11 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/controllers/signup/signup_controller.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
 
-class SignUpConfirmationPage extends StatelessWidget {
-
-  final SignUpController _ = Get.find();
+class SignUpConfirmationPage extends GetView<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +49,7 @@ class SignUpConfirmationPage extends StatelessWidget {
                             width: 200,
                             height: 40,
                             child: TextFormField(
-                              controller: _.codeController,
+                              controller: controller.codeController,
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 18),
                               keyboardType: TextInputType.number, 
@@ -96,7 +95,8 @@ class SignUpConfirmationPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // _.validation(currentIndex: 1);
-                              _.goToSetupLocation();
+                              dismissKeyboard(context);
+                              Future.delayed(Duration(seconds: 1)).then((value) => controller.goToSetupLocation());
                             },
                           )
                         )

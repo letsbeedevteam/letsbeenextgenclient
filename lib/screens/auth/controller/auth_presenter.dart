@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:letsbeeclient/controllers/auth/auth_controller.dart';
-import 'package:letsbeeclient/controllers/auth/auth_contract.dart';
-import 'package:letsbeeclient/controllers/auth/auth_model.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_controller.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_model.dart';
 import 'package:letsbeeclient/models/social.dart';
 
 class AuthPresenter implements AuthPresenterContract, OnSocialSignInRequest {

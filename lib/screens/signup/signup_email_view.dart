@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/controllers/signup/signup_controller.dart';
+import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
 
 class SignUpEmailPage extends StatelessWidget {
 

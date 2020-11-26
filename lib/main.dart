@@ -57,6 +57,8 @@ class MyApp extends StatelessWidget {
       enableLog: true,
       debugShowCheckedModeBanner: false,
       getPages: routes(),
+      transitionDuration: Duration(milliseconds: 500),
+      defaultTransition: Transition.fade,
       initialBinding: SplashBind(),
       home: SplashPage(),
     );

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/controllers/verify_number/verify_number_controller.dart';
+import 'package:letsbeeclient/screens/verify_number/controller/verify_number_controller.dart';
 
 class ContactNumberPage extends StatelessWidget {
 
@@ -89,14 +89,12 @@ class ContactNumberPage extends StatelessWidget {
                       child: Text('SEND CONFIRMATION CODE'),
                     ),
                     onPressed: () {
-                      // if (_.numberController.text.isEmpty) {
-                      //   customSnackbar(title: 'Required', message: 'Please input your mobile number');
-                      // } else {
-                      //   dismissKeyboard(context);
-                      //   _.changeIndex(1);
-                      // }
-                      dismissKeyboard(context);
-                       _.changeIndex(1);
+                      if (_.numberController.text.isEmpty) {
+                        customSnackbar(title: 'Required', message: 'Please input your mobile number');
+                      } else {
+                        dismissKeyboard(context);
+                        _.changeIndex(1);
+                      }
                     },
                   ),
                   width: Get.width * 0.80,

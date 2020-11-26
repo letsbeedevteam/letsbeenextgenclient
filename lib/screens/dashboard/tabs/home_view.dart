@@ -7,7 +7,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
@@ -33,7 +32,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+        Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
         Flexible(
           child: SingleChildScrollView(
             child: Column(
@@ -42,6 +41,7 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
@@ -54,8 +54,6 @@ class HomePage extends StatelessWidget {
                           _buildRecentRestaurantItem(),
                           _buildRecentRestaurantItem(),
                           _buildRecentRestaurantItem(),
-                          _buildRecentRestaurantItem(),
-                          _buildRecentRestaurantItem(),
                         ],
                       ),
                       )
@@ -65,7 +63,6 @@ class HomePage extends StatelessWidget {
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Column(
                   children: [
-                    _buildRestaurantItem(),
                     _buildRestaurantItem(),
                     _buildRestaurantItem(),
                     _buildRestaurantItem(),
@@ -85,7 +82,8 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: CircleAvatar(
           radius: 30.0,
-          child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png', fit: BoxFit.fill),
+          backgroundColor: Colors.transparent,
+          backgroundImage: AssetImage(Config.PNG_PATH + 'default.png'),
         ),
       ),
       onTap: () => print('Go to menu'),
@@ -94,7 +92,7 @@ class HomePage extends StatelessWidget {
 
   Widget _buildRestaurantItem() {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -104,7 +102,7 @@ class HomePage extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(left: 10, top: 5),
-            child: Text('SM Clark', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
+            child: Text('SM Clark', style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
           GestureDetector(
@@ -112,8 +110,10 @@ class HomePage extends StatelessWidget {
               height: 200,
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: 10),
-              color: Colors.red,
-              child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png', fit: BoxFit.cover),
+              child: SizedBox(
+                width: Get.width,
+                child: Image.asset(Config.PNG_PATH + 'default.png', fit: BoxFit.cover),
+              ),
             ),
             onTap: () => print('Go to menu'),
           ),
@@ -130,8 +130,6 @@ class HomePage extends StatelessWidget {
                 _buildMenuWithPriceItem(),
                 _buildMenuWithPriceItem(),
                 _buildMenuWithPriceItem(),
-                _buildMenuWithPriceItem(),
-                _buildMenuWithPriceItem()
               ],
             ),
           )
@@ -146,12 +144,13 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               child: Container(
                 margin: EdgeInsets.only(bottom: 10),
                 child: SizedBox(
-                  height: Get.height * 0.10,
+                  width: 180,
                   child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png', fit: BoxFit.cover),
                 ),
               ),

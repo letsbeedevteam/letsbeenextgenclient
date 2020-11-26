@@ -28,7 +28,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   }
 
   void goToSetupLocation() {
-    _box.write(Config.SOCIAL_LOGIN_TYPE, 'email');
+    _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
     _box.write(Config.IS_LOGGED_IN, true);
     _box.write(Config.USER_NAME, nameController.text);
     _box.write(Config.USER_EMAIL, emailController.text);

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:letsbeeclient/controllers/auth/auth_contract.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
 import 'package:letsbeeclient/models/social.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';

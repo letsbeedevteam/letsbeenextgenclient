@@ -17,6 +17,13 @@
             "request": "launch"
         },
         {
+            "name": "Run Dev Iphone 12 max",
+            "flutterMode": "debug",
+            "deviceId": "40C351F9-7FCC-4D68-A3C6-948AD810A14C",
+            "type": "dart",
+            "request": "launch"
+        },
+        {
             "name": "Run Dev Android Emulator",
             "flutterMode": "debug",
             "deviceId": "emulator-5554",

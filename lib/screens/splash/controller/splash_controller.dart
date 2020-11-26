@@ -15,18 +15,18 @@ class SplashController extends GetxController {
           
           if (_box.hasData(Config.IS_SETUP_LOCATION)) {
             
-             Get.offAndToNamed(_box.read(Config.IS_SETUP_LOCATION) ? Config.DASHBOARD_ROUTE : Config.SETUP_LOCATION_ROUTE); 
+             Get.offNamedUntil(_box.read(Config.IS_SETUP_LOCATION) ? Config.DASHBOARD_ROUTE : Config.SETUP_LOCATION_ROUTE, (route) => false); 
           
           } else {
-            Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
+            Get.offNamedUntil(Config.SETUP_LOCATION_ROUTE, (route) => false);
           }
 
         } else {
-          Get.offAndToNamed(Config.AUTH_ROUTE);
+          Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
         }
 
       } else {
-        Get.offAndToNamed(Config.AUTH_ROUTE);
+        Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
       }
     });
     super.onInit();

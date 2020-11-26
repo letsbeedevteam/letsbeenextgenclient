@@ -1,5 +1,5 @@
 
-import 'package:letsbeeclient/controllers/_base/BaseView.dart';
+import 'package:letsbeeclient/_utils/_base/BaseView.dart';
 import 'package:letsbeeclient/models/social.dart';
 
 abstract class AuthModelContract {

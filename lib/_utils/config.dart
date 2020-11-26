@@ -12,10 +12,13 @@ class Config {
   static const VERIFY_NUMBER_ROUTE = '/verify_number';
   static const DASHBOARD_ROUTE = '/dashboard';
 
+  static const REVIEW_DETAIL_ROUTE = '/review_detail';
+
   // Storage keys
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
+  static const USER_MOBILE_NUMBER = 'user_mobile_number';
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
@@ -42,6 +45,7 @@ class Config {
   static const GOOGLE = 'Google';
   static const KAKAO = 'Kakao';
   static const APPLE = 'Apple';
+  static const EMAIL = 'Email';
   static const CUSTOMER_PIN = 'customer_pin';
   static const YOU = 'You';
   static const LETS_BEE = 'Let\'s Bee';

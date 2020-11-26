@@ -29,6 +29,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
   void goToDashboardPage() {
 
     _box.write(Config.IS_SETUP_LOCATION, true);
+    _box.write(Config.USER_MOBILE_NUMBER, numberController.text);
     Get.offAllNamed(Config.DASHBOARD_ROUTE);
   }
 }

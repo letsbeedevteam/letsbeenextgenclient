@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/controllers/splash/splash_controller.dart';
+import 'package:letsbeeclient/screens/splash/controller/splash_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
 class SplashPage extends StatelessWidget {

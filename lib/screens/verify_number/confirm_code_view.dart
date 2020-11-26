@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/controllers/verify_number/verify_number_controller.dart';
+import 'package:letsbeeclient/screens/verify_number/controller/verify_number_controller.dart';
 
 class ConfirmCodePage extends StatelessWidget {
 

@@ -1,6 +1,6 @@
 import 'package:get/instance_manager.dart';
-import 'package:letsbeeclient/controllers/auth/auth_controller.dart';
-import 'package:letsbeeclient/controllers/auth/auth_model.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_controller.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_model.dart';
 
 class AuthBind extends Bindings {
 

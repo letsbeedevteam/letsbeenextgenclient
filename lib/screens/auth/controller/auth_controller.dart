@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:letsbeeclient/controllers/auth/auth_contract.dart';
-import 'package:letsbeeclient/controllers/auth/auth_presenter.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
+import 'package:letsbeeclient/screens/auth/controller/auth_presenter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/social.dart';

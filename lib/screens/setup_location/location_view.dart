@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/controllers/setup_location/setup_location_controller.dart';
+import 'package:letsbeeclient/screens/setup_location/controllers/setup_location_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
 class SetupLocationPage extends StatelessWidget {
