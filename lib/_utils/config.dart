@@ -11,6 +11,9 @@ class Config {
   static const MAP_ROUTE = '/map';
   static const VERIFY_NUMBER_ROUTE = '/verify_number';
   static const DASHBOARD_ROUTE = '/dashboard';
+  static const CART_ROUTE = '/cart';
+  static const RESTAURANT_ROUTE = '/restaurant';
+  static const MENU_ROUTE = '/menu';
 
   static const REVIEW_DETAIL_ROUTE = '/review_detail';
 
@@ -22,6 +25,13 @@ class Config {
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
+  static const USER_CURRENT_STREET = 'user_current_street';
+  static const USER_CURRENT_COUNTRY = 'user_current_country';
+  static const USER_CURRENT_STATE = 'user_current_state';
+  static const USER_CURRENT_CITY = 'user_current_city';
+  static const USER_CURRENT_IS_CODE = 'user_current_iso_code';
+  static const USER_CURRENT_BARANGAY = 'user_current_barangay';
+
 
   static const LETSBEE_STORAGE = 'LetsBeeStorage';
   static const SOCIAL_LOGIN_TYPE = 'social_login_type';
@@ -36,6 +46,7 @@ class Config {
 
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';
+  static const SOMETHING_WENT_WRONG = 'Something went wrong';
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

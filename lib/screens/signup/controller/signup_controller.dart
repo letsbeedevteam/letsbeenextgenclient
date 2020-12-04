@@ -51,20 +51,20 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     if (currentIndex == 0) {
 
       if (emailController.text.isEmpty || nameController.text.isEmpty || passwordController.text.isEmpty) {
-        customSnackbar(title: 'Required', message: 'Please input your required field(s)');
+        errorSnackBarBottom(title: 'Required', message: 'Please input your required field(s)');
       } else {
         
         if (GetUtils.isEmail(emailController.text)) {
           changeIndex(1);
         } else {
-          customSnackbar(title: 'Invalid', message: 'Your email is invalid');
+          errorSnackBarBottom(title: 'Invalid', message: 'Your email is invalid');
         }
       }
       
     } else {
       
       if (codeController.text.isEmpty) {
-        customSnackbar(title: 'Required', message: 'Please input your code');
+        errorSnackBarBottom(title: 'Required', message: 'Please input your code');
       } else {
         confirm();
         print('SENT');

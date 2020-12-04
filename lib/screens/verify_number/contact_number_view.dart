@@ -90,7 +90,7 @@ class ContactNumberPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       if (_.numberController.text.isEmpty) {
-                        customSnackbar(title: 'Required', message: 'Please input your mobile number');
+                        errorSnackBarBottom(title: 'Required', message: 'Please input your mobile number');
                       } else {
                         dismissKeyboard(context);
                         _.changeIndex(1);

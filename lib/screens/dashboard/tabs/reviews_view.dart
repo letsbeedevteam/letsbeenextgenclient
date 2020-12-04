@@ -51,8 +51,6 @@ class ReviewsPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     children: [
                       _buildTopViewItem('1'),
-                      _buildTopViewItem('2'),
-                      _buildTopViewItem('3'),
                     ],
                   ),
                 ),
@@ -66,8 +64,6 @@ class ReviewsPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     children: [
                       _buildRecentlyUploadItem('4'),
-                      _buildRecentlyUploadItem('5'),
-                      _buildRecentlyUploadItem('6')
                     ],
                   ),
                 ),
@@ -81,8 +77,6 @@ class ReviewsPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     children: [
                       _buildUploadedPhotoItem('7'),
-                      _buildUploadedPhotoItem('8'),
-                      _buildUploadedPhotoItem('9'),
                     ],
                   ),
                 ),

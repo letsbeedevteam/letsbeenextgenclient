@@ -37,8 +37,6 @@ class NotificationPage extends GetView<DashboardController> {
           scrollDirection: Axis.vertical,
             children: [
               _buildNotificationItem(),
-              _buildNotificationItem(),
-              _buildNotificationItem(),
             ],
           ),
         )
@@ -66,7 +64,7 @@ class NotificationPage extends GetView<DashboardController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(10.0),
               width: Get.width * 0.8,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

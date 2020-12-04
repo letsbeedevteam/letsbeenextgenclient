@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/link.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
 import 'package:letsbeeclient/screens/splash/splash_view.dart';
+import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -37,6 +38,7 @@ Future initServices() async {
   await Get.putAsync<FacebookLogin>(() async => FacebookLogin());
   await Get.putAsync(() => GetStorage.init(Config.LETSBEE_STORAGE));
   await Get.putAsync<GetStorage>(() async => GetStorage());
+  await Get.putAsync<ApiService>(() async => ApiService());
   await Get.putAsync<AuthService>(() async => AuthService());
   await Get.putAsync<SocketService>(() async => SocketService());
   print('All services started...');

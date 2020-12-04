@@ -75,16 +75,19 @@ class SetupLocationPage extends StatelessWidget {
                     ),
                     child: GetBuilder<SetupLocationController>(
                       builder: (_) {
-                        return RaisedButton(
-                          color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        return IgnorePointer(
+                          ignoring: !_.hasLocation.value,
+                          child: RaisedButton(
+                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(13),
+                              child: Text('CURRENT LOCATION'),
+                            ),
+                            onPressed: _.goToVerifyNumberPage,
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(13),
-                            child: Text('CURRENT LOCATION'),
-                          ),
-                          onPressed: _.goToVerifyNumberPage,
                         );
                       },
                     ),

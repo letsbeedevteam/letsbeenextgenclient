@@ -57,7 +57,15 @@ class MapController extends GetxController {
     isBounced.value = false;
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.value.latitude, currentPosition.value.longitude)).then((value) {
       userCurrentAddress.value = value.first.addressLine;
+
+      _box.write(Config.USER_CURRENT_STREET, value.first.featureName);
+      _box.write(Config.USER_CURRENT_COUNTRY, value.first.countryName);
+      _box.write(Config.USER_CURRENT_STATE, value.first.adminArea);
+      _box.write(Config.USER_CURRENT_CITY, value.first.locality);
+      _box.write(Config.USER_CURRENT_IS_CODE, value.first.countryCode);
+      _box.write(Config.USER_CURRENT_BARANGAY, value.first.subLocality);
       _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
+      
     }).catchError((onError) {
       print('getCurrentAddress: $onError');
     });

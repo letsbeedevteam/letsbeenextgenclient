@@ -13,6 +13,8 @@ class SetupLocationController extends GetxController {
 
   var userCurrentAddress = 'Getting your address...'.obs;
 
+  var hasLocation = false.obs;
+
   @override
   void onInit() {
     _locationPermission();
@@ -46,10 +48,23 @@ class SetupLocationController extends GetxController {
     box.write(Config.USER_CURRENT_LONGITUDE, currentLocation.longitude);
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentLocation.latitude, currentLocation.longitude)).then((value) {
       userCurrentAddress.value = value.first.addressLine;
+      hasLocation.value = true;
+
+      box.write(Config.USER_CURRENT_STREET, value.first.featureName);
+      box.write(Config.USER_CURRENT_COUNTRY, value.first.countryName);
+      box.write(Config.USER_CURRENT_STATE, value.first.adminArea);
+      box.write(Config.USER_CURRENT_CITY, value.first.locality);
+      box.write(Config.USER_CURRENT_IS_CODE, value.first.countryCode);
+      box.write(Config.USER_CURRENT_BARANGAY, value.first.subLocality);
+      box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
+      box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
+
     }).catchError((onError) {
+      hasLocation.value = false;
       userCurrentAddress.value = 'Getting your address...';
       _getCurrentLocation();
     });
+    update();
   }
 
   void goToVerifyNumberPage() {

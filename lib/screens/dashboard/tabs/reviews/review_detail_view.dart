@@ -83,15 +83,12 @@ class ReviewDetailPage extends GetView<DashboardController> {
                 ],
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FlatButton(onPressed: () => print('Like'), child: Text('Like'), minWidth: 0.2),
-                  FlatButton(onPressed: () => print('Dislike'), child: Text('Dislike'), minWidth: 0.2),
-                  FlatButton(onPressed: () => _buildCommentBottomSheet(postedName: 'Let\'s Bee'), child: Text('Comment'), minWidth: 0.2)
-                ],
-              )
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: FlatButton(onPressed: () => _buildCommentBottomSheet(postedName: 'Let\'s Bee'), child: Text('Enter your comment', style: TextStyle(fontSize: 18),), minWidth: 0.2),
+              ),
             ),
             Column(
               children: [
@@ -134,8 +131,17 @@ class ReviewDetailPage extends GetView<DashboardController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlatButton(onPressed: () => print('Like'), child: Text('Like'), minWidth: 0.2),
-                FlatButton(onPressed: () => print('Dislike'), child: Text('Dislike'), minWidth: 0.2),
+                Container(
+                  child: Row(
+                    children: [
+                      Text('10', style: TextStyle(fontWeight: FontWeight.bold)),
+                      IconButton(icon: Icon(Icons.thumb_up_off_alt), onPressed: () => print('Like')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                      Text('4', style: TextStyle(fontWeight: FontWeight.bold)),
+                      IconButton(icon: Icon(Icons.thumb_down_off_alt), onPressed: () => print('Dislike')),
+                    ],
+                  ),
+                ),
                 FlatButton(onPressed: () => _buildReplyBottomSheet(name: name), child: Text('Reply'), minWidth: 0.2)
               ],
             )
@@ -158,7 +164,7 @@ class ReviewDetailPage extends GetView<DashboardController> {
         ),
         height: 200,
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,11 +189,35 @@ class ReviewDetailPage extends GetView<DashboardController> {
                   hintText: 'Type something...'
                 ),
                 cursorColor: Colors.black,
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RaisedButton(
+                    child: Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold)), 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    color: Colors.red.shade300,
+                    onPressed: () => Get.back()
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                  RaisedButton(
+                    child: Text('Comment', style: TextStyle(fontWeight: FontWeight.bold)), 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    onPressed: () => print('Comment')
+                  ),
+                ],
               )
             ],
           ),
         )
       ),
+      isDismissible: false
     );
   }
 
@@ -203,7 +233,7 @@ class ReviewDetailPage extends GetView<DashboardController> {
         ),
         height: 200,
         child: Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.only(top: 20, left: 20, right: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,11 +258,35 @@ class ReviewDetailPage extends GetView<DashboardController> {
                   hintText: 'Type something...'
                 ),
                 cursorColor: Colors.black,
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RaisedButton(
+                    child: Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold)), 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    color: Colors.red.shade300,
+                    onPressed: () => Get.back()
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                  RaisedButton(
+                    child: Text('Reply', style: TextStyle(fontWeight: FontWeight.bold)), 
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    onPressed: () => print('Reply')
+                  ),
+                ],
               )
             ],
           ),
         )
       ),
+      isDismissible: false
     );
   }
 }

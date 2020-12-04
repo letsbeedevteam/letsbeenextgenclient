@@ -8,9 +8,7 @@ class HistoryPage extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-      _buildHistoryItem(),
-      _buildHistoryItem(),
-      _buildHistoryItem(),
+       _buildHistoryItem(),
       ],
     );
   }
@@ -32,13 +30,21 @@ class HistoryPage extends StatelessWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10),
-              child: SizedBox(
-                width: 130,
-                child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'),
+            Container(
+              margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
+              height: 70.0,
+              width: 70.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: Colors.black, width: 1.5)
+              ),
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: ExactAssetImage(Config.PNG_PATH + 'army_navy.png'),
+                backgroundColor: Colors.transparent,
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
@@ -56,7 +62,7 @@ class HistoryPage extends StatelessWidget {
                     Text('November 26, 2020', style: TextStyle(fontSize: 13)),
                     Text('1x Item', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
-                      margin: EdgeInsets.only(right: 10),
+                      margin: EdgeInsets.only(right: 10, bottom: 10),
                       alignment: FractionalOffset.bottomRight,
                       child: Text('₱ 200.00', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                     )

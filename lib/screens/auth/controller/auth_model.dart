@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
 import 'package:letsbeeclient/models/social.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
@@ -14,6 +14,7 @@ class AuthModel implements AuthModelContract {
   void onGoogleSignInRequest(OnSocialSignInRequest listener) {
     _authService.googleSignIn().then((googleSigninAccount) async {
       var auth = await googleSigninAccount.authentication;
+      copyText(auth.idToken);
       _request(Config.GOOGLE, auth.idToken, listener);
     }).catchError((onError) {
       if(onError.toString().contains(Config.NETWORK_ERROR)) {
@@ -28,6 +29,7 @@ class AuthModel implements AuthModelContract {
   @override
   void onFacebookSignInRequest(OnSocialSignInRequest listener) {
     _authService.facebookSignIn().then((accessToken) {
+      copyText(accessToken.token);
       _request(Config.FACEBOOK, accessToken.token, listener);
     }).catchError((onError) {
        if (onError.toString().contains("The getter 'token' was called on null")) {
@@ -40,6 +42,7 @@ class AuthModel implements AuthModelContract {
   @override
   void onKakaoSignInRequest(OnSocialSignInRequest listener) {
     _authService.kakaoSignIn().then((accessTokenResponse) {
+      copyText(accessTokenResponse.accessToken);
       _request(Config.KAKAO, accessTokenResponse.accessToken, listener);
     }).catchError((onError) {
       if (onError.toString().contains('User canceled login.') || onError.toString().contains('REDIRECT_URL_MISMATCH')) {
