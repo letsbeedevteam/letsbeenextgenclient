@@ -61,6 +61,7 @@ class AuthController extends GetxController implements AuthViewContract {
       _box.write(Config.USER_NAME, data.name);
       _box.write(Config.USER_EMAIL, data.email);
       _box.write(Config.USER_TOKEN, data.accessToken);
+      _box.write(Config.USER_REFRESH_TOKEN, data.refreshToken);
       Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
   }
 

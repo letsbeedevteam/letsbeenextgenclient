@@ -1,9 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/screens/cart/cart_controller.dart';
-import 'package:loading_gifs/loading_gifs.dart';
 
 class CartPage extends GetView<CartController> {
 
@@ -41,7 +41,7 @@ class CartPage extends GetView<CartController> {
               return _.refreshCompleter.future;
             },
             child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
+              physics: _.isLoading.value ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: _.cart.value.data.isNotEmpty ? 
@@ -57,16 +57,19 @@ class CartPage extends GetView<CartController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Items', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                          SizedBox(
-                            height: 30,
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                              child: _.isEdit.value ? Text('Cancel Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              onPressed: controller.setEdit,
-                            )
+                          IgnorePointer(
+                            ignoring: _.isLoading.value,
+                            child: SizedBox(
+                              height: 30,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                                child: _.isEdit.value ? Text('Cancel Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                onPressed: controller.setEdit,
+                              )
+                            ),
                           )
                         ],
                       ),
@@ -176,7 +179,7 @@ class CartPage extends GetView<CartController> {
                       ),
                     )
                   ],
-                ) : Container(height: 250,child: Center(child: _.isLoading.value ? Image.asset(cupertinoActivityIndicatorSmall) : Text(_.message.value, style: TextStyle(fontSize: 20))))
+                ) : Container(height: 250,child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20))))
               )
             ),
           );

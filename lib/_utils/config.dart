@@ -14,13 +14,14 @@ class Config {
   static const CART_ROUTE = '/cart';
   static const RESTAURANT_ROUTE = '/restaurant';
   static const MENU_ROUTE = '/menu';
-
   static const REVIEW_DETAIL_ROUTE = '/review_detail';
+  static const WEBVIEW_ROUTE = '/webview';
 
   // Storage keys
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
+  static const USER_REFRESH_TOKEN = 'user_refresh_token';
   static const USER_MOBILE_NUMBER = 'user_mobile_number';
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
@@ -46,7 +47,7 @@ class Config {
 
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';
-  static const SOMETHING_WENT_WRONG = 'Something went wrong';
+  static const SOMETHING_WENT_WRONG = 'Something went wrong. Please try again';
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

@@ -18,10 +18,9 @@ class ApiService extends GetxService {
   Future<Restaurant> getAllRestaurants() async {
 
     final response = await http.get(
-      Config.BASE_URL + '/restaurants',
+      Config.BASE_URL + '/restaurants/dashboard',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
@@ -36,7 +35,6 @@ class ApiService extends GetxService {
       Config.BASE_URL + '/restaurants/$restaurantId/menus/$menuId',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
@@ -51,7 +49,6 @@ class ApiService extends GetxService {
       Config.BASE_URL + '/carts',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
       body: jsonEncode(addToCart)
@@ -66,7 +63,6 @@ class ApiService extends GetxService {
       Config.BASE_URL + '/carts/$cartId',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
       body: jsonEncode(addToCart)
@@ -81,7 +77,6 @@ class ApiService extends GetxService {
       Config.BASE_URL + '/carts/$cartId',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
@@ -89,18 +84,19 @@ class ApiService extends GetxService {
     return deleteCartResponseFromJson(response.body);
   }
 
-  Future<GetCart> getActiveCarts() async {
+  Future<GetCart> getActiveCarts({int restaurantId}) async {
+
+    print(restaurantId);
 
     final response = await http.get(
-      Config.BASE_URL + '/carts',
+      Config.BASE_URL + '/carts?restaurant_id=$restaurantId',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-    // print('Get carts: ${response.body}');
+    print('Get carts: ${response.body}');
 
     return getCartFromJson(response.body);
   }
@@ -111,7 +107,6 @@ class ApiService extends GetxService {
       Config.BASE_URL + '/orders',
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
       body: jsonEncode({
@@ -129,7 +124,7 @@ class ApiService extends GetxService {
         }
       })
     );
-
+    
     return createOrderResponseFromJson(response.body);
   }
 }

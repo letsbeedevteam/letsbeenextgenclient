@@ -57,6 +57,7 @@ class AuthModel implements AuthModelContract {
   @override
   void onAppleSignInRequest(OnSocialSignInRequest listener) {
     _authService.appleSignIn().then((credential) {
+      copyText(credential.identityToken);
       _request(Config.APPLE, credential.identityToken, listener);
     }).catchError((onError) {
       if (onError.toString().contains('AuthorizationErrorCode.canceled')) {
@@ -68,6 +69,7 @@ class AuthModel implements AuthModelContract {
 
   void _request(String social, String token, OnSocialSignInRequest listener) {
     _authService.socialRequest(social, token).then((response) { 
+
       var model = Social.fromJson(jsonDecode(response.body));
       if (model.status == 200) {
         listener.onSocialSignInRequestSuccess(social, model.data);

@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                   return _.refreshCompleter.future;
                 },
                 child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: _.isLoading.value ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,16 +74,17 @@ class HomePage extends StatelessWidget {
                               height: 80,
                               child: ListView(
                               scrollDirection: Axis.horizontal,
-                              children: _.restaurants.value.data.recentOrders.map((e) => _buildRecentRestaurantItem()).toList()
+                              children: _.recentRestaurants.value.map((data) => _buildRecentRestaurantItem(data)).toList()
                             ),
                           )
                           ],
                         ),
                       ) : Container(),
+                      Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
                       Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                        _.searchRestaurants.value.isNotEmpty ? Column(
+                      _.searchRestaurants.value.isNotEmpty ? Column(
                           children: _.searchRestaurants.value.map((e) => _buildRestaurantItem(e)).toList(),
-                        ) : Container(height: 250,child: Center(child: _.isLoading.value ? Image.asset(cupertinoActivityIndicatorSmall) : Text(_.message.value, style: TextStyle(fontSize: 20)))
+                        ) : Container(height: 250,child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20)))
                       )
                     ],
                   ),
@@ -96,18 +97,23 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentRestaurantItem() {
+  Widget _buildRecentRestaurantItem(RestaurantElement restaurant) {
     return GestureDetector(
-      child: Container(
-        width: 70,
+      child: Hero(
+        tag: restaurant.logoUrl,
+        child: Container(
         margin: EdgeInsets.only(left: 10, right: 10),
-        child: Hero(
-          tag: 'jollibee',
-            child: CircleAvatar(
-            radius: 50,
-            backgroundImage: ExactAssetImage(Config.PNG_PATH + 'jollibee.png'),
-            backgroundColor: Colors.transparent,
-          ),
+        child: CircleAvatar(
+          radius: 30,
+          child: ClipOval(
+            child: FadeInImage.assetNetwork(
+              placeholder: cupertinoActivityIndicatorSmall, 
+              image: restaurant.logoUrl, 
+              fit: BoxFit.cover, 
+              placeholderScale: 5, 
+              imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+            ),
+          )
         ),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -117,11 +123,12 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE),
+    ),
+    onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
     );
   }
 
-  Widget _buildRestaurantItem(RestaurantElement data) {
+  Widget _buildRestaurantItem(RestaurantElement restaurant) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       child: Column(
@@ -129,28 +136,28 @@ class HomePage extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(data.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            child: Text(restaurant.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
           ),
           Padding(
             padding: EdgeInsets.only(left: 10, top: 5),
-            child: Text(data.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
+            child: Text(restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
           GestureDetector(
             child: Hero(
-              tag: data.name, 
+              tag: restaurant.name, 
               child: Container(
                 height: 200,
                 alignment: Alignment.center,
                 margin: EdgeInsets.symmetric(horizontal: 10),
                 child: SizedBox(
                   width: Get.width,
-                  child: data.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))) 
+                  child: restaurant.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))) 
                   : Container(child: Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))),
                 ),
               )
             ),
-            onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: data.toJson())
+            onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson())
           ),
           Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
@@ -161,7 +168,7 @@ class HomePage extends StatelessWidget {
             height: Get.height * 0.25,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: data.menuCategorized.first.menus.map((e) => _buildAvailableMenu(e, restaurantId: data.id)).toList()
+              children: restaurant.menuCategorized.first.menus.map((e) => _buildAvailableMenu(e, restaurantId: restaurant.id)).toList()
             ),
           )
         ],

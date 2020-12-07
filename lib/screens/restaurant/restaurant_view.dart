@@ -6,7 +6,7 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/restaurant/restaurant_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
-class RestaurantPage extends StatelessWidget {
+class RestaurantPage extends GetView<RestaurantController> {
   
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class RestaurantPage extends StatelessWidget {
                 SliverAppBar(
                   leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
                   actions: [
-                    IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                    // IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
                   ],
                   expandedHeight: 280.0,
                   floating: true,
@@ -84,18 +84,17 @@ class RestaurantPage extends StatelessWidget {
                         ),
                         Positioned(
                           top: 160.0,
-                          child: Container(
-                            margin: EdgeInsets.only(left: 20),
-                            height: 80.0,
-                            width: 80.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(color: Colors.black, width: 1.5)
-                            ),
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(_.restaurant.value.logoUrl),
-                              backgroundColor: Colors.transparent,
+                          child: Hero(
+                            tag: _.restaurant.value.logoUrl,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              height: 80.0,
+                              width: 80.0,
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(_.restaurant.value.logoUrl),
+                                backgroundColor: Colors.transparent,
+                              )
                             ),
                           ),
                         )
@@ -112,6 +111,18 @@ class RestaurantPage extends StatelessWidget {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        splashColor: Colors.transparent,
+        backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'),
+        ),
+        onPressed: () {
+          print(controller.restaurant.value.id);
+          Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.value.id);
+        },
       )
     );
   } 
@@ -119,14 +130,11 @@ class RestaurantPage extends StatelessWidget {
   Widget _buildItem(List<Menu> menus, {int restaurantId}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30),
-      child: SingleChildScrollView(
-        child: Container(
-          height: 200,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: menus.map((menu) =>  _buildAvailableMenu(menu, restaurantId: restaurantId)).toList(),
-          ),
-        )
+      child: GridView.count(
+        crossAxisCount: menus.length,
+        padding: EdgeInsets.all(4.0),
+        childAspectRatio: 8.0 / 9.0,
+        children: menus.map((menu) =>  _buildAvailableMenu(menu, restaurantId: restaurantId)).toList(),
       )
     );
   }

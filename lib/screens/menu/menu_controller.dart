@@ -181,7 +181,7 @@ class MenuController extends GetxController {
         apiService.addToCart(addToCart).then((value) {
         
           if (value.status == 200) {
-            successSnackBarTop(title: 'Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE) : null);
+            successSnackBarTop(title: 'Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
           } else {
             errorSnackbarTop(title: 'Oops!', message: value.message);
           }

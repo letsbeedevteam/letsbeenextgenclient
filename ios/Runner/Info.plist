@@ -11,13 +11,15 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Let's Bee</string>
+	<string>Let&apos;s Bee</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -40,7 +42,7 @@
 	<key>FacebookAppID</key>
 	<string>829806494451132</string>
 	<key>FacebookDisplayName</key>
-	<string>Let's bee</string>
+	<string>Let&apos;s bee</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

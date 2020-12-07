@@ -31,20 +31,20 @@ class Restaurant {
 class Data {
     Data({
         this.restaurants,
-        this.recentOrders,
+        this.recentRestaurants,
     });
 
     List<RestaurantElement> restaurants;
-    List<dynamic> recentOrders;
+    List<dynamic> recentRestaurants;
 
     factory Data.fromJson(Map<String, dynamic> json) => Data(
         restaurants: List<RestaurantElement>.from(json["restaurants"].map((x) => RestaurantElement.fromJson(x))),
-        recentOrders: List<dynamic>.from(json["recent_orders"].map((x) => x)),
+        recentRestaurants: List<dynamic>.from(json["recent_restaurants"].map((x) => RestaurantElement.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
-        "recent_orders": List<dynamic>.from(recentOrders.map((x) => x)),
+        "recent_restaurants": List<dynamic>.from(recentRestaurants.map((x) => x)),
     };
 }
 

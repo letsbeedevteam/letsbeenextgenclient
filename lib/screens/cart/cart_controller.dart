@@ -11,6 +11,7 @@ class CartController extends GetxController {
 
   final ApiService _apiService = Get.find();
   final GetStorage box = Get.find();
+  final argument = Get.arguments;
   Completer<void> refreshCompleter;
 
   var userCurrentAddress = ''.obs;
@@ -45,7 +46,7 @@ class CartController extends GetxController {
 
     Future.delayed(Duration(seconds: 2)).then((value) {
       
-      _apiService.getActiveCarts().then((cart) {
+      _apiService.getActiveCarts(restaurantId: argument).then((cart) {
         isLoading.value = false;
          _setRefreshCompleter();
         if(cart.status == 200) {
@@ -111,13 +112,23 @@ class CartController extends GetxController {
 
     Future.delayed(Duration(seconds: 2)).then((value) {
       
-      _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((value) {
+      _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
         
         isLoading.value = false;
 
-        if(value.status == 200) {
-          print('URL: ${value.paymentUrl}');
+        if(order.status == 200) {
+
+          if (order.paymentUrl.isNull) {
+            print('NO URL');
+          } else {
+            print('GO TO WEBVIEW: ${order.paymentUrl}');
+            Get.toNamed(Config.WEBVIEW_ROUTE, arguments: order.paymentUrl);
+          }
+
           fetchActiveCarts();
+          
+        } else {
+          errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
         }
         
       }).catchError((onError) {

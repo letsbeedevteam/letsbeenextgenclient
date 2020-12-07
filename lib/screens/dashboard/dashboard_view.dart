@@ -41,12 +41,15 @@ class DashboardPage extends StatelessWidget {
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                          Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                          )
                         ],
                       ),
-                      actions: [
-                        IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png', gaplessPlayback: true), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
-                      ],
+                        // actions: [
+                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png', gaplessPlayback: true), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                        // ],
                     ),
                   ),
                   Container(

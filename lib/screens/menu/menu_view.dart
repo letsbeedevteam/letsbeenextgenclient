@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -194,7 +195,7 @@ class MenuPage extends StatelessWidget {
                       )
                     ],
                   ),
-                ) : Container(alignment: Alignment.topCenter,height: 250, child: Center(child: _.isLoading.value ? Image.asset(cupertinoActivityIndicatorSmall) : Text(_.message.value, style: TextStyle(fontSize: 20))))
+                ) : Container(alignment: Alignment.topCenter, child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20))))
               ) 
             )
           );

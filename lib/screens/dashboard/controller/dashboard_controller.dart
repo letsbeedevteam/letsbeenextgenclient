@@ -93,7 +93,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void tapped(int tappedIndex) {
-
     tappedIndex == 0 ? isHideAppBar.value = false : isHideAppBar.value = true; 
     pageIndex.value = tappedIndex;
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
@@ -164,7 +163,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
           
           restaurants.value = restaurant;
           searchRestaurants.value..clear()..addAll(restaurant.data.restaurants);
-          recentRestaurants.value..clear()..addAll(restaurant.data.recentOrders);
+          recentRestaurants.value..clear()..addAll(restaurant.data.recentRestaurants);
 
           if(searchRestaurants.value.isEmpty) message.value = 'No restaurant found';
         

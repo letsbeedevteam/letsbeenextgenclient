@@ -54,6 +54,9 @@ dependencies:
   # Auto text resize
   auto_size_text: ^2.1.0
 
+  # Webview
+  webview_flutter: ^1.0.7
+
   # Social logins
   kakao_flutter_sdk: ^0.5.2
   google_sign_in: ^4.5.6
