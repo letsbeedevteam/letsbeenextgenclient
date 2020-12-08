@@ -11,19 +11,43 @@ String createOrderResponseToJson(CreateOrderResponse data) => json.encode(data.t
 class CreateOrderResponse {
     CreateOrderResponse({
       this.status,
+      this.data,
       this.paymentUrl,
+      this.code
     });
 
     int status;
     String paymentUrl;
+    RestaurantData data;
+    int code;
 
     factory CreateOrderResponse.fromJson(Map<String, dynamic> json) => CreateOrderResponse(
         status: json["status"],
+        data: RestaurantData.fromJson(json["data"]),
         paymentUrl: json["payment_url"],
+        code: json["code"]
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
+        "data": data,
         "payment_url": paymentUrl,
+        "code": code
     };
+}
+
+class RestaurantData {
+  RestaurantData({
+    this.id,
+  });
+
+  int id;
+
+  factory RestaurantData.fromJson(Map<String, dynamic> json) => RestaurantData(
+    id: json["id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+  };
 }

@@ -48,6 +48,7 @@ class Config {
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';
   static const SOMETHING_WENT_WRONG = 'Something went wrong. Please try again';
+  static const TIMED_OUT = 'Operation timed out. Please try again';
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

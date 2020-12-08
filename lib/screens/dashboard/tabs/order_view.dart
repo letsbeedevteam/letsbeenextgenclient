@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/order/history_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/order/on_going_view.dart';
+import 'package:letsbeeclient/screens/history/history_view.dart';
+import 'package:letsbeeclient/screens/ongoing/on_going_view.dart';
 
 class OrderPage extends GetView<DashboardController> {
 

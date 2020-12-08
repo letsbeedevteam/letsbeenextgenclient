@@ -16,7 +16,7 @@ class CartController extends GetxController {
 
   var userCurrentAddress = ''.obs;
   var message = ''.obs;
-  var totalPrice = ''.obs;
+  var totalPrice = 0.0.obs;
   var isLoading = false.obs;
   var isEdit = false.obs;
   var cart = GetCart(data: []).obs;
@@ -56,7 +56,7 @@ class CartController extends GetxController {
             this.message.value = 'No list of carts';
             this.isEdit.value = false;
           } else {
-            totalPrice.value = cart.data.map((e) => e.totalPrice).reduce((value, element) => value + element).toStringAsFixed(2);
+            totalPrice.value = cart.data.map((e) => e.totalPrice).reduce((value, element) => value + element).roundToDouble();
             this.cart.value = cart;
           }
        
@@ -90,7 +90,7 @@ class CartController extends GetxController {
           fetchActiveCarts();
           successSnackBarTop(title: 'Success', message: cart.message);
         } else {
-          errorSnackbarTop(title: 'Failed', message: 'Item already deleted');
+          errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
         }
         
         update();
@@ -106,37 +106,52 @@ class CartController extends GetxController {
   }
 
   paymentMethod(int restaurantId, String paymentMethod) {
-    isLoading.value = true;
-    Get.back();
-    paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
 
-    Future.delayed(Duration(seconds: 2)).then((value) {
+
+    if (totalPrice.value < 100) {
+      errorSnackbarTop(title: 'Alert', message: 'Please, the minimum transaction was ₱100');
+    } else {
       
-      _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
+      isLoading.value = true;
+      Get.back();
+      paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
+
+      Future.delayed(Duration(seconds: 2)).then((value) {
         
-        isLoading.value = false;
+        _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
+          
+          isLoading.value = false;
 
-        if(order.status == 200) {
+          if(order.status == 200) {
 
-          if (order.paymentUrl.isNull) {
-            print('NO URL');
+            if (order.paymentUrl.isNull) {
+              print('NO URL');
+            } else {
+              print('GO TO WEBVIEW: ${order.paymentUrl}');
+              Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
+                'url': order.paymentUrl,
+                'order_id': order.data.id
+              });
+            }
+
+            fetchActiveCarts();
+            
           } else {
-            print('GO TO WEBVIEW: ${order.paymentUrl}');
-            Get.toNamed(Config.WEBVIEW_ROUTE, arguments: order.paymentUrl);
+            
+          if (order.code == 3005)  errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request'); else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
           }
 
-          fetchActiveCarts();
+          update();
           
-        } else {
-          errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
-        }
-        
-      }).catchError((onError) {
-        isLoading.value = false;
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-        print('Payment method: $onError');
-      });
+        }).catchError((onError) {
+          isLoading.value = false;
+          errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          print('Payment method: $onError');
+          update();
+        });
 
-    });
+        update();
+      });
+    }
   }
 }

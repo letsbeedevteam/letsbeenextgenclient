@@ -84,18 +84,15 @@ class RestaurantPage extends GetView<RestaurantController> {
                         ),
                         Positioned(
                           top: 160.0,
-                          child: Hero(
-                            tag: _.restaurant.value.logoUrl,
-                            child: Container(
-                              margin: EdgeInsets.only(left: 20),
-                              height: 80.0,
-                              width: 80.0,
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage: NetworkImage(_.restaurant.value.logoUrl),
-                                backgroundColor: Colors.transparent,
-                              )
-                            ),
+                          child: Container(
+                            margin: EdgeInsets.only(left: 20),
+                            height: 80.0,
+                            width: 80.0,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: NetworkImage(_.restaurant.value.logoUrl),
+                              backgroundColor: Colors.transparent,
+                            )
                           ),
                         )
                       ],

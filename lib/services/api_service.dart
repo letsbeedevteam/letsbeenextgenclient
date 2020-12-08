@@ -8,6 +8,7 @@ import 'package:letsbeeclient/models/addToCart.dart';
 import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
+import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 
@@ -53,6 +54,8 @@ class ApiService extends GetxService {
       },
       body: jsonEncode(addToCart)
     );
+
+    print('Add carts: ${response.body}');
     
     return addToCartResponseFromJson(response.body);
   }
@@ -67,6 +70,8 @@ class ApiService extends GetxService {
       },
       body: jsonEncode(addToCart)
     );
+
+    print('Update carts: ${response.body}');
     
     return addToCartResponseFromJson(response.body);
   }
@@ -80,6 +85,8 @@ class ApiService extends GetxService {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
+
+    print('Delete carts: ${response.body}');
     
     return deleteCartResponseFromJson(response.body);
   }
@@ -124,7 +131,23 @@ class ApiService extends GetxService {
         }
       })
     );
+
+    print('Create order: ${response.body}');
     
     return createOrderResponseFromJson(response.body);
+  }
+
+  Future<DeleteOrderResponse> deleteOrderById({int orderId}) async {
+     final response = await http.delete(
+      Config.BASE_URL + '/orders/$orderId',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+    print('Delete order: ${response.body}');
+    
+    return deleteOrderResponseFromJson(response.body);
   }
 }

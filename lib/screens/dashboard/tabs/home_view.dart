@@ -73,14 +73,14 @@ class HomePage extends StatelessWidget {
                             Container(
                               height: 80,
                               child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: _.recentRestaurants.value.map((data) => _buildRecentRestaurantItem(data)).toList()
+                                scrollDirection: Axis.horizontal,
+                                children: _.recentRestaurants.value.map((data) => _buildRecentRestaurantItem(data)).toList()
+                              ),
                             ),
-                          )
+                            Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
                           ],
                         ),
                       ) : Container(),
-                      Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
                       Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                       _.searchRestaurants.value.isNotEmpty ? Column(
                           children: _.searchRestaurants.value.map((e) => _buildRestaurantItem(e)).toList(),
@@ -99,31 +99,29 @@ class HomePage extends StatelessWidget {
 
   Widget _buildRecentRestaurantItem(RestaurantElement restaurant) {
     return GestureDetector(
-      child: Hero(
-        tag: restaurant.logoUrl,
-        child: Container(
-        margin: EdgeInsets.only(left: 10, right: 10),
-        child: CircleAvatar(
-          radius: 30,
-          child: ClipOval(
-            child: FadeInImage.assetNetwork(
-              placeholder: cupertinoActivityIndicatorSmall, 
-              image: restaurant.logoUrl, 
-              fit: BoxFit.cover, 
-              placeholderScale: 5, 
-              imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
-            ),
-          )
-        ),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.black,
-            width: 2.0,
+      child: Container(
+      margin: EdgeInsets.only(left: 10, right: 10),
+      child: CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: 30,
+        child: ClipOval(
+          child: FadeInImage.assetNetwork(
+            placeholder: cupertinoActivityIndicatorSmall, 
+            image: restaurant.logoUrl, 
+            fit: BoxFit.cover, 
+            placeholderScale: 5, 
+            imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
           ),
+        )
+      ),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
         ),
       ),
-    ),
+      ),
     onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
     );
   }

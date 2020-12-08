@@ -176,26 +176,30 @@ class MenuController extends GetxController {
   }
 
   sendCartRequest(AddToCart addToCart) {
+    isAddToCartLoading.value = true;
     Future.delayed(Duration(seconds: 2)).then((value) {
 
-        apiService.addToCart(addToCart).then((value) {
-        
-          if (value.status == 200) {
-            successSnackBarTop(title: 'Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-          } else {
-            errorSnackbarTop(title: 'Oops!', message: value.message);
-          }
+      apiService.addToCart(addToCart).then((value) {
+      
+        if (value.status == 200) {
+          successSnackBarTop(title: 'Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
+        } else {
+          
+          if (value.code == 3005) errorSnackbarTop(title: 'Oops!', message: "There\'s a pending order"); else errorSnackbarTop(title: 'Oops!', message: value.message);
+        }
 
-          isAddToCartLoading.value = false;
-          update();
+        isAddToCartLoading.value = false;
+        update();
 
-        }).catchError((onError) {
-          isAddToCartLoading.value = false;
-          errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-          update();
-          print('Add to cart error: ${onError.toString()}');
-        });
+      }).catchError((onError) {
+        isAddToCartLoading.value = false;
+        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        update();
+        print('Add to cart error: ${onError.toString()}');
       });
+    });
+
+    update();
   }
 
   fetchMenuById() {

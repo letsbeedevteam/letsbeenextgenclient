@@ -169,7 +169,7 @@ class CartPage extends GetView<CartController> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  child: _.isLoading.value ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ),
                                 onPressed: () => paymentBottomsheet(_.cart.value.data.first.restaurantId)
                               ),
@@ -342,8 +342,10 @@ class CartPage extends GetView<CartController> {
       content: GetBuilder<CartController>(
         builder: (_) {
           return  Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Are you sure want to delete this item?'),
+              Text('Are you sure want to delete this item?', textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
               Text('($menu)'),
               _.isLoading.value ? Text('Loading..') : Container()
             ],

@@ -8,11 +8,11 @@ import 'package:letsbeeclient/binds/splash_bind.dart';
 import 'package:letsbeeclient/screens/splash/splash_view.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
+import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/routes.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,13 +22,6 @@ void main() async {
 
 Future initServices() async {
   print('Starting services...');
-  await Get.putAsync<IO.Socket>(() async {
-     final socket = IO.io(Config.BASE_URL, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-    return socket;
-  });
   await Get.putAsync<SecretLoader>(() async => SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json'));
   await Get.putAsync(() async {
     final secretLoad = await Get.find<SecretLoader>().loadKey();
@@ -38,6 +31,7 @@ Future initServices() async {
   await Get.putAsync<FacebookLogin>(() async => FacebookLogin());
   await Get.putAsync(() => GetStorage.init(Config.LETSBEE_STORAGE));
   await Get.putAsync<GetStorage>(() async => GetStorage());
+  await Get.putAsync<PushNotificationService>(() async => PushNotificationService());
   await Get.putAsync<ApiService>(() async => ApiService());
   await Get.putAsync<AuthService>(() async => AuthService());
   await Get.putAsync<SocketService>(() async => SocketService());

@@ -14,7 +14,7 @@ class WebViewPage extends GetView<WebController> {
         elevation: 0,
         titleSpacing: 0.0,
         centerTitle: false,
-        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: controller.deleteOrderById),
         title: Text('Payment method')
       ),
       body: Stack(
@@ -23,13 +23,17 @@ class WebViewPage extends GetView<WebController> {
           GetBuilder<WebController>(
             builder: (controller) {
               return WebView(
-                initialUrl: controller.argument,
+                initialUrl: controller.argument['url'],
                 javascriptMode: JavascriptMode.unrestricted,
                 gestureNavigationEnabled: true,
                 onPageFinished: (url) {
                   controller.isLoading.value = false;
                   print('print: $url');
-                  if (url.contains('/payment/success-checkout')) paymentSuccessDialog();
+                 
+                  if (url.contains('/payment/success-checkout')) {
+                    paymentSuccessDialog();
+                    // successSnackBarTop(title: 'Alert', message: 'Successful checkout!');
+                  }
                 },
                 onWebResourceError: (error) {
                   controller.isLoading.value = false;

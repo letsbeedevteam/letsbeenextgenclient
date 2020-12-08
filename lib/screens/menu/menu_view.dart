@@ -115,7 +115,7 @@ class MenuPage extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: IgnorePointer(
-                                ignoring: _.isLoading.value,
+                                ignoring: _.isAddToCartLoading.value,
                                 child: TextFormField(
                                   controller: _.tFRequestController,
                                   decoration: InputDecoration(
@@ -152,7 +152,7 @@ class MenuPage extends StatelessWidget {
                                 children: [
                                    Text('Quantity:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                                    IgnorePointer(
-                                     ignoring: _.isLoading.value,
+                                     ignoring: _.isAddToCartLoading.value,
                                      child: Container(
                                       child: Row(
                                         children: [
@@ -232,7 +232,7 @@ class MenuPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: choice.options.map((e) {
                 return IgnorePointer(
-                    ignoring: _.isLoading.value,
+                    ignoring: _.isAddToCartLoading.value,
                     child: RadioListTile(
                     title: Text(e.name),
                     value: e.name,
@@ -275,7 +275,7 @@ class MenuPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: additional.options.map((e) {
                 return IgnorePointer(
-                  ignoring: _.isLoading.value,
+                  ignoring: _.isAddToCartLoading.value,
                   child: CheckboxListTile(
                     controlAffinity: ListTileControlAffinity.leading,
                     title: Row(

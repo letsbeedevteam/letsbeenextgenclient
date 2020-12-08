@@ -4,14 +4,18 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/order/order_view.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:letsbeeclient/services/push_notification_service.dart';
+import 'package:letsbeeclient/services/socket_service.dart';
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
   
@@ -23,6 +27,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   // GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
   final ApiService apiService = Get.find();
+  final PushNotificationService pushNotificationService = Get.find();
+  final SocketService socketService = Get.find();
   final GetStorage box = Get.find();
   final GoogleSignIn _googleSignIn = Get.find();
   final FacebookLogin _facebookLogin = Get.find();
@@ -39,6 +45,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
   var recentRestaurants = RxList<dynamic>().obs;
+  var activeOrderData = ActiveOrderData(
+    menus: []
+  ).obs;
 
   static DashboardController get to => Get.find();
 
@@ -51,7 +60,21 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupAnimation();
     setupTabs();
     fetchRestaurants();
- 
+    socketService.connectSocket();
+    pushNotificationService.initialise();
+
+    socketService.socket.on("connect", (_) {
+      print('Connected');
+    });
+
+    socketService.socket.on('chatMessage', (data) async {
+      print(data);
+      await pushNotificationService.showNotification(title: 'HEY', body: 'hey');
+    });
+
+    fetchActiveOrder();
+    fetchCancelOrderById();
+   
     super.onInit();
   }
 
@@ -82,6 +105,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void setupTabs() {
     tabController = TabController(length: 2, vsync: this)..addListener(() {
       tabController.index == 0 ?  animationController.reverse() :  animationController.forward();
+      
+      if(tabController.index == 0) fetchActiveOrder();
     });
 
     pageController = PageController();
@@ -94,6 +119,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar.value = false : isHideAppBar.value = true; 
+
+    if(tappedIndex == 4) fetchActiveOrder();
     pageIndex.value = tappedIndex;
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
     update(['pageIndex']);
@@ -118,6 +145,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       break;
       default: _signOut();
     }
+    socketService.disconnectSocket();
   }
 
   void _facebookSignOut() async {
@@ -150,6 +178,42 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     refreshCompleter = Completer();
   }
 
+  fetchActiveOrder() {
+    socketService.socket.emitWithAck('customer-active-order', '', ack: (order) {
+
+      print(order);
+      if (order['status'] == 200) {
+        
+        if (order['data'] == null) {
+           message.value = 'No Active Order';
+        } else {
+          final activeOrder = ActiveOrder.fromJson(order);
+          activeOrderData.value = activeOrder.data;
+        }
+
+      } else {
+        message.value = Config.SOMETHING_WENT_WRONG;
+      }
+      update();
+    });
+  }
+
+  fetchCancelOrderById() {
+     socketService.socket.on('customer-cancel-order', (data) {
+      print(data);
+    });
+  }
+
+  cancelOrderById() {
+    socketService.socket.emitWithAck('customer-cancel-order', {'order_id': activeOrderData.value.id}, ack: (data) {
+      if (data['status'] == 200) {
+        successSnackBarTop(title: 'Success!', message: data['message']);
+        activeOrderData.value = ActiveOrderData(menus: []);
+        update();
+      } 
+    });
+  }
+
   fetchRestaurants() {
 
     isLoading.value = true;
@@ -175,7 +239,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       }).catchError((onError) {
           isLoading.value = false;
           _setRefreshCompleter();
-          if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
+          if (onError.toString().contains('Connection failed')) {
+            message.value = Config.NO_INTERNET_CONNECTION;
+          } else if (onError.toString().contains('Operation timed out')) {
+            message.value = Config.TIMED_OUT;
+          }
           print('Error fetch restaurant: $onError');
           update();
       });
