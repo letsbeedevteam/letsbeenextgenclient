@@ -69,11 +69,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
     socketService.socket.on('chatMessage', (data) async {
       print(data);
-      await pushNotificationService.showNotification(title: 'HEY', body: 'hey');
+      await pushNotificationService.showNotification(title: 'HEY', body: data);
     });
 
     fetchActiveOrder();
-    fetchCancelOrderById();
    
     super.onInit();
   }
@@ -180,27 +179,22 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   fetchActiveOrder() {
     socketService.socket.emitWithAck('customer-active-order', '', ack: (order) {
-
-      print(order);
+      
       if (order['status'] == 200) {
         
         if (order['data'] == null) {
-           message.value = 'No Active Order';
+          message.value = 'No Active Order';
+          activeOrderData.value = ActiveOrderData(menus: []);
         } else {
           final activeOrder = ActiveOrder.fromJson(order);
           activeOrderData.value = activeOrder.data;
         }
+        update();
 
       } else {
         message.value = Config.SOMETHING_WENT_WRONG;
+        update();
       }
-      update();
-    });
-  }
-
-  fetchCancelOrderById() {
-     socketService.socket.on('customer-cancel-order', (data) {
-      print(data);
     });
   }
 

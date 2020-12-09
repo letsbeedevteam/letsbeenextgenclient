@@ -22,7 +22,7 @@ class WebController extends GetxController {
   deleteOrderById() {
 
     isLoading.value = true;
-    deleteSnackBarTop(title: 'Cancelling order', message: 'Please wait, and it will automatically go back.');
+    deleteSnackBarTop(title: 'Cancelling the payment', message: 'Please wait, and it will automatically go back.');
 
     Future.delayed(Duration(seconds: 2)).then((value) {
 
