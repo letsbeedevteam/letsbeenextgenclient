@@ -13,7 +13,7 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<MenuController>(
+      body: GetX<MenuController>(
         builder: (_) {
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -95,10 +95,10 @@ class MenuPage extends StatelessWidget {
                         child: Column(
                           children: [
                             _.menu.value.choices != null ? Column(
-                              children: _.menu.value.choices.map((e) => _buildRequiredItem(e, _)).toList()
+                              children: _.menu.value.choices.map((e) => _buildRequiredItem(e)).toList()
                             ) : Container(),
                             _.menu.value.additionals != null ? Column(
-                              children: _.menu.value.additionals.map((e) => _buildOptionalItem(e, _)).toList()
+                              children: _.menu.value.additionals.map((e) => _buildOptionalItem(e)).toList()
                             ) : Container()
                           ],  
                         ),
@@ -205,98 +205,113 @@ class MenuPage extends StatelessWidget {
   }
 
 
-  Widget _buildRequiredItem(Choice choice, MenuController _) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                    borderRadius: BorderRadius.circular(20)
-                  ),
-                  child: Text('Required', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+  Widget _buildRequiredItem(Choice choice) {
+    return GetX<MenuController>(
+      builder: (_) {
+        return Container(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Text('Required', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: choice.options.map((e) {
+                    return IgnorePointer(
+                        ignoring: _.isAddToCartLoading.value,
+                        child: RadioListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: Text(e.name)),
+                            Text(e.price == 0.0 ? '' : '(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
+                          ],
+                        ),
+                        value: e.name,
+                        groupValue: e.selectedValue,
+                        onChanged: (value) => controller.updateSelectedChoice(choice.id, e.name)
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+            ],
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: choice.options.map((e) {
-                return IgnorePointer(
-                    ignoring: _.isAddToCartLoading.value,
-                    child: RadioListTile(
-                    title: Text(e.name),
-                    value: e.name,
-                    groupValue: e.selectedValue,
-                    onChanged: (value) => controller.updateSelectedChoice(choice.id, e.name)
-                  ),
-                );
-              }).toList(),
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildOptionalItem(Additional additional, MenuController _) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('${additional.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(20)
-                  ),
-                  child: Text('Optional', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: additional.options.map((e) {
-                return IgnorePointer(
-                  ignoring: _.isAddToCartLoading.value,
-                  child: CheckboxListTile(
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: Text(e.name)),
-                        Text('(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
-                      ],
+  Widget _buildOptionalItem(Additional additional) {
+    return GetX<MenuController>(
+      builder: (_) {
+        return Container(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('${additional.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Text('Optional', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     ),
-                    value: e.selectedValue, 
-                    onChanged: (value) {
-                      controller.updateSelectedAdditional(additional.id, e.name);
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          )
-        ],
-      ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: additional.options.map((e) {
+                    return IgnorePointer(
+                      ignoring: _.isAddToCartLoading.value,
+                      child: CheckboxListTile(
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: Text(e.name)),
+                            Text('(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
+                          ],
+                        ),
+                        value: e.selectedValue, 
+                        onChanged: (value) {
+                          controller.updateSelectedAdditional(additional.id, e.name);
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -20,25 +20,21 @@ class AuthController extends GetxController implements AuthViewContract {
   void googleSignIn() {
     socialColor.value = Colors.red;
     _presenter.googleSignIn();
-    update();
   }
 
   void facebookSignIn() {
     socialColor.value = Colors.blue;
     _presenter.facebookSignIn();
-    update();
   }
 
   void kakaoSignIn() {
     socialColor.value = Colors.brown;
     _presenter.kakaoSignIn();
-    update();
   }
 
   void appleSignIn() {
     socialColor.value = Colors.black;
     _presenter.appleSignIn();
-    update();
   }
 
   @override
@@ -50,7 +46,6 @@ class AuthController extends GetxController implements AuthViewContract {
   @override
   void setLoading(bool isLoading) {
     this.isLoading.value = isLoading;
-    update();
   }
 
   @override

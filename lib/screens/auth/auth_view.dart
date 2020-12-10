@@ -24,7 +24,7 @@ class AuthPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(padding: EdgeInsets.symmetric(vertical: 30)),
-                    GetBuilder<AuthController>(
+                    GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
                           ignoring: _.isLoading.value,
@@ -38,7 +38,7 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
-                    GetBuilder<AuthController>(
+                    GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
                           ignoring: _.isLoading.value,
@@ -52,7 +52,7 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
-                    GetBuilder<AuthController>(
+                    GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
                           ignoring: _.isLoading.value,
@@ -68,7 +68,7 @@ class AuthPage extends StatelessWidget {
                     ),
                     signInWithApple(),
                     Padding(padding: EdgeInsets.only(top: 10)),
-                    GetBuilder<AuthController>(
+                    GetX<AuthController>(
                       builder: (_) {
                         return AnimatedContainer(
                           child: _.isLoading.value ? LinearProgressIndicator(backgroundColor: Colors.yellow, valueColor: AlwaysStoppedAnimation<Color>(_.socialColor.value)) : Container(),
@@ -81,7 +81,7 @@ class AuthPage extends StatelessWidget {
                       },
                     ),
                     Padding(padding: EdgeInsets.only(top: 5)),
-                    GetBuilder<AuthController>(
+                    GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
                           ignoring: _.isLoading.value,
@@ -108,7 +108,7 @@ class AuthPage extends StatelessWidget {
 
   Widget signInWithApple() {
     return GetPlatform.isIOS ? 
-    GetBuilder<AuthController>(
+    GetX<AuthController>(
       builder: (_) {
       return IgnorePointer(
           ignoring: _.isLoading.value,

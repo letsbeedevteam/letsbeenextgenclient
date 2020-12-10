@@ -42,7 +42,13 @@ class WebViewPage extends GetView<WebController> {
               );
             },
           ),
-          Center(child: Obx(() => controller.isLoading.value ? Text('Loading...') : Container()))
+          Center(
+            child: GetX<WebController>(
+              builder: (_) {
+                return _.isLoading.value ? Text('Loading...') : Container();
+              },
+            )
+          )
         ],
       )
     );

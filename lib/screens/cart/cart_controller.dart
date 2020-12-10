@@ -18,6 +18,7 @@ class CartController extends GetxController {
   var message = ''.obs;
   var totalPrice = 0.0.obs;
   var isLoading = false.obs;
+  var isPaymentLoading = false.obs;
   var isEdit = false.obs;
   var cart = GetCart(data: []).obs;
   
@@ -38,7 +39,6 @@ class CartController extends GetxController {
 
   setEdit() {
     isEdit.value = !isEdit.value;
-    update();
   }
 
   fetchActiveCarts() {
@@ -63,14 +63,12 @@ class CartController extends GetxController {
         } else {
           this.message.value = Config.SOMETHING_WENT_WRONG;
         }
-        update();
 
       }).catchError((onError) {
         isLoading.value = false;
          _setRefreshCompleter();
         if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
         print('Get cart: $onError');
-        update();
       });
     });
   }
@@ -93,14 +91,11 @@ class CartController extends GetxController {
           errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
         }
         
-        update();
-
       }).catchError((onError) {
         isLoading.value = false;
          _setRefreshCompleter();
         if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
         print('Delete cart: $onError');
-        update();
       });
     });
   }
@@ -112,7 +107,7 @@ class CartController extends GetxController {
       errorSnackbarTop(title: 'Alert', message: 'Please, the minimum transaction was ₱100');
     } else {
       
-      isLoading.value = true;
+      isPaymentLoading.value = true;
       Get.back();
       paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
 
@@ -120,7 +115,7 @@ class CartController extends GetxController {
         
         _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
           
-          isLoading.value = false;
+          isPaymentLoading.value = false;
 
           if(order.status == 200) {
 
@@ -134,23 +129,20 @@ class CartController extends GetxController {
               });
             }
 
-            fetchActiveCarts();
-            
           } else {
             
-          if (order.code == 3005)  errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request'); else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+            if (order.code == 3005) {
+              errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
+            } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
           }
 
-          update();
+          fetchActiveCarts();
           
         }).catchError((onError) {
-          isLoading.value = false;
+          isPaymentLoading.value = false;
           errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
           print('Payment method: $onError');
-          update();
         });
-
-        update();
       });
     }
   }

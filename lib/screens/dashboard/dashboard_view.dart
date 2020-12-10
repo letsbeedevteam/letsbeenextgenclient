@@ -9,10 +9,9 @@ class DashboardPage extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DashboardController>(
-      id: 'pageIndex',
+    return GetX<DashboardController>(
       builder: (_) {
-        var currentIndex = _.pageIndex.value;
+        final currentIndex = _.pageIndex.value;
         return Scaffold(
           resizeToAvoidBottomPadding: false,
           body: Column(
@@ -156,7 +155,10 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(name, style: TextStyle(color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.bold)),
+            Container(
+              width: Get.width,
+              child: Text(name, style: TextStyle(color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.bold)),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

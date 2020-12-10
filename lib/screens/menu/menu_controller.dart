@@ -63,7 +63,6 @@ class MenuController extends GetxController {
 
   void increment() {
     countQuantity.value++;
-    update();
   }
 
   void decrement() {
@@ -72,27 +71,24 @@ class MenuController extends GetxController {
     } else {
       countQuantity.value--;
     }
-    update();
   }
 
   updateSelectedChoice(int id, String name) {
-
-    var getMenu = menu.value.choices.where((element) => element.id == id).first;
-
-    getMenu.options.forEach((data) { 
-       data.selectedValue = name;
+    menu.update((val) {
+      final getMenu = val.choices.where((element) => element.id == id).first;
+      getMenu.options.forEach((data) { 
+        data.selectedValue = name;
+      });
     });
-
-    update();
   }
 
   updateSelectedAdditional(int id, String name) {
-    var getMenu = menu.value.additionals.where((element) => element.id == id).first;
-    getMenu.options.forEach((data) { 
-      if (name == data.name) data.selectedValue = !data.selectedValue;
+    menu.update((val) {
+      final getMenu = val.additionals.where((element) => element.id == id).first;
+      getMenu.options.forEach((data) { 
+        if (name == data.name) data.selectedValue = !data.selectedValue;
+      });
     });
-
-    update();
   }
 
   addToCart() {
@@ -129,7 +125,6 @@ class MenuController extends GetxController {
     if (!hasSelected.value) {
       errorSnackbarTop(title: 'Oops!', message: 'Please choose your required option(s)');
       isAddToCartLoading.value = false;
-      update();
     } else {
 
       var addToCart = AddToCart(
@@ -147,8 +142,6 @@ class MenuController extends GetxController {
         sendCartRequest(addToCart);
       }
     }
-
-    update();
   }
 
   updateCartRequest(AddToCart addToCart) {
@@ -164,12 +157,10 @@ class MenuController extends GetxController {
           }
 
           isAddToCartLoading.value = false;
-          update();
 
         }).catchError((onError) {
           isAddToCartLoading.value = false;
           errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-          update();
           print('Add to cart error: ${onError.toString()}');
         });
       });
@@ -189,17 +180,13 @@ class MenuController extends GetxController {
         }
 
         isAddToCartLoading.value = false;
-        update();
 
       }).catchError((onError) {
         isAddToCartLoading.value = false;
         errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-        update();
         print('Add to cart error: ${onError.toString()}');
       });
     });
-
-    update();
   }
 
   fetchMenuById() {
@@ -232,15 +219,12 @@ class MenuController extends GetxController {
             });
           });
         }
-        
-        update();
-        
+                
       }).catchError((onError) {
           isLoading.value = false;
           _setRefreshCompleter();
           if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
           print('Error fetch restaurant: $onError');
-          update();
       });
 
     });

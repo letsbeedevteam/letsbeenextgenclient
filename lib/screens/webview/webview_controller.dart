@@ -41,8 +41,5 @@ class WebController extends GetxController {
         print('Error delete order: $onError');
       });
     });
-    
-
-    update();
   }
 }

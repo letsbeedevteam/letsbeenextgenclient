@@ -92,9 +92,7 @@ class ApiService extends GetxService {
   }
 
   Future<GetCart> getActiveCarts({int restaurantId}) async {
-
-    print(restaurantId);
-
+    
     final response = await http.get(
       Config.BASE_URL + '/carts?restaurant_id=$restaurantId',
       headers: <String, String>{

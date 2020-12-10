@@ -23,7 +23,7 @@ class CreateOrderResponse {
 
     factory CreateOrderResponse.fromJson(Map<String, dynamic> json) => CreateOrderResponse(
         status: json["status"],
-        data: RestaurantData.fromJson(json["data"]),
+        data: json["data"] == null ? RestaurantData(id: 0) : RestaurantData.fromJson(json["data"]),
         paymentUrl: json["payment_url"],
         code: json["code"]
     );

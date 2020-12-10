@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
           height: 35,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
-            child: GetBuilder<DashboardController>(
+            child: GetX<DashboardController>(
               builder: (_) {
                 return IgnorePointer(
                   ignoring: _.isLoading.value,
@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
           ),
         ),
         Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
-        GetBuilder<DashboardController>(
+        GetX<DashboardController>(
           builder: (_) {
             return Flexible(
               child: RefreshIndicator(

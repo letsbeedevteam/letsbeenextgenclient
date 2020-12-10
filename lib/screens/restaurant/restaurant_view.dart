@@ -11,7 +11,7 @@ class RestaurantPage extends GetView<RestaurantController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<RestaurantController>(
+      body: GetX<RestaurantController>(
         builder: (_) {
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -88,6 +88,10 @@ class RestaurantPage extends GetView<RestaurantController> {
                             margin: EdgeInsets.only(left: 20),
                             height: 80.0,
                             width: 80.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(width: 2)
+                            ),
                             child: CircleAvatar(
                               radius: 50,
                               backgroundImage: NetworkImage(_.restaurant.value.logoUrl),

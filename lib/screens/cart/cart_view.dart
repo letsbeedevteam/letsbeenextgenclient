@@ -16,7 +16,7 @@ class CartPage extends GetView<CartController> {
         titleSpacing: 0.0,
         centerTitle: false,
         leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-        title: GetBuilder<CartController>(
+        title: GetX<CartController>(
           builder: (_) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +33,7 @@ class CartPage extends GetView<CartController> {
           },
         )
       ),
-      body: GetBuilder<CartController>(
+      body: GetX<CartController>(
         builder: (_) {
           return RefreshIndicator(
             onRefresh: () {
@@ -159,7 +159,7 @@ class CartPage extends GetView<CartController> {
                             ),
                           ),
                           IgnorePointer(
-                            ignoring: _.isLoading.value || _.isEdit.value,
+                            ignoring: _.isLoading.value || _.isEdit.value || _.isPaymentLoading.value,
                             child: Container(
                               width: Get.width,
                               child: RaisedButton(
@@ -169,7 +169,7 @@ class CartPage extends GetView<CartController> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: _.isLoading.value ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  child: _.isPaymentLoading.value ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ),
                                 onPressed: () => paymentBottomsheet(_.cart.value.data.first.restaurantId)
                               ),
@@ -339,7 +339,7 @@ class CartPage extends GetView<CartController> {
 
   deleteDialog({String menu, int cartId}) {
     Get.defaultDialog(
-      content: GetBuilder<CartController>(
+      content: GetX<CartController>(
         builder: (_) {
           return  Column(
             crossAxisAlignment: CrossAxisAlignment.center,
