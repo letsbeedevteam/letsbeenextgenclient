@@ -12,14 +12,17 @@ class Restaurant {
     Restaurant({
         this.status,
         this.data,
+        this.code
     });
 
     int status;
     Data data;
+    int code;
 
     factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
-        status: json["status"],
-        data: Data.fromJson(json["data"]),
+        status: json["status"] == null ? 0 : json["status"],
+        data: json["data"] == null ? Data() : Data.fromJson(json["data"]),
+        code: json["code"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -38,8 +41,8 @@ class Data {
     List<dynamic> recentRestaurants;
 
     factory Data.fromJson(Map<String, dynamic> json) => Data(
-        restaurants: List<RestaurantElement>.from(json["restaurants"].map((x) => RestaurantElement.fromJson(x))),
-        recentRestaurants: List<dynamic>.from(json["recent_restaurants"].map((x) => RestaurantElement.fromJson(x))),
+        restaurants: json["restaurants"] == null ? List<RestaurantElement>() : List<RestaurantElement>.from(json["restaurants"].map((x) => RestaurantElement.fromJson(x))),
+        recentRestaurants: json["recent_restaurants"] == null ? List<RestaurantElement>() : List<RestaurantElement>.from(json["recent_restaurants"].map((x) => RestaurantElement.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {

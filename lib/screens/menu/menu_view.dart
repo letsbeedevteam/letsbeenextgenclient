@@ -27,19 +27,19 @@ class MenuPage extends StatelessWidget {
                   backgroundColor: Colors.white,
                   elevation: 0,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: _.menu.value.image != null ? Column(
+                    background: _.menu.call().image != null ? Column(
                       children: [
                        Container(
                           margin: EdgeInsets.only(top: 40),
                           alignment: Alignment.center,
                           child: Hero(
-                            tag: _.menu.value.name.toString(),
+                            tag: _.menu.call().name.toString(),
                             child: Container(
                               alignment: Alignment.center,
                               child: Container(
                                 width: 160,
                                 height: 160,
-                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.value.image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
+                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.call().image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
                               ),
                             ),
                           )
@@ -51,17 +51,17 @@ class MenuPage extends StatelessWidget {
                             children: [
                               Container(
                                 margin: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(_.menu.value.name.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                                child: Text(_.menu.call().name.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text('₱ ${_.menu.value.price}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),textAlign: TextAlign.start),
+                                child: Text('₱ ${_.menu.call().price}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),textAlign: TextAlign.start),
                               ),
                               Container(
                                 alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                child: Text(_.menu.value.description.toString(), style: TextStyle(fontSize: 15),textAlign: TextAlign.start),
+                                child: Text(_.menu.call().description.toString(), style: TextStyle(fontSize: 15),textAlign: TextAlign.start),
                               ),
                               Container(width: Get.width, height: 3,color: Colors.grey.withOpacity(0.3), margin: EdgeInsets.symmetric(horizontal: 10,vertical: 5)),
                             ],
@@ -84,7 +84,7 @@ class MenuPage extends StatelessWidget {
               },
               child: SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
-                child: _.menu.value.id != 0 ? Container(
+                child: _.menu.call().id != 0 ? Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -94,16 +94,16 @@ class MenuPage extends StatelessWidget {
                         padding: EdgeInsets.only(bottom: 20),
                         child: Column(
                           children: [
-                            _.menu.value.choices != null ? Column(
-                              children: _.menu.value.choices.map((e) => _buildRequiredItem(e)).toList()
+                            _.menu.call().choices != null ? Column(
+                              children: _.menu.call().choices.map((e) => _buildRequiredItem(e)).toList()
                             ) : Container(),
-                            _.menu.value.additionals != null ? Column(
-                              children: _.menu.value.additionals.map((e) => _buildOptionalItem(e)).toList()
+                            _.menu.call().additionals != null ? Column(
+                              children: _.menu.call().additionals.map((e) => _buildOptionalItem(e)).toList()
                             ) : Container()
                           ],  
                         ),
                       ),
-                      _.menu.value.id != 0 ?
+                      _.menu.call().id != 0 ?
                       Container(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +115,7 @@ class MenuPage extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: IgnorePointer(
-                                ignoring: _.isAddToCartLoading.value,
+                                ignoring: _.isAddToCartLoading.call(),
                                 child: TextFormField(
                                   controller: _.tFRequestController,
                                   decoration: InputDecoration(
@@ -152,7 +152,7 @@ class MenuPage extends StatelessWidget {
                                 children: [
                                    Text('Quantity:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                                    IgnorePointer(
-                                     ignoring: _.isAddToCartLoading.value,
+                                     ignoring: _.isAddToCartLoading.call(),
                                      child: Container(
                                       child: Row(
                                         children: [
@@ -165,7 +165,7 @@ class MenuPage extends StatelessWidget {
                                               borderRadius: BorderRadius.circular(5),
                                               color: Colors.grey.shade200
                                             ),
-                                            child: Text('${_.countQuantity.value}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                            child: Text('${_.countQuantity.call()}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                           ),
                                           IconButton(icon: Icon(Icons.add), onPressed: () => _.increment()),
                                         ],
@@ -188,14 +188,14 @@ class MenuPage extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: EdgeInsets.all(10),
-                            child: _.isAddToCartLoading.value ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text(_.argument['type'] == 'edit' ? 'DONE EDITING' : 'ADD TO CART', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                            child: _.isAddToCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text(_.argument['type'] == 'edit' ? 'DONE EDITING' : 'ADD TO CART', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                           ),
-                          onPressed: () => _.isAddToCartLoading.value ? null : _.addToCart(),
+                          onPressed: () => _.isAddToCartLoading.call() ? null : _.addToCart(),
                         ),
                       )
                     ],
                   ),
-                ) : Container(alignment: Alignment.topCenter, child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20))))
+                ) : Container(alignment: Alignment.topCenter, child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 20))))
               ) 
             )
           );
@@ -234,7 +234,7 @@ class MenuPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: choice.options.map((e) {
                     return IgnorePointer(
-                        ignoring: _.isAddToCartLoading.value,
+                        ignoring: _.isAddToCartLoading.call(),
                         child: RadioListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -288,7 +288,7 @@ class MenuPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: additional.options.map((e) {
                     return IgnorePointer(
-                      ignoring: _.isAddToCartLoading.value,
+                      ignoring: _.isAddToCartLoading.call(),
                       child: CheckboxListTile(
                         controlAffinity: ListTileControlAffinity.leading,
                         title: Row(

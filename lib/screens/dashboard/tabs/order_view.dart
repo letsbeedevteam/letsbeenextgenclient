@@ -36,10 +36,10 @@ class OrderPage extends GetView<DashboardController> {
                             child: Row(
                               children: [
                                 IconButton(icon: Icon(Icons.location_pin), onPressed: () {
-                                  if (_.tabController.index == 0) print('Location');
+                                  if (_.tabController.index == 0) _.goToRiderLocationPage();
                                 }),
                                 IconButton(icon: Icon(Icons.chat_sharp), onPressed: () {
-                                  if (_.tabController.index == 0) print('Chat');
+                                  if (_.tabController.index == 0) _.goToChatPage();
                                 }),
                               ],
                             ),

@@ -5,11 +5,12 @@ class HistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-       _buildHistoryItem(),
-      ],
+    return Scrollbar(
+      child: ListView(
+        children: [
+          _buildHistoryItem(),
+        ],
+      ),
     );
   }
 

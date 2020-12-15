@@ -33,11 +33,13 @@ class NotificationPage extends GetView<DashboardController> {
           ),
         ),
         Flexible(
-          child: ListView(
-          scrollDirection: Axis.vertical,
-            children: [
-              _buildNotificationItem(),
-            ],
+          child: Scrollbar(
+            child: ListView(
+            scrollDirection: Axis.vertical,
+              children: [
+                _buildNotificationItem(),
+              ],
+            ),
           ),
         )
       ],

@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'package:letsbeeclient/binds/auth_bind.dart';
 import 'package:letsbeeclient/binds/cart_bind.dart';
+import 'package:letsbeeclient/binds/chat_bind.dart';
 import 'package:letsbeeclient/binds/dashboard_bind.dart';
 import 'package:letsbeeclient/binds/map_bind.dart';
 import 'package:letsbeeclient/binds/menu_bind.dart';
 import 'package:letsbeeclient/binds/restaurant_bind.dart';
+import 'package:letsbeeclient/binds/rider_location_bind.dart';
 import 'package:letsbeeclient/binds/setup_location_bind.dart';
 import 'package:letsbeeclient/binds/signup_bind.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
@@ -12,10 +14,12 @@ import 'package:letsbeeclient/binds/verify_number_bind.dart';
 import 'package:letsbeeclient/binds/webview_bind.dart';
 import 'package:letsbeeclient/screens/auth/auth_view.dart';
 import 'package:letsbeeclient/screens/cart/cart_view.dart';
+import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
 import 'package:letsbeeclient/screens/menu/menu_view.dart';
 import 'package:letsbeeclient/screens/restaurant/restaurant_view.dart';
 import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
+import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/map_view.dart';
 import 'package:letsbeeclient/screens/signup/tab_signup_view.dart';
@@ -36,5 +40,7 @@ routes() => [
   GetPage(name: Config.RESTAURANT_ROUTE, page: () => RestaurantPage(), binding: RestaurantBind()),
   GetPage(name: Config.MENU_ROUTE, page: () => MenuPage(), binding: MenuBind()),
   GetPage(name: Config.REVIEW_DETAIL_ROUTE, page: () => ReviewDetailPage()),
-  GetPage(name: Config.WEBVIEW_ROUTE, page: () => WebViewPage(), binding: WebViewBind())
+  GetPage(name: Config.WEBVIEW_ROUTE, page: () => WebViewPage(), binding: WebViewBind()),
+  GetPage(name: Config.CHAT_ROUTE, page: () => ChatPage(), binding: ChatBind()),
+  GetPage(name: Config.RIDER_LOCATION_ROUTE, page: () => RiderLocationPage(), binding: RiderLocationBind())
 ];

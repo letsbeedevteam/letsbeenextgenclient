@@ -27,7 +27,7 @@ class WebViewPage extends GetView<WebController> {
                 javascriptMode: JavascriptMode.unrestricted,
                 gestureNavigationEnabled: true,
                 onPageFinished: (url) {
-                  controller.isLoading.value = false;
+                  controller.isLoading(false);
                   print('print: $url');
                  
                   if (url.contains('/payment/success-checkout')) {
@@ -36,7 +36,7 @@ class WebViewPage extends GetView<WebController> {
                   }
                 },
                 onWebResourceError: (error) {
-                  controller.isLoading.value = false;
+                  controller.isLoading(false);
                   print('Webview ERROR: ${error.description}');
                 },
               );
@@ -45,7 +45,7 @@ class WebViewPage extends GetView<WebController> {
           Center(
             child: GetX<WebController>(
               builder: (_) {
-                return _.isLoading.value ? Text('Loading...') : Container();
+                return _.isLoading.call() ? Text('Loading...') : Container();
               },
             )
           )

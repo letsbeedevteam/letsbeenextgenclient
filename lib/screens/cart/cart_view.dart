@@ -26,7 +26,7 @@ class CartPage extends GetView<CartController> {
                 Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                 Container(
                   margin: EdgeInsets.only(right: 5),
-                  child: Text(controller.userCurrentAddress.value, style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: Text(controller.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
                 )
               ],
             );
@@ -41,10 +41,10 @@ class CartPage extends GetView<CartController> {
               return _.refreshCompleter.future;
             },
             child: SingleChildScrollView(
-              physics: _.isLoading.value ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+              physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child: _.cart.value.data.isNotEmpty ? 
+                child: _.cart.call().data.isNotEmpty ? 
                 Column(
                   children: [
                     // Container(
@@ -58,7 +58,7 @@ class CartPage extends GetView<CartController> {
                         children: [
                           Text('Items', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                           IgnorePointer(
-                            ignoring: _.isLoading.value,
+                            ignoring: _.isLoading.call(),
                             child: SizedBox(
                               height: 30,
                               child: RaisedButton(
@@ -66,7 +66,7 @@ class CartPage extends GetView<CartController> {
                                   borderRadius: BorderRadius.circular(25),
                                 ),
                                 color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                                child: _.isEdit.value ? Text('Cancel Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                child: _.isEdit.call() ? Text('Cancel Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                 onPressed: controller.setEdit,
                               )
                             ),
@@ -77,7 +77,7 @@ class CartPage extends GetView<CartController> {
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(children: _.cart.value.data.map((e) => _buildMenuItem(e, _)).toList())
+                      child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 15),
@@ -86,7 +86,7 @@ class CartPage extends GetView<CartController> {
                         children: [
                           AnimatedContainer(
                             duration: Duration(milliseconds: 500),
-                            height: _.isEdit.value ? 0 : 100,
+                            height: _.isEdit.call() ? 0 : 100,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -99,11 +99,11 @@ class CartPage extends GetView<CartController> {
                                       ),
                                       color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                                       child: Text('Use', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      onPressed: () => _.isEdit.value ? null : print('Promo code')
+                                      onPressed: () => _.isEdit.call() ? null : print('Promo code')
                                     )
                                   )
                                 ),
-                                Expanded(child: Divider(thickness: 2, color: _.isEdit.value ? Colors.white : Colors.grey.shade200))
+                                Expanded(child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200))
                               ],
                             ),
                           ),
@@ -113,7 +113,7 @@ class CartPage extends GetView<CartController> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                  Text('₱ ${_.totalPrice.value}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  Text('₱ ${_.totalPrice.call()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ],
                               ),
                               Row(
@@ -130,7 +130,7 @@ class CartPage extends GetView<CartController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.totalPrice.value}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${_.totalPrice.call()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                               )
@@ -138,7 +138,7 @@ class CartPage extends GetView<CartController> {
                           ),
                           Container(
                             margin: EdgeInsets.only(top: 5),
-                            child: Divider(thickness: 2, color: _.isEdit.value ? Colors.white : Colors.grey.shade200),
+                            child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
                           ),
                           Container(
                             child: Column(
@@ -159,7 +159,7 @@ class CartPage extends GetView<CartController> {
                             ),
                           ),
                           IgnorePointer(
-                            ignoring: _.isLoading.value || _.isEdit.value || _.isPaymentLoading.value,
+                            ignoring: _.isLoading.call() || _.isEdit.call() || _.isPaymentLoading.call(),
                             child: Container(
                               width: Get.width,
                               child: RaisedButton(
@@ -169,9 +169,9 @@ class CartPage extends GetView<CartController> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: _.isPaymentLoading.value ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ),
-                                onPressed: () => paymentBottomsheet(_.cart.value.data.first.restaurantId)
+                                onPressed: () => paymentBottomsheet(_.cart.call().data.first.restaurantId)
                               ),
                             ),
                           )
@@ -179,7 +179,7 @@ class CartPage extends GetView<CartController> {
                       ),
                     )
                   ],
-                ) : Container(height: 250,child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20))))
+                ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 20))))
               )
             ),
           );
@@ -205,11 +205,11 @@ class CartPage extends GetView<CartController> {
                           duration: Duration(milliseconds: 500),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: controller.isEdit.value ? Colors.grey.shade300 : Colors.white,
+                            color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
                           ),
                           curve: Curves.easeInOut,
-                          padding: EdgeInsets.all(controller.isEdit.value ? 10 : 0),
                           child: Container(
+                            padding: EdgeInsets.all(5),
                             child: Column(
                               children: [
                                 Row(
@@ -235,7 +235,7 @@ class CartPage extends GetView<CartController> {
                                       ),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                       Column(
-                                        children: cart.choices.map((e) => _buildChoice(e)).toList(),
+                                        children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
                                       ),
                                     ],
                                   )
@@ -264,7 +264,7 @@ class CartPage extends GetView<CartController> {
                             ),
                           )
                         ),
-                        onTap: () => _.isEdit.value ? Get.toNamed(Config.MENU_ROUTE, arguments: {
+                        onTap: () => _.isEdit.call() ? Get.toNamed(Config.MENU_ROUTE, arguments: {
                           'type': 'edit',
                           'restaurant_id': cart.restaurantId,
                           'restaurant_menu_id': cart.restaurantMenuId,
@@ -272,17 +272,16 @@ class CartPage extends GetView<CartController> {
                         }) : null,
                       ),
                     ),
-                    controller.isEdit.value ? Padding(padding: EdgeInsets.symmetric(horizontal: 10)) : Container(),
                     AnimatedSwitcher(
                       duration: Duration(milliseconds: 100),
-                      child: controller.isEdit.value ? 
+                      child: controller.isEdit.call() ? 
                       GestureDetector(key: UniqueKey(), child: Icon(Icons.delete, color: Colors.red), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
                     )
                   ],
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 5),
-                  child: Divider(thickness: 2, color: _.isEdit.value ? Colors.white : Colors.grey.shade200),
+                  child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
                 ),
               ],
             ),
@@ -322,17 +321,21 @@ class CartPage extends GetView<CartController> {
     );
   }
 
-  Widget _buildChoice(Choice choice) {
+  Widget _buildChoice(Choice choice, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Container(
-            child: Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-          ),
+          child: Row(
+            children: [
+              Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+              Expanded(child: Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)))
+            ],
+          )
         ),
-        Text(choice.pick, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+        Text('₱ ' + double.parse('${(choice.price * quantity)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }
@@ -347,7 +350,7 @@ class CartPage extends GetView<CartController> {
               Text('Are you sure want to delete this item?', textAlign: TextAlign.center),
               Padding(padding: EdgeInsets.symmetric(vertical: 2)),
               Text('($menu)'),
-              _.isLoading.value ? Text('Loading..') : Container()
+              _.isLoading.call() ? Text('Loading..') : Container()
             ],
           );
         },
@@ -366,7 +369,7 @@ class CartPage extends GetView<CartController> {
         ),
         child: Text('Cancel'), 
         onPressed: () {
-          if (!controller.isLoading.value) Get.back();
+          if (!controller.isLoading.call()) Get.back();
         }
       ),
       confirm: RaisedButton(
@@ -376,7 +379,7 @@ class CartPage extends GetView<CartController> {
         ),
         child: Text('Delete'), 
         onPressed: () {
-          if (!controller.isLoading.value) controller.deleteCart(cartId: cartId);
+          if (!controller.isLoading.call()) controller.deleteCart(cartId: cartId);
         }
       ),
     );

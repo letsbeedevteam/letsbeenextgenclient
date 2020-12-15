@@ -27,7 +27,7 @@ class AuthPage extends StatelessWidget {
                     GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
-                          ignoring: _.isLoading.value,
+                          ignoring: _.isLoading.call(),
                           child: customSignInButton(
                             color: Colors.blue.shade400,
                             icon: Icon(FontAwesomeIcons.facebookSquare, color: Colors.white),
@@ -41,7 +41,7 @@ class AuthPage extends StatelessWidget {
                     GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
-                          ignoring: _.isLoading.value,
+                          ignoring: _.isLoading.call(),
                           child: customSignInButton(
                             color: Colors.red.shade400,
                             icon: Icon(FontAwesomeIcons.google, color: Colors.white),
@@ -55,7 +55,7 @@ class AuthPage extends StatelessWidget {
                     GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
-                          ignoring: _.isLoading.value,
+                          ignoring: _.isLoading.call(),
                           child: customSignInButton(
                             color: Colors.yellow.shade600,
                             svg: SvgPicture.asset(Config.SVG_PATH + 'kakao_talk.svg'),
@@ -71,11 +71,11 @@ class AuthPage extends StatelessWidget {
                     GetX<AuthController>(
                       builder: (_) {
                         return AnimatedContainer(
-                          child: _.isLoading.value ? LinearProgressIndicator(backgroundColor: Colors.yellow, valueColor: AlwaysStoppedAnimation<Color>(_.socialColor.value)) : Container(),
+                          child: _.isLoading.call() ? LinearProgressIndicator(backgroundColor: Colors.yellow, valueColor: AlwaysStoppedAnimation<Color>(_.socialColor.call())) : Container(),
                           duration: Duration (seconds: 2),
                           curve: Curves.fastLinearToSlowEaseIn,
-                          width: _.isLoading.value ? Get.width : Get.width / 250 * 180,
-                          height: _.isLoading.value ? 2 : 0.3,
+                          width: _.isLoading.call() ? Get.width : Get.width / 250 * 180,
+                          height: _.isLoading.call() ? 2 : 0.3,
                           color: Colors.black,
                         );
                       },
@@ -84,7 +84,7 @@ class AuthPage extends StatelessWidget {
                     GetX<AuthController>(
                       builder: (_) {
                       return IgnorePointer(
-                          ignoring: _.isLoading.value,
+                          ignoring: _.isLoading.call(),
                           child: customSignInButton(
                             color: Colors.grey,
                             icon: Icon(Icons.email, color: Colors.black),
@@ -111,7 +111,7 @@ class AuthPage extends StatelessWidget {
     GetX<AuthController>(
       builder: (_) {
       return IgnorePointer(
-          ignoring: _.isLoading.value,
+          ignoring: _.isLoading.call(),
           child: customSignInButton(
             color: Colors.black,
             icon: Icon(FontAwesomeIcons.apple, color: Colors.white),

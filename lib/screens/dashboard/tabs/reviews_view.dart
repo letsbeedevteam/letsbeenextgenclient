@@ -37,50 +37,52 @@ class ReviewsPage extends StatelessWidget {
         ),
         Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 10)),
         Flexible(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text('TOP VIEWS', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-                Container(
-                  height: 200,
-                  child:  ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildTopViewItem('1'),
-                    ],
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('TOP VIEWS', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text('RECENTLY UPLOAD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-                Container(
-                  height: 200,
-                  child:  ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildRecentlyUploadItem('4'),
-                    ],
+                  Container(
+                    height: 200,
+                    child:  ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _buildTopViewItem('1'),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text('UPLOADED PHOTO', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-                Container(
-                  height: 200,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildUploadedPhotoItem('7'),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('RECENTLY UPLOAD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
-                ),
-              ],
+                  Container(
+                    height: 200,
+                    child:  ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _buildRecentlyUploadItem('4'),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('UPLOADED PHOTO', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  Container(
+                    height: 200,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _buildUploadedPhotoItem('7'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

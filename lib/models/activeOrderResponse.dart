@@ -71,7 +71,7 @@ class ActiveOrderData {
         id: json["id"],
         restaurantId: json["restaurant_id"],
         userId: json["user_id"],
-        riderId: json["rider_id"],
+        riderId: json["rider_id"] == null ? 0 : json["rider_id"],
         status: json["status"],
         reason: json["reason"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -177,7 +177,7 @@ class Fee {
     factory Fee.fromJson(Map<String, dynamic> json) => Fee(
         subTotal: json["sub_total"].toDouble(),
         delivery: json["delivery"],
-        discountCode: json["discount_code"],
+        discountCode: json["discount_code"] == null ? '' : json["discount_code"],
         discountPrice: json["discount_price"].toDouble(),
         total: json["total"].toDouble(),
     );

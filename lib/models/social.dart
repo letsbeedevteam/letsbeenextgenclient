@@ -34,21 +34,18 @@ class SocialData {
         this.name,
         this.email,
         this.accessToken,
-        this.refreshToken
     });
 
     int id;
     String name;
     String email;
     String accessToken;
-    String refreshToken;
 
     factory SocialData.fromJson(Map<String, dynamic> json) => SocialData(
         id: json["id"],
         name: json["name"],
         email: json["email"],
         accessToken: json["access_token"],
-        refreshToken: json["refresh_token"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -56,6 +53,5 @@ class SocialData {
         "name": name,
         "email": email,
         "access_token": accessToken,
-        "refresh_token": refreshToken
     };
 }

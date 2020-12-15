@@ -35,7 +35,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                     labelColor: Colors.black,
                     indicatorColor: Colors.black,
                     indicatorWeight: 3.5,
-                    tabs: _.restaurant.value.menuCategorized.map((element) {
+                    tabs: _.restaurant.call().menuCategorized.map((element) {
                       return Tab(
                         child: Container(
                           child: Center(child: Text(element.name.capitalizeFirst, style: TextStyle(fontSize: 15)))
@@ -54,7 +54,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                               height: 200,
                               child: Center(
                                 child: Hero(
-                                  tag: _.restaurant.value.name,
+                                  tag: _.restaurant.call().name,
                                   child: Container(
                                     width: Get.width,
                                     child: CarouselSlider(
@@ -62,7 +62,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                       autoPlay: false,
                                       disableCenter: true,                                    
                                     ),
-                                    items: _.restaurant.value.sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
+                                    items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
                                   ),
                                 ),
                               ),
@@ -75,8 +75,8 @@ class RestaurantPage extends GetView<RestaurantController> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                  Center(child: Text(_.restaurant.value.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),),
-                                  Center(child: Text(_.restaurant.value.location.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal)),)
+                                  Center(child: Text(_.restaurant.call().name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),),
+                                  Center(child: Text(_.restaurant.call().location.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal)),)
                                 ],
                               ),
                             ),
@@ -94,7 +94,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                             ),
                             child: CircleAvatar(
                               radius: 50,
-                              backgroundImage: NetworkImage(_.restaurant.value.logoUrl),
+                              backgroundImage: NetworkImage(_.restaurant.call().logoUrl),
                               backgroundColor: Colors.transparent,
                             )
                           ),
@@ -108,7 +108,7 @@ class RestaurantPage extends GetView<RestaurantController> {
             body: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               controller: _.tabController,
-              children: _.restaurant.value.menuCategorized.map((e) => _buildItem(e.menus, restaurantId: _.restaurant.value.id)).toList(),
+              children: _.restaurant.call().menuCategorized.map((e) => _buildItem(e.menus, restaurantId: _.restaurant.call().id)).toList(),
             ),
           );
         },
@@ -120,10 +120,7 @@ class RestaurantPage extends GetView<RestaurantController> {
           padding: EdgeInsets.all(8),
           child: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'),
         ),
-        onPressed: () {
-          print(controller.restaurant.value.id);
-          Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.value.id);
-        },
+        onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id)
       )
     );
   } 

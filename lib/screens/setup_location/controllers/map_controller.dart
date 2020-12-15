@@ -27,36 +27,34 @@ class MapController extends GetxController {
   }
 
   void gpsLocation() async {
-    isBounced.value = true;
+    isBounced(true);
     final currentLocation = await lct.Location().getLocation();
     final c = await _mapController.future;
     c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
-    isBounced.value = false;
+    isBounced(false);
   }
 
   void onMapCreated(GoogleMapController controller) {
     _mapController.complete(controller);
-    if (currentPosition.value != null) {
-      Future.delayed(Duration(seconds: 2)).then((value) => isMapLoading.value = false);
+    if (currentPosition.call() != null) {
+      Future.delayed(Duration(seconds: 2)).then((value) => isMapLoading(false));
     }
   }
 
   void _updateCurrentPosition(double latitude, double longitude) async {
-    currentPosition.update((val) {
-      val = LatLng(latitude, longitude);
-    });
+    currentPosition(LatLng(latitude, longitude));
   }
 
   void onCameraMovePosition(CameraPosition position) {
-    isBounced.value = true;
-    currentPosition.value = LatLng(position.target.latitude, position.target.longitude);
+    isBounced(true);
+    currentPosition(LatLng(position.target.latitude, position.target.longitude));
     _updateCurrentPosition(currentPosition.value.latitude, currentPosition.value.longitude);
   }
 
   void getCurrentAddress() async {
-    isBounced.value = false;
+    isBounced(false);
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.value.latitude, currentPosition.value.longitude)).then((value) {
-      userCurrentAddress.value = value.first.addressLine;
+      userCurrentAddress(value.first.addressLine);
 
       _box.write(Config.USER_CURRENT_STREET, value.first.featureName);
       _box.write(Config.USER_CURRENT_COUNTRY, value.first.countryName);

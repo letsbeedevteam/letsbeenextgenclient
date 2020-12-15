@@ -21,22 +21,22 @@ class HomePage extends StatelessWidget {
             child: GetX<DashboardController>(
               builder: (_) {
                 return IgnorePointer(
-                  ignoring: _.isLoading.value,
+                  ignoring: _.isLoading.call(),
                   child: TextField(
                     controller: _.tfSearchController,
                     onChanged: _.searchRestaurant,
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 15),
+                      contentPadding: EdgeInsets.only(left: 10),
                       hintText: 'Search restaurant...',
                       fillColor: Colors.grey.shade200,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         borderSide: BorderSide.none
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.0),
                         borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
@@ -55,38 +55,40 @@ class HomePage extends StatelessWidget {
                   _.fetchRestaurants();
                   return _.refreshCompleter.future;
                 },
-                child: SingleChildScrollView(
-                  physics: _.isLoading.value ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _.recentRestaurants.value.isNotEmpty ? Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-                            ),
-                            Container(
-                              height: 80,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: _.recentRestaurants.value.map((data) => _buildRecentRestaurantItem(data)).toList()
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _.recentRestaurants.call().isNotEmpty ? Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
                               ),
-                            ),
-                            Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
-                          ],
-                        ),
-                      ) : Container(),
-                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                      _.searchRestaurants.value.isNotEmpty ? Column(
-                          children: _.searchRestaurants.value.map((e) => _buildRestaurantItem(e)).toList(),
-                        ) : Container(height: 250,child: Center(child: _.isLoading.value ? CupertinoActivityIndicator() : Text(_.message.value, style: TextStyle(fontSize: 20)))
-                      )
-                    ],
+                              Container(
+                                height: 80,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: _.recentRestaurants.call().map((data) => _buildRecentRestaurantItem(data)).toList()
+                                ),
+                              ),
+                              Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
+                            ],
+                          ),
+                        ) : Container(),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        _.searchRestaurants.call().isNotEmpty ? Column(
+                            children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList(),
+                          ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )

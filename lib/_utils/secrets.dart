@@ -4,11 +4,13 @@ import 'dart:convert';
 class Secrets {
 
   final String nativeAppKey;
+  final String googleMapKey;
 
-  Secrets({this.nativeAppKey});
+  Secrets({this.nativeAppKey, this.googleMapKey});
 
   factory Secrets.fromJson(Map<String, dynamic> json) => Secrets(
-    nativeAppKey: json['native_app_key']
+    nativeAppKey: json['native_app_key'],
+    googleMapKey: json['google_map_key']
   );
 }
 

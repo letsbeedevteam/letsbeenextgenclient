@@ -14,7 +14,7 @@ class SplashPage extends StatelessWidget {
             child: SizedBox(
               height: 130,
               width: 240,
-              child: Hero(tag: 'splash', child: Image.asset(Config.PNG_PATH + 'splash_logo.png')),
+              child: Hero(tag: 'splash', child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')),
             ),
           );
         },

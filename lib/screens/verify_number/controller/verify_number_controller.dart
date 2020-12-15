@@ -21,8 +21,8 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
   }
 
   void changeIndex(int index) {
-    selectedIndex.value = index;
-    tabController.index = selectedIndex.value;
+    selectedIndex(index);
+    tabController.index = selectedIndex.call();
     update();
   }
 

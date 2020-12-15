@@ -25,7 +25,7 @@ class CartController extends GetxController {
   @override
   void onInit() {
     refreshCompleter = Completer();
-    userCurrentAddress.value = box.read(Config.USER_CURRENT_ADDRESS);
+    userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
 
     fetchActiveCarts();
     
@@ -38,111 +38,101 @@ class CartController extends GetxController {
   }
 
   setEdit() {
-    isEdit.value = !isEdit.value;
+    isEdit(!isEdit.call());
   }
 
   fetchActiveCarts() {
-    isLoading.value = true;
+    isLoading(true);
 
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      
-      _apiService.getActiveCarts(restaurantId: argument).then((cart) {
-        isLoading.value = false;
-         _setRefreshCompleter();
-        if(cart.status == 200) {
+    _apiService.getActiveCarts(restaurantId: argument).then((response) {
+      isLoading(false);
+        _setRefreshCompleter();
+      if(response.status == 200) {
 
-          if (cart.data.isEmpty) {
-            this.cart.value = cart;
-            this.message.value = 'No list of carts';
-            this.isEdit.value = false;
-          } else {
-            totalPrice.value = cart.data.map((e) => e.totalPrice).reduce((value, element) => value + element).roundToDouble();
-            this.cart.value = cart;
-          }
-       
+        if (response.data.isEmpty) {
+          this.cart(response);
+          this.message('No list of carts');
+          this.isEdit(false);
         } else {
-          this.message.value = Config.SOMETHING_WENT_WRONG;
+          totalPrice(response.data.map((e) => e.totalPrice).reduce((value, element) => value + element).roundToDouble());
+          this.cart(response);
         }
+      
+      } else {
+        this.message(Config.SOMETHING_WENT_WRONG);
+      }
 
-      }).catchError((onError) {
-        isLoading.value = false;
-         _setRefreshCompleter();
-        if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
-        print('Get cart: $onError');
-      });
+    }).catchError((onError) {
+      isLoading(false);
+      _setRefreshCompleter();
+      if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
+      print('Get cart: $onError');
     });
   }
 
   deleteCart({int cartId}) {
-    isLoading.value = true;
+    isLoading(true);
     Get.back();
     deleteSnackBarTop(title: 'Deleting item..', message: 'Please wait..');
 
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      
-      _apiService.deleteCart(cartId).then((cart) {
-        isLoading.value = false;
-         _setRefreshCompleter();
+    _apiService.deleteCart(cartId).then((cart) {
+      isLoading(false);
+        _setRefreshCompleter();
 
-        if(cart.status == 200) {
-          fetchActiveCarts();
-          successSnackBarTop(title: 'Success', message: cart.message);
-        } else {
-          errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
-        }
-        
-      }).catchError((onError) {
-        isLoading.value = false;
-         _setRefreshCompleter();
-        if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
-        print('Delete cart: $onError');
-      });
+      if(cart.status == 200) {
+        fetchActiveCarts();
+        successSnackBarTop(title: 'Success', message: cart.message);
+      } else {
+        errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
+      }
+      
+    }).catchError((onError) {
+      isLoading(false);
+        _setRefreshCompleter();
+      if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
+      print('Delete cart: $onError');
     });
   }
 
   paymentMethod(int restaurantId, String paymentMethod) {
 
-
     if (totalPrice.value < 100) {
       errorSnackbarTop(title: 'Alert', message: 'Please, the minimum transaction was ₱100');
     } else {
       
-      isPaymentLoading.value = true;
+      isPaymentLoading(true);
       Get.back();
       paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
 
-      Future.delayed(Duration(seconds: 2)).then((value) {
-        
-        _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
+      _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
           
-          isPaymentLoading.value = false;
+        isPaymentLoading(false);
 
-          if(order.status == 200) {
+        if(order.status == 200) {
 
-            if (order.paymentUrl.isNull) {
-              print('NO URL');
-            } else {
-              print('GO TO WEBVIEW: ${order.paymentUrl}');
-              Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
-                'url': order.paymentUrl,
-                'order_id': order.data.id
-              });
-            }
-
+          if (order.paymentUrl.isNull) {
+            print('NO URL');
           } else {
-            
-            if (order.code == 3005) {
-              errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
-            } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+            print('GO TO WEBVIEW: ${order.paymentUrl}');
+            Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
+              'url': order.paymentUrl,
+              'order_id': order.data.id
+            });
           }
 
-          fetchActiveCarts();
+        } else {
           
-        }).catchError((onError) {
-          isPaymentLoading.value = false;
-          errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-          print('Payment method: $onError');
-        });
+          if (order.code == 3005) {
+            errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
+          } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        }
+
+        fetchActiveCarts();
+        
+      }).catchError((onError) {
+        isPaymentLoading(false);
+        if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
+        print('Payment method: $onError');
       });
     }
   }

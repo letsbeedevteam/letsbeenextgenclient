@@ -16,12 +16,13 @@ class Config {
   static const MENU_ROUTE = '/menu';
   static const REVIEW_DETAIL_ROUTE = '/review_detail';
   static const WEBVIEW_ROUTE = '/webview';
+  static const CHAT_ROUTE = '/chat';
+  static const RIDER_LOCATION_ROUTE = '/rider_location';
 
   // Storage keys
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
-  static const USER_REFRESH_TOKEN = 'user_refresh_token';
   static const USER_MOBILE_NUMBER = 'user_mobile_number';
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
@@ -49,6 +50,7 @@ class Config {
   static const NO_INTERNET_CONNECTION = 'No internet connection';
   static const SOMETHING_WENT_WRONG = 'Something went wrong. Please try again';
   static const TIMED_OUT = 'Operation timed out. Please try again';
+  static const TOKEN_EXPIRED = 'Token Expired!';
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

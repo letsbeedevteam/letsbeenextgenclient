@@ -18,22 +18,22 @@ class AuthController extends GetxController implements AuthViewContract {
   var socialColor = Colors.black.obs;
   
   void googleSignIn() {
-    socialColor.value = Colors.red;
+    socialColor(Colors.red);
     _presenter.googleSignIn();
   }
 
   void facebookSignIn() {
-    socialColor.value = Colors.blue;
+    socialColor(Colors.blue);
     _presenter.facebookSignIn();
   }
 
   void kakaoSignIn() {
-    socialColor.value = Colors.brown;
+    socialColor(Colors.brown);
     _presenter.kakaoSignIn();
   }
 
   void appleSignIn() {
-    socialColor.value = Colors.black;
+    socialColor(Colors.black);
     _presenter.appleSignIn();
   }
 
@@ -45,7 +45,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void setLoading(bool isLoading) {
-    this.isLoading.value = isLoading;
+    this.isLoading(isLoading);
   }
 
   @override
@@ -56,7 +56,6 @@ class AuthController extends GetxController implements AuthViewContract {
       _box.write(Config.USER_NAME, data.name);
       _box.write(Config.USER_EMAIL, data.email);
       _box.write(Config.USER_TOKEN, data.accessToken);
-      _box.write(Config.USER_REFRESH_TOKEN, data.refreshToken);
       Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
   }
 

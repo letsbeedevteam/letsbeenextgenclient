@@ -53,7 +53,7 @@ class SignUpPage extends GetView<SignUpController>  {
 
   Future<bool> _willPopCallback() async {
     dismissKeyboard(Get.context);
-    if (controller.selectedIndex.value == 0) {
+    if (controller.selectedIndex.call() == 0) {
       Get.back(closeOverlays: true);
       return true;
     } else {

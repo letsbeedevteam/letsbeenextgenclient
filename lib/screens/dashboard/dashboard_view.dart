@@ -11,7 +11,7 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetX<DashboardController>(
       builder: (_) {
-        final currentIndex = _.pageIndex.value;
+        final currentIndex = _.pageIndex.call();
         return Scaffold(
           resizeToAvoidBottomPadding: false,
           body: Column(
@@ -20,7 +20,7 @@ class DashboardPage extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                     AnimatedContainer(
-                    height: _.isHideAppBar.value ? 0 : 100,
+                    height: _.isHideAppBar.call() ? 0 : 100,
                     duration: Duration(seconds: 2),
                     curve: Curves.fastLinearToSlowEaseIn,
                     child: AppBar(
@@ -42,7 +42,7 @@ class DashboardPage extends StatelessWidget {
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                           Padding(
                             padding: EdgeInsets.only(right: 10),
-                            child: Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                            child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
                           )
                         ],
                       ),
@@ -52,7 +52,7 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    child:  _.isOpenLocationSheet.value ? _topSheet(_) : Container(),
+                    child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
                     width: Get.width, 
                     color: Colors.white
                   )
@@ -63,7 +63,7 @@ class DashboardPage extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   controller: _.pageController,
                   onPageChanged: (index) {
-                    _.pageIndex.value = index;
+                    _.pageIndex(index);
                     _.showLocationSheet(false);
                   },
                   children: _.widgets,

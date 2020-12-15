@@ -54,19 +54,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   @override
   void onInit() {
-
     userCurrentAddress.value = box.read(Config.USER_CURRENT_ADDRESS);
  
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
-    fetchRestaurants();
+    refreshToken();
     socketService.connectSocket();
     pushNotificationService.initialise();
 
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
+      fetchActiveOrder();
+      receiveUpdateOrder();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -75,22 +76,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('Reconnecting');
     })
     ..on('disconnect', (_) {
-      if (box.read(Config.IS_LOGGED_IN)) socketService.socket.connect();
+      onGoingMessage('No Active Order');
+      activeOrderData(ActiveOrderData(menus: []));
       print('Disconnected');
     })
     ..on('error', (_) {
       print('Error socket: $_');
     });
-
-    socketService.socket.on('chatMessage', (data) async {
-      print(data);
-      await pushNotificationService.showNotification(title: 'HEY', body: data);
-    });
-
-    if (pageIndex.value == 4) {
-      fetchActiveOrder();
-    }
-   
+    
     super.onInit();
   }
 
@@ -101,7 +94,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     //   refreshIndicatorKey.currentState?.show(); 
     // });
   }
-
+  
   void setupAnimation() {
 
     animationController = AnimationController(
@@ -121,27 +114,27 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void setupTabs() {
     tabController = TabController(length: 2, vsync: this)..addListener(() {
       tabController.index == 0 ?  animationController.reverse() :  animationController.forward();
-      
-      if(tabController.index == 4) fetchActiveOrder();
+      if(tabController.index == 0) fetchActiveOrder();
     });
 
     pageController = PageController();
   }
 
   void showLocationSheet(bool isOpenLocationSheet) {
-    this.isOpenLocationSheet.value = isOpenLocationSheet;
+    this.isOpenLocationSheet(isOpenLocationSheet);
   }
 
   void tapped(int tappedIndex) {
-    tappedIndex == 0 ? isHideAppBar.value = false : isHideAppBar.value = true; 
-
-    if(tappedIndex == 4) fetchActiveOrder();
-    pageIndex.value = tappedIndex;
+    tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
+    tfSearchController.clear();
+    searchRestaurant('');
+    if (tappedIndex == 4) fetchActiveOrder();
+    pageIndex(tappedIndex);
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
 
   void updateCurrentLocation(String address) {
-     userCurrentAddress.value = address;
+     userCurrentAddress(address);
      box.write(Config.USER_CURRENT_ADDRESS, address);
      showLocationSheet(false);
   }
@@ -191,88 +184,134 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     refreshCompleter = Completer();
   }
 
-  fetchActiveOrder() {
-    socketService.socket.emitWithAck('customer-active-order', '', ack: (order) {
-      print('Active order $order');
-      if (order['status'] == 200) {
-        
-        if (order['data'] == null) {
-          onGoingMessage.value = 'No Active Order';
-          activeOrderData.value = ActiveOrderData(menus: []);
-        } else {
-          final activeOrder = ActiveOrder.fromJson(order);
-          activeOrderData.value = activeOrder.data;
-        }
+  goToChatPage() {
+    activeOrderData.call().riderId != 0 ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
+    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+  }
 
+  goToRiderLocationPage() {
+    activeOrderData.call().riderId != 0 ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
+    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+  }
+
+  fetchActiveOrder() {
+    socketService.socket.emitWithAck('customer-active-order', '', ack: (response) {
+      print('Active order $response');
+      if (response['status'] == 200) {
+        if (response['data'] == null) {
+          onGoingMessage('No Active Order');
+          activeOrderData(ActiveOrderData(menus: []));
+        } else {
+          activeOrderData(ActiveOrderData.fromJson(response['data']));
+        }
       } else {
-        onGoingMessage.value = Config.SOMETHING_WENT_WRONG;
+        onGoingMessage(Config.SOMETHING_WENT_WRONG);
       }
     });
   }
 
+  receiveUpdateOrder() {
+    socketService.socket.on('customer-orders', (response) {
+      print('Receive update: $response');
+    });
+  }
+
   cancelOrderById() {
-    socketService.socket.emitWithAck('customer-cancel-order', {'order_id': activeOrderData.value.id}, ack: (data) {
-      if (data['status'] == 200) {
-        successSnackBarTop(title: 'Success!', message: data['message']);
-        onGoingMessage.value = 'No Active Order';
-        activeOrderData.value = ActiveOrderData(menus: []);
-      } 
+    socketService.socket.emitWithAck('customer-cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
+      if (response['status'] == 200) {
+        successSnackBarTop(title: 'Success!', message: response['message']);
+        onGoingMessage('No Active Order');
+        activeOrderData(ActiveOrderData(menus: []));
+      } else {
+        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      }
     });
   }
 
   fetchRestaurants() {
 
-    isLoading.value = true;
-   
-    Future.delayed(Duration(seconds: 2)).then((value) {
+    isLoading(true);
 
-      apiService.getAllRestaurants().then((restaurant) {
-        isLoading.value = false;
-        tfSearchController.text = '';
+    apiService.getAllRestaurants().then((response) {
+      isLoading(false);
+      tfSearchController.text = '';
+      _setRefreshCompleter();
+      if (response.status == 200) {
+        
+        restaurants(response);
+        
+        searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
+        recentRestaurants.call()..clear()..assignAll(response.data.recentRestaurants);
+
+        if(searchRestaurants.call().isEmpty) message('No restaurant found');
+      
+      } else {
+
+        if (response.code == 2006) {
+          refreshToken();
+        }       
+
+        message(Config.SOMETHING_WENT_WRONG);
+      }
+      
+    }).catchError((onError) {
+         isLoading(false);
         _setRefreshCompleter();
-        if (restaurant.status == 200) {
-          
-          restaurants.value = restaurant;
-          searchRestaurants.value..clear()..addAll(restaurant.data.restaurants);
-          recentRestaurants.value..clear()..addAll(restaurant.data.recentRestaurants);
-
-          if(searchRestaurants.value.isEmpty) message.value = 'No restaurant found';
-        
+        if (onError.toString().contains('Connection failed')) {
+          message(Config.NO_INTERNET_CONNECTION);
+        } else if (onError.toString().contains('Operation timed out')) {
+          message(Config.TIMED_OUT);
         } else {
-          message.value = Config.SOMETHING_WENT_WRONG;
+          message(Config.SOMETHING_WENT_WRONG);
         }
-        
-      }).catchError((onError) {
-          isLoading.value = false;
-          _setRefreshCompleter();
-          if (onError.toString().contains('Connection failed')) {
-            message.value = Config.NO_INTERNET_CONNECTION;
-          } else if (onError.toString().contains('Operation timed out')) {
-            message.value = Config.TIMED_OUT;
-          }
-          print('Error fetch restaurant: $onError');
-      });
-
+        print('Error fetch restaurant: $onError');
     });
   }
 
   searchRestaurant(String value) {
     
-    isSearching.value = value.isNotEmpty;
-    searchRestaurants.value.clear();
-    if (isSearching.value) {
+    isSearching(value.trim().isNotEmpty);
+    searchRestaurants.call().clear();
+    if (isSearching.call()) {
       
-      var restaurant = restaurants.value.data.restaurants.where((element) => element.name.toLowerCase().contains(value.toLowerCase()));
+      var restaurant = restaurants.call().data.restaurants.where((element) => element.name.toLowerCase().contains(value.trim().toLowerCase()));
 
       if (restaurant.isEmpty) {
-        searchRestaurants.value.clear();
-        message.value = 'No restaurant found';
+        searchRestaurants.call().clear();
+        message('No restaurant found');
       } else {
-        searchRestaurants.value.addAll(restaurant);
+        searchRestaurants.call().assignAll(restaurant);
       }
      
     } else {
-      searchRestaurants.value.addAll(restaurants.value.data.restaurants);
+      searchRestaurants.call().assignAll(restaurants.call().data.restaurants);
     }
-  } 
+  }
+
+  refreshToken() {
+    isLoading(true);
+
+    apiService.refreshToken().then((response) {
+      isLoading(false);
+      _setRefreshCompleter();
+      if(response.status == 200) {
+        box.write(Config.USER_TOKEN, response.data.accessToken);
+        fetchRestaurants();
+      } else {
+        fetchRestaurants();
+      }
+      
+    }).catchError((onError) {
+      isLoading(false);
+      _setRefreshCompleter();
+      if (onError.toString().contains('Connection failed')) {
+        message(Config.NO_INTERNET_CONNECTION);
+      } else if (onError.toString().contains('Operation timed out')) {
+        message(Config.TIMED_OUT);
+      } else {
+        message(Config.SOMETHING_WENT_WRONG);
+      }
+      print('Refresh token: $onError');
+    });
+  }
 }

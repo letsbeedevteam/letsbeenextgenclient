@@ -10,11 +10,29 @@ import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
+import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 
 class ApiService extends GetxService {
 
   final GetStorage _box = Get.find();
+
+  Future<RefreshTokenResponse> refreshToken() async {
+
+    final response = await http.post(
+      Config.BASE_URL + '/auth/customer/refresh-token',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'token': _box.read(Config.USER_TOKEN)
+      })
+    );
+
+    print('Refresh token: ${response.body}');
+
+    return refreshTokenFromJson(response.body);
+  }
 
   Future<Restaurant> getAllRestaurants() async {
 
@@ -26,7 +44,7 @@ class ApiService extends GetxService {
       },
     );
 
-    // print('Get restaurants: ${response.body}');
+    print('Get restaurants: ${response.body}');
 
     return restaurantFromJson(response.body);
   }

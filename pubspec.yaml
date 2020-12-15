@@ -44,6 +44,7 @@ dependencies:
   google_maps_flutter: ^1.0.6
   geocoder: ^0.2.1
   location: ^3.0.2
+  flutter_polyline_points: ^0.2.4
 
   # Notification builder
   flutter_local_notifications: ^3.0.2

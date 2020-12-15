@@ -68,7 +68,7 @@ class MapPage extends StatelessWidget {
                             mapType: MapType.normal,
                             initialCameraPosition: CameraPosition(
                               zoom: 18,
-                              target: _.currentPosition.value
+                              target: _.currentPosition.call()
                             ),
                             myLocationButtonEnabled: false,
                             compassEnabled: false,
@@ -88,14 +88,14 @@ class MapPage extends StatelessWidget {
                               child: AnimatedContainer(
                                 duration: Duration(seconds: 1), 
                                 margin: EdgeInsets.only(top: 32), 
-                                height: _.isBounced.value ? 5 : 8,
-                                width: _.isBounced.value ? 5 : 15, 
+                                height: _.isBounced.call() ? 5 : 8,
+                                width: _.isBounced.call() ? 5 : 15, 
                                 curve: Curves.fastLinearToSlowEaseIn,
                                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.4), borderRadius: BorderRadius.all(Radius.elliptical(100, 70)))
                               )
                             ),
                             AnimatedContainer(
-                              padding: EdgeInsets.only(bottom: _.isBounced.value ? 20 : 0),
+                              padding: EdgeInsets.only(bottom: _.isBounced.call() ? 20 : 0),
                               duration: Duration(seconds: 1),
                               curve: Curves.bounceOut,
                               child: Column(
@@ -111,7 +111,7 @@ class MapPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      _.isMapLoading.value ? Container(color: Colors.white, child: Center(child: Text('Loading google map...'))) : Container(),
+                      _.isMapLoading.call() ? Container(color: Colors.white, child: Center(child: Text('Loading google map...'))) : Container(),
                     ],
                   ),
                 );
@@ -138,7 +138,7 @@ class MapPage extends StatelessWidget {
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
                         ),
-                        onPressed: () => _.isMapLoading.value ? null : _showDialog(_.userCurrentAddress.value)
+                        onPressed: () => _.isMapLoading.call() ? null : _showDialog(_.userCurrentAddress.call())
                       );
                     },
                   ),

@@ -40,17 +40,17 @@ class MenuController extends GetxController {
     if (argument['type'] == 'edit') {
       
       cartController = Get.find();
-      cart.value = CartData.fromJson(argument['cart']);
+      cart(CartData.fromJson(argument['cart']));
 
-      countQuantity.value = cart.value.quantity;
-      tFRequestController.text = cart.value.note == 'N/A' ? '' : cart.value.note;
+      countQuantity(cart.value.quantity);
+      tFRequestController.text = cart.call().note == 'N/A' ? '' : cart.call().note;
       fetchMenuById();
 
     } else {
       
-      restaurantId.value = argument['restaurantId'];
-      menuId.value = argument['menuId'];
-      menu.value = Menu.fromJson(argument['menu']);
+      restaurantId(argument['restaurantId']);
+      menuId(argument['menuId']);
+      menu(Menu.fromJson(argument['menu']));
     }
 
     super.onInit();
@@ -67,7 +67,7 @@ class MenuController extends GetxController {
 
   void decrement() {
     if (countQuantity.value <= 1) {
-      countQuantity.value = 1;
+      countQuantity(1);
     } else {
       countQuantity.value--;
     }
@@ -93,7 +93,7 @@ class MenuController extends GetxController {
 
   addToCart() {
     
-    isAddToCartLoading.value = true;
+    isAddToCartLoading(true);
     choiceIds.clear();
     additionalIds.clear();
 
@@ -120,19 +120,19 @@ class MenuController extends GetxController {
       );
     });
 
-    if (argument['type'] == 'edit')  hasSelected.value = true;
+    if (argument['type'] == 'edit') hasSelected(true);
 
-    if (!hasSelected.value) {
+    if (!hasSelected.call()) {
       errorSnackbarTop(title: 'Oops!', message: 'Please choose your required option(s)');
-      isAddToCartLoading.value = false;
+      isAddToCartLoading(false);
     } else {
 
       var addToCart = AddToCart(
-        restaurantId: restaurantId.value,
-        menuId: menuId.value,
+        restaurantId: restaurantId.call(),
+        menuId: menuId.call(),
         choices: choiceIds,
         additionals: additionalIds.toList(),
-        quantity: countQuantity.value,
+        quantity: countQuantity.call(),
         note: tFRequestController.text
       );
 
@@ -145,88 +145,79 @@ class MenuController extends GetxController {
   }
 
   updateCartRequest(AddToCart addToCart) {
-    Future.delayed(Duration(seconds: 2)).then((value) {
+     apiService.updateCart(addToCart, cart.value.id).then((response) {
+    
+      if (response.status == 200) {
+        cartController.fetchActiveCarts();
+        successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
+        isAddToCartLoading(true);
+      } else {
+        errorSnackbarTop(title: 'Oops!', message: response.message);
+        isAddToCartLoading(false);
+      }
 
-        apiService.updateCart(addToCart, cart.value.id).then((value) {
-        
-          if (value.status == 200) {
-            cartController.fetchActiveCarts();
-            successSnackBarTop(title: 'Updated Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
-          } else {
-            errorSnackbarTop(title: 'Oops!', message: value.message);
-          }
+     
 
-          isAddToCartLoading.value = false;
-
-        }).catchError((onError) {
-          isAddToCartLoading.value = false;
-          errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-          print('Add to cart error: ${onError.toString()}');
-        });
-      });
+    }).catchError((onError) {
+      isAddToCartLoading(true);
+      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      print('Add to cart error: ${onError.toString()}');
+    });
   }
 
   sendCartRequest(AddToCart addToCart) {
-    isAddToCartLoading.value = true;
-    Future.delayed(Duration(seconds: 2)).then((value) {
-
-      apiService.addToCart(addToCart).then((value) {
+    isAddToCartLoading(true);
+    apiService.addToCart(addToCart).then((response) {
       
-        if (value.status == 200) {
-          successSnackBarTop(title: 'Cart!', message: value.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-        } else {
-          
-          if (value.code == 3005) errorSnackbarTop(title: 'Oops!', message: "There\'s a pending order"); else errorSnackbarTop(title: 'Oops!', message: value.message);
-        }
+      if (response.status == 200) {
+        successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
+        isAddToCartLoading(true);
+      } else {
+        if (response.code == 3005) errorSnackbarTop(title: 'Oops!', message: "There\'s a pending order"); else errorSnackbarTop(title: 'Oops!', message: response.message);
+        isAddToCartLoading(false);
+      }
 
-        isAddToCartLoading.value = false;
-
-      }).catchError((onError) {
-        isAddToCartLoading.value = false;
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-        print('Add to cart error: ${onError.toString()}');
-      });
+    }).catchError((onError) {
+      isAddToCartLoading(false);
+      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      print('Add to cart error: ${onError.toString()}');
     });
   }
 
   fetchMenuById() {
 
-    isLoading.value = true;
+    isLoading(true);
    
-    Future.delayed(Duration(seconds: 2)).then((value) {
+    apiService.getMenuById(restaurantId: argument['restaurant_id'], menuId: argument['restaurant_menu_id']).then((restaurant) {
+      isLoading(false);
+      _setRefreshCompleter();
 
-      apiService.getMenuById(restaurantId: argument['restaurant_id'], menuId: argument['restaurant_menu_id']).then((restaurant) {
-        isLoading.value = false;
-        _setRefreshCompleter();
+      menu(restaurant);
 
-        menu.value = restaurant;
-
-        for (var item in cart.value.additionals) {
-          menu.value.additionals.map((e) => e.options).forEach((element) {
-             var name = item.picks.map((e) => e.name);
-             name.forEach((additional) {
-              element.where((element) => element.name.contains(additional)).forEach((element) {
-                element.selectedValue = true;
-              });
-             });
-          });
-        }
-
-        for (var item in cart.value.choices) {
-          menu.value.choices.map((e) => e.options).forEach((element) {
-            element.where((element) => item.pick.contains(element.name)).forEach((element) {
-              element.selectedValue = item.pick;
+      for (var item in cart.value.additionals) {
+        menu.value.additionals.map((e) => e.options).forEach((element) {
+            var name = item.picks.map((e) => e.name);
+            name.forEach((additional) {
+            element.where((element) => element.name.contains(additional)).forEach((element) {
+              element.selectedValue = true;
             });
-          });
-        }
-                
-      }).catchError((onError) {
-          isLoading.value = false;
-          _setRefreshCompleter();
-          if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
-          print('Error fetch restaurant: $onError');
-      });
+            });
+        });
+      }
 
+      for (var item in cart.value.choices) {
+        menu.value.choices.map((e) => e.options).forEach((element) {
+          element.where((element) => item.pick.contains(element.name)).forEach((element) {
+            element.selectedValue = item.pick;
+          });
+        });
+      }
+              
+    }).catchError((onError) {
+        isLoading(false);
+        _setRefreshCompleter();
+        if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
+        print('Error fetch restaurant: $onError');
     });
   }
 }

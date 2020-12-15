@@ -47,8 +47,8 @@ class SetupLocationController extends GetxController {
     box.write(Config.USER_CURRENT_LATITUDE, currentLocation.latitude);
     box.write(Config.USER_CURRENT_LONGITUDE, currentLocation.longitude);
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentLocation.latitude, currentLocation.longitude)).then((value) {
-      userCurrentAddress.value = value.first.addressLine;
-      hasLocation.value = true;
+      userCurrentAddress(value.first.addressLine);
+      hasLocation(true);
 
       box.write(Config.USER_CURRENT_STREET, value.first.featureName);
       box.write(Config.USER_CURRENT_COUNTRY, value.first.countryName);
@@ -60,8 +60,8 @@ class SetupLocationController extends GetxController {
       box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
 
     }).catchError((onError) {
-      hasLocation.value = false;
-      userCurrentAddress.value = 'Getting your address...';
+      hasLocation(false);
+      userCurrentAddress('Getting your address...');
       _getCurrentLocation();
     });
     update();

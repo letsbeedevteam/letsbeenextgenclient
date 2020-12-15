@@ -8,143 +8,145 @@ class OnGoingPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
-      child: GetX<DashboardController>(
-        builder: (_) {
-          return _.activeOrderData.value.menus.isEmpty ? Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: Center(child: Text(_.onGoingMessage.value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-          ) : Container(
-            margin: EdgeInsets.symmetric(horizontal: 5),
-            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  alignment: Alignment.center,
-                  child: Text("${_.activeOrderData.value.activeRestaurant.name} - ${_.activeOrderData.value.activeRestaurant.location.name}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                      Text('Items', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                      Column(
-                        children: _.activeOrderData.value.menus.map((e) => _buildMenu(e, _)).toList(),
-                      ),
-                      Container(
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                Text('₱ ${_.activeOrderData.value.fee.subTotal.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                Text('₱ ${_.activeOrderData.value.fee.delivery.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Promo Code Discount', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                Text('₱ ${_.activeOrderData.value.fee.discountPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                              ],
-                            ),
-                            Container(
-                              alignment: Alignment.bottomCenter,
-                              height: 50,
-                              child: Row(
+    return Scrollbar(
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: GetX<DashboardController>(
+          builder: (_) {
+            return _.activeOrderData.call().menus.isEmpty ? Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            ) : Container(
+              margin: EdgeInsets.symmetric(horizontal: 5),
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    alignment: Alignment.center,
+                    child: Text("${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.location.name}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                        Text('Items', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Column(
+                          children: _.activeOrderData.call().menus.map((e) => _buildMenu(e, _)).toList(),
+                        ),
+                        Container(
+                          child: Column(
+                            children: [
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                  Text('₱ ${_.activeOrderData.value.fee.total.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                  Text('₱ ${_.activeOrderData.call().fee.subTotal.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ],
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: Divider(thickness: 2, color: Colors.grey.shade200),
-                      ),
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Delivery Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Name: Let\'s Bee', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                  Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 13))
+                                  Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                  Text('₱ ${_.activeOrderData.call().fee.delivery.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                 ],
                               ),
-                            )
-                          ],
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Promo Code Discount', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                  Text('₱ ${_.activeOrderData.call().fee.discountPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                ],
+                              ),
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                height: 50,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('₱ ${_.activeOrderData.call().fee.total.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: Divider(thickness: 2, color: Colors.grey.shade200),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Mode of Payment', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                          Text('${_.activeOrderData.value.payment.method.capitalizeFirst}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: Divider(thickness: 2, color: Colors.grey.shade200),
-                      ),
-                      Container(
-                        child: Row(
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                        ),
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Delivery Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Name: Let\'s Bee', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                    Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 13))
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                            _buildStatus()
+                            Text('Mode of Payment', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                            Text('${_.activeOrderData.call().payment.method.capitalizeFirst}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                           ],
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: Divider(thickness: 2, color: Colors.grey.shade200),
-                      ),
-                      _.activeOrderData.value.status != 'pending' ? Container() : Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.all(10),
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                          ),
-                          color: Colors.blue,
-                          child: Text('Cancel Order', style: TextStyle(color: Colors.white)),
-                          onPressed: _cancelDialog,
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Divider(thickness: 2, color: Colors.grey.shade200),
                         ),
-                      )
-                    ],
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                              _buildStatus()
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                        ),
+                        _.activeOrderData.call().status != 'pending' ? Container() : Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.all(10),
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            color: Colors.blue,
+                            child: Text('Cancel Order', style: TextStyle(color: Colors.white)),
+                            onPressed: _cancelDialog,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-      )
+                ],
+              ),
+            );
+          },
+        )
+      ),
     );
   }
 
@@ -170,16 +172,16 @@ class OnGoingPage extends GetView<DashboardController> {
           child: Column(
             children: [
               Column(
-                children: controller.activeOrderData.value.menus.first.additionals.map((e) => _buildAdditional(e, menu.quantity)).toList()
+                children: menu.additionals.map((e) => _buildAdditional(e, menu.quantity)).toList()
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               Column(
-                children: controller.activeOrderData.value.menus.first.choices.map((e) => _buildChoice(e, menu.quantity)).toList(),
+                children: menu.choices.map((e) => _buildChoice(e, menu.quantity)).toList(),
               ),
             ],
           )
         ),
-        controller.activeOrderData.value.menus.first.note.toString() != 'N/A' ? Container(
+        menu.note.toString() != 'N/A' ? Container(
           margin: EdgeInsets.only(top: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +196,7 @@ class OnGoingPage extends GetView<DashboardController> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all()
                 ),
-                child: Text(controller.activeOrderData.value.menus.first.note.toString())
+                child: Text(menu.note.toString())
               ),
             ],
           ),
@@ -203,7 +205,7 @@ class OnGoingPage extends GetView<DashboardController> {
           margin: EdgeInsets.only(top: 5),
           child: Divider(thickness: 2, color: Colors.grey.shade200),
         ),
-        _.activeOrderData.value.fee.discountCode.isNotEmpty ? Container(
+        _.activeOrderData.call().fee.discountCode.isNotEmpty ? Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -211,7 +213,7 @@ class OnGoingPage extends GetView<DashboardController> {
               Padding(
                 padding: EdgeInsets.all(10),
                 child: Center(
-                  child: Text(_.activeOrderData.value.fee.discountCode)
+                  child: Text(_.activeOrderData.call().fee.discountCode)
                 ),
               ),
               Container(
@@ -226,7 +228,7 @@ class OnGoingPage extends GetView<DashboardController> {
   }
 
   Widget _buildStatus() {
-    switch (controller.activeOrderData.value.status) {
+    switch (controller.activeOrderData.call().status) {
       case 'pending': return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
@@ -314,7 +316,7 @@ class OnGoingPage extends GetView<DashboardController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Do you really want to cancel your order at ${controller.activeOrderData.value.activeRestaurant.name} - ${controller.activeOrderData.value.activeRestaurant.location.name}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                Text('Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} - ${controller.activeOrderData.call().activeRestaurant.location.name}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 Padding(padding: EdgeInsets.all(10)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),

@@ -42,7 +42,7 @@ class SetupLocationPage extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
                     child: GetX<SetupLocationController>(
-                      builder: (_) => Text(_.userCurrentAddress.value, style: TextStyle(fontSize: 17), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,),
+                      builder: (_) => Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 17), textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,),
                     ),
                   ),
                 ],
@@ -76,7 +76,7 @@ class SetupLocationPage extends StatelessWidget {
                     child: GetBuilder<SetupLocationController>(
                       builder: (_) {
                         return IgnorePointer(
-                          ignoring: !_.hasLocation.value,
+                          ignoring: !_.hasLocation.call(),
                           child: RaisedButton(
                             color: Color(Config.LETSBEE_COLOR).withOpacity(1),
                             shape: RoundedRectangleBorder(

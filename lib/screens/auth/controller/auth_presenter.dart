@@ -14,25 +14,25 @@ class AuthPresenter implements AuthPresenterContract, OnSocialSignInRequest {
   @override
   void googleSignIn() {
     controller.setLoading(true);
-    Future.delayed(Duration(seconds: 3)).then((value) => _model.onGoogleSignInRequest(this));
+    _model.onGoogleSignInRequest(this);
   }
 
  @override
   void facebookSignIn() {
     controller.setLoading(true);
-    Future.delayed(Duration(seconds: 3)).then((value) => _model.onFacebookSignInRequest(this));
+    _model.onFacebookSignInRequest(this);
   }
 
   @override
   void kakaoSignIn() {
     controller.setLoading(true);
-    Future.delayed(Duration(seconds: 3)).then((value) => _model.onKakaoSignInRequest(this));
+    _model.onKakaoSignInRequest(this);
   }
 
   @override
   void appleSignIn() {
     controller.setLoading(true);
-    Future.delayed(Duration(seconds: 3)).then((value) => _model.onAppleSignInRequest(this));
+    _model.onAppleSignInRequest(this);
   }
 
   @override
