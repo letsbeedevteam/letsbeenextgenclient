@@ -58,11 +58,12 @@ class HomePage extends StatelessWidget {
                 child: Scrollbar(
                   child: SingleChildScrollView(
                     physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-                    child: Column(
+                    child: _.restaurants.call() != null ?
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _.recentRestaurants.call().isNotEmpty ? Container(
+                        _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -75,7 +76,7 @@ class HomePage extends StatelessWidget {
                                 height: 80,
                                 child: ListView(
                                   scrollDirection: Axis.horizontal,
-                                  children: _.recentRestaurants.call().map((data) => _buildRecentRestaurantItem(data)).toList()
+                                  children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList()
                                 ),
                               ),
                               Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
@@ -83,14 +84,14 @@ class HomePage extends StatelessWidget {
                           ),
                         ) : Container(),
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                        _.searchRestaurants.call().isNotEmpty ? Column(
-                            children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList(),
-                          ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))
-                        )
+                        _.searchRestaurants.call().isNotEmpty ? 
+                        Column(
+                          children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList(),
+                        ) : Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18)))
                       ],
-                    ),
+                    ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),
                   ),
-                ),
+                )
               )
             );
           },

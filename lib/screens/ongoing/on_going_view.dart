@@ -13,7 +13,7 @@ class OnGoingPage extends GetView<DashboardController> {
         physics: AlwaysScrollableScrollPhysics(),
         child: GetX<DashboardController>(
           builder: (_) {
-            return _.activeOrderData.call().menus.isEmpty ? Padding(
+            return _.activeOrderData.call() == null ? Padding(
               padding: EdgeInsets.only(top: 20),
               child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             ) : Container(

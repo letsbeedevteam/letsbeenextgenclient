@@ -3,6 +3,8 @@ class Config {
   // Base URLs
   static const BASE_URL = 'http://192.168.0.2:8000';
 
+  static const CUSTOMER_NAMESPACE = '/customer';
+
   // Routes
   static const SPLASH_ROUTE = '/splash';
   static const AUTH_ROUTE = '/auth';

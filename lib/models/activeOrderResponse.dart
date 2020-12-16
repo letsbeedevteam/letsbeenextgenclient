@@ -49,7 +49,7 @@ class ActiveOrderData {
     List<Menu> menus;
     ActiveRestaurant activeRestaurant;
     Fee fee;
-    String timeframe;
+    Timeframe timeframe;
     Address address;
     Payment payment;
     int id;
@@ -58,14 +58,14 @@ class ActiveOrderData {
     int riderId;
     String status;
     dynamic reason;
-    DateTime createdAt;
-    DateTime updatedAt;
+    String createdAt;
+    String updatedAt;
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         menus: json["menus"] == null ?  List<Menu>() : List<Menu>.from(json["menus"].map((x) => Menu.fromJson(x))),
         activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
         fee: Fee.fromJson(json["fee"]),
-        timeframe: json["timeframe"],
+        timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
         address: Address.fromJson(json["address"]),
         payment: Payment.fromJson(json["payment"]),
         id: json["id"],
@@ -74,14 +74,14 @@ class ActiveOrderData {
         riderId: json["rider_id"] == null ? 0 : json["rider_id"],
         status: json["status"],
         reason: json["reason"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
+        createdAt: DateTime.parse(json["createdAt"]).toString(),
+        updatedAt: DateTime.parse(json["updatedAt"]).toString(),
     );
 
     Map<String, dynamic> toJson() => {
         "menus": List<dynamic>.from(menus.map((x) => x.toJson())),
         "fee": fee.toJson(),
-        "timeframe": timeframe,
+        "timeframe": timeframe.toJson(),
         "address": address.toJson(),
         "payment": payment.toJson(),
         "id": id,
@@ -90,8 +90,37 @@ class ActiveOrderData {
         "rider_id": riderId,
         "status": status,
         "reason": reason,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
+    };
+}
+
+class Timeframe {
+  Timeframe({
+    this.restaurantPickTime,
+    this.riderPickTime,
+    this.riderPickUpTime,
+    this.deliveredTime
+  });
+
+  String restaurantPickTime;
+  String riderPickTime;
+  String riderPickUpTime;
+  String deliveredTime;
+
+
+   factory Timeframe.fromJson(Map<String, dynamic> json) => Timeframe(
+      restaurantPickTime: json['restaurant_pick_time'],
+      riderPickTime: json['rider_pick_time'],
+      riderPickUpTime: json['rider_pick_up_time'],
+      deliveredTime: json['delivered_time']
+    );
+
+     Map<String, dynamic> toJson() => {
+      "restaurant_pick_time": restaurantPickTime,
+      "rider_pick_time": riderPickTime,
+      "rider_pick_up_time": riderPickUpTime,
+      "delivered_time": deliveredTime,
     };
 }
 

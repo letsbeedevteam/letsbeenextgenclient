@@ -33,7 +33,6 @@ class RiderLocationController extends GetxController {
     currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
     activeOrderData(arguments);
     fetchRiderLocation();
-    setupMarker();
     super.onInit();
   }
 
@@ -41,6 +40,9 @@ class RiderLocationController extends GetxController {
 
     _socketService.socket.on('rider-location', (data) {
       print('Rider location: $data');
+      markers[MarkerId('rider')].copyWith(
+        positionParam: LatLng(15.162861, 120.555717)
+      );
     });
   }
 
@@ -51,13 +53,12 @@ class RiderLocationController extends GetxController {
 
     markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
     markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
-    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: LatLng(0, 0), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: LatLng(15.162861, 120.555717), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
 
     _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }
 
   void _setupPolylines({LatLng destLocation, LatLng sourceLocation}) async {
-    isMapLoading(true);
     message('Loading coordinates...');
 
     final secretLoad = await Get.find<SecretLoader>().loadKey();
@@ -72,7 +73,6 @@ class RiderLocationController extends GetxController {
         isMapLoading(false);
       }
     }).catchError((onError) {
-       isMapLoading(false);
       _setupPolylines();
       print('Polyline error: $onError');
     });
@@ -85,9 +85,7 @@ class RiderLocationController extends GetxController {
 
   onMapCreated(GoogleMapController controller) {
     _mapController.complete(controller);
-    Future.delayed(Duration(seconds: 2)).then((value) {
-       isMapLoading(false);
-    });
+    setupMarker();
   }
 
   onCameraMovePosition(CameraPosition position) {

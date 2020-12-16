@@ -20,10 +20,11 @@ class CartController extends GetxController {
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
   var isEdit = false.obs;
-  var cart = GetCart(data: []).obs;
+  var cart = GetCart().obs;
   
   @override
   void onInit() {
+    this.cart.nil();
     refreshCompleter = Completer();
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
 
@@ -50,7 +51,7 @@ class CartController extends GetxController {
       if(response.status == 200) {
 
         if (response.data.isEmpty) {
-          this.cart(response);
+          this.cart.nil();
           this.message('No list of carts');
           this.isEdit(false);
         } else {
@@ -102,7 +103,6 @@ class CartController extends GetxController {
       
       isPaymentLoading(true);
       Get.back();
-      paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
 
       _apiService.createOrder(restaurantId: restaurantId, paymentMethod: paymentMethod).then((order) {
           
@@ -112,7 +112,9 @@ class CartController extends GetxController {
 
           if (order.paymentUrl.isNull) {
             print('NO URL');
+            successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
           } else {
+            paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
             print('GO TO WEBVIEW: ${order.paymentUrl}');
             Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
               'url': order.paymentUrl,

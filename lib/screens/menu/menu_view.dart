@@ -27,7 +27,7 @@ class MenuPage extends StatelessWidget {
                   backgroundColor: Colors.white,
                   elevation: 0,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: _.menu.call().image != null ? Column(
+                    background: _.menu.call() != null ? Column(
                       children: [
                        Container(
                           margin: EdgeInsets.only(top: 40),
@@ -84,7 +84,7 @@ class MenuPage extends StatelessWidget {
               },
               child: SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
-                child: _.menu.call().id != 0 ? Container(
+                child: _.menu.call() != null ? Container(
                   margin: EdgeInsets.only(bottom: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

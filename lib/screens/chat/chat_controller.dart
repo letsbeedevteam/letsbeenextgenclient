@@ -15,7 +15,7 @@ class ChatController extends GetxController {
 
   @override
   void onInit() {
-
+    chat.nil();
     activeOrderData(arguments);
     fetchOrderChats();
     
@@ -23,7 +23,7 @@ class ChatController extends GetxController {
   }
 
   sendMessageToRider() {
-    _socketService.socket.emitWithAck('order-chats', {'order_id': activeOrderData.value.id, 'rider_id': activeOrderData.value.riderId}, ack: (response) {
+    _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.value.id, 'rider_id': activeOrderData.value.riderId}, ack: (response) {
       if (response['status'] == 200) {
         print(response);
       } else {

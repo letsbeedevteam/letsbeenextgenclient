@@ -44,7 +44,7 @@ class CartPage extends GetView<CartController> {
               physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child: _.cart.call().data.isNotEmpty ? 
+                child: _.cart.call() != null ? 
                 Column(
                   children: [
                     // Container(

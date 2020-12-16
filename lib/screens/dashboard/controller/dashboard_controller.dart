@@ -45,44 +45,22 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var onGoingMessage = 'No Active Order'.obs;
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
-  var recentRestaurants = RxList<dynamic>().obs;
-  var activeOrderData = ActiveOrderData(
-    menus: []
-  ).obs;
+  var activeOrderData = ActiveOrderData().obs;
 
   static DashboardController get to => Get.find();
 
   @override
   void onInit() {
+    restaurants.nil();
+    activeOrderData.nil();
+
     userCurrentAddress.value = box.read(Config.USER_CURRENT_ADDRESS);
- 
+    pushNotificationService.initialise();
+
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
     refreshToken();
-    socketService.connectSocket();
-    pushNotificationService.initialise();
-
-    socketService.socket
-    ..on('connect', (_) {
-      print('Connected');
-      fetchActiveOrder();
-      receiveUpdateOrder();
-    })
-    ..on('connecting', (_) {
-      print('Connecting');
-    })
-    ..on('reconnecting', (_) {
-      print('Reconnecting');
-    })
-    ..on('disconnect', (_) {
-      onGoingMessage('No Active Order');
-      activeOrderData(ActiveOrderData(menus: []));
-      print('Disconnected');
-    })
-    ..on('error', (_) {
-      print('Error socket: $_');
-    });
     
     super.onInit();
   }
@@ -114,7 +92,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void setupTabs() {
     tabController = TabController(length: 2, vsync: this)..addListener(() {
       tabController.index == 0 ?  animationController.reverse() :  animationController.forward();
-      if(tabController.index == 0) fetchActiveOrder();
     });
 
     pageController = PageController();
@@ -126,9 +103,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
+    if (tappedIndex == 4) fetchActiveOrder();
     tfSearchController.clear();
     searchRestaurant('');
-    if (tappedIndex == 4) fetchActiveOrder();
     pageIndex(tappedIndex);
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
@@ -187,20 +164,24 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   goToChatPage() {
     activeOrderData.call().riderId != 0 ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+
+    // Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
   }
 
   goToRiderLocationPage() {
     activeOrderData.call().riderId != 0 ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+
+    // Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
   }
 
   fetchActiveOrder() {
-    socketService.socket.emitWithAck('customer-active-order', '', ack: (response) {
+    socketService.socket.emitWithAck('active-order', '', ack: (response) {
       print('Active order $response');
       if (response['status'] == 200) {
         if (response['data'] == null) {
           onGoingMessage('No Active Order');
-          activeOrderData(ActiveOrderData(menus: []));
+          activeOrderData.nil();
         } else {
           activeOrderData(ActiveOrderData.fromJson(response['data']));
         }
@@ -211,17 +192,50 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   receiveUpdateOrder() {
-    socketService.socket.on('customer-orders', (response) {
+    socketService.socket.on('order', (response) {
       print('Receive update: $response');
+      final order = ActiveOrder.fromJson(response);
+      if (order.status == 200) {
+        final name = '${order.data.activeRestaurant.name} - ${order.data.address.location.name}';
+        switch (order.data.status) {
+          case 'restaurant-declined': {
+            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been declined by the restaurant');
+            onGoingMessage('No Active Order');
+            activeOrderData.nil();
+          }
+            break;
+          case 'restaurant-accepted': {
+            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been accepted by the restaurant');
+            activeOrderData(ActiveOrderData.fromJson(response['data']));
+          }
+            break;
+          case 'rider-accepted': {
+            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been accepted by the rider');
+            activeOrderData(ActiveOrderData.fromJson(response['data']));
+          }
+            break;
+          case 'rider-picked-up': {
+            pushNotificationService.showNotification(title: 'Hi!,', body: 'Rider has picked up your order');
+            activeOrderData(ActiveOrderData.fromJson(response['data']));
+          }
+            break;
+          case 'delivered': {
+            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been delivered');
+            onGoingMessage('No Active Order');
+            activeOrderData.nil();
+          }
+            break;
+        }
+      }
     });
   }
 
   cancelOrderById() {
-    socketService.socket.emitWithAck('customer-cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
+    socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       if (response['status'] == 200) {
         successSnackBarTop(title: 'Success!', message: response['message']);
         onGoingMessage('No Active Order');
-        activeOrderData(ActiveOrderData(menus: []));
+        activeOrderData.nil();
       } else {
         errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       }
@@ -239,18 +253,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       if (response.status == 200) {
         
         restaurants(response);
-        
-        searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
-        recentRestaurants.call()..clear()..assignAll(response.data.recentRestaurants);
 
+        searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
         if(searchRestaurants.call().isEmpty) message('No restaurant found');
       
       } else {
-
-        if (response.code == 2006) {
-          refreshToken();
-        }       
-
         message(Config.SOMETHING_WENT_WRONG);
       }
       
@@ -270,21 +277,23 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   searchRestaurant(String value) {
     
-    isSearching(value.trim().isNotEmpty);
-    searchRestaurants.call().clear();
-    if (isSearching.call()) {
-      
-      var restaurant = restaurants.call().data.restaurants.where((element) => element.name.toLowerCase().contains(value.trim().toLowerCase()));
+    if (restaurants.call() != null) {
+      isSearching(value.trim().isNotEmpty);
+      searchRestaurants.call().clear();
+      if (isSearching.call()) {
+        
+        var restaurant = restaurants.call().data.restaurants.where((element) => element.name.toLowerCase().contains(value.trim().toLowerCase()));
 
-      if (restaurant.isEmpty) {
-        searchRestaurants.call().clear();
-        message('No restaurant found');
+        if (restaurant.isEmpty) {
+          searchRestaurants.call().clear();
+          message('No restaurant found');
+        } else {
+          searchRestaurants.call().assignAll(restaurant);
+        }
+      
       } else {
-        searchRestaurants.call().assignAll(restaurant);
+        searchRestaurants.call().assignAll(restaurants.call().data.restaurants);
       }
-     
-    } else {
-      searchRestaurants.call().assignAll(restaurants.call().data.restaurants);
     }
   }
 
@@ -296,10 +305,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if(response.status == 200) {
         box.write(Config.USER_TOKEN, response.data.accessToken);
-        fetchRestaurants();
-      } else {
-        fetchRestaurants();
-      }
+      } 
+
+      fetchRestaurants();
+      socketSetup();
       
     }).catchError((onError) {
       isLoading(false);
@@ -312,6 +321,32 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         message(Config.SOMETHING_WENT_WRONG);
       }
       print('Refresh token: $onError');
+    });
+  }
+
+  socketSetup() {
+    socketService.connectSocket();
+    socketService.socket
+    ..on('connect', (_) {
+      print('Connected');
+      fetchActiveOrder();
+      receiveUpdateOrder();
+    })
+    ..on('connecting', (_) {
+      print('Connecting');
+      onGoingMessage('Connecting');
+    })
+    ..on('reconnecting', (_) {
+      print('Reconnecting');
+      onGoingMessage('Reconnecting');
+    })
+    ..on('disconnect', (_) {
+      onGoingMessage('No Active Order');
+      activeOrderData.nil();
+      print('Disconnected');
+    })
+    ..on('error', (_) {
+      print('Error socket: $_');
     });
   }
 }

@@ -17,9 +17,7 @@ class MenuController extends GetxController {
   CartController cartController;
   Completer<void> refreshCompleter;
 
-  var menu = Menu(
-    id: 0,
-  ).obs;
+  var menu = Menu().obs;
   var cart = CartData().obs;
   var hasSelected = true.obs;
   var countQuantity = 1.obs;
@@ -37,11 +35,13 @@ class MenuController extends GetxController {
   @override
   void onInit() {
     refreshCompleter = Completer();
+    menu.nil();
+    cart.nil();
     if (argument['type'] == 'edit') {
       
       cartController = Get.find();
       cart(CartData.fromJson(argument['cart']));
-
+      
       countQuantity(cart.value.quantity);
       tFRequestController.text = cart.call().note == 'N/A' ? '' : cart.call().note;
       fetchMenuById();

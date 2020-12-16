@@ -35,12 +35,12 @@ class OrderPage extends GetView<DashboardController> {
                             padding: EdgeInsets.only(right: 20),
                             child: Row(
                               children: [
-                                IconButton(icon: Icon(Icons.location_pin), onPressed: () {
+                                _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.location_pin), onPressed: () {
                                   if (_.tabController.index == 0) _.goToRiderLocationPage();
-                                }),
-                                IconButton(icon: Icon(Icons.chat_sharp), onPressed: () {
+                                }) : Container(),
+                                _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.chat_sharp), onPressed: () {
                                   if (_.tabController.index == 0) _.goToChatPage();
-                                }),
+                                }) : Container()
                               ],
                             ),
                           ),

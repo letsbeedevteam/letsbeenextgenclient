@@ -11,7 +11,7 @@ class SocketService extends GetxService {
 
   void connectSocket() {
 
-    this.socket = IO.io(Config.BASE_URL, <String, dynamic>{
+    this.socket = IO.io(Config.BASE_URL + Config.CUSTOMER_NAMESPACE, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
       'extraHeaders': {'x-auth-token': _box.read(Config.USER_TOKEN)}
