@@ -10,8 +10,10 @@ import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
+import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
+// import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetxService {
 
@@ -165,5 +167,21 @@ class ApiService extends GetxService {
     print('Delete order: ${response.body}');
     
     return deleteOrderResponseFromJson(response.body);
+  }
+
+  Future<OrderHistoryResponse> orderHistory() async {
+
+    final response = await http.get(
+      Config.BASE_URL + '/orders/history',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Get order history: ${response.body}');
+    // 'Get order history: ${response.body}'.printWrapped();
+
+    return orderHistoryResponseFromJson(response.body);
   }
 }

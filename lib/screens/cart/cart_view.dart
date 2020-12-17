@@ -47,10 +47,6 @@ class CartPage extends GetView<CartController> {
                 child: _.cart.call() != null ? 
                 Column(
                   children: [
-                    // Container(
-                    //   padding: EdgeInsets.symmetric(vertical: 15),
-                    //   child: Center(child: Text('Army Navy Burger + Burrito', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))),
-                    // ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Row(

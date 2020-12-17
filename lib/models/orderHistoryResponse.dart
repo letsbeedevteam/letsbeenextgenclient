@@ -1,37 +1,36 @@
 // To parse this JSON data, do
 //
-//     final activeOrder = activeOrderFromJson(jsonString);
+//     final orderHistoryResponse = orderHistoryResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-ActiveOrder activeOrderFromJson(String str) => ActiveOrder.fromJson(json.decode(str));
+OrderHistoryResponse orderHistoryResponseFromJson(String str) => OrderHistoryResponse.fromJson(json.decode(str));
 
-String activeOrderToJson(ActiveOrder data) => json.encode(data.toJson());
+String orderHistoryResponseToJson(OrderHistoryResponse data) => json.encode(data.toJson());
 
-class ActiveOrder {
-    ActiveOrder({
+class OrderHistoryResponse {
+    OrderHistoryResponse({
         this.status,
         this.data,
     });
 
     int status;
-    ActiveOrderData data;
+    List<OrderHistoryData> data;
 
-    factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
+    factory OrderHistoryResponse.fromJson(Map<String, dynamic> json) => OrderHistoryResponse(
         status: json["status"],
-        data: ActiveOrderData.fromJson(json["data"]),
+        data: json["data"] == null ? List<OrderHistoryData>() : List<OrderHistoryData>.from(json["data"].map((x) => OrderHistoryData.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
-        "data": data.toJson(),
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
     };
 }
 
-class ActiveOrderData {
-    ActiveOrderData({
+class OrderHistoryData {
+    OrderHistoryData({
         this.menus,
-        this.activeRestaurant,
         this.fee,
         this.timeframe,
         this.address,
@@ -44,44 +43,45 @@ class ActiveOrderData {
         this.reason,
         this.createdAt,
         this.updatedAt,
+        this.restaurant
     });
 
-    List<ActiveOrderMenu> menus;
-    ActiveRestaurant activeRestaurant;
+    List<OrderHistoryMenu> menus;
     Fee fee;
-    Timeframe timeframe;
+    dynamic timeframe;
     Address address;
     Payment payment;
     int id;
     int restaurantId;
     int userId;
-    int riderId;
+    dynamic riderId;
     String status;
-    dynamic reason;
-    String createdAt;
-    String updatedAt;
+    String reason;
+    DateTime createdAt;
+    DateTime updatedAt;
+    OrderHistoryRestaurant restaurant;
 
-    factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
-        menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
-        activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
+    factory OrderHistoryData.fromJson(Map<String, dynamic> json) => OrderHistoryData(
+        menus: List<OrderHistoryMenu>.from(json["menus"].map((x) => OrderHistoryMenu.fromJson(x))),
         fee: Fee.fromJson(json["fee"]),
-        timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
+        timeframe: json["timeframe"],
         address: Address.fromJson(json["address"]),
         payment: Payment.fromJson(json["payment"]),
         id: json["id"],
         restaurantId: json["restaurant_id"],
         userId: json["user_id"],
-        riderId: json["rider_id"] == null ? 0 : json["rider_id"],
+        riderId: json["rider_id"],
         status: json["status"],
-        reason: json["reason"],
-        createdAt: DateTime.parse(json["createdAt"]).toString(),
-        updatedAt: DateTime.parse(json["updatedAt"]).toString(),
+        reason: json["reason"] == null ? null : json["reason"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        restaurant: OrderHistoryRestaurant.fromJson(json['restaurant'])
     );
 
     Map<String, dynamic> toJson() => {
         "menus": List<dynamic>.from(menus.map((x) => x.toJson())),
         "fee": fee.toJson(),
-        "timeframe": timeframe.toJson(),
+        "timeframe": timeframe,
         "address": address.toJson(),
         "payment": payment.toJson(),
         "id": id,
@@ -89,38 +89,10 @@ class ActiveOrderData {
         "user_id": userId,
         "rider_id": riderId,
         "status": status,
-        "reason": reason,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
-    };
-}
-
-class Timeframe {
-  Timeframe({
-    this.restaurantPickTime,
-    this.riderPickTime,
-    this.riderPickUpTime,
-    this.deliveredTime
-  });
-
-  String restaurantPickTime;
-  String riderPickTime;
-  String riderPickUpTime;
-  String deliveredTime;
-
-
-   factory Timeframe.fromJson(Map<String, dynamic> json) => Timeframe(
-      restaurantPickTime: json['restaurant_pick_time'],
-      riderPickTime: json['rider_pick_time'],
-      riderPickUpTime: json['rider_pick_up_time'],
-      deliveredTime: json['delivered_time']
-    );
-
-     Map<String, dynamic> toJson() => {
-      "restaurant_pick_time": restaurantPickTime,
-      "rider_pick_time": riderPickTime,
-      "rider_pick_up_time": riderPickUpTime,
-      "delivered_time": deliveredTime,
+        "reason": reason == null ? null : reason,
+        "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt.toIso8601String(),
+        "restaurant": restaurant.toJson()
     };
 }
 
@@ -168,23 +140,19 @@ class Location {
     Location({
         this.lat,
         this.lng,
-        this.name
     });
 
     double lat;
     double lng;
-    String name;
 
     factory Location.fromJson(Map<String, dynamic> json) => Location(
         lat: json["lat"].toDouble(),
         lng: json["lng"].toDouble(),
-        name: json["name"]
     );
 
     Map<String, dynamic> toJson() => {
         "lat": lat,
         "lng": lng,
-        "name": name
     };
 }
 
@@ -200,14 +168,14 @@ class Fee {
     double subTotal;
     int delivery;
     String discountCode;
-    double discountPrice;
+    int discountPrice;
     double total;
 
     factory Fee.fromJson(Map<String, dynamic> json) => Fee(
         subTotal: json["sub_total"].toDouble(),
         delivery: json["delivery"],
-        discountCode: json["discount_code"] == null ? '' : json["discount_code"],
-        discountPrice: json["discount_price"].toDouble(),
+        discountCode: json["discount_code"] == null || json["discount_code"] == '' ? null : json["discount_code"],
+        discountPrice: json["discount_price"],
         total: json["total"].toDouble(),
     );
 
@@ -220,8 +188,8 @@ class Fee {
     };
 }
 
-class ActiveOrderMenu {
-    ActiveOrderMenu({
+class OrderHistoryMenu {
+    OrderHistoryMenu({
         this.menuId,
         this.name,
         this.price,
@@ -237,16 +205,16 @@ class ActiveOrderMenu {
     int quantity;
     List<Choice> choices;
     List<Additional> additionals;
-    dynamic note;
+    String note;
 
-    factory ActiveOrderMenu.fromJson(Map<String, dynamic> json) => ActiveOrderMenu(
+    factory OrderHistoryMenu.fromJson(Map<String, dynamic> json) => OrderHistoryMenu(
         menuId: json["menu_id"],
         name: json["name"],
         price: json["price"].toDouble(),
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
-        note: json["note"] == null ? 'N/A' : json["note"],
+        note: json["note"] == null ? null : json["note"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -256,8 +224,71 @@ class ActiveOrderMenu {
         "quantity": quantity,
         "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
         "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),
-        "note": note,
+        "note": note == null ? null : note,
     };
+}
+
+class OrderHistoryRestaurant {
+  OrderHistoryRestaurant({
+    this.location,
+    this.slider,
+    this.name,
+    this.logoUrl
+  });
+
+  RestaurantLocation location;
+  List<Slider> slider;
+  String name;
+  String logoUrl;
+
+  factory OrderHistoryRestaurant.fromJson(Map<String, dynamic> json) => OrderHistoryRestaurant(
+    location: RestaurantLocation.fromJson(json['location']),
+    slider: List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
+    name: json['name'],
+    logoUrl: json['logo_url']  
+  );
+
+  Map<String, dynamic> toJson() => {
+    'location': location.toJson(),
+    'sliders': List<dynamic>.from(slider.map((x) => x.toJson())),
+    'name': name,
+    'logo_url': logoUrl
+  };
+}
+
+class RestaurantLocation {
+  RestaurantLocation({
+    this.name
+  });
+  String name;
+
+  factory RestaurantLocation.fromJson(Map<String, dynamic> json) => RestaurantLocation(
+    name: json['name']
+  );
+
+  Map<String, dynamic> toJson() => {
+    'name': name
+  };
+}
+
+class Slider {
+  Slider({
+    this.url,
+    this.show
+  });
+
+  String url;
+  bool show;
+
+  factory Slider.fromJson(Map<String, dynamic> json) => Slider(
+    url: json['url'],
+    show: json['show']  
+  );
+
+  Map<String, dynamic> toJson() => {
+    'url': url,
+    'show': show
+  };
 }
 
 class Additional {
@@ -353,33 +384,39 @@ class Payment {
 }
 
 class Details {
-    Details({
-        this.id,
-    });
-
-    String id;
+    Details();
 
     factory Details.fromJson(Map<String, dynamic> json) => Details(
-        id: json["id"],
     );
 
     Map<String, dynamic> toJson() => {
-        "id": id,
     };
 }
 
-class ActiveRestaurant {
+class TimeframeClass {
+    TimeframeClass({
+        this.restaurantPickTime,
+        this.riderPickTime,
+        this.riderPickUpTime,
+        this.deliveredTime,
+    });
 
-  ActiveRestaurant({
-    this.location,
-    this.name
-  });
+    DateTime restaurantPickTime;
+    dynamic riderPickTime;
+    dynamic riderPickUpTime;
+    dynamic deliveredTime;
 
-  Location location;
-  String name;
+    factory TimeframeClass.fromJson(Map<String, dynamic> json) => TimeframeClass(
+        restaurantPickTime: DateTime.parse(json["restaurant_pick_time"]),
+        riderPickTime: json["rider_pick_time"],
+        riderPickUpTime: json["rider_pick_up_time"],
+        deliveredTime: json["delivered_time"],
+    );
 
-  factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
-      location: Location.fromJson(json["location"]),
-      name: json["name"]
-  );
+    Map<String, dynamic> toJson() => {
+        "restaurant_pick_time": restaurantPickTime.toIso8601String(),
+        "rider_pick_time": riderPickTime,
+        "rider_pick_up_time": riderPickUpTime,
+        "delivered_time": deliveredTime,
+    };
 }

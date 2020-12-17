@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
                 },
                 child: Scrollbar(
                   child: SingleChildScrollView(
-                    physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     child: _.restaurants.call() != null ?
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,

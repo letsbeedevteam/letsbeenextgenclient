@@ -6,6 +6,10 @@ import 'package:letsbeeclient/_utils/config.dart';
 extension StringExtension on String {
 
   String uppercase() => this.toUpperCase();
+  void printWrapped()  {
+      final pattern = RegExp('.{1,800}');
+      pattern.allMatches(this).forEach((match) => print(match.group(0)));
+  }
 }
 
 extension IntExtension on String {

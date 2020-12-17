@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
+import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
@@ -43,6 +44,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isSearching = false.obs;
   var message = ''.obs;
   var onGoingMessage = 'No Active Order'.obs;
+  var historyMessage = 'No list of history'.obs;
+  var history = OrderHistoryResponse().obs;
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
   var activeOrderData = ActiveOrderData().obs;
@@ -51,6 +54,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   @override
   void onInit() {
+    print('Access Token: ${box.read(Config.USER_TOKEN)}');
+    history.nil();
     restaurants.nil();
     activeOrderData.nil();
 
@@ -103,7 +108,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
-    if (tappedIndex == 4) fetchActiveOrder();
+    if (tappedIndex == 4) {
+      fetchActiveOrder();
+      fetchOrderHistory();
+    }
     tfSearchController.clear();
     searchRestaurant('');
     pageIndex(tappedIndex);
@@ -176,19 +184,23 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchActiveOrder() {
-    socketService.socket.emitWithAck('active-order', '', ack: (response) {
-      print('Active order $response');
-      if (response['status'] == 200) {
-        if (response['data'] == null) {
-          onGoingMessage('No Active Order');
-          activeOrderData.nil();
+    if (socketService.socket != null) {
+       socketService.socket.emitWithAck('active-order', '', ack: (response) {
+        'Active order $response'.printWrapped();
+        if (response['status'] == 200) {
+          if (response['data'] == null) {
+            onGoingMessage('No Active Order');
+            activeOrderData.nil();
+          } else {
+            activeOrderData(ActiveOrderData.fromJson(response['data']));
+          }
         } else {
-          activeOrderData(ActiveOrderData.fromJson(response['data']));
+          onGoingMessage(Config.SOMETHING_WENT_WRONG);
         }
-      } else {
-        onGoingMessage(Config.SOMETHING_WENT_WRONG);
-      }
-    });
+      });
+    } else {
+      socketSetup();
+    }
   }
 
   receiveUpdateOrder() {
@@ -236,9 +248,42 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         successSnackBarTop(title: 'Success!', message: response['message']);
         onGoingMessage('No Active Order');
         activeOrderData.nil();
+        fetchOrderHistory();
       } else {
         errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       }
+    });
+  }
+
+  fetchOrderHistory() {
+    isLoading(true);
+    apiService.orderHistory().then((response) {
+      isLoading(false);
+      _setRefreshCompleter();
+      if (response.status == 200) {
+
+        if (response.data.isNotEmpty) {
+          history(response);
+        } else {
+          historyMessage('No list of history orders');
+          history.nil();
+        }
+
+      } else {
+        historyMessage(Config.SOMETHING_WENT_WRONG);
+      }
+      
+    }).catchError((onError) {
+      isLoading(false);
+      _setRefreshCompleter();
+      if (onError.toString().contains('Connection failed')) {
+        message(Config.NO_INTERNET_CONNECTION);
+      } else if (onError.toString().contains('Operation timed out')) {
+        message(Config.TIMED_OUT);
+      } else {
+        message(Config.SOMETHING_WENT_WRONG);
+      }
+      print('Error fetch history orders: $onError');
     });
   }
 

@@ -20,6 +20,7 @@ class Config {
   static const WEBVIEW_ROUTE = '/webview';
   static const CHAT_ROUTE = '/chat';
   static const RIDER_LOCATION_ROUTE = '/rider_location';
+  static const HISTORY_DETAIL_ROUTE = '/history_detail';
 
   // Storage keys
   static const USER_NAME = 'user_name';

@@ -1,20 +1,53 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/orderHistoryResponse.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:intl/intl.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: ListView(
-        children: [
-          _buildHistoryItem(),
-        ],
+    return RefreshIndicator(
+      onRefresh: () {
+        controller.fetchOrderHistory();
+        return controller.refreshCompleter.future;
+      },
+      child: Container(
+        height: Get.height,
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: GetX<DashboardController>(
+              builder: (_) {
+                return _.history.call().isNull ? Container(
+                  alignment: Alignment.topCenter,
+                  padding: EdgeInsets.only(top: 20),
+                  child: _.isLoading.call() ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CupertinoActivityIndicator(),
+                      Text('Loading', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+                    ],
+                  ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ) : Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: _.history.call().data.reversed.map((e) => _buildHistoryItem(e)).toList(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildHistoryItem() {
+  Widget _buildHistoryItem(OrderHistoryData data) {
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
@@ -44,9 +77,9 @@ class HistoryPage extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: 50,
-                backgroundImage: ExactAssetImage(Config.PNG_PATH + 'army_navy.png'),
+                backgroundImage: NetworkImage(data.restaurant.logoUrl),
                 backgroundColor: Colors.transparent,
-              ),
+              )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
             Expanded(
@@ -58,14 +91,14 @@ class HistoryPage extends StatelessWidget {
                     Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Container(
                       padding: EdgeInsets.only(right: 10),
-                      child: Text('Army Navy - SM Clark', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
+                      child: Text(data.restaurant.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
                     ),
-                    Text('November 26, 2020', style: TextStyle(fontSize: 13)),
-                    Text('1x Item', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(DateFormat('MMMM dd, yyyy').format(data.createdAt), style: TextStyle(fontSize: 13)),
+                    Text(data.menus.length == 1 ? '1x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
                       margin: EdgeInsets.only(right: 10, bottom: 10),
                       alignment: FractionalOffset.bottomRight,
-                      child: Text('₱ 200.00', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      child: Text('₱ ${data.fee.total.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                     )
                 ],
               )
@@ -73,7 +106,7 @@ class HistoryPage extends StatelessWidget {
           ],
         ),
       ),
-      onTap: () => print('Clicked'),
+      onTap: () => Get.toNamed(Config.HISTORY_DETAIL_ROUTE, arguments: data.toJson()),
     );
   }
 }

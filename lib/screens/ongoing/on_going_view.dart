@@ -90,8 +90,12 @@ class OnGoingPage extends GetView<DashboardController> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Name: Let\'s Bee', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                    Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 13))
+                                    Text(
+                                      'Address: ${_.activeOrderData.call().address.street}, ${_.activeOrderData.call().address.barangay}, ${_.activeOrderData.call().address.city} ${_.activeOrderData.call().address.state}', 
+                                      style: TextStyle(color: Colors.black, fontSize: 14)
+                                    ),
+                                    Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                                    Text('Contact Number: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 14))
                                   ],
                                 ),
                               )
@@ -122,6 +126,39 @@ class OnGoingPage extends GetView<DashboardController> {
                             ],
                           ),
                         ),
+                        _.activeOrderData.call().riderId != 0 ? Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(top: 5),
+                              child: Divider(thickness: 2, color: Colors.grey.shade200),
+                            ),
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('Driver:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                      Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                      Text('Juan B.', style: TextStyle(color: Colors.black))
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                        Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.location.name})', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                        Text('Estimated Delivery time: 30 Minutes', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ) : Container(),
                         Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Divider(thickness: 2, color: Colors.grey.shade200),
@@ -150,7 +187,7 @@ class OnGoingPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildMenu(Menu menu, DashboardController _) {
+  Widget _buildMenu(ActiveOrderMenu menu, DashboardController _) {
     return Column(
         children: [
           Row(

@@ -19,7 +19,6 @@ class MenuController extends GetxController {
 
   var menu = Menu().obs;
   var cart = CartData().obs;
-  var hasSelected = true.obs;
   var countQuantity = 1.obs;
   var restaurantId = 0.obs;
   var menuId = 0.obs;
@@ -86,7 +85,7 @@ class MenuController extends GetxController {
     menu.update((val) {
       final getMenu = val.additionals.where((element) => element.id == id).first;
       getMenu.options.forEach((data) { 
-        if (name == data.name) data.selectedValue = !data.selectedValue;
+        if (name == data.name) data.selectedValue = !data.selectedValue; else data.selectedValue = false;
       });
     });
   }
@@ -99,7 +98,6 @@ class MenuController extends GetxController {
 
     menu.value.choices.forEach((choice) {
       choice.options.forEach((element) {
-        hasSelected.value = element.selectedValue != null;
         if (element.name == element.selectedValue) {
           choiceIds.add(
             ChoiceCart(
@@ -120,27 +118,19 @@ class MenuController extends GetxController {
       );
     });
 
-    if (argument['type'] == 'edit') hasSelected(true);
+    var addToCart = AddToCart(
+      restaurantId: restaurantId.call(),
+      menuId: menuId.call(),
+      choices: choiceIds,
+      additionals: additionalIds.toList(),
+      quantity: countQuantity.call(),
+      note: tFRequestController.text
+    );
 
-    if (!hasSelected.call()) {
-      errorSnackbarTop(title: 'Oops!', message: 'Please choose your required option(s)');
-      isAddToCartLoading(false);
+    if (argument['type'] == 'edit') {
+      updateCartRequest(addToCart);
     } else {
-
-      var addToCart = AddToCart(
-        restaurantId: restaurantId.call(),
-        menuId: menuId.call(),
-        choices: choiceIds,
-        additionals: additionalIds.toList(),
-        quantity: countQuantity.call(),
-        note: tFRequestController.text
-      );
-
-      if (argument['type'] == 'edit') {
-        updateCartRequest(addToCart);
-      } else {
-        sendCartRequest(addToCart);
-      }
+      sendCartRequest(addToCart);
     }
   }
 
@@ -198,9 +188,9 @@ class MenuController extends GetxController {
         menu.value.additionals.map((e) => e.options).forEach((element) {
             var name = item.picks.map((e) => e.name);
             name.forEach((additional) {
-            element.where((element) => element.name.contains(additional)).forEach((element) {
-              element.selectedValue = true;
-            });
+              element.where((element) => element.name.contains(additional)).forEach((element) {
+                element.selectedValue = true;
+              });
             });
         });
       }
