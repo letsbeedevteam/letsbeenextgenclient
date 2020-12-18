@@ -303,6 +303,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if(searchRestaurants.call().isEmpty) message('No restaurant found');
       
       } else {
+
         message(Config.SOMETHING_WENT_WRONG);
       }
       

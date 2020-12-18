@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
             return Flexible(
               child: RefreshIndicator(
                 onRefresh: () {
-                  _.fetchRestaurants();
+                  _.refreshToken();
                   return _.refreshCompleter.future;
                 },
                 child: Scrollbar(

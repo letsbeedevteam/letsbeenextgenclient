@@ -19,9 +19,8 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
               sliver: SliverAppBar(
                 leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
                 expandedHeight: 280.0,
-                floating: false,
+                floating: true,
                 pinned: true,
-                forceElevated: innerBoxIsScrolled,
                 backgroundColor: Colors.white,
                 elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
@@ -29,6 +28,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   title: GetX<HistoryDetailController>(
                     builder: (_) => Text('${_.data.call().restaurant.name} - ${_.data.call().restaurant.location.name}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ),
+                  centerTitle: true,
                   background: GetX<HistoryDetailController>(
                     builder: (_) {
                       return Stack(
@@ -175,6 +175,23 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                 _buildStatus()
                               ],
                             ),
+                          ),
+                          _.data.call().reason.isNullOrBlank ? Container() : Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 5),
+                                child: Divider(thickness: 5, color: Colors.grey.shade200),
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Reason', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text(_.data.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                           Container(
                             margin: EdgeInsets.only(top: 5),

@@ -26,8 +26,7 @@ class OrderPage extends GetView<DashboardController> {
                       padding: EdgeInsets.only(left: 20),
                       child: Text('Order', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
                     ),
-                    GetBuilder<DashboardController>(
-                      id: 'tabIndex',
+                    GetX<DashboardController>(
                       builder: (_) {
                         return SlideTransition(
                           position: _.offsetAnimation,

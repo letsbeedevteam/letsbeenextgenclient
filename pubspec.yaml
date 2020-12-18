@@ -23,7 +23,7 @@ dependencies:
   loading_gifs: ^0.2.3
 
   # Dependency Injection
-  get: ^3.17.1
+  get: ^3.23.1
 
   # Slider
   carousel_slider: ^2.3.1

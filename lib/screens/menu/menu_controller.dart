@@ -160,10 +160,17 @@ class MenuController extends GetxController {
     apiService.addToCart(addToCart).then((response) {
       
       if (response.status == 200) {
-        successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
+        // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
+        Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value);
         isAddToCartLoading(true);
       } else {
-        if (response.code == 3005) errorSnackbarTop(title: 'Oops!', message: "There\'s a pending order"); else errorSnackbarTop(title: 'Oops!', message: response.message);
+        if (response.code == 3005) {
+          errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending order');
+        } else if (response.code == 3107) {
+          errorSnackbarTop(title: 'Oops!', message: 'Please select your required choice(s)');
+        } else {
+          errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        }
         isAddToCartLoading(false);
       }
 

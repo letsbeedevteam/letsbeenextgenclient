@@ -371,7 +371,7 @@ class Payment {
     Details details;
 
     factory Payment.fromJson(Map<String, dynamic> json) => Payment(
-        method: json["method"],
+        method: json["method"] == 'cod' ? 'cash on delivery' : json["method"],
         status: json["status"],
         details: Details.fromJson(json["details"]),
     );
