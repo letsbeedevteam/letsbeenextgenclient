@@ -49,35 +49,31 @@ class OrderPage extends GetView<DashboardController> {
                   ],
                 ),
               ),
-              GetBuilder<DashboardController>(
-                builder: (controller) {
-                  return Container(
-                    child: TabBar(
-                      indicatorColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),
-                      indicatorWeight: 5,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      unselectedLabelColor: Colors.grey,
-                      labelColor: Colors.black,
-                      controller: controller.tabController,
-                      tabs: [
-                        Tab(
-                          child: Container(
-                            width: Get.width * 0.3,
-                            child: Center(child: Text('On going', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
-                          )
-                        ),
-                        Tab(
-                          child: Container(
-                            width: Get.width * 0.3,
-                            child: Center(child: Text('History', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
-                          )
-                        )
-                      ],
+              Container(
+                child: TabBar(
+                  indicatorColor: Color(Config.LETSBEE_COLOR).withOpacity(0.5),
+                  indicatorWeight: 5,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  unselectedLabelColor: Colors.grey,
+                  labelColor: Colors.black,
+                  controller: controller.tabController,
+                  tabs: [
+                    Tab(
+                      child: Container(
+                        width: Get.width * 0.3,
+                        child: Center(child: Text('On going', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
+                      )
                     ),
-                  );
-                },
+                    Tab(
+                      child: Container(
+                        width: Get.width * 0.3,
+                        child: Center(child: Text('History', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))
+                      )
+                    )
+                  ],
+                ),
               ),
-              Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 10)),
+              Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 5)),
             ],
           ),
         ),

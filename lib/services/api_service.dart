@@ -179,7 +179,7 @@ class ApiService extends GetxService {
       }
     );
 
-    print('Get order history: ${response.body}');
+    // print('Get order history: ${response.body}');
     // 'Get order history: ${response.body}'.printWrapped();
 
     return orderHistoryResponseFromJson(response.body);

@@ -6,10 +6,8 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/menu/menu_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends GetView<MenuController> {
   
- final MenuController controller = Get.find();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

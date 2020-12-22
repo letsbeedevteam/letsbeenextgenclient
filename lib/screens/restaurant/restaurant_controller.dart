@@ -14,7 +14,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     restaurant(RestaurantElement.fromJson(Get.arguments));
 
     var menus = restaurant.call().menuCategorized..map((e) => e.menus);
-    
+  
     tabController = TabController(length: menus.length, vsync: this);
     super.onInit();
   }

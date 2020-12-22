@@ -60,7 +60,7 @@ class AuthModel implements AuthModelContract {
       copyText(credential.identityToken);
       _request(Config.APPLE, credential.identityToken, listener);
     }).catchError((onError) {
-      if (onError.toString().contains('AuthorizationErrorCode.canceled')) {
+      if (onError.toString().contains('AuthorizationErrorCode.canceled') || onError.toString().contains('AuthorizationErrorCode.unknown')) {
         listener.onSocialSignInRequestFailed('User cancelled');
       }
       print('onAppleSignInRequestFailed: $onError');
@@ -74,13 +74,14 @@ class AuthModel implements AuthModelContract {
       if (model.status == 200) {
         listener.onSocialSignInRequestSuccess(social, model.data);
       } else {
-        listener.onSocialSignInRequestFailed(response.body);
+        listener.onSocialSignInRequestFailed(Config.SOMETHING_WENT_WRONG);
       }
     }).catchError((onError) {
       if (onError.toString().contains('Connection timed out')) {
         listener.onSocialSignInRequestFailed('Connection timed out');
-      } else {
-        listener.onSocialSignInRequestFailed('$social request onError: $onError');
+      } else if (onError.toString().contains('Operation timed out')) {
+        listener.onSocialSignInRequestFailed(Config.TIMED_OUT);
+        print('$social request onError: $onError');
       }
     });
   }

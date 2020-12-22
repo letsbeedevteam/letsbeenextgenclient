@@ -58,13 +58,11 @@ class SetupLocationController extends GetxController {
       box.write(Config.USER_CURRENT_BARANGAY, value.first.subLocality);
       box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
       box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
-
     }).catchError((onError) {
       hasLocation(false);
       userCurrentAddress('Getting your address...');
       _getCurrentLocation();
     });
-    update();
   }
 
   void goToVerifyNumberPage() {

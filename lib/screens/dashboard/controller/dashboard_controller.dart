@@ -170,17 +170,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   goToChatPage() {
-    activeOrderData.call().riderId != 0 ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
+    activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
-
-    // Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
   }
 
   goToRiderLocationPage() {
-    activeOrderData.call().riderId != 0 ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
+    activeOrderData.call().rider != null ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
-
-    // Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
   }
 
   fetchActiveOrder() {
@@ -205,35 +201,36 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   receiveUpdateOrder() {
     socketService.socket.on('order', (response) {
-      print('Receive update: $response');
+      'Receive update: $response'.printWrapped();
       final order = ActiveOrder.fromJson(response);
       if (order.status == 200) {
-        final name = '${order.data.activeRestaurant.name} - ${order.data.address.location.name}';
+        final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.location.name}';
         switch (order.data.status) {
           case 'restaurant-declined': {
-            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been declined by the restaurant');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been declined by the Restaurant');
             onGoingMessage('No Active Order');
             activeOrderData.nil();
           }
             break;
           case 'restaurant-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been accepted by the restaurant');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Restaurant');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been accepted by the rider');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Rider');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-picked-up': {
-            pushNotificationService.showNotification(title: 'Hi!,', body: 'Rider has picked up your order');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Rider has picked up your order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'delivered': {
-            pushNotificationService.showNotification(title: 'Hi!,', body: 'Your order in $name has been delivered');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been delivered');
             onGoingMessage('No Active Order');
+            fetchOrderHistory();
             activeOrderData.nil();
           }
             break;

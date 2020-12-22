@@ -208,7 +208,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Address: ${_.data.call().address.street} ${_.data.call().address.barangay}, ${_.data.call().address.city} ${_.data.call().address.state}', 
+                                        'Address: ${_.data.call().address.street} ${_.data.call().address.barangay} ${_.data.call().address.city} ${_.data.call().address.state}', 
                                         style: TextStyle(color: Colors.black, fontSize: 14)
                                       ),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),

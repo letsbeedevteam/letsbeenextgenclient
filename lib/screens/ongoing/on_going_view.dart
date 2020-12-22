@@ -24,7 +24,6 @@ class OnGoingPage extends GetView<DashboardController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 10),
                     alignment: Alignment.center,
                     child: Text("${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.location.name}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
@@ -91,7 +90,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Address: ${_.activeOrderData.call().address.street}, ${_.activeOrderData.call().address.barangay}, ${_.activeOrderData.call().address.city} ${_.activeOrderData.call().address.state}', 
+                                      'Address: ${_.activeOrderData.call().address.street} ${_.activeOrderData.call().address.barangay} ${_.activeOrderData.call().address.city} ${_.activeOrderData.call().address.state}', 
                                       style: TextStyle(color: Colors.black, fontSize: 14)
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(vertical: 2)),
@@ -126,7 +125,7 @@ class OnGoingPage extends GetView<DashboardController> {
                             ],
                           ),
                         ),
-                        _.activeOrderData.call().riderId != 0 ? Column(
+                        _.activeOrderData.call().rider != null ? Column(
                           children: [
                             Container(
                               margin: EdgeInsets.only(top: 5),
@@ -140,7 +139,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                     children: [
                                       Text('Driver:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                       Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                      Text('Juan B.', style: TextStyle(color: Colors.black))
+                                      Text(_.activeOrderData.call().rider.user.name, style: TextStyle(color: Colors.black))
                                     ],
                                   ),
                                   Container(
@@ -148,7 +147,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                        Text('Contact #: ${_.activeOrderData.call().rider.user.number}', style: TextStyle(color: Colors.black, fontSize: 13)),
                                         Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.location.name})', style: TextStyle(color: Colors.black, fontSize: 13)),
                                         Text('Estimated Delivery time: 30 Minutes', style: TextStyle(color: Colors.black, fontSize: 13)),
                                       ],

@@ -32,6 +32,7 @@ class ActiveOrderData {
     ActiveOrderData({
         this.menus,
         this.activeRestaurant,
+        this.rider,
         this.fee,
         this.timeframe,
         this.address,
@@ -48,6 +49,7 @@ class ActiveOrderData {
 
     List<ActiveOrderMenu> menus;
     ActiveRestaurant activeRestaurant;
+    Rider rider;
     Fee fee;
     Timeframe timeframe;
     Address address;
@@ -64,6 +66,7 @@ class ActiveOrderData {
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
         activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
+        rider: json["rider"] == null ? null : Rider.fromJson(json['rider']),
         fee: Fee.fromJson(json["fee"]),
         timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
         address: Address.fromJson(json["address"]),
@@ -381,5 +384,35 @@ class ActiveRestaurant {
   factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
       location: Location.fromJson(json["location"]),
       name: json["name"]
+  );
+}
+
+class Rider {
+  Rider({
+    this.userId,
+    this.user
+  });
+
+  int userId;
+  RiderUser user;
+
+  factory Rider.fromJson(Map<String, dynamic> json) => Rider(
+    userId: json['user_id'],
+    user: RiderUser.fromJson(json['user'])
+  );
+}
+
+class RiderUser {
+  RiderUser({
+    this.name,
+    this.number
+  });
+  
+  String name;
+  String number;
+
+  factory RiderUser.fromJson(Map<String, dynamic> json) => RiderUser(
+    name: json['name'],
+    number: json['cellphone_number']
   );
 }

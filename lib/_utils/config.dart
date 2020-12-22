@@ -1,7 +1,7 @@
 class Config {
 
   // Base URLs
-  static const BASE_URL = 'http://192.168.0.2:8000';
+  static const BASE_URL = 'http://192.168.0.17:8000';
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -23,6 +23,7 @@ class Config {
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
 
   // Storage keys
+  static const USER_ID = 'user_id';
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';

@@ -53,6 +53,7 @@ class AuthController extends GetxController implements AuthViewContract {
       print('LOL: ${data.toJson()}');
       _box.write(Config.SOCIAL_LOGIN_TYPE, social);
       _box.write(Config.IS_LOGGED_IN, true);
+      _box.write(Config.USER_ID, data.id);
       _box.write(Config.USER_NAME, data.name);
       _box.write(Config.USER_EMAIL, data.email);
       _box.write(Config.USER_TOKEN, data.accessToken);

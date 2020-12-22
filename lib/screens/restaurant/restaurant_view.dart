@@ -14,92 +14,101 @@ class RestaurantPage extends GetView<RestaurantController> {
       body: GetX<RestaurantController>(
         builder: (_) {
           return NestedScrollView(
+            physics: _.restaurant.call().menuCategorized.map((e) => e.menus).length == 1 ? AlwaysScrollableScrollPhysics() : NeverScrollableScrollPhysics(),
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
-                SliverAppBar(
-                  leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-                  actions: [
-                    // IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
-                  ],
-                  expandedHeight: 280.0,
-                  floating: true,
-                  pinned: true,
-                  forceElevated: innerBoxIsScrolled,
-                  backgroundColor: Colors.white,
-                  elevation: 0,
-                  bottom: TabBar(
-                    controller: _.tabController,
-                    isScrollable: true,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    unselectedLabelColor: Colors.grey.shade400,
-                    labelColor: Colors.black,
-                    indicatorColor: Colors.black,
-                    indicatorWeight: 3.5,
-                    tabs: _.restaurant.call().menuCategorized.map((element) {
-                      return Tab(
-                        child: Container(
-                          child: Center(child: Text(element.name.capitalizeFirst, style: TextStyle(fontSize: 15)))
-                        )
-                      );
-                    }).toList(),
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.pin,
-                    background: Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        Column(
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverSafeArea(
+                    top: false,
+                    bottom: false,
+                    sliver: SliverAppBar(
+                      leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+                      expandedHeight: 300.0,
+                      floating: true,
+                      pinned: true,
+                      backgroundColor: Colors.white,
+                      elevation: 0,
+                      bottom: TabBar(
+                        controller: _.tabController,
+                        isScrollable: true,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelColor: Colors.grey.shade400,
+                        labelColor: Colors.black,
+                        indicatorWeight: 5.0,
+                        tabs: _.restaurant.call().menuCategorized.map((element) {
+                          return Tab(
+                            child: Container(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(element.name.capitalizeFirst, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              ),
+                            )
+                          );
+                        }).toList(),
+                      ),
+                      flexibleSpace: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.pin,
+                        background: Stack(
+                          alignment: Alignment.centerLeft,
                           children: [
-                            Container(
-                              height: 200,
-                              child: Center(
-                                child: Hero(
-                                  tag: _.restaurant.call().name,
-                                  child: Container(
-                                    width: Get.width,
-                                    child: CarouselSlider(
-                                    options: CarouselOptions(
-                                      autoPlay: false,
-                                      disableCenter: true,                                    
+                            Column(
+                              children: [
+                                Container(
+                                  height: 200,
+                                  child: Center(
+                                    child: Hero(
+                                      tag: _.restaurant.call().name,
+                                      child: Container(
+                                        width: Get.width,
+                                        child: CarouselSlider(
+                                        options: CarouselOptions(
+                                          autoPlay: false,
+                                          disableCenter: true,                                    
+                                        ),
+                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
+                                      ),
                                     ),
-                                    items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
                                   ),
                                 ),
                               ),
+                              Flexible(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(bottom: 30),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                        Text(_.restaurant.call().name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                        Text(_.restaurant.call().location.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal))
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 20, bottom: 30),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                  Center(child: Text(_.restaurant.call().name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),),
-                                  Center(child: Text(_.restaurant.call().location.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal)),)
-                                ],
+                            Positioned(
+                              top: 160.0,
+                              child: Container(
+                                margin: EdgeInsets.only(left: 20),
+                                height: 80.0,
+                                width: 80.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(width: 2)
+                                ),
+                                child: CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: NetworkImage(_.restaurant.call().logoUrl),
+                                  backgroundColor: Colors.transparent,
+                                )
                               ),
-                            ),
+                            )
                           ],
                         ),
-                        Positioned(
-                          top: 160.0,
-                          child: Container(
-                            margin: EdgeInsets.only(left: 20),
-                            height: 80.0,
-                            width: 80.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(width: 2)
-                            ),
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundImage: NetworkImage(_.restaurant.call().logoUrl),
-                              backgroundColor: Colors.transparent,
-                            )
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
                 )
@@ -127,7 +136,6 @@ class RestaurantPage extends GetView<RestaurantController> {
 
   Widget _buildItem(List<Menu> menus, {int restaurantId}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 30),
       child: GridView.count(
         crossAxisCount: menus.length,
         padding: EdgeInsets.all(4.0),

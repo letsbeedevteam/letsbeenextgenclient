@@ -65,6 +65,7 @@ class MapController extends GetxController {
       _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
       
     }).catchError((onError) {
+      getCurrentAddress();
       print('getCurrentAddress: $onError');
     });
   }

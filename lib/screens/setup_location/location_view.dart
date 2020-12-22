@@ -73,7 +73,7 @@ class SetupLocationPage extends StatelessWidget {
                         )
                       ]
                     ),
-                    child: GetBuilder<SetupLocationController>(
+                    child: GetX<SetupLocationController>(
                       builder: (_) {
                         return IgnorePointer(
                           ignoring: !_.hasLocation.call(),
