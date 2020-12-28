@@ -6,12 +6,10 @@ import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
 
 class SignUpEmailPage extends StatelessWidget {
 
-  final SignUpController _ = Get.find();
-
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<SignUpController>(
-      builder: (controller) {
+    return GetX<SignUpController>(
+      builder: (_) {
         return SingleChildScrollView(
           child: Container(
             child: Column(
@@ -23,7 +21,7 @@ class SignUpEmailPage extends StatelessWidget {
                     child: SizedBox(
                       height: 180,
                       width: 180,
-                      child: Image.asset(Config.PNG_PATH + 'frame_email.png'),
+                      child: Image.asset(Config.PNG_PATH + 'sign_up.png'),
                     ),
                   ),
                 ),
@@ -31,15 +29,10 @@ class SignUpEmailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('What\'s your email?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text('Create your account', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('We\'ll check if you have an account', style: TextStyle(fontSize: 15)),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Container(
                       padding: EdgeInsets.only(left: 30, right: 30, top: 10),
                       child: Column(
@@ -111,9 +104,9 @@ class SignUpEmailPage extends StatelessWidget {
                                   autocorrect: false,
                                   obscureText: false,
                                   cursorColor: Colors.black,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp("[a-z \s]"))
-                                  ],
+                                  // inputFormatters: [
+                                  //   FilteringTextInputFormatter.allow(RegExp("[a-z \s]"))
+                                  // ],
                                   decoration: InputDecoration(
                                     fillColor: Colors.grey.shade200,
                                     filled: true,
@@ -174,6 +167,22 @@ class SignUpEmailPage extends StatelessWidget {
                               ),
                             ],
                           ),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                          SizedBox(
+                            width: Get.width,
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)
+                              ),
+                              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                              child: _.isLoading.call() ? 
+                               Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)))
+                              : Text('Sign Up', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                              onPressed: () {
+                                if(!_.isLoading.call()) _.signUp();
+                              },
+                            ),
+                          )
                         ],
                       ),
                     )

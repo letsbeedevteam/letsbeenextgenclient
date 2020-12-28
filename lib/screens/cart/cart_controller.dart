@@ -33,6 +33,11 @@ class CartController extends GetxController {
     super.onInit();
   }
 
+  Future<bool> onWillPopBack() async {
+    Get.back(closeOverlays: true);
+    return true;
+  }
+
   void _setRefreshCompleter() {
     refreshCompleter?.complete();
     refreshCompleter = Completer();

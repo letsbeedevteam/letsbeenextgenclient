@@ -46,7 +46,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         autoPlay: false,
                                         disableCenter: true,                                    
                                       ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
+                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                     ),
                                   )
                                 ),
@@ -61,12 +61,11 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               width: 80.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
-                                border: Border.all(width: 2)
+                                border: Border.all(width: 2),
+                                color: Colors.white
                               ),
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage: NetworkImage(_.data.call().restaurant.logoUrl),
-                                backgroundColor: Colors.transparent,
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
                               )
                             ),
                           )

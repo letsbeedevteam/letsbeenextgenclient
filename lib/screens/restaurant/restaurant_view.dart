@@ -66,7 +66,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                           autoPlay: false,
                                           disableCenter: true,                                    
                                         ),
-                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover)).toList(),
+                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                       ),
                                     ),
                                   ),
@@ -97,13 +97,12 @@ class RestaurantPage extends GetView<RestaurantController> {
                                 width: 80.0,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(width: 2)
+                                  border: Border.all(width: 2),
+                                  color: Colors.white
                                 ),
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(_.restaurant.call().logoUrl),
-                                  backgroundColor: Colors.transparent,
-                                )
+                                child: ClipOval(
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                                ),
                               ),
                             )
                           ],

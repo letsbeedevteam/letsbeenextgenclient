@@ -13,11 +13,50 @@ import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signUpResponse.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetxService {
 
   final GetStorage _box = Get.find();
+
+  Future<SignInResponse> customerSignIn({String email, String password}) async {
+
+    final response = await http.post(
+      Config.BASE_URL + '/auth/customer/signin',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password
+      })
+    );
+
+    print('Customer Sign In: ${response.body}');
+
+    return signInResponseFromJson(response.body);
+  }
+
+  Future<SignUpResponse> customerSignUp({String name, String email, String password}) async {
+
+    final response = await http.post(
+      Config.BASE_URL + '/auth/customer/signup',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'password': password
+      })
+    );
+
+    print('Customer Sign Up: ${response.body}');
+
+    return signUpResponseFromJson(response.body);
+  }
 
   Future<RefreshTokenResponse> refreshToken() async {
 
@@ -59,6 +98,8 @@ class ApiService extends GetxService {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
+
+     print('Menu by id: ${response.body}');
 
     var json = jsonDecode(response.body);
     return Menu.fromJson(json['data']);

@@ -413,6 +413,6 @@ class RiderUser {
 
   factory RiderUser.fromJson(Map<String, dynamic> json) => RiderUser(
     name: json['name'],
-    number: json['cellphone_number']
+    number: json['cellphone_number'] == null ? 'None' : json['cellphone_number']
   );
 }

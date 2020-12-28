@@ -4,15 +4,13 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
 class ChatController extends GetxController {
   
   final replyTF = TextEditingController();
-  final scrollController = ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
+  final scrollController = ScrollController();
   final SocketService _socketService = Get.find();
   final arguments = Get.arguments;
   
@@ -28,12 +26,18 @@ class ChatController extends GetxController {
     super.onInit();
   }
 
+  goBack() {
+    DashboardController.to.isOnChat(false);
+    Get.back();
+  }
+
   sendMessageToRider() {
     if (replyTF.text.isNullOrBlank) {
       alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
     } else {
       _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': replyTF.text});
       replyTF.clear();
+      scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
     }
   }
 
@@ -47,7 +51,7 @@ class ChatController extends GetxController {
 
   fetchOrderChats() {
     _socketService.socket.emitWithAck('order-chats', {'order_id': activeOrderData.call().id}, ack: (response) {
-      print('fetch: $response');
+      'fetch: $response'.printWrapped();
       if (response['status'] == 200) {
           
         var getResponse = ChatResponse.fromJson(response);

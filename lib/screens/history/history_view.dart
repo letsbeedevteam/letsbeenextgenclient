@@ -5,6 +5,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_gifs/loading_gifs.dart';
 
 class HistoryPage extends GetView<DashboardController> {
 
@@ -73,12 +74,11 @@ class HistoryPage extends GetView<DashboardController> {
               width: 70.0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.black, width: 1.5)
+                border: Border.all(color: Colors.black, width: 1.5),
+                color: Colors.white
               ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(data.restaurant.logoUrl),
-                backgroundColor: Colors.transparent,
+              child: ClipOval(
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
               )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),

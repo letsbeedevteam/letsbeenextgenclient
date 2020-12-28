@@ -13,6 +13,7 @@ import 'package:letsbeeclient/services/socket_service.dart';
 class RiderLocationController extends GetxController {
 
   final GetStorage _box = Get.find();
+  final SecretLoader _secretLoader = Get.find();
   final SocketService _socketService = Get.find();
   final Completer<GoogleMapController> _mapController = Completer();
   final polylinePoints = PolylinePoints();
@@ -47,13 +48,13 @@ class RiderLocationController extends GetxController {
   }
 
   void setupMarker() async {
-
+    
     final riderIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), Config.PNG_PATH + 'driver_marker.png');
-    final restaurantLocation = LatLng(activeOrderData.value.activeRestaurant.location.lat, activeOrderData.value.activeRestaurant.location.lng);
+    final restaurantLocation = LatLng(activeOrderData.call().activeRestaurant.location.lat, activeOrderData.call().activeRestaurant.location.lng);
 
     markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
     markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
-    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: LatLng(0, 0), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: LatLng(15.162861, 120.555717), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
 
     _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }
@@ -61,7 +62,7 @@ class RiderLocationController extends GetxController {
   void _setupPolylines({LatLng destLocation, LatLng sourceLocation}) async {
     message('Loading coordinates...');
 
-    final secretLoad = await Get.find<SecretLoader>().loadKey();
+    final secretLoad = await _secretLoader.loadKey();
 
     await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(destLocation.latitude, destLocation.longitude)).then((result) {
       if (result.points.isNotEmpty) {
@@ -73,7 +74,7 @@ class RiderLocationController extends GetxController {
         isMapLoading(false);
       }
     }).catchError((onError) {
-      _setupPolylines();
+      setupMarker();
       print('Polyline error: $onError');
     });
   }
@@ -88,7 +89,5 @@ class RiderLocationController extends GetxController {
     setupMarker();
   }
 
-  onCameraMovePosition(CameraPosition position) {
-    currentPosition(LatLng(position.target.latitude, position.target.longitude));
-  }
+  onCameraMovePosition(CameraPosition position) => currentPosition(LatLng(position.target.latitude, position.target.longitude));
 }

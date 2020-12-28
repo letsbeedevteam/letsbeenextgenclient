@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
+import 'package:letsbeeclient/models/chatResponse.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
@@ -34,6 +35,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final GoogleSignIn _googleSignIn = Get.find();
   final FacebookLogin _facebookLogin = Get.find();
   final tfSearchController = TextEditingController();
+  final scrollController = ScrollController();
   final widgets = [HomePage(), NotificationPage(), AccountSettingsPage(), ReviewsPage(), OrderPage()];
 
   var pageIndex = 0.obs;
@@ -42,6 +44,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
   var isSearching = false.obs;
+  var isOnChat = false.obs;
   var message = ''.obs;
   var onGoingMessage = 'No Active Order'.obs;
   var historyMessage = 'No list of history'.obs;
@@ -125,18 +128,18 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void signOut() {
-   switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
-      case Config.GOOGLE: _googleSignOut();
-      break;
-      case Config.FACEBOOK: _facebookSignOut();
-      break;
-      case Config.APPLE: _signOut();
-      break;
-      case Config.KAKAO: _signOut();
-      break;
-      default: _signOut();
-    }
     socketService.disconnectSocket();
+    switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
+        case Config.GOOGLE: _googleSignOut();
+        break;
+        case Config.FACEBOOK: _facebookSignOut();
+        break;
+        case Config.APPLE: _signOut();
+        break;
+        case Config.KAKAO: _signOut();
+        break;
+        default: _signOut();
+      }
   }
 
   void _facebookSignOut() async {
@@ -170,6 +173,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   goToChatPage() {
+    to.isOnChat(true);
     activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
   }
@@ -235,6 +239,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
           }
             break;
         }
+      }
+    });
+  }
+
+  receiveChat() {
+    socketService.socket.on('order-chat', (response) {
+      print('receive message: $response');
+      final test = ChatData.fromJson(response['data']);
+      if (!isOnChat.call()) {
+         if (box.read(Config.USER_ID) != test.userId) pushNotificationService.showNotification(title: 'You have a new message from Rider', body: test.message);
       }
     });
   }
@@ -374,6 +388,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('Connected');
       fetchActiveOrder();
       receiveUpdateOrder();
+      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');

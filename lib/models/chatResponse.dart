@@ -48,13 +48,13 @@ class ChatData {
     userId: json["user_id"],
     message: json["message"],
     createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"])
+    // updatedAt: DateTime.parse(json["updatedAt"])
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "order_id": orderId,
-    "updatedAt": updatedAt,
+    // "updatedAt": updatedAt,
     "createdAt": createdAt,
     "user_id": userId,
     "message": message

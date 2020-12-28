@@ -57,6 +57,7 @@ class HomePage extends StatelessWidget {
                 },
                 child: Scrollbar(
                   child: SingleChildScrollView(
+                    controller: _.scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
                     child: _.restaurants.call() != null ?
                     Column(
@@ -86,7 +87,10 @@ class HomePage extends StatelessWidget {
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                         _.searchRestaurants.call().isNotEmpty ? 
                         Column(
-                          children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList(),
+                          children: [
+                            Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
+                            IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate))
+                          ],
                         ) : Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18)))
                       ],
                     ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),

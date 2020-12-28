@@ -72,6 +72,11 @@ class MenuController extends GetxController {
     }
   }
 
+  Future<bool> onWillPopBack() async {
+    Get.back(closeOverlays: true);
+    return true;
+  }
+
   updateSelectedChoice(int id, String name) {
     menu.update((val) {
       final getMenu = val.choices.where((element) => element.id == id).first;
@@ -130,7 +135,13 @@ class MenuController extends GetxController {
     if (argument['type'] == 'edit') {
       updateCartRequest(addToCart);
     } else {
-      sendCartRequest(addToCart);
+
+      if (choiceIds.isNotEmpty) {
+        sendCartRequest(addToCart);
+      } else {
+        isAddToCartLoading(false);
+        errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+      }
     }
   }
 

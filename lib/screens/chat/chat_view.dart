@@ -25,7 +25,7 @@ class ChatPage extends GetView<ChatController> {
           },
         ),
         centerTitle: false,
-        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back())
+        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => controller.goBack())
       ),
       body: Container(
         height: Get.height,
@@ -36,30 +36,31 @@ class ChatPage extends GetView<ChatController> {
               builder: (_) => Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(15),
-                margin: EdgeInsets.only(bottom: 10),
                 child: Text('${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.location.name}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
               ),
             ),
-            Container(color: Colors.grey, width: Get.width, height: 1),
+            Container(color: Colors.grey,width: Get.width, height: 1),
             Expanded(
-              child: Scrollbar(
-                child: GetX<ChatController>(
-                  builder: (_) {
-                    return SingleChildScrollView(
-                      reverse: true,
-                      controller: _.scrollController,
-                      child: _.chat.call().isNullOrBlank || _.chat.call().isEmpty ? Center(
-                        child: Text(_.message.call()),
-                      ) : Column(
-                        children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
-                      )
-                    );
-                  },
-                ),
+              child: GetX<ChatController>(
+                builder: (_) {
+                   _.chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+                  return SingleChildScrollView(
+                    reverse: true,
+                    controller: _.scrollController,
+                    child: Column(
+                      children: [
+                        _.chat.call().isNullOrBlank || _.chat.call().isEmpty ? Container() : Column(
+                          children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
+                        ),
+                        // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => print('Go back on top'))
+                      ],
+                    )
+                  );
+                },
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
+              margin: EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(color: Colors.grey)
@@ -107,7 +108,7 @@ class ChatPage extends GetView<ChatController> {
       builder: (_) {
         return data.userId == _.activeOrderData.call().rider.userId ? Container(
           alignment: Alignment.centerLeft,
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -137,7 +138,7 @@ class ChatPage extends GetView<ChatController> {
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(DateFormat('MMMM dd, yyyy').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                      child: Text(DateFormat('MMMM dd, yyyy HH:mm a').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
                     )
                   ],
                 ),
@@ -146,7 +147,7 @@ class ChatPage extends GetView<ChatController> {
           ),
         ) : 
         Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 20),
           alignment: Alignment.centerRight,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -177,7 +178,7 @@ class ChatPage extends GetView<ChatController> {
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text(DateFormat('MMMM dd, yyyy').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                      child: Text(DateFormat('MMMM dd, yyyy HH:mm a').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
                     )
                   ],
                 ),
