@@ -46,18 +46,19 @@ class SetupLocationController extends GetxController {
 
     box.write(Config.USER_CURRENT_LATITUDE, currentLocation.latitude);
     box.write(Config.USER_CURRENT_LONGITUDE, currentLocation.longitude);
-    await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentLocation.latitude, currentLocation.longitude)).then((value) {
-      userCurrentAddress(value.first.addressLine);
+
+    await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentLocation.latitude, currentLocation.longitude)).then((response) {
+      userCurrentAddress(response.first.addressLine);
       hasLocation(true);
 
-      box.write(Config.USER_CURRENT_STREET, value.first.featureName);
-      box.write(Config.USER_CURRENT_COUNTRY, value.first.countryName);
-      box.write(Config.USER_CURRENT_STATE, value.first.adminArea);
-      box.write(Config.USER_CURRENT_CITY, value.first.locality);
-      box.write(Config.USER_CURRENT_IS_CODE, value.first.countryCode);
-      box.write(Config.USER_CURRENT_BARANGAY, value.first.subLocality);
-      box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
-      box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
+      box.write(Config.USER_CURRENT_STREET, response.first.featureName);
+      box.write(Config.USER_CURRENT_COUNTRY, response.first.countryName);
+      box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
+      box.write(Config.USER_CURRENT_CITY, response.first.locality);
+      box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
+      box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
+      box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+
     }).catchError((onError) {
       hasLocation(false);
       userCurrentAddress('Getting your address...');
@@ -65,8 +66,5 @@ class SetupLocationController extends GetxController {
     });
   }
 
-  void goToVerifyNumberPage() {
-    box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.value);
-    Get.toNamed(Config.VERIFY_NUMBER_ROUTE);
-  }
+  void goToVerifyNumberPage() => Get.toNamed(Config.VERIFY_NUMBER_ROUTE);
 }

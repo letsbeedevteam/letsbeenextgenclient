@@ -43,7 +43,6 @@ class ChatPage extends GetView<ChatController> {
             Expanded(
               child: GetX<ChatController>(
                 builder: (_) {
-                   _.chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
                   return SingleChildScrollView(
                     reverse: true,
                     controller: _.scrollController,

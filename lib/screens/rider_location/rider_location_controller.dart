@@ -3,16 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
+import 'package:letsbeeclient/models/riderLocationResponse.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
 class RiderLocationController extends GetxController {
 
-  final GetStorage _box = Get.find();
+  // final GetStorage _box = Get.find();
   final SecretLoader _secretLoader = Get.find();
   final SocketService _socketService = Get.find();
   final Completer<GoogleMapController> _mapController = Completer();
@@ -25,36 +26,41 @@ class RiderLocationController extends GetxController {
   var activeOrderData = ActiveOrderData().obs;
 
   var currentPosition = LatLng(0, 0).obs;
+  var riderPosition = LatLng(0, 0).obs;
   var isMapLoading = true.obs;
   var message = 'Loading google map...'.obs;
 
+  BitmapDescriptor riderIcon;
+
   @override
   void onInit() {
-    
-    currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
+    setupIcon();
     activeOrderData(arguments);
-    fetchRiderLocation();
+    currentPosition(LatLng(activeOrderData.call().address.location.lat, activeOrderData.call().address.location.lng));
+    receiveRiderLocation();
     super.onInit();
   }
 
-  void fetchRiderLocation() {
+  void setupIcon() async {
+    riderIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), Config.PNG_PATH + 'driver_marker.png');
+  }
 
-    _socketService.socket.on('rider-location', (data) {
-      print('Rider location: $data');
-      markers[MarkerId('rider')].copyWith(
-        positionParam: LatLng(15.162861, 120.555717)
-      );
+  void receiveRiderLocation() async {
+    _socketService.socket.on('rider-location', (response) {
+      print('Rider location: $response');
+      final rider = RiderLocationData.fromJson(response['data']);
+      riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
+      markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
     });
   }
 
   void setupMarker() async {
     
-    final riderIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), Config.PNG_PATH + 'driver_marker.png');
     final restaurantLocation = LatLng(activeOrderData.call().activeRestaurant.location.lat, activeOrderData.call().activeRestaurant.location.lng);
 
     markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
     markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
-    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: LatLng(15.162861, 120.555717), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
 
     _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }

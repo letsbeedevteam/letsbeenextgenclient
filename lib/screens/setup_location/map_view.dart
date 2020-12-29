@@ -6,7 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/screens/setup_location/controllers/map_controller.dart';
 
-class MapPage extends StatelessWidget {
+class MapPage extends GetView<MapController> {
 
   @override
   Widget build(BuildContext context) {
@@ -17,40 +17,12 @@ class MapPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: _willPopCallback),
-          title: Container(
-            height: 40,
-            margin: EdgeInsets.only(right: 10),
-            child: TextFormField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
-                hintText: 'Search your location',
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    width: 0, 
-                    color: Colors.black
-                  )
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    width: 0, 
-                    color: Colors.black
-                  )
-                ),
-                filled: true,
-                fillColor: Colors.grey.shade200,
-                contentPadding: EdgeInsets.only(top: 10, left: 10, bottom: 10)
-              ),
-              enableSuggestions: false,
-              textAlign: TextAlign.start,
-              cursorColor: Colors.black,
-            ),
+          title: GetX<MapController>(
+            builder: (_) => _.isBounced.call() ? Text('Loading location...', style: TextStyle(fontSize: 15)) : Container(),
           ),
           actions: [
-            GetBuilder<MapController>(
-              builder: (_) => IconButton(icon: Image.asset(Config.PNG_PATH + 'gps.png'), onPressed: () => _.gpsLocation())
-            )
+            SizedBox(height: 45, width: 45, child: IconButton(icon: Image.asset(Config.PNG_PATH + 'search.png'), onPressed: () => controller.handleSearchLocation())),
+            IconButton(icon: Image.asset(Config.PNG_PATH + 'gps.png'), onPressed: () => controller.gpsLocation())
           ],
         ),
         body: Stack(

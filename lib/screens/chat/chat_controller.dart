@@ -46,6 +46,7 @@ class ChatController extends GetxController {
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
       chat.call().add(test);
+      chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
     });
   }
 
@@ -57,6 +58,7 @@ class ChatController extends GetxController {
         var getResponse = ChatResponse.fromJson(response);
 
         chat.call().addAll(getResponse.data);
+        chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
         if(chat.call().isEmpty) message('No Messages');
 
