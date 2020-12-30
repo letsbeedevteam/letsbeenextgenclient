@@ -30,7 +30,7 @@ class SignUpEmailPage extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text('Create your account', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
+                      child: Center(child: Text('Create your account', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Container(

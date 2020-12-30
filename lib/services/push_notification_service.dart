@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:math';
-
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class PushNotificationService extends GetxService {
 
@@ -37,17 +38,22 @@ class PushNotificationService extends GetxService {
   }
 
   Future onSelectionNotification(String payload) async {
-    if (payload != null) {
-      print('Notification payload: $payload');
+    switch (payload) {
+      case 'rider-chat':
+        DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
+        break;
+      case 'active-order':
+        DashboardController.to..tapped(4)..tabController.index = 0;
+        break;
     }
   }
 
-  Future<void> showNotification({String title, String body}) async {
+  Future<void> showNotification({@required String title, @required String body, String payload}) async {
     var androidPlatformChannel = AndroidNotificationDetails(
         'Customer Channel ID', 'Customer App', 'Customer Notification', importance: Importance.max, priority: Priority.high, ticker: 'test ticker');
 
     var iosPlatform = IOSNotificationDetails();
     var platform = NotificationDetails(android: androidPlatformChannel, iOS: iosPlatform);
-    await _flutterLocalNotificationsPlugin.show(Random().nextInt(pow(2, 31) - 1), title, body, platform, payload: 'test payload');
+    await _flutterLocalNotificationsPlugin.show(Random().nextInt(pow(2, 31) - 1), title, body, platform, payload: payload);
   }
 }

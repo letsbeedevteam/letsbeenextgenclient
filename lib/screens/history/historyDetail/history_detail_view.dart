@@ -37,6 +37,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             children: [
                               Container(
+                                color: Colors.black,
                                 height: 200,
                                   child: Center(
                                     child: Container(
@@ -57,15 +58,18 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                             top: 160.0,
                             child: Container(
                               margin: EdgeInsets.only(left: 20),
-                              height: 80.0,
-                              width: 80.0,
+                              height: 70.0,
+                              width: 70.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(width: 2),
-                                color: Colors.white
+                                color: Colors.transparent
                               ),
-                              child: ClipOval(
-                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                              child: Hero(
+                                tag: _.data.call().id,
+                                child: ClipOval(
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                                ),
                               )
                             ),
                           )

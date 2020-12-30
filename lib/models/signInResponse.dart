@@ -6,16 +6,19 @@ class SignInResponse {
   SignInResponse({
     this.status,
     this.data,
-    this.message
+    this.message,
+    this.code
   });
 
   int status;
   String message;
+  int code;
   SignInData data;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(
     status: json['status'],
     message: json['message'] == null ? null : json['message'],
+    code: json['code'] == null ? null : json['code'],
     data: json['data'] == null ? null : SignInData.fromJson(json['data'])
   );
 }

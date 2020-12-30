@@ -143,21 +143,31 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void _facebookSignOut() async {
-    await _facebookLogin.logOut().then((value) {
-      box.write(Config.IS_LOGGED_IN, false);
-      box.write(Config.IS_SETUP_LOCATION, false);
-      box.remove(Config.USER_TOKEN);
-      Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
-    });
+    // await _facebookLogin.logOut().then((value) {
+    //   box.write(Config.IS_LOGGED_IN, false);
+    //   box.write(Config.IS_SETUP_LOCATION, false);
+    //   box.remove(Config.USER_TOKEN);
+    //   Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    // });
+    _facebookLogin.logOut();
+    box.write(Config.IS_LOGGED_IN, false);
+    box.write(Config.IS_SETUP_LOCATION, false);
+    box.remove(Config.USER_TOKEN);
+    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
   void _googleSignOut() async {
-    await _googleSignIn.disconnect().then((value) {
-      box.write(Config.IS_LOGGED_IN, false);
-      box.write(Config.IS_SETUP_LOCATION, false);
-      box.remove(Config.USER_TOKEN);
-      Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
-    });
+    // await _googleSignIn.disconnect().then((value) {
+    //   box.write(Config.IS_LOGGED_IN, false);
+    //   box.write(Config.IS_SETUP_LOCATION, false);
+    //   box.remove(Config.USER_TOKEN);
+    //   Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    // });
+    _googleSignIn.disconnect();
+    box.write(Config.IS_LOGGED_IN, false);
+    box.write(Config.IS_SETUP_LOCATION, false);
+    box.remove(Config.USER_TOKEN);
+    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
   void _signOut() {
@@ -211,28 +221,28 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.location.name}';
         switch (order.data.status) {
           case 'restaurant-declined': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been declined by the Restaurant');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been declined by the Restaurant', payload: 'active-order');
             onGoingMessage('No Active Order');
             activeOrderData.nil();
           }
             break;
           case 'restaurant-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Restaurant');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Restaurant', payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Rider');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Rider', payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-picked-up': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Rider has picked up your order');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Rider has picked up your order', payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'delivered': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been delivered');
+            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been delivered', payload: 'active-order');
             onGoingMessage('No Active Order');
             fetchOrderHistory();
             activeOrderData.nil();
@@ -248,7 +258,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
       if (!isOnChat.call()) {
-         if (box.read(Config.USER_ID) != test.userId) pushNotificationService.showNotification(title: 'You have a new message from Rider', body: test.message);
+        if (box.read(Config.USER_ID) != test.userId) {
+          pushNotificationService.showNotification(title: 'You have a new message from Rider', body: test.message, payload: 'rider-chat');
+        }
       }
     });
   }
@@ -404,6 +416,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('Disconnected');
     })
     ..on('error', (_) {
+      onGoingMessage('No Active Order');
       print('Error socket: $_');
     });
   }

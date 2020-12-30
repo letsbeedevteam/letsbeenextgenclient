@@ -75,10 +75,13 @@ class HistoryPage extends GetView<DashboardController> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(color: Colors.black, width: 1.5),
-                color: Colors.white
+                color: Colors.transparent
               ),
-              child: ClipOval(
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+              child: Hero(
+                tag: data.id,
+                child: ClipOval(
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                ),
               )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),

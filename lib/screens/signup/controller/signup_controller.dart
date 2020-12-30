@@ -54,12 +54,15 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             _box.write(Config.USER_TOKEN, response.data.accessToken);
             changeIndex(2);
           } else {
-            alertSnackBarTop(title: 'Oops!', message: 'You don\'t have an account, Please create a new one.');
-            changeIndex(1);
+
+            if (response.code == 2000) {
+              alertSnackBarTop(title: 'Oops!', message: 'Your password is invalid.');
+            } else {
+              alertSnackBarTop(title: 'Oops!', message: 'You don\'t have an account, Please create a new one.');
+              changeIndex(1);
+            }
           }
 
-          signInEmailController.clear();
-          signInPasswordController.clear();
           isLoading(false);
 
         }).catchError((onError) {
@@ -92,6 +95,10 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             nameController.clear();
             emailController.clear();
             passwordController.clear();
+
+            signInEmailController.clear();
+            signInPasswordController.clear();
+
             isLoading(false);
           }
 
@@ -100,7 +107,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
           print('Sign up error: $onError');
         });
       } else {
-        errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid');
+        errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid.');
         isLoading(false);
       }
     }

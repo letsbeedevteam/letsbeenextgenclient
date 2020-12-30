@@ -55,6 +55,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                             Column(
                               children: [
                                 Container(
+                                  color: Colors.black,
                                   height: 200,
                                   child: Center(
                                     child: Hero(
@@ -93,8 +94,8 @@ class RestaurantPage extends GetView<RestaurantController> {
                               top: 160.0,
                               child: Container(
                                 margin: EdgeInsets.only(left: 20),
-                                height: 80.0,
-                                width: 80.0,
+                                height: 70.0,
+                                width: 70.0,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
                                   border: Border.all(width: 2),

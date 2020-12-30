@@ -78,7 +78,7 @@ class ApiService extends GetxService {
   Future<Restaurant> getAllRestaurants() async {
 
     final response = await http.get(
-      Config.BASE_URL + '/restaurants/dashboard',
+      Config.BASE_URL + '/restaurants/dashboard?lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
@@ -224,5 +224,18 @@ class ApiService extends GetxService {
     // 'Get order history: ${response.body}'.printWrapped();
 
     return orderHistoryResponseFromJson(response.body);
+  }
+
+  Future<void> getAllAddress() async {
+    
+    final response = await http.get(
+      Config.BASE_URL + '/addresses?user_id=${_box.read(Config.USER_ID)}',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Get all address: $response');
   }
 }
