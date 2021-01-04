@@ -36,7 +36,7 @@ class DashboardPage extends StatelessWidget {
                           Row(
                             children: [
                               Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-                              Text('HOME', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text(_.userCurrentNameOfLocation.call().isNullOrBlank ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
@@ -119,7 +119,7 @@ class DashboardPage extends StatelessWidget {
               Container(
                 child: Row(
                   children: [
-                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: () => print('Add a new address')),
+                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: _.addAddress),
                   ],
                 ),
               ),

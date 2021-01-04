@@ -91,7 +91,16 @@ class HomePage extends StatelessWidget {
                             Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
                             IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate))
                           ],
-                        ) : Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18)))
+                        ) : Column(
+                          children: [
+                            Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                            RaisedButton(
+                              color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                              child: Text('Refresh'),
+                              onPressed: () => _.refreshToken(),
+                            )
+                          ],
+                        )
                       ],
                     ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),
                   ),

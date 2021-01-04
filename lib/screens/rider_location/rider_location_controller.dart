@@ -55,8 +55,9 @@ class RiderLocationController extends GetxController {
   }
 
   void setupMarker() async {
-    
-    final restaurantLocation = LatLng(activeOrderData.call().activeRestaurant.location.lat, activeOrderData.call().activeRestaurant.location.lng);
+    double latitude = double.parse(activeOrderData.call().activeRestaurant.latitude);
+    double longitude = double.parse(activeOrderData.call().activeRestaurant.longitude);
+    final restaurantLocation = LatLng(latitude, longitude);
 
     markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
     markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));

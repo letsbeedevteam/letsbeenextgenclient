@@ -10,12 +10,14 @@ import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
+import 'package:letsbeeclient/models/newAddressRequest.dart';
+import 'package:letsbeeclient/models/newAddressResponse.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
-// import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetxService {
 
@@ -78,13 +80,14 @@ class ApiService extends GetxService {
   Future<Restaurant> getAllRestaurants() async {
 
     final response = await http.get(
-      Config.BASE_URL + '/restaurants/dashboard?lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      Config.BASE_URL + '/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
 
+  // 'Get restaurants: ${response.body}'.printWrapped();
     print('Get restaurants: ${response.body}');
 
     return restaurantFromJson(response.body);
@@ -221,7 +224,7 @@ class ApiService extends GetxService {
     );
 
     // print('Get order history: ${response.body}');
-    // 'Get order history: ${response.body}'.printWrapped();
+    'Get order history: ${response.body}'.printWrapped();
 
     return orderHistoryResponseFromJson(response.body);
   }
@@ -237,5 +240,19 @@ class ApiService extends GetxService {
     );
 
     print('Get all address: $response');
+  }
+
+  Future<NewAddressResponse> addNewAddress(NewAddressRequest request) async {
+
+    final response = await http.put(
+      Config.BASE_URL + '/addresses',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+      body: jsonEncode(request.toJson())
+    );
+
+    return newAddressResponseFromJson(response.body);
   }
 }

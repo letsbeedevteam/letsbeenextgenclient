@@ -5,7 +5,12 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
+import 'package:letsbeeclient/models/newAddressRequest.dart';
+import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:letsbeeclient/services/api_service.dart';
 import 'package:location/location.dart' as lct;
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -14,14 +19,24 @@ class MapController extends GetxController {
 
   final GetStorage _box = Get.find();
   final SecretLoader _secretLoader = Get.find();
+  final ApiService _apiService = Get.find();
   final Completer<GoogleMapController> _mapController = Completer();
+  final _nameTF = TextEditingController();
+  final argument = Get.arguments;
   
-  var currentPosition = LatLng(0, 0).obs;
-  var userCurrentAddress = 'Getting your address...'.obs;
   var isMapLoading = true.obs;
   var isBounced = false.obs;
+  var isLoading = false.obs;
+
+  var currentPosition = LatLng(0, 0).obs;
+  var userCurrentAddress = 'Getting your address...'.obs;
+  var country = ''.obs;
+  var state = ''.obs;
+  var city = ''.obs;
+  var barangay = ''.obs;
 
   GoogleMapsPlaces _places;
+  StreamSubscription<NewAddressResponse> newAddressSub;
 
   @override 
   void onInit() {
@@ -57,20 +72,34 @@ class MapController extends GetxController {
 
   void getCurrentAddress() async {
     isBounced(false);
+    isLoading(true);
 
-    _box.write(Config.USER_CURRENT_LATITUDE, currentPosition.call().latitude);
-    _box.write(Config.USER_CURRENT_LONGITUDE, currentPosition.call().longitude);
+    if (argument['type'] != Config.ADD_NEW_ADDRESS) {
+      _box.write(Config.USER_CURRENT_LATITUDE, currentPosition.call().latitude);
+      _box.write(Config.USER_CURRENT_LONGITUDE, currentPosition.call().longitude);
+    }
 
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.call().latitude, currentPosition.call().longitude)).then((response) {
+      isLoading(false);
       userCurrentAddress(response.first.addressLine);
 
-      _box.write(Config.USER_CURRENT_STREET, response.first.featureName);
-      _box.write(Config.USER_CURRENT_COUNTRY, response.first.countryName);
-      _box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
-      _box.write(Config.USER_CURRENT_CITY, response.first.locality);
-      _box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
-      _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
-      _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+      if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+
+        this.country(response.first.countryName);
+        this.state(response.first.adminArea);
+        this.city(response.first.locality);
+        this.barangay(response.first.subLocality);
+
+      } else {
+      
+        _box.write(Config.USER_CURRENT_STREET, response.first.featureName);
+        _box.write(Config.USER_CURRENT_COUNTRY, response.first.countryName);
+        _box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
+        _box.write(Config.USER_CURRENT_CITY, response.first.locality);
+        _box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
+        _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
+        _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+      }
       
     }).catchError((onError) {
       getCurrentAddress();
@@ -109,5 +138,120 @@ class MapController extends GetxController {
 
   void onError(PlacesAutocompleteResponse response) {
     print(response.errorMessage);
+  }
+
+  Future<bool> willPopCallback() async {
+    Get.back(closeOverlays: true);
+    return true;
+  }
+
+  void addAddress() {
+
+    final request = NewAddressRequest(
+      name: _nameTF.text,
+      location: AddressLocation(
+        lat: currentPosition.call().latitude,
+        lng: currentPosition.call().longitude
+      ),
+      country: this.country.call(),
+      state: this.state.call(),
+      city: this.city.call(),
+      barangay: this.barangay.call()
+    );
+
+    newAddressSub = _apiService.addNewAddress(request).asStream().listen((response) {
+      if(response.status == 200) {
+        print('Success');
+        _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
+        _box.write(Config.USER_CURRENT_STATE, response.data.state);
+        _box.write(Config.USER_CURRENT_CITY, response.data.city);
+        _box.write(Config.USER_CURRENT_BARANGAY, response.data.barangay);
+        _box.write(Config.USER_CURRENT_LATITUDE, response.data.location.lat);
+        _box.write(Config.USER_CURRENT_LONGITUDE,  response.data.location.lng);
+        _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, _nameTF.text);
+        DashboardController.to
+        ..userCurrentNameOfLocation(_nameTF.text)
+        ..userCurrentAddress(this.userCurrentAddress.call())
+        ..isOpenLocationSheet(false)
+        ..fetchRestaurants();
+        Get.back(closeOverlays: true);
+        
+      } else {
+        print('Failed to add new address');
+      }
+    });
+
+    newAddressSub.onError((handleError) {
+      print('Error add new address: $handleError');
+    });
+  }
+
+  showDialog() {
+
+    Get.defaultDialog(
+      title: 'Confirm your location',
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(userCurrentAddress.call(), textAlign: TextAlign.center),
+          Padding(
+            child: argument['type'] != Config.ADD_NEW_ADDRESS ? 
+            Container() : TextField(
+              controller: _nameTF,
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 10),
+                hintText: 'Name (ex: Home, Work)',
+                fillColor: Colors.grey.shade200,
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderSide: BorderSide.none
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+            ),
+            padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+          )
+        ],
+      ),
+      barrierDismissible: false,
+      cancel: RaisedButton(
+        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text('Cancel'), 
+        onPressed: () {
+          _nameTF.clear();
+           Get.back();
+          if (newAddressSub != null) newAddressSub.cancel();
+        }
+      ),
+      confirm: RaisedButton(
+        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text('Looks good'), 
+        onPressed: () {
+          if(argument['type'] == Config.ADD_NEW_ADDRESS) {
+            if (_nameTF.text.isNullOrBlank) {
+              errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
+            } else {
+              addAddress();
+            }
+          } else {
+            Get.back();
+            Future.delayed(Duration(seconds: 1)).then((value) => Get.toNamed(Config.VERIFY_NUMBER_ROUTE));
+          }
+        }
+      ),
+    );
   }
 }

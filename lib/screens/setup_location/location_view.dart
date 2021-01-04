@@ -115,7 +115,7 @@ class SetupLocationPage extends StatelessWidget {
                         padding: EdgeInsets.all(13),
                         child: Text('SEARCH LOCATION'),
                       ),
-                      onPressed: () => Get.toNamed(Config.MAP_ROUTE),
+                      onPressed: () => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS}),
                     ),
                   )
                 ],

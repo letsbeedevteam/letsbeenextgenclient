@@ -16,9 +16,9 @@ class MapPage extends GetView<MapController> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.white,
-          leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: _willPopCallback),
+          leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: controller.willPopCallback),
           title: GetX<MapController>(
-            builder: (_) => _.isBounced.call() ? Text('Loading location...', style: TextStyle(fontSize: 15)) : Container(),
+            builder: (_) => _.isBounced.call() || _.isLoading.call() ? Text('Loading location...', style: TextStyle(fontSize: 15)) : Container(),
           ),
           actions: [
             SizedBox(height: 45, width: 45, child: IconButton(icon: Image.asset(Config.PNG_PATH + 'search.png'), onPressed: () => controller.handleSearchLocation())),
@@ -110,7 +110,7 @@ class MapPage extends GetView<MapController> {
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
                         ),
-                        onPressed: () => _.isMapLoading.call() ? null : _showDialog(_.userCurrentAddress.call())
+                        onPressed: () => _.isMapLoading.call() ? null : _.showDialog()
                       );
                     },
                   ),
@@ -120,41 +120,7 @@ class MapPage extends GetView<MapController> {
           ],
         ),
       ),
-      onWillPop: _willPopCallback,
-    );
-  }
-
-  Future<bool> _willPopCallback() async {
-    Get.back(closeOverlays: true);
-    return true;
-  }
-
-  _goToVerifyNumberPage() => Get.toNamed(Config.VERIFY_NUMBER_ROUTE);
-
-  _showDialog(String address) {
-    Get.defaultDialog(
-      title: 'Confirm your location',
-      middleText: address,
-      barrierDismissible: false,
-      cancel: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Cancel'), 
-        onPressed: () => Get.back()
-      ),
-      confirm: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Looks good'), 
-        onPressed: () {
-          Get.back();
-          Future.delayed(Duration(seconds: 1)).then((value) => _goToVerifyNumberPage());
-        }
-      ),
+      onWillPop: controller.willPopCallback,
     );
   }
 }

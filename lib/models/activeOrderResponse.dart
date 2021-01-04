@@ -19,7 +19,7 @@ class ActiveOrder {
 
     factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
         status: json["status"],
-        data: ActiveOrderData.fromJson(json["data"]),
+        data: json['data'] == null ? null : ActiveOrderData.fromJson(json["data"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -60,8 +60,8 @@ class ActiveOrderData {
     int riderId;
     String status;
     dynamic reason;
-    String createdAt;
-    String updatedAt;
+    DateTime createdAt;
+    DateTime updatedAt;
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
@@ -77,8 +77,8 @@ class ActiveOrderData {
         riderId: json["rider_id"] == null ? 0 : json["rider_id"],
         status: json["status"],
         reason: json["reason"],
-        createdAt: DateTime.parse(json["createdAt"]).toString(),
-        updatedAt: DateTime.parse(json["updatedAt"]).toString(),
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -138,7 +138,7 @@ class Address {
         this.barangay,
     });
 
-    Location location;
+    AddressLocation location;
     String street;
     String country;
     String isoCode;
@@ -147,7 +147,7 @@ class Address {
     String barangay;
 
     factory Address.fromJson(Map<String, dynamic> json) => Address(
-        location: Location.fromJson(json["location"]),
+        location: AddressLocation.fromJson(json["location"]),
         street: json["street"],
         country: json["country"],
         isoCode: json["iso_code"],
@@ -167,27 +167,52 @@ class Address {
     };
 }
 
+class AddressLocation {
+  AddressLocation({
+    this.lat,
+    this.lng
+  });
+
+  double lat;
+  double lng;
+
+
+  factory AddressLocation.fromJson(Map<String, dynamic> json) => AddressLocation(
+    lat: json["lat"].toDouble(),
+    lng: json["lng"].toDouble(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "lat": lat,
+    "lng": lng,
+  };
+}
+
 class Location {
     Location({
         this.lat,
         this.lng,
-        this.name
+        this.name,
+        this.locationName
     });
 
-    double lat;
-    double lng;
+    String lat;
+    String lng;
     String name;
+    String locationName;
 
     factory Location.fromJson(Map<String, dynamic> json) => Location(
-        lat: json["lat"].toDouble(),
-        lng: json["lng"].toDouble(),
-        name: json["name"]
+      lat: json["latitude"],
+      lng: json["longitude"],
+      name: json['name'],
+      locationName: json["location_name"]
     );
 
     Map<String, dynamic> toJson() => {
-        "lat": lat,
-        "lng": lng,
-        "name": name
+      "lat": lat,
+      "lng": lng,
+      "name": name,
+      "location_name": locationName
     };
 }
 
@@ -374,16 +399,23 @@ class Details {
 class ActiveRestaurant {
 
   ActiveRestaurant({
-    this.location,
-    this.name
+    this.name,
+    this.locationName,
+    this.latitude,
+    this.longitude
   });
 
-  Location location;
+  
   String name;
+  String locationName;
+  String latitude;
+  String longitude;
 
   factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
-      location: Location.fromJson(json["location"]),
-      name: json["name"]
+      name: json["name"],
+      locationName: json['location_name'],
+      latitude: json['latitude'],
+      longitude: json['longitude']
   );
 }
 

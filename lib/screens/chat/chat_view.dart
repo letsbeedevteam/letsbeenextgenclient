@@ -36,7 +36,7 @@ class ChatPage extends GetView<ChatController> {
               builder: (_) => Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(15),
-                child: Text('${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.location.name}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                child: Text('${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.locationName}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
               ),
             ),
             Container(color: Colors.grey,width: Get.width, height: 1),

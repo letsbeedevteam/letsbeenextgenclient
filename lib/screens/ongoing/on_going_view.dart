@@ -25,7 +25,7 @@ class OnGoingPage extends GetView<DashboardController> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text("${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.location.name}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text("${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.locationName}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   Container(
                     child: Column(
@@ -148,7 +148,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text('Contact #: ${_.activeOrderData.call().rider.user.number}', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                        Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.location.name})', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                        Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})', style: TextStyle(color: Colors.black, fontSize: 13)),
                                         Text('Estimated Delivery time: 30 Minutes', style: TextStyle(color: Colors.black, fontSize: 13)),
                                       ],
                                     ),
@@ -352,7 +352,7 @@ class OnGoingPage extends GetView<DashboardController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} - ${controller.activeOrderData.call().activeRestaurant.location.name}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                Text('Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} - ${controller.activeOrderData.call().activeRestaurant.locationName}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 Padding(padding: EdgeInsets.all(10)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),

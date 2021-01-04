@@ -28,6 +28,7 @@ class Config {
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
   static const USER_MOBILE_NUMBER = 'user_mobile_number';
+  static const USER_CURRENT_NAME_OF_LOCATION = 'user_current_name_of_location';
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
@@ -68,6 +69,8 @@ class Config {
   static const CUSTOMER_PIN = 'customer_pin';
   static const YOU = 'You';
   static const LETS_BEE = 'Let\'s Bee';
+  static const ADD_NEW_ADDRESS = 'add_new_address';
+  static const SETUP_ADDRESS = 'setup_address';
 
   // Colors 
   static const LETSBEE_COLOR = 0xFBD10B;

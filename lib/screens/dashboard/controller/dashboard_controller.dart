@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
+import 'package:letsbeeclient/models/getNotification.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
@@ -34,11 +35,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final GetStorage box = Get.find();
   final GoogleSignIn _googleSignIn = Get.find();
   final FacebookLogin _facebookLogin = Get.find();
+  
   final tfSearchController = TextEditingController();
   final scrollController = ScrollController();
   final widgets = [HomePage(), NotificationPage(), AccountSettingsPage(), ReviewsPage(), OrderPage()];
 
   var pageIndex = 0.obs;
+  var userCurrentNameOfLocation = ''.obs;
   var userCurrentAddress = ''.obs;
   var isHideAppBar = false.obs;
   var isOpenLocationSheet = false.obs;
@@ -62,13 +65,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     restaurants.nil();
     activeOrderData.nil();
 
-    userCurrentAddress.value = box.read(Config.USER_CURRENT_ADDRESS);
+    userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
+    userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
     pushNotificationService.initialise();
 
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
     refreshToken();
+  
+    if (box.read('notification_list') != null) {
+      notificationDataFromJson(box.read('notification_list'));
+    }
+  
     
     super.onInit();
   }
@@ -217,32 +226,38 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.on('order', (response) {
       'Receive update: $response'.printWrapped();
       final order = ActiveOrder.fromJson(response);
+      String message;
       if (order.status == 200) {
-        final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.location.name}';
+        final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
         switch (order.data.status) {
           case 'restaurant-declined': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been declined by the Restaurant', payload: 'active-order');
+            message = 'Your order in $name has been declined by the Restaurant';
+            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             onGoingMessage('No Active Order');
             activeOrderData.nil();
           }
             break;
           case 'restaurant-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Restaurant', payload: 'active-order');
+            message = 'Your order in $name has been accepted by the Restaurant';
+            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-accepted': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been accepted by the Rider', payload: 'active-order');
+            message = 'Your order in $name has been accepted by the Let\'s Bee Rider';
+            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-picked-up': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Rider has picked up your order', payload: 'active-order');
+            message = 'Let\'s Bee Rider has picked up your order';
+            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'delivered': {
-            pushNotificationService.showNotification(title: 'Hi!', body: 'Your order in $name has been delivered', payload: 'active-order');
+            message = 'Your order in ${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName} has been delivered';
+            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             onGoingMessage('No Active Order');
             fetchOrderHistory();
             activeOrderData.nil();
@@ -392,6 +407,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('Refresh token: $onError');
     });
   }
+
+  addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
 
   socketSetup() {
     socketService.connectSocket();

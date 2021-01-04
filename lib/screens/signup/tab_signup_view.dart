@@ -21,9 +21,12 @@ class SignUpPage extends GetView<SignUpController>  {
                 elevation: 0,
                 leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: _.willPopCallback),
                 actions: [
-                  _.tabController.index == 0 ? FlatButton(
-                    child: Text('Next', style: TextStyle(fontSize: 18)), color: Colors.white, highlightColor: Colors.transparent,
-                    onPressed: () => _.signIn() 
+                  _.tabController.index == 0 ? IgnorePointer(
+                    ignoring: _.isLoading.call(),
+                    child: FlatButton(
+                      child: Text('Next', style: TextStyle(fontSize: 18)), color: Colors.white, highlightColor: Colors.transparent,
+                      onPressed: () => _.signIn() 
+                    ),
                   ) : Container()
                 ],
               ),

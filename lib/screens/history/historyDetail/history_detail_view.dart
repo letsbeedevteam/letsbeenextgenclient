@@ -26,7 +26,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   title: GetX<HistoryDetailController>(
-                    builder: (_) => Text('${_.data.call().restaurant.name} - ${_.data.call().restaurant.location.name}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    builder: (_) => Text('${_.data.call().restaurant.name} - ${_.data.call().restaurant.locationName}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ),
                   centerTitle: true,
                   background: GetX<HistoryDetailController>(
