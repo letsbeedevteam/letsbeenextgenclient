@@ -48,6 +48,9 @@ class SetupLocationController extends GetxController {
     box.write(Config.USER_CURRENT_LONGITUDE, currentLocation.longitude);
 
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentLocation.latitude, currentLocation.longitude)).then((response) {
+      response.forEach((element) {
+        print(element.toMap());
+      });
       userCurrentAddress(response.first.addressLine);
       hasLocation(true);
 

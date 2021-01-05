@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -59,14 +60,34 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
               Flexible(
-                child: PageView(
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: _.pageController,
-                  onPageChanged: (index) {
-                    _.pageIndex(index);
-                    _.showLocationSheet(false);
-                  },
-                  children: _.widgets,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    PageView(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _.pageController,
+                      onPageChanged: (index) {
+                        _.pageIndex(index);
+                        _.showLocationSheet(false);
+                      },
+                      children: _.widgets,
+                    ),
+                    // _.activeOrderData.call() == null ? Container() :
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    //   child: SizedBox(
+                    //     width: Get.width,
+                    //     child: RaisedButton(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(20),
+                    //       ),
+                    //       color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    //       child: Text('Order on going'),
+                    //       onPressed: () => print('On going'),
+                    //     ),
+                    //   ),
+                    // )
+                  ],
                 )
               )
             ],
@@ -126,21 +147,32 @@ class DashboardPage extends StatelessWidget {
             ],
           ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+          _.addresses.call().isNull ? Container(
+            padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _buildLocationList(name: 'HOME', address: '#234 San Pedro Magalang Pampanga', dashboardController: _),
-                    _buildLocationList(name: 'WORK', address: '#23423 San san san Tarlac Pampanga', dashboardController: _),
-                    _buildLocationList(name: 'BAHAY KO', address: '#2345 San Nicolas Test Pampanga', dashboardController: _)
-                  ],
-                ),
+                Text(_.addressMessage.call()),
+                RaisedButton(
+                  color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                  child: Text('Refresh'),
+                  onPressed: () => _.refreshToken(),
+                )
               ],
+            ),
+          ) :
+          Container(
+            height: 150,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: GetX<DashboardController>(
+              builder: (_) {
+                return Scrollbar(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: _.addresses.call().data.map((e) => _buildLocationList(e)).toList(),
+                    ),
+                  ),
+                );
+              },
             ),
           )
         ],
@@ -148,7 +180,8 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationList({String name, String address, DashboardController dashboardController}) {
+  Widget _buildLocationList(AddressData data) {
+    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -157,7 +190,7 @@ class DashboardPage extends StatelessWidget {
           children: [
             Container(
               width: Get.width,
-              child: Text(name, style: TextStyle(color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.bold)),
+              child: Text(data.name, style: TextStyle(color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.bold)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +204,7 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
       onTap: () {
-        dashboardController.updateCurrentLocation(address);
+        DashboardController.to.updateCurrentLocation(data);
       },
     );
   }

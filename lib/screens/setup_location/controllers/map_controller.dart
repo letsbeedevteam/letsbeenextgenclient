@@ -21,7 +21,7 @@ class MapController extends GetxController {
   final SecretLoader _secretLoader = Get.find();
   final ApiService _apiService = Get.find();
   final Completer<GoogleMapController> _mapController = Completer();
-  final _nameTF = TextEditingController();
+  final nameTF = TextEditingController();
   final argument = Get.arguments;
   
   var isMapLoading = true.obs;
@@ -34,6 +34,8 @@ class MapController extends GetxController {
   var state = ''.obs;
   var city = ''.obs;
   var barangay = ''.obs;
+  var street = ''.obs;
+  var isoCode = ''.obs;
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
@@ -81,7 +83,11 @@ class MapController extends GetxController {
 
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.call().latitude, currentPosition.call().longitude)).then((response) {
       isLoading(false);
+      // final address = '${response.first.subLocality}, ${response.first.locality}, ${response.first.adminArea}';
       userCurrentAddress(response.first.addressLine);
+      response.forEach((element) {
+        print(element.toMap());
+      });
 
       if (argument['type'] == Config.ADD_NEW_ADDRESS) {
 
@@ -89,6 +95,8 @@ class MapController extends GetxController {
         this.state(response.first.adminArea);
         this.city(response.first.locality);
         this.barangay(response.first.subLocality);
+        this.street(response.first.featureName);
+        this.isoCode(response.first.countryCode);
 
       } else {
       
@@ -99,6 +107,7 @@ class MapController extends GetxController {
         _box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
         _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
       }
       
     }).catchError((onError) {
@@ -146,43 +155,50 @@ class MapController extends GetxController {
   }
 
   void addAddress() {
-
+    
     final request = NewAddressRequest(
-      name: _nameTF.text,
+      name: this.nameTF.text,
       location: AddressLocation(
-        lat: currentPosition.call().latitude,
-        lng: currentPosition.call().longitude
+        lat: this.currentPosition.call().latitude,
+        lng: this.currentPosition.call().longitude
       ),
       country: this.country.call(),
       state: this.state.call(),
       city: this.city.call(),
-      barangay: this.barangay.call()
+      barangay: this.barangay.call(),
+      street: this.street.call(),
+      isoCode: this.isoCode.call()
     );
 
     newAddressSub = _apiService.addNewAddress(request).asStream().listen((response) {
+
       if(response.status == 200) {
         print('Success');
+        _box.write(Config.USER_CURRENT_STREET, response.data.street);
         _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
         _box.write(Config.USER_CURRENT_STATE, response.data.state);
         _box.write(Config.USER_CURRENT_CITY, response.data.city);
+        _box.write(Config.USER_CURRENT_IS_CODE, response.data.street);
         _box.write(Config.USER_CURRENT_BARANGAY, response.data.barangay);
         _box.write(Config.USER_CURRENT_LATITUDE, response.data.location.lat);
         _box.write(Config.USER_CURRENT_LONGITUDE,  response.data.location.lng);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, _nameTF.text);
+        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, nameTF.text);
         DashboardController.to
-        ..userCurrentNameOfLocation(_nameTF.text)
+        ..userCurrentNameOfLocation(nameTF.text)
         ..userCurrentAddress(this.userCurrentAddress.call())
         ..isOpenLocationSheet(false)
+        ..fetchAllAddresses()
         ..fetchRestaurants();
         Get.back(closeOverlays: true);
         
       } else {
+        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
         print('Failed to add new address');
       }
-    });
 
-    newAddressSub.onError((handleError) {
+    })..onError((handleError) {
+      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       print('Error add new address: $handleError');
     });
   }
@@ -199,7 +215,7 @@ class MapController extends GetxController {
           Padding(
             child: argument['type'] != Config.ADD_NEW_ADDRESS ? 
             Container() : TextField(
-              controller: _nameTF,
+              controller: nameTF,
               cursorColor: Colors.black,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(left: 10),
@@ -228,7 +244,7 @@ class MapController extends GetxController {
         ),
         child: Text('Cancel'), 
         onPressed: () {
-          _nameTF.clear();
+          nameTF.clear();
            Get.back();
           if (newAddressSub != null) newAddressSub.cancel();
         }
@@ -241,7 +257,7 @@ class MapController extends GetxController {
         child: Text('Looks good'), 
         onPressed: () {
           if(argument['type'] == Config.ADD_NEW_ADDRESS) {
-            if (_nameTF.text.isNullOrBlank) {
+            if (nameTF.text.isNullOrBlank) {
               errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
             } else {
               addAddress();

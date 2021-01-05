@@ -16,6 +16,8 @@ class NewAddressRequest {
         this.state,
         this.city,
         this.barangay,
+        this.street,
+        this.isoCode
     });
 
     String name;
@@ -24,6 +26,8 @@ class NewAddressRequest {
     String state;
     String city;
     String barangay;
+    String street;
+    String isoCode;
 
     factory NewAddressRequest.fromJson(Map<String, dynamic> json) => NewAddressRequest(
         name: json["name"],
@@ -32,6 +36,8 @@ class NewAddressRequest {
         state: json["state"],
         city: json["city"],
         barangay: json["barangay"],
+        street: json["street"],
+        isoCode: json["iso_code"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -41,6 +47,8 @@ class NewAddressRequest {
         "state": state,
         "city": city,
         "barangay": barangay,
+        "street": street,
+        "iso_code": isoCode
     };
 }
 

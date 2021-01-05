@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
-import 'package:letsbeeclient/models/getNotification.dart';
+import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
@@ -51,7 +51,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var message = ''.obs;
   var onGoingMessage = 'No Active Order'.obs;
   var historyMessage = 'No list of history'.obs;
+  var addressMessage = 'No list of address'.obs;
   var history = OrderHistoryResponse().obs;
+  var addresses = GetAllAddressResponse().obs;
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
   var activeOrderData = ActiveOrderData().obs;
@@ -64,6 +66,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     history.nil();
     restaurants.nil();
     activeOrderData.nil();
+    addresses.nil();
 
     userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
@@ -73,13 +76,36 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupAnimation();
     setupTabs();
     refreshToken();
-  
-    if (box.read('notification_list') != null) {
-      notificationDataFromJson(box.read('notification_list'));
-    }
-  
     
     super.onInit();
+  }
+
+  socketSetup() {
+    socketService.connectSocket();
+    socketService.socket
+    ..on('connect', (_) {
+      print('Connected');
+      fetchActiveOrder();
+      receiveUpdateOrder();
+      receiveChat();
+    })
+    ..on('connecting', (_) {
+      print('Connecting');
+      onGoingMessage('Connecting');
+    })
+    ..on('reconnecting', (_) {
+      print('Reconnecting');
+      onGoingMessage('Reconnecting');
+    })
+    ..on('disconnect', (_) {
+      onGoingMessage('No Active Order');
+      activeOrderData.nil();
+      print('Disconnected');
+    })
+    ..on('error', (_) {
+      onGoingMessage('No Active Order');
+      print('Error socket: $_');
+    });
   }
 
   void setupRefreshIndicator() {
@@ -130,14 +156,28 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
 
-  void updateCurrentLocation(String address) {
-     userCurrentAddress(address);
-     box.write(Config.USER_CURRENT_ADDRESS, address);
-     showLocationSheet(false);
+  void updateCurrentLocation(AddressData data) {
+    box.write(Config.USER_CURRENT_STREET, data.street);
+    box.write(Config.USER_CURRENT_COUNTRY, data.country);
+    box.write(Config.USER_CURRENT_STATE, data.state);
+    box.write(Config.USER_CURRENT_CITY, data.city);
+    box.write(Config.USER_CURRENT_IS_CODE, data.street);
+    box.write(Config.USER_CURRENT_BARANGAY, data.barangay);
+    box.write(Config.USER_CURRENT_LATITUDE, data.location.lat);
+    box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
+    box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
+
+    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    userCurrentAddress(address);
+    userCurrentNameOfLocation(data.name);
+    box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+    showLocationSheet(false);
+    fetchRestaurants();
   }
 
   void signOut() {
     socketService.disconnectSocket();
+    box.erase();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
         case Config.GOOGLE: _googleSignOut();
         break;
@@ -391,6 +431,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         box.write(Config.USER_TOKEN, response.data.accessToken);
       } 
 
+      fetchAllAddresses();
       fetchRestaurants();
       socketSetup();
       
@@ -410,31 +451,29 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
 
-  socketSetup() {
-    socketService.connectSocket();
-    socketService.socket
-    ..on('connect', (_) {
-      print('Connected');
-      fetchActiveOrder();
-      receiveUpdateOrder();
-      receiveChat();
-    })
-    ..on('connecting', (_) {
-      print('Connecting');
-      onGoingMessage('Connecting');
-    })
-    ..on('reconnecting', (_) {
-      print('Reconnecting');
-      onGoingMessage('Reconnecting');
-    })
-    ..on('disconnect', (_) {
-      onGoingMessage('No Active Order');
-      activeOrderData.nil();
-      print('Disconnected');
-    })
-    ..on('error', (_) {
-      onGoingMessage('No Active Order');
-      print('Error socket: $_');
+  fetchAllAddresses() { 
+    isLoading(true);
+    apiService.getAllAddress().then((response) {
+      isLoading(false);
+      if (response.status == 200) {
+
+        if (response.data.isNotEmpty) {
+          addresses(response);
+        } else {
+          addresses.nil();
+          addressMessage('No list of address');
+        }
+
+      } else {
+        addresses.nil();
+        addressMessage(Config.SOMETHING_WENT_WRONG);
+      }
+      
+    }).catchError((onError) {
+      addresses.nil();
+      isLoading(false);
+      addressMessage(Config.SOMETHING_WENT_WRONG);
+      print('Error fetch all address: $onError');
     });
   }
 }

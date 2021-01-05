@@ -1,39 +1,35 @@
 // To parse this JSON data, do
 //
-//     final newAddressResponse = newAddressResponseFromJson(jsonString);
+//     final getAllAddressResponse = getAllAddressResponseFromJson(jsonString);
 
 import 'dart:convert';
 
-NewAddressResponse newAddressResponseFromJson(String str) => NewAddressResponse.fromJson(json.decode(str));
+GetAllAddressResponse getAllAddressResponseFromJson(String str) => GetAllAddressResponse.fromJson(json.decode(str));
 
-String newAddressResponseToJson(NewAddressResponse data) => json.encode(data.toJson());
+String getAllAddressResponseToJson(GetAllAddressResponse data) => json.encode(data.toJson());
 
-class NewAddressResponse {
-    NewAddressResponse({
+class GetAllAddressResponse {
+    GetAllAddressResponse({
         this.status,
         this.data,
-        this.message,
     });
 
     int status;
-    Data data;
-    String message;
+    List<AddressData> data;
 
-    factory NewAddressResponse.fromJson(Map<String, dynamic> json) => NewAddressResponse(
+    factory GetAllAddressResponse.fromJson(Map<String, dynamic> json) => GetAllAddressResponse(
         status: json["status"],
-        data: Data.fromJson(json["data"]),
-        message: json["message"],
+        data: List<AddressData>.from(json["data"].map((x) => AddressData.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
-        "data": data.toJson(),
-        "message": message,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
     };
 }
 
-class Data {
-    Data({
+class AddressData {
+    AddressData({
         this.location,
         this.id,
         this.userId,
@@ -44,7 +40,6 @@ class Data {
         this.barangay,
         this.street,
         this.isoCode,
-        this.createdAt,
     });
 
     Location location;
@@ -57,9 +52,8 @@ class Data {
     String barangay;
     String street;
     String isoCode;
-    DateTime createdAt;
 
-    factory Data.fromJson(Map<String, dynamic> json) => Data(
+    factory AddressData.fromJson(Map<String, dynamic> json) => AddressData(
         location: Location.fromJson(json["location"]),
         id: json["id"],
         userId: json["user_id"],
@@ -70,7 +64,6 @@ class Data {
         barangay: json["barangay"],
         street: json["street"],
         isoCode: json["iso_code"],
-        createdAt: DateTime.parse(json["createdAt"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -84,7 +77,6 @@ class Data {
         "barangay": barangay,
         "street": street,
         "iso_code": isoCode,
-        "createdAt": createdAt.toIso8601String(),
     };
 }
 

@@ -149,7 +149,6 @@ class OnGoingPage extends GetView<DashboardController> {
                                       children: [
                                         Text('Contact #: ${_.activeOrderData.call().rider.user.number}', style: TextStyle(color: Colors.black, fontSize: 13)),
                                         Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                        Text('Estimated Delivery time: 30 Minutes', style: TextStyle(color: Colors.black, fontSize: 13)),
                                       ],
                                     ),
                                   )

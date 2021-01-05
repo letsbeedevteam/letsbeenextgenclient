@@ -61,7 +61,7 @@ class RiderLocationController extends GetxController {
 
     markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
     markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
-    markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+    // markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
 
     _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }

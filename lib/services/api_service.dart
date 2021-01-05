@@ -9,6 +9,7 @@ import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
+import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/newAddressRequest.dart';
 import 'package:letsbeeclient/models/newAddressResponse.dart';
@@ -17,7 +18,7 @@ import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
-import 'package:letsbeeclient/_utils/extensions.dart';
+// import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetxService {
 
@@ -223,23 +224,26 @@ class ApiService extends GetxService {
       }
     );
 
-    // print('Get order history: ${response.body}');
-    'Get order history: ${response.body}'.printWrapped();
+    print('Get order history: ${response.body}');
+    // 'Get order history: ${response.body}'.printWrapped();
 
     return orderHistoryResponseFromJson(response.body);
   }
 
-  Future<void> getAllAddress() async {
+  Future<GetAllAddressResponse> getAllAddress() async {
     
     final response = await http.get(
-      Config.BASE_URL + '/addresses?user_id=${_box.read(Config.USER_ID)}',
+      Config.BASE_URL + '/addresses',
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-    print('Get all address: $response');
+    print('Get all addresses: ${response.body}');
+    
+
+    return getAllAddressResponseFromJson(response.body);
   }
 
   Future<NewAddressResponse> addNewAddress(NewAddressRequest request) async {
@@ -252,6 +256,8 @@ class ApiService extends GetxService {
       },
       body: jsonEncode(request.toJson())
     );
+
+    print('New addresses: ${response.body}');
 
     return newAddressResponseFromJson(response.body);
   }
