@@ -31,6 +31,8 @@ class MenuController extends GetxController {
   var argument = Get.arguments;
   var message = ''.obs;
 
+  var hasNoChoices = false.obs;
+
   @override
   void onInit() {
     refreshCompleter = Completer();
@@ -101,18 +103,23 @@ class MenuController extends GetxController {
     choiceIds.clear();
     additionalIds.clear();
 
-    menu.value.choices.forEach((choice) {
-      choice.options.forEach((element) {
-        if (element.name == element.selectedValue) {
-          choiceIds.add(
-            ChoiceCart(
-              id: choice.id,
-              optionId: element.name == element.selectedValue ? element.id : null
-            )
-          );
-        }
+    if (menu.value.choices.isEmpty) {
+      hasNoChoices(true);
+    } else {
+      hasNoChoices(false);
+      menu.value.choices.forEach((choice) {
+        choice.options.forEach((element) {
+          if (element.name == element.selectedValue) {
+            choiceIds.add(
+              ChoiceCart(
+                id: choice.id,
+                optionId: element.name == element.selectedValue ? element.id : null
+              )
+            );
+          }
+        });
       });
-    });
+    }
 
     menu.value.additionals.forEach((additional) {
       additionalIds.add(
@@ -136,11 +143,15 @@ class MenuController extends GetxController {
       updateCartRequest(addToCart);
     } else {
 
-      if (choiceIds.isNotEmpty) {
+      if(hasNoChoices.call()) {
         sendCartRequest(addToCart);
       } else {
-        isAddToCartLoading(false);
-        errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+        if (choiceIds.isNotEmpty) {
+          sendCartRequest(addToCart);
+        } else {
+          isAddToCartLoading(false);
+          errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+        }
       }
     }
   }

@@ -30,6 +30,8 @@ class RiderLocationController extends GetxController {
   var isMapLoading = true.obs;
   var message = 'Loading google map...'.obs;
 
+  var hasPolyline = false.obs;
+
   BitmapDescriptor riderIcon;
 
   @override
@@ -39,6 +41,12 @@ class RiderLocationController extends GetxController {
     currentPosition(LatLng(activeOrderData.call().address.location.lat, activeOrderData.call().address.location.lng));
     receiveRiderLocation();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    hasPolyline(false);
+    super.onClose();
   }
 
   void setupIcon() async {
@@ -51,39 +59,50 @@ class RiderLocationController extends GetxController {
       final rider = RiderLocationData.fromJson(response['data']);
       riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
       markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+
+      if (!hasPolyline.call()) {
+        hasPolyline(true);
+        polylineCoordinates.call().clear();
+        _setupPolylines(sourceLocation: riderPosition.call());
+      } 
     });
   }
 
   void setupMarker() async {
-    double latitude = double.parse(activeOrderData.call().activeRestaurant.latitude);
-    double longitude = double.parse(activeOrderData.call().activeRestaurant.longitude);
-    final restaurantLocation = LatLng(latitude, longitude);
+    // double latitude = double.parse(activeOrderData.call().activeRestaurant.latitude);
+    // double longitude = double.parse(activeOrderData.call().activeRestaurant.longitude);
+    // // final restaurantLocation = LatLng(latitude, longitude);
 
-    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
-    markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
+    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), infoWindow: InfoWindow(title: 'You'));
+    // markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
     // markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
-
-    _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }
 
-  void _setupPolylines({LatLng destLocation, LatLng sourceLocation}) async {
+  void _setupPolylines({LatLng sourceLocation}) async {
     message('Loading coordinates...');
-
     final secretLoad = await _secretLoader.loadKey();
-
-    await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(destLocation.latitude, destLocation.longitude)).then((result) {
-      if (result.points.isNotEmpty) {
-        result.points.forEach((PointLatLng point){
-          polylineCoordinates.value.add(LatLng(point.latitude,point.longitude));
+    print('sourceLocation $sourceLocation');
+    // if (sourceLocation.latitude != null || sourceLocation.longitude != null || sourceLocation.isNull) {
+      try {
+        await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(currentPosition.call().latitude, currentPosition.call().longitude)).then((result) {
+        
+          if (result.points.isNotEmpty) {
+            
+            result.points.forEach((PointLatLng point){
+              polylineCoordinates.call().add(LatLng(point.latitude,point.longitude));
+            });
+              
+            polylines[PolylineId('poly')] = Polyline(polylineId: PolylineId('poly'), width: 5, geodesic: true, jointType: JointType.round, color: Colors.red, points: polylineCoordinates.call());
+            isMapLoading(false);
+          }
+        }).catchError((onError) {
+          _setupPolylines();
+          print('Polyline error: $onError');
         });
-          
-        polylines[PolylineId('poly')] =  Polyline(polylineId: PolylineId('poly'), width: 5, color: Colors.red, points: polylineCoordinates.value);
-        isMapLoading(false);
+      } catch (e) {
+        print(e.toString());
       }
-    }).catchError((onError) {
-      setupMarker();
-      print('Polyline error: $onError');
-    });
+    // }
   }
 
   currentRiderLocation() async {

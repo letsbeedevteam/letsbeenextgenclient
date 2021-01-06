@@ -27,6 +27,7 @@ class MapController extends GetxController {
   var isMapLoading = true.obs;
   var isBounced = false.obs;
   var isLoading = false.obs;
+  var isAddAddressLoading = false.obs;
 
   var currentPosition = LatLng(0, 0).obs;
   var userCurrentAddress = 'Getting your address...'.obs;
@@ -155,7 +156,7 @@ class MapController extends GetxController {
   }
 
   void addAddress() {
-    
+    isAddAddressLoading(true);
     final request = NewAddressRequest(
       name: this.nameTF.text,
       location: AddressLocation(
@@ -171,7 +172,7 @@ class MapController extends GetxController {
     );
 
     newAddressSub = _apiService.addNewAddress(request).asStream().listen((response) {
-
+      isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
         _box.write(Config.USER_CURRENT_STREET, response.data.street);
@@ -197,77 +198,12 @@ class MapController extends GetxController {
         print('Failed to add new address');
       }
 
-    })..onError((handleError) {
+    });
+    
+    newAddressSub.onError((handleError) {
+      isAddAddressLoading(false);
       errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       print('Error add new address: $handleError');
     });
-  }
-
-  showDialog() {
-
-    Get.defaultDialog(
-      title: 'Confirm your location',
-      content: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(userCurrentAddress.call(), textAlign: TextAlign.center),
-          Padding(
-            child: argument['type'] != Config.ADD_NEW_ADDRESS ? 
-            Container() : TextField(
-              controller: nameTF,
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(left: 10),
-                hintText: 'Name (ex: Home, Work)',
-                fillColor: Colors.grey.shade200,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  borderSide: BorderSide.none
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
-            ),
-            padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-          )
-        ],
-      ),
-      barrierDismissible: false,
-      cancel: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Cancel'), 
-        onPressed: () {
-          nameTF.clear();
-           Get.back();
-          if (newAddressSub != null) newAddressSub.cancel();
-        }
-      ),
-      confirm: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Looks good'), 
-        onPressed: () {
-          if(argument['type'] == Config.ADD_NEW_ADDRESS) {
-            if (nameTF.text.isNullOrBlank) {
-              errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
-            } else {
-              addAddress();
-            }
-          } else {
-            Get.back();
-            Future.delayed(Duration(seconds: 1)).then((value) => Get.toNamed(Config.VERIFY_NUMBER_ROUTE));
-          }
-        }
-      ),
-    );
   }
 }

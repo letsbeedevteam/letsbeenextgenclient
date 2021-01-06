@@ -55,7 +55,6 @@ class RestaurantPage extends GetView<RestaurantController> {
                             Column(
                               children: [
                                 Container(
-                                  color: Colors.black,
                                   height: 200,
                                   child: Center(
                                     child: Hero(
@@ -67,7 +66,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                           autoPlay: false,
                                           disableCenter: true,                                    
                                         ),
-                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                       ),
                                     ),
                                   ),
@@ -137,8 +136,8 @@ class RestaurantPage extends GetView<RestaurantController> {
   Widget _buildItem(List<Menu> menus, {int restaurantId}) {
     return Container(
       child: GridView.count(
-        crossAxisCount: menus.length,
-        padding: EdgeInsets.all(4.0),
+        crossAxisCount: 2,
+        padding: EdgeInsets.all(10.0),
         childAspectRatio: 8.0 / 9.0,
         children: menus.map((menu) =>  _buildAvailableMenu(menu, restaurantId: restaurantId)).toList(),
       )
@@ -169,12 +168,12 @@ class RestaurantPage extends GetView<RestaurantController> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                    child: Text(menu.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                    child: Text(menu.name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Text('₱ ${menu.price}', style: TextStyle(fontSize: 13), textAlign: TextAlign.start),
+                    child: Text('₱ ${menu.price}', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
                   )
                 ],
               ),

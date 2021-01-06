@@ -37,7 +37,6 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             children: [
                               Container(
-                                color: Colors.black,
                                 height: 200,
                                   child: Center(
                                     child: Container(
@@ -47,7 +46,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         autoPlay: false,
                                         disableCenter: true,                                    
                                       ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                     ),
                                   )
                                 ),
@@ -63,7 +62,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(width: 2),
-                                color: Colors.transparent
+                                color: Colors.white
                               ),
                               child: Hero(
                                 tag: _.data.call().id,

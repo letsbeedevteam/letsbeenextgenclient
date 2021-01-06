@@ -48,6 +48,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isLoading = false.obs;
   var isSearching = false.obs;
   var isOnChat = false.obs;
+  var hasPickedUp = false.obs;
   var message = ''.obs;
   var onGoingMessage = 'No Active Order'.obs;
   var historyMessage = 'No list of history'.obs;
@@ -175,9 +176,18 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     fetchRestaurants();
   }
 
+  void clearData() {
+    box.erase();
+    history.nil();
+    addresses.nil();
+    restaurants.nil();
+    searchRestaurants.nil();
+    activeOrderData.nil();
+  }
+
   void signOut() {
     socketService.disconnectSocket();
-    box.erase();
+    clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
         case Config.GOOGLE: _googleSignOut();
         break;
@@ -232,13 +242,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   goToChatPage() {
-    to.isOnChat(true);
+    isOnChat(true);
     activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
   }
 
   goToRiderLocationPage() {
-    activeOrderData.call().rider != null ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
+    hasPickedUp.call() ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
   }
 
@@ -252,6 +262,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             activeOrderData.nil();
           } else {
             activeOrderData(ActiveOrderData.fromJson(response['data']));
+            if (activeOrderData.call().status == 'rider-picked-up') hasPickedUp(true); else hasPickedUp(false);
           }
         } else {
           onGoingMessage(Config.SOMETHING_WENT_WRONG);
@@ -271,6 +282,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
         switch (order.data.status) {
           case 'restaurant-declined': {
+            hasPickedUp(false);
             message = 'Your order in $name has been declined by the Restaurant';
             pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             onGoingMessage('No Active Order');
@@ -278,24 +290,28 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
           }
             break;
           case 'restaurant-accepted': {
+            hasPickedUp(false);
             message = 'Your order in $name has been accepted by the Restaurant';
             pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-accepted': {
+            hasPickedUp(false);
             message = 'Your order in $name has been accepted by the Let\'s Bee Rider';
             pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'rider-picked-up': {
+            hasPickedUp(true);
             message = 'Let\'s Bee Rider has picked up your order';
             pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             activeOrderData(ActiveOrderData.fromJson(response['data']));
           }
             break;
           case 'delivered': {
+            hasPickedUp(false);
             message = 'Your order in ${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName} has been delivered';
             pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
             onGoingMessage('No Active Order');

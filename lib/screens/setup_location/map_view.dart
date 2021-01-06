@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/setup_location/controllers/map_controller.dart';
 
 class MapPage extends GetView<MapController> {
@@ -110,7 +111,7 @@ class MapPage extends GetView<MapController> {
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
                         ),
-                        onPressed: () => _.isMapLoading.call() ? null : _.showDialog()
+                        onPressed: () => _.isMapLoading.call() ? null : showDialog()
                       );
                     },
                   ),
@@ -121,6 +122,89 @@ class MapPage extends GetView<MapController> {
         ),
       ),
       onWillPop: controller.willPopCallback,
+    );
+  }
+
+   showDialog() {
+
+    Get.defaultDialog(
+      title: 'Confirm your location',
+      content: GetX<MapController>(
+        builder: (_) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(_.userCurrentAddress.call(), textAlign: TextAlign.center),
+              Padding(
+                child: _.argument['type'] != Config.ADD_NEW_ADDRESS ? 
+                Container() : IgnorePointer(
+                  ignoring: _.isAddAddressLoading.call(),
+                  child: TextField(
+                    controller: _.nameTF,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 10),
+                      hintText: 'Name (ex: Home, Work)',
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        borderSide: BorderSide.none
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+              )
+            ],
+          );
+        },
+      ),
+      barrierDismissible: false,
+      cancel: GetBuilder<MapController>(
+        builder: (_) {
+          return RaisedButton(
+            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text('Cancel'), 
+            onPressed: () {
+              _.nameTF.clear();
+              Get.back();
+              if (_.newAddressSub != null) _.newAddressSub.cancel();
+            }
+          );
+        },
+      ),
+      confirm: GetX<MapController>(
+        builder: (_) {
+          return RaisedButton(
+            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: _.isAddAddressLoading.call() ? SizedBox(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Looks good'), 
+            onPressed: () {
+              if(_.argument['type'] == Config.ADD_NEW_ADDRESS) {
+                if (_.nameTF.text.isNullOrBlank) {
+                  errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
+                } else {
+                  if (!_.isAddAddressLoading.call()) _.addAddress();
+                }
+              } else {
+                Get.back();
+                Future.delayed(Duration(seconds: 1)).then((value) => Get.toNamed(Config.VERIFY_NUMBER_ROUTE));
+              }
+            }
+          );
+        },
+      ),
     );
   }
 }
