@@ -13,21 +13,25 @@ class GetCart {
         this.status,
         this.total,
         this.data,
+        this.deliveryFee
     });
 
     int status;
+    double deliveryFee;
     int total;
     List<CartData> data;
 
     factory GetCart.fromJson(Map<String, dynamic> json) => GetCart(
         status: json["status"],
         total: json["total"],
+        deliveryFee: json['deliveryFee'].toDouble(),
         data: json["data"] == null ? List<CartData>() : List<CartData>.from(json["data"].map((x) => CartData.fromJson(x)))
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
         "total": total,
+        "deliveryFee": deliveryFee,
         "data": List<dynamic>.from(data.map((x) => x.toJson())),
     };
 }

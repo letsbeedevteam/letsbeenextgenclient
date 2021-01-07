@@ -159,7 +159,7 @@ class ApiService extends GetxService {
   Future<GetCart> getActiveCarts({int restaurantId}) async {
     
     final response = await http.get(
-      Config.BASE_URL + '/carts?restaurant_id=$restaurantId',
+      Config.BASE_URL + '/carts?restaurant_id=$restaurantId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',

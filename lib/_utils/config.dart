@@ -1,8 +1,8 @@
 class Config {
 
   // Base URLs
-  static const BASE_URL = 'http://192.168.100.14:8000';
-  // static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
+  // static const BASE_URL = 'http://192.168.100.14:8000';
+  static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
 
   static const CUSTOMER_NAMESPACE = '/customer';
 

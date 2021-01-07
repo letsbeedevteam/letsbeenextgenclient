@@ -186,6 +186,7 @@ class MapController extends GetxController {
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
         _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, nameTF.text);
         DashboardController.to
+        ..isSelectedLocation(true)
         ..userCurrentNameOfLocation(nameTF.text)
         ..userCurrentAddress(this.userCurrentAddress.call())
         ..isOpenLocationSheet(false)

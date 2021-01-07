@@ -111,14 +111,14 @@ class CartPage extends GetView<CartController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.totalPrice.call()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${_.totalPrice.call().toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ 0.00', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${_.cart.call().deliveryFee.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Container(
@@ -128,7 +128,7 @@ class CartPage extends GetView<CartController> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${_.totalPrice.call()}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                      Text('₱ ${(_.totalPrice.call() + _.cart.call().deliveryFee).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
                                 )

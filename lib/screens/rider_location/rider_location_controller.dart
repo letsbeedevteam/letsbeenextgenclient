@@ -59,12 +59,7 @@ class RiderLocationController extends GetxController {
       final rider = RiderLocationData.fromJson(response['data']);
       riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
       markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
-
-      if (!hasPolyline.call()) {
-        hasPolyline(true);
-        polylineCoordinates.call().clear();
-        _setupPolylines(sourceLocation: riderPosition.call());
-      } 
+      _setupPolylines(sourceLocation: riderPosition.call());
     });
   }
 
@@ -81,28 +76,21 @@ class RiderLocationController extends GetxController {
   void _setupPolylines({LatLng sourceLocation}) async {
     message('Loading coordinates...');
     final secretLoad = await _secretLoader.loadKey();
-    print('sourceLocation $sourceLocation');
-    // if (sourceLocation.latitude != null || sourceLocation.longitude != null || sourceLocation.isNull) {
-      try {
-        await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(currentPosition.call().latitude, currentPosition.call().longitude)).then((result) {
+    await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(currentPosition.call().latitude, currentPosition.call().longitude)).then((result) {
+      polylineCoordinates.call().clear();
+      if (result.points.isNotEmpty) {
         
-          if (result.points.isNotEmpty) {
-            
-            result.points.forEach((PointLatLng point){
-              polylineCoordinates.call().add(LatLng(point.latitude,point.longitude));
-            });
-              
-            polylines[PolylineId('poly')] = Polyline(polylineId: PolylineId('poly'), width: 5, geodesic: true, jointType: JointType.round, color: Colors.red, points: polylineCoordinates.call());
-            isMapLoading(false);
-          }
-        }).catchError((onError) {
-          _setupPolylines();
-          print('Polyline error: $onError');
+        result.points.forEach((PointLatLng point){
+          polylineCoordinates.call().add(LatLng(point.latitude,point.longitude));
         });
-      } catch (e) {
-        print(e.toString());
+          
+        polylines[PolylineId('poly')] = Polyline(polylineId: PolylineId('poly'), width: 5, geodesic: true, jointType: JointType.round, color: Colors.red, points: polylineCoordinates.call());
+        isMapLoading(false);
       }
-    // }
+    }).catchError((onError) {
+      _setupPolylines(sourceLocation: riderPosition.call());
+      print('Polyline error: $onError');
+    });
   }
 
   currentRiderLocation() async {
@@ -115,5 +103,10 @@ class RiderLocationController extends GetxController {
     setupMarker();
   }
 
-  onCameraMovePosition(CameraPosition position) => currentPosition(LatLng(position.target.latitude, position.target.longitude));
+  gpsLocation() async {
+    final c = await _mapController.future;
+    c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition.call(), zoom: 18)));
+  }
+
+  // onCameraMovePosition(CameraPosition position) => currentPosition(LatLng(position.target.latitude, position.target.longitude));
 }

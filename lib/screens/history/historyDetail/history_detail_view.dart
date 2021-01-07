@@ -26,7 +26,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   title: GetX<HistoryDetailController>(
-                    builder: (_) => Text('${_.data.call().restaurant.name} - ${_.data.call().restaurant.locationName}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    builder: (_) => Text(_.title.call(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ),
                   centerTitle: true,
                   background: GetX<HistoryDetailController>(
@@ -46,7 +46,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         autoPlay: false,
                                         disableCenter: true,                                    
                                       ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                     ),
                                   )
                                 ),
@@ -147,7 +147,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${_.data.call().fee.total.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                      Text('₱ ${(_.data.call().fee.total + _.data.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
                                 )

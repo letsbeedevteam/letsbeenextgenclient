@@ -214,6 +214,7 @@ class MenuController extends GetxController {
       menu(restaurant);
 
       for (var item in cart.value.additionals) {
+        print(item.name);
         menu.value.additionals.map((e) => e.options).forEach((element) {
             var name = item.picks.map((e) => e.name);
             name.forEach((additional) {

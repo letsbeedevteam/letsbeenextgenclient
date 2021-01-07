@@ -64,9 +64,9 @@ class RestaurantPage extends GetView<RestaurantController> {
                                         child: CarouselSlider(
                                         options: CarouselOptions(
                                           autoPlay: false,
-                                          disableCenter: true,                                    
+                                          disableCenter: true, 
                                         ),
-                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
                                       ),
                                     ),
                                   ),
@@ -173,7 +173,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Text('₱ ${menu.price}', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
+                    child: Text('₱ ${menu.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
                   )
                 ],
               ),

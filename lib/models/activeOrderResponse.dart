@@ -417,6 +417,13 @@ class ActiveRestaurant {
       latitude: json['latitude'],
       longitude: json['longitude']
   );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "location_name": locationName,
+    "latitude": latitude,
+    "longitude": longitude
+  };
 }
 
 class Rider {

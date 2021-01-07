@@ -50,61 +50,91 @@ class HomePage extends StatelessWidget {
         GetX<DashboardController>(
           builder: (_) {
             return Flexible(
-              child: RefreshIndicator(
-                onRefresh: () {
-                  _.refreshToken();
-                  return _.refreshCompleter.future;
-                },
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    controller: _.scrollController,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: _.restaurants.call() != null ?
-                    Column(
+              child: Stack(
+                alignment: _.restaurants.call() != null ? Alignment.topCenter : Alignment.center,
+                children: [
+                  RefreshIndicator(
+                    onRefresh: () {
+                      _.refreshToken();
+                      return _.refreshCompleter.future;
+                    },
+                    child: IgnorePointer(
+                      ignoring: _.isSelectedLocation.call(),
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          controller: _.scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: _.restaurants.call() != null ?
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                                    ),
+                                    Container(
+                                      height: 80,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList()
+                                      ),
+                                    ),
+                                    Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
+                                  ],
+                                ),
+                              ) : Container(),
+                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              _.searchRestaurants.call().isNotEmpty ? 
+                              Column(
+                                children: [
+                                  Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
+                                  IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate))
+                                ],
+                              ) : Column(
+                                children: [
+                                  Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                                  RaisedButton(
+                                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                                    child: Text('Refresh'),
+                                    onPressed: () => _.refreshToken(),
+                                  )
+                                ],
+                              )
+                            ],
+                          ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),
+                        ),
+                      ),
+                    )
+                  ),
+                  _.isSelectedLocation.call() ? Container(
+                    margin: EdgeInsets.only(top: 70),
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-                              ),
-                              Container(
-                                height: 80,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList()
-                                ),
-                              ),
-                              Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
-                            ],
-                          ),
-                        ) : Container(),
+                        SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
+                        ),
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                        _.searchRestaurants.call().isNotEmpty ? 
-                        Column(
-                          children: [
-                            Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
-                            IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate))
-                          ],
-                        ) : Column(
-                          children: [
-                            Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
-                            RaisedButton(
-                              color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                              child: Text('Refresh'),
-                              onPressed: () => _.refreshToken(),
-                            )
-                          ],
-                        )
+                        Text('Loading your location...', style: TextStyle(fontWeight: FontWeight.bold))
                       ],
-                    ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),
-                  ),
-                )
+                    ),
+                  ) : Container()
+                ],
               )
             );
           },
@@ -219,7 +249,7 @@ class HomePage extends StatelessWidget {
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Text('₱ ${menu.price}', style: TextStyle(fontSize: 13), textAlign: TextAlign.start),
+                    child: Text('₱ ${menu.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 13), textAlign: TextAlign.start),
                   )
                 ],
               ),

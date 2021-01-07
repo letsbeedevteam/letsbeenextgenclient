@@ -11,15 +11,18 @@ class MapPage extends GetView<MapController> {
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: controller.willPopCallback),
           title: GetX<MapController>(
-            builder: (_) => _.isBounced.call() || _.isLoading.call() ? Text('Loading location...', style: TextStyle(fontSize: 15)) : Container(),
+            builder: (_) => _.isBounced.call() || _.isLoading.call() ? Text('Loading location...', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)) : Container(),
           ),
           actions: [
             SizedBox(height: 45, width: 45, child: IconButton(icon: Image.asset(Config.PNG_PATH + 'search.png'), onPressed: () => controller.handleSearchLocation())),
@@ -38,7 +41,7 @@ class MapPage extends GetView<MapController> {
                         future: Future.delayed(Duration(seconds: 2)),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            mapType: MapType.normal,
+                            mapType: MapType.hybrid,
                             initialCameraPosition: CameraPosition(
                               zoom: 18,
                               target: _.currentPosition.call()

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:intl/intl.dart';
 
 class OnGoingPage extends GetView<DashboardController> {
 
@@ -25,7 +26,7 @@ class OnGoingPage extends GetView<DashboardController> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Text("${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.locationName}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text(_.title.call(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   Container(
                     child: Column(
@@ -68,7 +69,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.activeOrderData.call().fee.total.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${(_.activeOrderData.call().fee.total + _.activeOrderData.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                               )
@@ -116,6 +117,17 @@ class OnGoingPage extends GetView<DashboardController> {
                           margin: EdgeInsets.only(top: 5),
                           child: Divider(thickness: 2, color: Colors.grey.shade200),
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Date', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                            Text(DateFormat('MMMM dd, yyyy (hh:mm a)').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                        ),
                         Container(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,7 +160,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text('Contact #: ${_.activeOrderData.call().rider.user.number}', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                        Text('Status: On the way to ${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                        Text('Status: On the way to ${_.title}', style: TextStyle(color: Colors.black, fontSize: 13)),
                                       ],
                                     ),
                                   )
@@ -351,7 +363,7 @@ class OnGoingPage extends GetView<DashboardController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} - ${controller.activeOrderData.call().activeRestaurant.locationName}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                Text('Do you really want to cancel your order at ${controller.title.call()}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 Padding(padding: EdgeInsets.all(10)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),

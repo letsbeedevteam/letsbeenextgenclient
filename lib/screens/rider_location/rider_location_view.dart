@@ -17,7 +17,8 @@ class RiderLocationPage extends GetView<RiderLocationController> {
         centerTitle: false,
         leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
         actions: [
-          IconButton(icon: Icon(FontAwesomeIcons.motorcycle, color: Colors.black), onPressed: controller.currentRiderLocation)
+          IconButton(icon: Icon(FontAwesomeIcons.motorcycle, color: Colors.black), onPressed: controller.currentRiderLocation),
+          IconButton(icon: Image.asset(Config.PNG_PATH + 'gps.png'), onPressed: () => controller.gpsLocation())
         ],
       ),
       body: Container(
@@ -31,7 +32,7 @@ class RiderLocationPage extends GetView<RiderLocationController> {
             GetX<RiderLocationController>(
               builder: (_) {
                 return GoogleMap(
-                    mapType: MapType.normal,
+                    mapType: MapType.hybrid,
                     initialCameraPosition: CameraPosition(
                       zoom: 18,
                       target: _.currentPosition.call()
@@ -42,7 +43,7 @@ class RiderLocationPage extends GetView<RiderLocationController> {
                     markers: Set<Marker>.of(_.markers.values),
                     polylines: Set<Polyline>.of(_.polylines.values),
                     onMapCreated: _.onMapCreated,
-                    onCameraMove: _.onCameraMovePosition
+                    // onCameraMove: _.onCameraMovePosition
                   );
               },
             ),

@@ -40,6 +40,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final scrollController = ScrollController();
   final widgets = [HomePage(), NotificationPage(), AccountSettingsPage(), ReviewsPage(), OrderPage()];
 
+  var title = ''.obs;
   var pageIndex = 0.obs;
   var userCurrentNameOfLocation = ''.obs;
   var userCurrentAddress = ''.obs;
@@ -49,10 +50,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isSearching = false.obs;
   var isOnChat = false.obs;
   var hasPickedUp = false.obs;
+  var isSelectedLocation = false.obs;
   var message = ''.obs;
-  var onGoingMessage = 'No Active Order'.obs;
+  var onGoingMessage = 'Loading...'.obs;
   var historyMessage = 'No list of history'.obs;
-  var addressMessage = 'No list of address'.obs;
+  var addressMessage = 'Loading...'.obs;
   var history = OrderHistoryResponse().obs;
   var addresses = GetAllAddressResponse().obs;
   var restaurants = Restaurant().obs;
@@ -92,19 +94,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     })
     ..on('connecting', (_) {
       print('Connecting');
-      onGoingMessage('Connecting');
+      onGoingMessage('Loading...');
     })
     ..on('reconnecting', (_) {
       print('Reconnecting');
-      onGoingMessage('Reconnecting');
+      onGoingMessage('Loading...');
     })
     ..on('disconnect', (_) {
-      onGoingMessage('No Active Order');
+      onGoingMessage('Loading...');
       activeOrderData.nil();
       print('Disconnected');
     })
     ..on('error', (_) {
-      onGoingMessage('No Active Order');
+      onGoingMessage('Loading...');
       print('Error socket: $_');
     });
   }
@@ -169,6 +171,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
 
     final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    isSelectedLocation(true);
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
@@ -253,6 +256,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchActiveOrder() {
+    onGoingMessage('Loading...');
     if (socketService.socket != null) {
        socketService.socket.emitWithAck('active-order', '', ack: (response) {
         'Active order $response'.printWrapped();
@@ -262,6 +266,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             activeOrderData.nil();
           } else {
             activeOrderData(ActiveOrderData.fromJson(response['data']));
+            if (activeOrderData.call().activeRestaurant.locationName.isNullOrBlank) {
+              this.title("${activeOrderData.call().activeRestaurant.name}");
+            } else {
+              this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
+            }
             if (activeOrderData.call().status == 'rider-picked-up') hasPickedUp(true); else hasPickedUp(false);
           }
         } else {
@@ -330,7 +339,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       final test = ChatData.fromJson(response['data']);
       if (!isOnChat.call()) {
         if (box.read(Config.USER_ID) != test.userId) {
-          pushNotificationService.showNotification(title: 'You have a new message from Rider', body: test.message, payload: 'rider-chat');
+          pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: 'rider-chat');
         }
       }
     });
@@ -387,10 +396,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
     apiService.getAllRestaurants().then((response) {
       isLoading(false);
+      isSelectedLocation(false);
       tfSearchController.text = '';
       _setRefreshCompleter();
       if (response.status == 200) {
-        
         restaurants(response);
 
         searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
@@ -403,6 +412,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       
     }).catchError((onError) {
          isLoading(false);
+         isSelectedLocation(false);
         _setRefreshCompleter();
         if (onError.toString().contains('Connection failed')) {
           message(Config.NO_INTERNET_CONNECTION);
@@ -467,7 +477,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
 
-  fetchAllAddresses() { 
+  fetchAllAddresses() {
     isLoading(true);
     apiService.getAllAddress().then((response) {
       isLoading(false);
