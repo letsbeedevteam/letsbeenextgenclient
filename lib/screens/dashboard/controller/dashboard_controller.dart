@@ -79,7 +79,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupAnimation();
     setupTabs();
     refreshToken();
-    
+
     super.onInit();
   }
 
@@ -137,15 +137,17 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void setupTabs() {
     tabController = TabController(length: 2, vsync: this)..addListener(() {
-      tabController.index == 0 ?  animationController.reverse() :  animationController.forward();
+      if(tabController.index == 0) {
+        animationController.reverse();
+      } else {
+        animationController.forward();
+      }
     });
 
     pageController = PageController();
   }
 
-  void showLocationSheet(bool isOpenLocationSheet) {
-    this.isOpenLocationSheet(isOpenLocationSheet);
-  }
+  void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
@@ -288,7 +290,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       final order = ActiveOrder.fromJson(response);
       String message;
       if (order.status == 200) {
-        final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
+        
+        final name = order.data.activeRestaurant.locationName.isNullOrBlank ? order.data.activeRestaurant.name : '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
+        
         switch (order.data.status) {
           case 'restaurant-declined': {
             hasPickedUp(false);

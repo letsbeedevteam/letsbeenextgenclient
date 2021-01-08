@@ -16,10 +16,13 @@ class ChatController extends GetxController {
   
   var activeOrderData = ActiveOrderData().obs;
   var chat = RxList<ChatData>().obs;
+  var connectMessage = 'Connecting'.obs;
   var message = ''.obs;
   var title = ''.obs;
   var isLoading = false.obs;
   var isSending = false.obs;
+  var isConnected = true.obs;
+  var color = Colors.orange.obs;
 
   @override
   void onInit() {
@@ -30,6 +33,45 @@ class ChatController extends GetxController {
     } else {
       this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
     }
+
+    _socketService.socket
+    ..on('connect', (_) {
+      Future.delayed(Duration(seconds: 2)).then((value) => isConnected(true));
+      print('Connected');
+      color(Colors.green);
+      connectMessage('Connected');
+
+      chat.call().where((data) => !data.isSent).forEach((element) {
+        messageRiderRequest(element.message);
+      });
+    })
+    ..on('connecting', (_) {
+      isConnected(false);
+      print('Connecting');
+      color(Colors.orange);
+      connectMessage('Connecting');
+    })
+    ..on('reconnecting', (_) {
+      isConnected(false);
+      isSending(false);
+      print('Reconnecting');
+      color(Colors.orange);
+      connectMessage('Reconnecting');
+    })
+    ..on('disconnect', (_) {
+      isConnected(false);
+      isSending(false);
+      color(Colors.red);
+      connectMessage('Disconnected');
+      print('Disconnected');
+    })
+    ..on('error', (_) {
+      isConnected(false);
+      isSending(false);
+      color(Colors.red);
+      print('Error socket: $_');
+      connectMessage('Your message can\'t be sent. Please try again');
+    });
 
     fetchOrderChats();
     updadateReceiveChat();
@@ -45,29 +87,37 @@ class ChatController extends GetxController {
     if (replyTF.text.isNullOrBlank) {
       alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
     } else {
-      isSending(true);
-      try {
-        _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': replyTF.text}, ack: (response) {
-          print('sent $response');
-          isSending(false);
-          if (response['status'] == 200) {
-            final test = ChatData.fromJson(response['data']);
-            chat.call().add(test);
-            chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
-            replyTF.clear();
-            scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
-          } else {
-            errorSnackbarTop(title: 'Oops!', message: 'Your message cannot be sent. Please try again');
-          }
-        });
-      } on Exception catch (_) {
-        print('never reached: $_');
-        isSending(false);
-      } catch (error) {
-        print('ERROR SEND MESSAGE: $error');
-        isSending(false);
-      }
+
+      String sendMessage = replyTF.text;
+
+      chat.call().add(ChatData(
+        id: chat.call().last.id + 1,
+        orderId: activeOrderData.call().id,
+        userId: activeOrderData.call().userId,
+        message: replyTF.text,
+        createdAt: DateTime.now(),
+        isSent: false
+      ));
+
+      replyTF.clear();
+      messageRiderRequest(sendMessage);
     }
+  }
+
+  messageRiderRequest(String message) {
+    _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
+      print('sent $response');
+      if (response['status'] == 200) {
+        final test = ChatData.fromJson(response['data']);
+        chat.call().removeWhere((element) => !element.isSent);
+        chat.call().add(test);
+        chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        replyTF.clear();
+        scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+      } else {
+        errorSnackbarTop(title: 'Oops!', message: 'Your message cannot be sent. Please try again');
+      }
+    });
   }
 
   updadateReceiveChat() {
@@ -87,12 +137,11 @@ class ChatController extends GetxController {
       'fetch: $response'.printWrapped();
       isLoading(false);
       if (response['status'] == 200) {
-          
-        var getResponse = ChatResponse.fromJson(response);
 
-        chat.call().addAll(getResponse.data);
-        chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        final chatResponse = ChatResponse.fromJson(response);
 
+        chat.call().addAll(chatResponse.data);
+        chat.call().sort((a, b) => a.id.compareTo(b.id));
         if(chat.call().isEmpty) message('No Messages');
 
       } else {
