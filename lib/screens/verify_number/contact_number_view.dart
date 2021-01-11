@@ -58,6 +58,7 @@ class ContactNumberPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: Colors.black),
                     ),
+                    hintText: '(Ex: 9061234567)',
                     fillColor: Colors.grey.shade200,
                     filled: true,
                     counterText: "",

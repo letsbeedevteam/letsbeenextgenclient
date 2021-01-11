@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends GetView<DashboardController> {
   
   @override
   Widget build(BuildContext context) {
@@ -60,37 +61,35 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
               Flexible(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    PageView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _.pageController,
-                      onPageChanged: (index) {
-                        _.pageIndex(index);
-                        _.showLocationSheet(false);
-                      },
-                      children: _.widgets,
-                    ),
-                    // _.activeOrderData.call() == null ? Container() :
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    //   child: SizedBox(
-                    //     width: Get.width,
-                    //     child: RaisedButton(
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //       color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                    //       child: Text('Order on going'),
-                    //       onPressed: () => print('On going'),
-                    //     ),
-                    //   ),
-                    // )
-                  ],
-                )
+                child: PageView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _.pageController,
+                  onPageChanged: (index) {
+                    _.pageIndex(index);
+                    _.showLocationSheet(false);
+                  },
+                  children: _.widgets,
+                ),
               )
             ],
+          ),
+          floatingActionButton: Badge(
+            badgeContent: Text('1', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            padding: EdgeInsets.all(10),
+            showBadge: _.activeOrderData.call() != null,
+            child: FloatingActionButton(
+              splashColor: Colors.transparent,
+              backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(30)
+              ),
+              onPressed: () {
+                _activeOrderDialog();
+                _.fetchActiveOrder();
+              },
+              child: Icon(Icons.restaurant_sharp),
+            ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
@@ -106,7 +105,7 @@ class DashboardPage extends StatelessWidget {
               customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
               customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              customNavigationBarItem('Order', icon: Icon(FontAwesomeIcons.clipboardList))
+              customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList))
             ],
           )
         );
@@ -196,7 +195,7 @@ class DashboardPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child:  Text(address)),
-                GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
+                // GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
               ],
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -206,6 +205,99 @@ class DashboardPage extends StatelessWidget {
       onTap: () {
         DashboardController.to.updateCurrentLocation(data);
       },
+    );
+  }
+
+  Widget _buildActiveOrderList() {
+    return GetX<DashboardController>(
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {
+            Get.back(result: 'active-dialog');
+            Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+          },
+          child: Container(
+            margin: EdgeInsets.all(15),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(width: 0.5),
+              borderRadius: BorderRadius.circular(5),
+              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                    Row(
+                      children: [
+                        Text('Order Status: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
+                        _buildStatus(status: _.activeOrderData.call().status),
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatus({String status}) {
+    switch (status) {
+      case 'pending': return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'rider-picked-up': return Text('Rider picked up', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      default: return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+    }
+  }
+
+  _activeOrderDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        backgroundColor: Colors.white,
+        insetPadding: EdgeInsets.all(20),
+        child: GetX<DashboardController>(
+          builder: (_) {
+            return Container(
+              height: _.activeOrderData.call() == null ? 100 : 350,
+              child: _.activeOrderData.call() == null ? Container(
+                child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
+              ) : Scrollbar(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildActiveOrderList(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      name: 'active-dialog'
     );
   }
 }

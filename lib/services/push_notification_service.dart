@@ -40,11 +40,12 @@ class PushNotificationService extends GetxService {
   Future onSelectionNotification(String payload) async {
     switch (payload) {
       case 'rider-chat':
-        DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
+        // DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
+        DashboardController.to..goToChatPage();
         break;
-      case 'active-order':
-        DashboardController.to..tapped(4)..tabController.index = 0;
-        break;
+      // case 'active-order':
+      //   DashboardController.to..tapped(4)..tabController.index = 0;
+      //   break;
     }
   }
 

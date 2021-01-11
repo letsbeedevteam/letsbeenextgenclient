@@ -19,6 +19,7 @@ import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
 import 'package:letsbeeclient/screens/menu/menu_view.dart';
+import 'package:letsbeeclient/screens/ongoing/on_going_view.dart';
 import 'package:letsbeeclient/screens/restaurant/restaurant_view.dart';
 import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
@@ -45,5 +46,6 @@ routes() => [
   GetPage(name: Config.WEBVIEW_ROUTE, page: () => WebViewPage(), binding: WebViewBind()),
   GetPage(name: Config.CHAT_ROUTE, page: () => ChatPage(), binding: ChatBind()),
   GetPage(name: Config.RIDER_LOCATION_ROUTE, page: () => RiderLocationPage(), binding: RiderLocationBind()),
-  GetPage(name: Config.HISTORY_DETAIL_ROUTE, page: () => HistoryDetailPage(), binding: HistoryDetailBind())
+  GetPage(name: Config.HISTORY_DETAIL_ROUTE, page: () => HistoryDetailPage(), binding: HistoryDetailBind()),
+  GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => OnGoingPage())
 ];

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/webview/webview_controller.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -31,6 +32,7 @@ class WebViewPage extends GetView<WebController> {
                   print('print: $url');
                  
                   if (url.contains('/payment/success-checkout')) {
+                    DashboardController.to.fetchActiveOrder();
                     paymentSuccessDialog();
                     // successSnackBarTop(title: 'Alert', message: 'Successful checkout!');
                   }

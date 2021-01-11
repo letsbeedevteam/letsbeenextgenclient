@@ -177,7 +177,19 @@ class CartPage extends GetView<CartController> {
                         ),
                       )
                     ],
-                  ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 20))))
+                  ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                          RaisedButton(
+                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            child: Text('Refresh'),
+                            onPressed: () => _.fetchActiveCarts(),
+                          )
+                        ],
+                      )
+                    )
+                  )
                 )
               ),
             );

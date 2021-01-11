@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -28,6 +29,7 @@ class WebController extends GetxController {
       isLoading(false);
 
       if(value.status == 200) {
+        DashboardController.to.fetchActiveOrder();
         Get.back(closeOverlays: true);
       } else {
         errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);

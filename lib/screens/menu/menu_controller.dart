@@ -13,8 +13,6 @@ import 'package:letsbeeclient/services/api_service.dart';
 class MenuController extends GetxController {
 
   final ApiService apiService = Get.find();
-
-  CartController cartController;
   Completer<void> refreshCompleter;
 
   var menu = Menu().obs;
@@ -40,7 +38,6 @@ class MenuController extends GetxController {
     cart.nil();
     if (argument['type'] == 'edit') {
       
-      cartController = Get.find();
       cart(CartData.fromJson(argument['cart']));
       
       countQuantity(cart.value.quantity);
@@ -160,7 +157,7 @@ class MenuController extends GetxController {
      apiService.updateCart(addToCart, cart.value.id).then((response) {
     
       if (response.status == 200) {
-        cartController.fetchActiveCarts();
+        CartController.to.fetchActiveCarts();
         successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {
@@ -183,7 +180,8 @@ class MenuController extends GetxController {
       
       if (response.status == 200) {
         // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-        Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value);
+        CartController.to.fetchActiveCarts();
+        Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
         isAddToCartLoading(true);
       } else {
         if (response.code == 3005) {

@@ -1,10 +1,12 @@
 import 'dart:async';
 
+// import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/getCart.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class CartController extends GetxController {
@@ -20,19 +22,24 @@ class CartController extends GetxController {
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
   var isEdit = false.obs;
+  var restaurantId = 0.obs;
   var cart = GetCart().obs;
+
+  static CartController get to => Get.find();
   
   @override
   void onInit() {
     this.cart.nil();
     refreshCompleter = Completer();
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
-
-    fetchActiveCarts();
+        
+    if (restaurantId.call() != 0) {
+      fetchActiveCarts();
+    }
     
     super.onInit();
   }
-
+  
   Future<bool> onWillPopBack() async {
     Get.back(closeOverlays: true);
     return true;
@@ -47,10 +54,10 @@ class CartController extends GetxController {
     isEdit(!isEdit.call());
   }
 
-  fetchActiveCarts() {
+  fetchActiveCarts({int getRestaurantId = 0}) {
     isLoading(true);
 
-    _apiService.getActiveCarts(restaurantId: argument).then((response) {
+    _apiService.getActiveCarts(restaurantId: getRestaurantId == 0 ? restaurantId.call() : getRestaurantId).then((response) {
       isLoading(false);
         _setRefreshCompleter();
       if(response.status == 200) {
@@ -114,7 +121,7 @@ class CartController extends GetxController {
         isPaymentLoading(false);
 
         if(order.status == 200) {
-
+          DashboardController.to.fetchActiveOrder();
           if (order.paymentUrl.isNull) {
             print('NO URL');
             successSnackBarTop(title: 'Success!', message: 'Please check your on going order');

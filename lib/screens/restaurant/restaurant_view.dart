@@ -1,8 +1,10 @@
+import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/screens/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/restaurant/restaurant_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
@@ -121,14 +123,29 @@ class RestaurantPage extends GetView<RestaurantController> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        splashColor: Colors.transparent,
-        backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'),
-        ),
-        onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id)
+      floatingActionButton: GetX<CartController>(
+        init: CartController.to.fetchActiveCarts(getRestaurantId: controller.restaurant.call().id),
+        builder: (_) {
+          CartController.to.restaurantId(controller.restaurant.call().id);
+          return Badge(
+            badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            padding: EdgeInsets.all(10),
+            showBadge: CartController.to.cart.call() != null,
+            child: FloatingActionButton(
+              splashColor: Colors.transparent,
+              backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(30)
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png'),
+              ),
+              onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id)
+            ),
+          );
+        },
       )
     );
   } 

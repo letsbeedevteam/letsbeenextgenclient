@@ -37,7 +37,7 @@ class HistoryPage extends GetView<DashboardController> {
                 ) : Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Column(
-                    children: _.history.call().data.reversed.map((e) => _buildHistoryItem(e)).toList(),
+                    children: _.history.call().data.map((e) => _buildHistoryItem(e)).toList(),
                   ),
                 );
               },

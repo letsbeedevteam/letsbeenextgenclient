@@ -5,6 +5,6 @@ class MapBind extends Bindings {
 
   @override
   void dependencies() {
-    Get.lazyPut<MapController>(() => MapController());
+    Get.put(MapController());
   }
 }

@@ -16,8 +16,11 @@ dependencies:
 
   # Icons
   cupertino_icons: ^1.0.0
-  font_awesome_flutter: ^8.10.0
+  font_awesome_flutter: ^8.11.0
   
+  # Badge
+  badges: ^1.1.6
+
   # Lottie animation
   lottie: ^0.7.0+1
   loading_gifs: ^0.2.3

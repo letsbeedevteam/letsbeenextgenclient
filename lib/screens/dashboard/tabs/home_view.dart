@@ -94,9 +94,11 @@ class HomePage extends StatelessWidget {
                               Column(
                                 children: [
                                   Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
-                                  IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate))
+                                  _.searchRestaurants.call().length == 1 ? Container() : 
+                                  IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
                                 ],
                               ) : Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
                                   RaisedButton(
@@ -107,7 +109,7 @@ class HomePage extends StatelessWidget {
                                 ],
                               )
                             ],
-                          ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18)))),
+                          ) : Container(height: 250, child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18))),
                         ),
                       ),
                     )

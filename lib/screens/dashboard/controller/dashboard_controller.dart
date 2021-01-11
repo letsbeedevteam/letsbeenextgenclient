@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -44,6 +45,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var pageIndex = 0.obs;
   var userCurrentNameOfLocation = ''.obs;
   var userCurrentAddress = ''.obs;
+  var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
   var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
@@ -75,6 +77,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
     pushNotificationService.initialise();
 
+    // setupScrollControllers();
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
@@ -111,6 +114,23 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
+  // void setupScrollControllers() {
+  //   isFloatVisible(true);
+  //   scrollController.addListener(() {
+  //      if(scrollController.position.userScrollDirection == ScrollDirection.reverse){
+  //       if(isFloatVisible.call()) {
+  //         isFloatVisible(false);
+  //       }
+  //     } else {
+  //       if(scrollController.position.userScrollDirection == ScrollDirection.forward){
+  //         if(!isFloatVisible.call()) {
+  //           isFloatVisible(true);  
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
+
   void setupRefreshIndicator() {
     // refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     refreshCompleter = Completer();
@@ -136,14 +156,15 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void setupTabs() {
-    tabController = TabController(length: 2, vsync: this)..addListener(() {
-      if(tabController.index == 0) {
-        animationController.reverse();
-      } else {
-        animationController.forward();
-      }
-    });
+    // tabController = TabController(length: 2, vsync: this)..addListener(() {
+    //   if(tabController.index == 0) {
+    //     animationController.reverse();
+    //   } else {
+    //     animationController.forward();
+    //   }
+    // });
 
+    tabController = TabController(length: 1, vsync: this);
     pageController = PageController();
   }
 
@@ -152,7 +173,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 4) {
-      fetchActiveOrder();
+      // fetchActiveOrder();
       fetchOrderHistory();
     }
     tfSearchController.clear();
@@ -254,7 +275,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   goToRiderLocationPage() {
     hasPickedUp.call() ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
-    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s pick up');
   }
 
   fetchActiveOrder() {
@@ -352,6 +373,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   cancelOrderById() {
     socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       if (response['status'] == 200) {
+        Get.back(result: 'cancel-dialog');
         successSnackBarTop(title: 'Success!', message: response['message']);
         onGoingMessage('No Active Order');
         activeOrderData.nil();
@@ -384,11 +406,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        message(Config.NO_INTERNET_CONNECTION);
+        historyMessage(Config.NO_INTERNET_CONNECTION);
       } else if (onError.toString().contains('Operation timed out')) {
-        message(Config.TIMED_OUT);
+        historyMessage(Config.TIMED_OUT);
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        historyMessage(Config.SOMETHING_WENT_WRONG);
       }
       print('Error fetch history orders: $onError');
     });
