@@ -38,7 +38,7 @@ class DashboardPage extends GetView<DashboardController> {
                           Row(
                             children: [
                               Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-                              Text(_.userCurrentNameOfLocation.call().isNullOrBlank ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
@@ -103,9 +103,9 @@ class DashboardPage extends GetView<DashboardController> {
             items: [
               customNavigationBarItem('Home', icon: Icon(Icons.home)),
               customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-              customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList))
+              customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+              customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
             ],
           )
         );
@@ -146,7 +146,7 @@ class DashboardPage extends GetView<DashboardController> {
             ],
           ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
-          _.addresses.call().isNull ? Container(
+          _.addresses.call() == null ? Container(
             padding: EdgeInsets.all(20),
             child: Column(
               children: [

@@ -68,7 +68,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                           autoPlay: false,
                                           disableCenter: true, 
                                         ),
-                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                        items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
                                       ),
                                     ),
                                   ),
@@ -103,7 +103,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                   color: Colors.white
                                 ),
                                 child: ClipOval(
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                                 ),
                               ),
                             )
@@ -175,7 +175,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                 child: Container(
                   width: 180,
                   height: 200,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
                 ),
               )
             ),

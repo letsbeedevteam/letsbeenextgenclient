@@ -39,7 +39,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   
   final tfSearchController = TextEditingController();
   final scrollController = ScrollController();
-  final widgets = [HomePage(), NotificationPage(), AccountSettingsPage(), ReviewsPage(), OrderPage()];
+  final widgets = [
+    HomePage(), 
+    NotificationPage(), 
+    ReviewsPage(), 
+    OrderPage(),
+    AccountSettingsPage(), 
+  ];
 
   var title = ''.obs;
   var pageIndex = 0.obs;
@@ -172,7 +178,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
-    if (tappedIndex == 4) {
+    if (tappedIndex == 3) {
       // fetchActiveOrder();
       fetchOrderHistory();
     }
@@ -289,7 +295,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             activeOrderData.nil();
           } else {
             activeOrderData(ActiveOrderData.fromJson(response['data']));
-            if (activeOrderData.call().activeRestaurant.locationName.isNullOrBlank) {
+            if (activeOrderData.call().activeRestaurant.locationName.isBlank) {
               this.title("${activeOrderData.call().activeRestaurant.name}");
             } else {
               this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
@@ -312,7 +318,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       String message;
       if (order.status == 200) {
         
-        final name = order.data.activeRestaurant.locationName.isNullOrBlank ? order.data.activeRestaurant.name : '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
+        final name = order.data.activeRestaurant.locationName == null ? order.data.activeRestaurant.name : '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
         
         switch (order.data.status) {
           case 'restaurant-declined': {
@@ -363,9 +369,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
       if (!isOnChat.call()) {
-        if (box.read(Config.USER_ID) != test.userId) {
-          pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: 'rider-chat');
-        }
+        pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: 'rider-chat');
       }
     });
   }
@@ -393,6 +397,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (response.data.isNotEmpty) {
           history(response);
+          history.call().data.sort((b, a) => a.id.compareTo(b.id));
         } else {
           historyMessage('No list of history orders');
           history.nil();

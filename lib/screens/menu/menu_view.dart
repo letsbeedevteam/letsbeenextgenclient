@@ -39,7 +39,7 @@ class MenuPage extends GetView<MenuController> {
                                 child: Container(
                                   width: 160,
                                   height: 160,
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.call().image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.call().image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
                                 ),
                               ),
                             )

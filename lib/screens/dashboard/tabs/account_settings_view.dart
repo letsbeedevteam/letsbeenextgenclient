@@ -26,7 +26,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
                   ),
                   height: 100,
                   width: 90,
-                  child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'),
+                  child: Icon(Icons.person, size: 35),
                 ),
                 Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
                 Expanded(

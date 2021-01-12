@@ -23,7 +23,7 @@ class HistoryPage extends GetView<DashboardController> {
             physics: AlwaysScrollableScrollPhysics(),
             child: GetX<DashboardController>(
               builder: (_) {
-                return _.history.call().isNull ? Container(
+                return _.history.call() == null ? Container(
                   alignment: Alignment.topCenter,
                   padding: EdgeInsets.only(top: 20),
                   child: _.isLoading.call() ? Column(
@@ -80,7 +80,7 @@ class HistoryPage extends GetView<DashboardController> {
               child: Hero(
                 tag: data.id,
                 child: ClipOval(
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                 ),
               )
             ),

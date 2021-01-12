@@ -71,7 +71,7 @@ class ChatPage extends GetView<ChatController> {
                     controller: _.scrollController,
                     child: Column(
                       children: [
-                        _.chat.call().isNullOrBlank || _.chat.call().isEmpty ? Container() : Column(
+                        _.chat.call() == null || _.chat.call().isEmpty ? Container() : Column(
                           children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
                         ),
                         // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => print('Go back on top'))

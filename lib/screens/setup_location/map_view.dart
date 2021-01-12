@@ -195,7 +195,7 @@ class MapPage extends GetView<MapController> {
             child: _.isAddAddressLoading.call() ? SizedBox(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Looks good'), 
             onPressed: () {
               if(_.argument['type'] == Config.ADD_NEW_ADDRESS) {
-                if (_.nameTF.text.isNullOrBlank) {
+                if (_.nameTF.text.isBlank) {
                   errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
                 } else {
                   if (!_.isAddAddressLoading.call()) _.addAddress();

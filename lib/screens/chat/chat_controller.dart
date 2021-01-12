@@ -28,7 +28,7 @@ class ChatController extends GetxController {
   void onInit() {
     activeOrderData(arguments);
 
-    if (activeOrderData.call().activeRestaurant.locationName.isNullOrBlank) {
+    if (activeOrderData.call().activeRestaurant.locationName.isBlank) {
       this.title("${activeOrderData.call().activeRestaurant.name}");
     } else {
       this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
@@ -84,7 +84,7 @@ class ChatController extends GetxController {
   }
 
   sendMessageToRider() {
-    if (replyTF.text.isNullOrBlank) {
+    if (replyTF.text == null) {
       alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
     } else {
 

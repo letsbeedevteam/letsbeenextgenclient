@@ -46,7 +46,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         autoPlay: false,
                                         disableCenter: true,                                    
                                       ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
+                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
                                     ),
                                   )
                                 ),
@@ -67,7 +67,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               child: Hero(
                                 tag: _.data.call().id,
                                 child: ClipOval(
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                                 ),
                               )
                             ),
@@ -100,7 +100,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             children: _.data.call().menus.map((e) => _buildMenu(e)).toList(),
                           ),
-                           _.data.call().fee.discountCode.isNullOrBlank ? Container() :
+                          _.data.call().fee.discountCode == null ? Container() :
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -178,7 +178,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               ],
                             ),
                           ),
-                          _.data.call().reason.isNullOrBlank ? Container() : Column(
+                          _.data.call().reason == null ? Container() : Column(
                             children: [
                               Container(
                                 margin: EdgeInsets.only(top: 5),

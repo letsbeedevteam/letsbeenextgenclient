@@ -158,7 +158,7 @@ class HomePage extends StatelessWidget {
             image: restaurant.logoUrl, 
             fit: BoxFit.cover, 
             placeholderScale: 5, 
-            imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+            imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))
           ),
         )
       ),
@@ -198,7 +198,7 @@ class HomePage extends StatelessWidget {
                 margin: EdgeInsets.symmetric(horizontal: 10),
                 child: SizedBox(
                   width: Get.width,
-                  child: restaurant.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))) 
+                  child: restaurant.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                   : Container(child: Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))),
                 ),
               )
@@ -236,7 +236,7 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   width: 180,
                   height: 200,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
                 ),
               )
             ),
