@@ -28,6 +28,7 @@ class MapController extends GetxController {
   var isBounced = false.obs;
   var isLoading = false.obs;
   var isAddAddressLoading = false.obs;
+  var hasLocation = false.obs;
 
   var currentPosition = LatLng(0, 0).obs;
   var userCurrentAddress = 'Getting your address...'.obs;
@@ -84,6 +85,7 @@ class MapController extends GetxController {
 
     await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.call().latitude, currentPosition.call().longitude)).then((response) {
       isLoading(false);
+      hasLocation(true);
       // final address = '${response.first.subLocality}, ${response.first.locality}, ${response.first.adminArea}';
       userCurrentAddress(response.first.addressLine);
       response.forEach((element) {
@@ -112,6 +114,7 @@ class MapController extends GetxController {
       }
       
     }).catchError((onError) {
+      hasLocation(false);
       getCurrentAddress();
       print('getCurrentAddress: $onError');
     });

@@ -482,14 +482,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     isLoading(true);
 
     apiService.refreshToken().then((response) {
-      isLoading(false);
+      // isLoading(false);
+      message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
         box.write(Config.USER_TOKEN, response.data.accessToken);
       } 
 
       fetchAllAddresses();
-      fetchRestaurants();
       socketSetup();
       
     }).catchError((onError) {
@@ -513,7 +513,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     apiService.getAllAddress().then((response) {
       isLoading(false);
       if (response.status == 200) {
-
+        fetchRestaurants();
         if (response.data.isNotEmpty) {
           addresses(response);
         } else {

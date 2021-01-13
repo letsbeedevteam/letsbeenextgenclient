@@ -13,11 +13,11 @@ class SocketService extends GetxService {
 
     this.socket = IO.io(Config.BASE_URL + Config.CUSTOMER_NAMESPACE, <String, dynamic>{
       'transports': ['websocket'],
-      'autoConnect': false,
+      'autoConnect': true,
       'extraHeaders': {'x-auth-token': _box.read(Config.USER_TOKEN)}
     });
     
-    this.socket.connect();
+    // this.socket.connect();
 
     // this.socket.on("connect", (_) => print('Connected'));
     // this.socket.on("connecting", (_) => print('Connecting'));

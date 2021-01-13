@@ -23,8 +23,8 @@ class GetCart {
 
     factory GetCart.fromJson(Map<String, dynamic> json) => GetCart(
         status: json["status"],
-        total: json["total"].toDouble(),
-        deliveryFee: json['deliveryFee'].toDouble(),
+        total: json["total"] == null ? 0 : json["total"].toDouble(),
+        deliveryFee: json['deliveryFee'] == null ? 0 : json['deliveryFee'].toDouble(),
         data: json["data"] == null ? List<CartData>() : List<CartData>.from(json["data"].map((x) => CartData.fromJson(x)))
     );
 

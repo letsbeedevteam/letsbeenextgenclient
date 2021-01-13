@@ -177,9 +177,15 @@ class MapPage extends GetView<MapController> {
               borderRadius: BorderRadius.circular(5),
             ),
             child: Text('Cancel'), 
-            onPressed: () {
+            onPressed: () async {
               _.nameTF.clear();
-              Get.back();
+              if (Get.isSnackbarOpen) {
+                Get.back();
+                await Future.delayed(Duration(milliseconds: 100));
+                Get.back();
+              } else {
+                Get.back();
+              }
               if (_.newAddressSub != null) _.newAddressSub.cancel();
             }
           );

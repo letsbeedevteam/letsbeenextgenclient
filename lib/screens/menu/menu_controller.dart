@@ -19,7 +19,6 @@ class MenuController extends GetxController {
   var cart = CartData().obs;
   var countQuantity = 1.obs;
   var restaurantId = 0.obs;
-  var menuId = 0.obs;
   var choiceIds = List<ChoiceCart>().obs;
   var additionalIds =  List<AdditionalCart>().obs;
   var tFRequestController = TextEditingController();
@@ -47,7 +46,6 @@ class MenuController extends GetxController {
     } else {
       
       restaurantId(argument['restaurantId']);
-      menuId(argument['menuId']);
       menu(Menu.fromJson(argument['menu']));
     }
 
@@ -129,7 +127,7 @@ class MenuController extends GetxController {
 
     var addToCart = AddToCart(
       restaurantId: restaurantId.call(),
-      menuId: menuId.call(),
+      menuId: menu.call().id,
       choices: choiceIds,
       additionals: additionalIds.toList(),
       quantity: countQuantity.call(),
@@ -157,7 +155,7 @@ class MenuController extends GetxController {
      apiService.updateCart(addToCart, cart.value.id).then((response) {
     
       if (response.status == 200) {
-        CartController.to.fetchActiveCarts();
+        CartController.to.cart.nil();
         successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {
@@ -180,7 +178,7 @@ class MenuController extends GetxController {
       
       if (response.status == 200) {
         // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-        CartController.to.fetchActiveCarts();
+        CartController.to.cart.nil();
         Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
         isAddToCartLoading(true);
       } else {

@@ -36,10 +36,11 @@ class CartPage extends GetView<CartController> {
           )
         ),
         body: GetX<CartController>(
+          initState: controller.fetchActiveCarts(getRestaurantId: controller.restaurantId.call()),
           builder: (_) {
             return RefreshIndicator(
               onRefresh: () {
-                _.fetchActiveCarts();
+                _.fetchActiveCarts(getRestaurantId: _.restaurantId.call());
                 return _.refreshCompleter.future;
               },
               child: SingleChildScrollView(
@@ -184,7 +185,7 @@ class CartPage extends GetView<CartController> {
                           RaisedButton(
                             color: Color(Config.LETSBEE_COLOR).withOpacity(1),
                             child: Text('Refresh'),
-                            onPressed: () => _.fetchActiveCarts(),
+                            onPressed: () => _.fetchActiveCarts(getRestaurantId: _.restaurantId.call()),
                           )
                         ],
                       )

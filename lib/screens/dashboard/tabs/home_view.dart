@@ -261,7 +261,6 @@ class HomePage extends StatelessWidget {
       ),
       onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
         'restaurantId': restaurantId, 
-        'menuId': menu.id,
         'menu': menu.toJson()
       })
     );

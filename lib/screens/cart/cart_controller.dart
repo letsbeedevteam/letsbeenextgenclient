@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -26,7 +27,6 @@ class CartController extends GetxController {
   var cart = GetCart().obs;
 
   static CartController get to => Get.find();
-  
   @override
   void onInit() {
     this.cart.nil();
@@ -34,7 +34,7 @@ class CartController extends GetxController {
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
         
     if (restaurantId.call() != 0) {
-      fetchActiveCarts();
+      fetchActiveCarts(getRestaurantId: restaurantId.call());
     }
     
     super.onInit();
@@ -54,10 +54,10 @@ class CartController extends GetxController {
     isEdit(!isEdit.call());
   }
 
-  fetchActiveCarts({int getRestaurantId = 0}) {
+  fetchActiveCarts({@required int getRestaurantId}) {
     isLoading(true);
 
-    _apiService.getActiveCarts(restaurantId: getRestaurantId == 0 ? restaurantId.call() : getRestaurantId).then((response) {
+    _apiService.getActiveCarts(restaurantId: getRestaurantId).then((response) {
       isLoading(false);
         _setRefreshCompleter();
       if(response.status == 200) {
@@ -93,7 +93,7 @@ class CartController extends GetxController {
         _setRefreshCompleter();
 
       if(cart.status == 200) {
-        fetchActiveCarts();
+        fetchActiveCarts(getRestaurantId: restaurantId.call());
         successSnackBarTop(title: 'Success', message: cart.message);
       } else {
         errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
@@ -141,7 +141,7 @@ class CartController extends GetxController {
           } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
         }
 
-        fetchActiveCarts();
+        fetchActiveCarts(getRestaurantId: restaurantId);
         
       }).catchError((onError) {
         isPaymentLoading(false);

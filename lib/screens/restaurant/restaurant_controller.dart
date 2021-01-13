@@ -11,7 +11,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   @override
   void onInit() {
-
+    CartController.to.cart.nil();
     restaurant(RestaurantElement.fromJson(Get.arguments));
 
     var menus = restaurant.call().menuCategorized..map((e) => e.menus);
@@ -19,11 +19,5 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     tabController = TabController(length: menus.length, vsync: this);
     
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    CartController.to.cart.nil();
-    super.onClose();
   }
 }
