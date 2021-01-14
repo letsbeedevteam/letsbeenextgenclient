@@ -83,8 +83,9 @@ class RestaurantPage extends GetView<RestaurantController> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                        Text(_.restaurant.call().name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                        Text(_.restaurant.call().location.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal))
+                                        Container(height: 10),
+                                        Text(_.restaurant.call().name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                        Text(_.restaurant.call().location.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal))
                                       ],
                                     ),
                                   ),

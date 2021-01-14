@@ -4,12 +4,12 @@
 
 import 'dart:convert';
 
-Social facebookFromJson(String str) => Social.fromJson(json.decode(str));
+SocialLoginResponse socialFromJson(String str) => SocialLoginResponse.fromJson(json.decode(str));
 
-String facebookToJson(Social data) => json.encode(data.toJson());
+String socialToJson(SocialLoginResponse data) => json.encode(data.toJson());
 
-class Social {
-    Social({
+class SocialLoginResponse {
+    SocialLoginResponse({
         this.status,
         this.data,
     });
@@ -17,7 +17,7 @@ class Social {
     int status;
     SocialData data;
 
-    factory Social.fromJson(Map<String, dynamic> json) => Social(
+    factory SocialLoginResponse.fromJson(Map<String, dynamic> json) => SocialLoginResponse(
         status: json["status"],
         data: SocialData.fromJson(json["data"]),
     );

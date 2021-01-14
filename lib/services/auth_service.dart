@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/social.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 
@@ -17,14 +18,19 @@ class AuthService extends GetConnect {
     super.onInit();
   }
 
-  Future<Response> socialRequest(String social, String token) async {
-    return await post(
+  Future<SocialLoginResponse> socialRequest(String social, String token) async {
+    
+    final response = await post(
       '/auth/customer/${social.toLowerCase()}/login',
       {'token': token},
       headers: {
         'Content-Type': 'application/json',
       },
     );
+
+    print('Login response: ${response.body}');
+
+    return socialFromJson(response.bodyString);
   }
 
   Future<GoogleSignInAccount> googleSignIn() async {

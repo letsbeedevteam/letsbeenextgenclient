@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
-import 'package:letsbeeclient/models/social.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 
@@ -70,9 +68,8 @@ class AuthModel implements AuthModelContract {
   void _request(String social, String token, OnSocialSignInRequest listener) {
     _authService.socialRequest(social, token).then((response) { 
 
-      var model = Social.fromJson(jsonDecode(response.body));
-      if (model.status == 200) {
-        listener.onSocialSignInRequestSuccess(social, model.data);
+      if (response.status == 200) {
+        listener.onSocialSignInRequestSuccess(social, response.data);
       } else {
         listener.onSocialSignInRequestFailed(Config.SOMETHING_WENT_WRONG);
       }
@@ -81,8 +78,10 @@ class AuthModel implements AuthModelContract {
         listener.onSocialSignInRequestFailed('Connection timed out');
       } else if (onError.toString().contains('Operation timed out')) {
         listener.onSocialSignInRequestFailed(Config.TIMED_OUT);
-        print('$social request onError: $onError');
+      } else {
+        listener.onSocialSignInRequestFailed(Config.SOMETHING_WENT_WRONG);
       }
+      print('$social request onError: $onError');
     });
   }
 }

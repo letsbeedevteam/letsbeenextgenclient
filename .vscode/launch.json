@@ -19,7 +19,7 @@
         {
             "name": "Run Dev Iphone 12 max",
             "flutterMode": "debug",
-            "deviceId": "40C351F9-7FCC-4D68-A3C6-948AD810A14C",
+            "deviceId": "f4ef490238b96c80d3806a5de1f1036487693425",
             "type": "dart",
             "request": "launch"
         },
