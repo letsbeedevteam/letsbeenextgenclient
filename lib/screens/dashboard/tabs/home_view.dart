@@ -51,7 +51,7 @@ class HomePage extends StatelessWidget {
           builder: (_) {
             return Flexible(
               child: Stack(
-                alignment: _.restaurants.call() != null ? Alignment.topCenter : Alignment.center,
+                alignment: Alignment.topCenter,
                 children: [
                   RefreshIndicator(
                     onRefresh: () {
@@ -97,19 +97,22 @@ class HomePage extends StatelessWidget {
                                   _.searchRestaurants.call().length == 1 ? Container() : 
                                   IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
                                 ],
-                              ) : Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
-                                  RaisedButton(
-                                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                                    child: Text('Refresh'),
-                                    onPressed: () => _.refreshToken(),
-                                  )
-                                ],
+                              ) : Container(
+                                  height: 250,
+                                  child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                                    RaisedButton(
+                                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                                      child: Text('Refresh'),
+                                      onPressed: () => _.refreshToken(),
+                                    )
+                                  ],
+                                ),
                               )
                             ],
-                          ) : Container(height: 250, child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                          ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18))),
                         ),
                       ),
                     )

@@ -155,7 +155,7 @@ class MenuController extends GetxController {
      apiService.updateCart(addToCart, cart.value.id).then((response) {
     
       if (response.status == 200) {
-        CartController.to.cart.nil();
+        CartController.to..cart.nil()..fetchActiveCarts(getRestaurantId: argument['restaurant_id']);
         successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {

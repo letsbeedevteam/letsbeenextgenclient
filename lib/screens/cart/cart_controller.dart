@@ -68,6 +68,7 @@ class CartController extends GetxController {
           this.isEdit(false);
         } else {
           totalPrice(response.data.map((e) => e.totalPrice).reduce((value, element) => value + element).roundToDouble());
+          response.data.sort((b, a) => a.createdAt.compareTo(b.createdAt));
           this.cart(response);
         }
       

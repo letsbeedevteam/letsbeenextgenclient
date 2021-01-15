@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-import 'package:letsbeeclient/models/signUpResponse.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class SignUpController extends GetxController with SingleGetTickerProviderMixin {
@@ -33,8 +31,6 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   var isLoading = false.obs;
   
   TabController tabController;
-  StreamSubscription<SignInResponse> signInSub;
-  StreamSubscription<SignUpResponse> signUpSub;
 
   @override
   void onInit() {
@@ -53,7 +49,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     } else {
       if(GetUtils.isEmail(signInEmailController.text)) {
 
-        signInSub = _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).asStream().listen((response) {
+        _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).then((response) {
           
           if (response.status == 200) {
             _box.write(Config.USER_NAME, response.data.name);
@@ -74,11 +70,6 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
           isLoading(false);
         });
 
-        signInSub.onError((handleError) {
-          isLoading(false);
-          print('Sign in error: $handleError');
-        });
-
       } else {
         errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid');
         isLoading(false);
@@ -97,7 +88,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     } else {
       
       if(GetUtils.isEmail(emailController.text)) {
-        signUpSub = _apiService.customerSignUp(name: nameController.text, email: emailController.text, password: passwordController.text).asStream().listen((response) {
+        _apiService.customerSignUp(name: nameController.text, email: emailController.text, password: passwordController.text).then((response) {
            if (response.status == 200) {
             successSnackBarTop(title: 'Registered SuccessFully', message: 'Please sign in with your email');
             changeIndex(0);
@@ -110,11 +101,6 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
             isLoading(false);
           }
-        });
-
-        signUpSub.onError((handleError) {
-          isLoading(false);
-          print('Sign up error: $handleError');
         });
 
       } else {
@@ -144,11 +130,9 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   Future<bool> willPopCallback() async {
     dismissKeyboard(Get.context);
     if (selectedIndex.call() == 0) {
-      if (signInSub != null) signInSub.cancel();
       Get.back(closeOverlays: true);
       return true;
     } else {
-      if (signUpSub != null) signUpSub.cancel();
       changeIndex(0);
       return false;
     }

@@ -41,6 +41,8 @@
 	<string>829806494451132</string>
 	<key>FacebookDisplayName</key>
 	<string>Let's bee</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

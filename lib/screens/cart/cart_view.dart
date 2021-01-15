@@ -44,7 +44,7 @@ class CartPage extends GetView<CartController> {
                 return _.refreshCompleter.future;
               },
               child: SingleChildScrollView(
-                physics: _.isLoading.call() ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                physics: _.cart.call() == null ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: _.cart.call() != null ? 
