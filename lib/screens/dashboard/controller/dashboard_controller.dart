@@ -368,7 +368,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.on('order-chat', (response) {
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
-      if (!isOnChat.call()) {
+      if(Get.currentRoute != Config.CHAT_ROUTE) {
         pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: 'rider-chat');
       }
     });

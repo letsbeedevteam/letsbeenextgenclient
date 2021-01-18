@@ -68,6 +68,9 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
           }
 
           isLoading(false);
+        }).catchError((onError) {
+          alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          isLoading(false);
         });
 
       } else {
@@ -101,6 +104,9 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
             isLoading(false);
           }
+        }).catchError((onError) {
+          alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          isLoading(false);
         });
 
       } else {

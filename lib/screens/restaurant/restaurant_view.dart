@@ -155,8 +155,8 @@ class RestaurantPage extends GetView<RestaurantController> {
     return Container(
       child: GridView.count(
         crossAxisCount: 2,
-        padding: EdgeInsets.all(10.0),
-        childAspectRatio: 8.0 / 9.0,
+        padding: EdgeInsets.all(5.0),
+        childAspectRatio: Get.height / 1000,
         children: menus.map((menu) =>  _buildAvailableMenu(menu, restaurantId: restaurantId)).toList(),
       )
     );
