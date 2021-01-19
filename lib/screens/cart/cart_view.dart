@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/screens/cart/cart_controller.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class CartPage extends GetView<CartController> {
 
@@ -28,7 +29,7 @@ class CartPage extends GetView<CartController> {
                   Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                   Container(
                     margin: EdgeInsets.only(right: 5),
-                    child: Text(controller.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                    child: Text(DashboardController.to.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
                   )
                 ],
               );

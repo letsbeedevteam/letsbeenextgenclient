@@ -17,7 +17,6 @@ class CartController extends GetxController {
   final argument = Get.arguments;
   Completer<void> refreshCompleter;
 
-  var userCurrentAddress = ''.obs;
   var message = ''.obs;
   var totalPrice = 0.0.obs;
   var isLoading = false.obs;
@@ -31,7 +30,6 @@ class CartController extends GetxController {
   void onInit() {
     this.cart.nil();
     refreshCompleter = Completer();
-    userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
         
     if (restaurantId.call() != 0) {
       fetchActiveCarts(getRestaurantId: restaurantId.call());
