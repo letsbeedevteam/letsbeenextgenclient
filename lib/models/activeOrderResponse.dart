@@ -15,16 +15,16 @@ class ActiveOrder {
     });
 
     int status;
-    ActiveOrderData data;
+    List<ActiveOrderData> data;
 
     factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
         status: json["status"],
-        data: json['data'] == null ? null : ActiveOrderData.fromJson(json["data"]),
+        data: json["data"] == null ? List<ActiveOrderData>() : List<ActiveOrderData>.from(json["data"].map((x) => ActiveOrderData.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
-        "data": data.toJson(),
+        "data": List<ActiveOrderData>.from(data.map((x) => x.toJson())),
     };
 }
 
@@ -225,18 +225,18 @@ class Fee {
         this.total,
     });
 
-    double subTotal;
-    int delivery;
+    String subTotal;
+    String delivery;
     String discountCode;
-    double discountPrice;
-    double total;
+    String discountPrice;
+    String total;
 
     factory Fee.fromJson(Map<String, dynamic> json) => Fee(
-        subTotal: json["sub_total"].toDouble(),
-        delivery: json["delivery"],
+        subTotal: json["sub_total"].toString(),
+        delivery: json["delivery"].toString(),
         discountCode: json["discount_code"] == null ? '' : json["discount_code"],
-        discountPrice: json["discount_price"].toDouble(),
-        total: json["total"].toDouble(),
+        discountPrice: json["discount_price"].toString(),
+        total: json["total"].toString(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -261,16 +261,16 @@ class ActiveOrderMenu {
 
     int menuId;
     String name;
-    double price;
+    String price;
     int quantity;
     List<Choice> choices;
     List<Additional> additionals;
-    dynamic note;
+    String note;
 
     factory ActiveOrderMenu.fromJson(Map<String, dynamic> json) => ActiveOrderMenu(
         menuId: json["menu_id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
@@ -317,12 +317,12 @@ class Pick {
 
     int id;
     String name;
-    double price;
+    String price;
 
     factory Pick.fromJson(Map<String, dynamic> json) => Pick(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -340,12 +340,12 @@ class Choice {
     });
 
     String name;
-    double price;
+    String price;
     String pick;
 
     factory Choice.fromJson(Map<String, dynamic> json) => Choice(
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         pick: json["pick"],
     );
 
@@ -413,7 +413,7 @@ class ActiveRestaurant {
 
   factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
       name: json["name"],
-      locationName: json['location_name'],
+      locationName: json['location_name'] == '' || json['location_name'] == null ? '' : json['location_name'],
       latitude: json['latitude'],
       longitude: json['longitude']
   );

@@ -25,20 +25,24 @@ class WebController extends GetxController {
     isLoading(true);
     deleteSnackBarTop(title: 'Cancelling the payment', message: 'Please wait, and it will automatically go back.');
 
-    apiService.deleteOrderById(orderId: argument['order_id']).then((value) {
-      isLoading(false);
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      apiService.deleteOrderById(orderId: argument['order_id']).then((value) {
+        isLoading(false);
 
-      if(value.status == 200) {
-        DashboardController.to.fetchActiveOrder();
-        Get.back(closeOverlays: true);
-      } else {
+        if(value.status == 200) {
+          DashboardController.to.fetchActiveOrder();
+          Get.back(closeOverlays: true);
+          Future.delayed(Duration(seconds: 1));
+          Get.back();
+        } else {
+          errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
+        }
+
+      }).catchError((onError) {
+        isLoading(false);
         errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
-      }
-
-    }).catchError((onError) {
-      isLoading(false);
-      errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
-      print('Error delete order: $onError');
+        print('Error delete order: $onError');
+      });
     });
   }
 }

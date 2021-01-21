@@ -83,7 +83,7 @@ class RestaurantElement {
         location: Location.fromJson(json["location"]),
         status: json["status"],
         logoUrl: json["logo_url"],
-        sliders: List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
+        sliders: json["sliders"] == null ? List<Slider>() : List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
         address: Address.fromJson(json["address"]),
         workingDays: WorkingDays.fromJson(json["working_days"]),
         menuCategorized: List<MenuCategorized>.from(json["menu_categorized"].map((x) => MenuCategorized.fromJson(x))),
@@ -191,7 +191,7 @@ class Menu {
 
     int id;
     String name;
-    double price;
+    String price;
     String description;
     String image;
     List<Choice> choices;
@@ -203,7 +203,7 @@ class Menu {
     factory Menu.fromJson(Map<String, dynamic> json) => Menu(
         id: json["id"],
         name: json["name"] == null ? "" : json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         description: json["description"] == null ? "No description" : json["description"],
         image: json["image"] == null ? "" : json["image"],
         choices: json["choices"] == null ? List<Choice>() : List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
@@ -260,14 +260,14 @@ class AdditionalOption {
 
     int id;
     String name;
-    double price;
+    String price;
     int status;
     bool selectedValue;
 
     factory AdditionalOption.fromJson(Map<String, dynamic> json) => AdditionalOption(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         status: json["status"],
         selectedValue: false
     );
@@ -323,14 +323,14 @@ class ChoiceOption {
 
     int id;
     String name;
-    double price;
+    String price;
     dynamic status;
     String selectedValue;
 
     factory ChoiceOption.fromJson(Map<String, dynamic> json) => ChoiceOption(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         status: json["status"],
         selectedValue: null
     );

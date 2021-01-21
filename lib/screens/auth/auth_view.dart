@@ -31,7 +31,7 @@ class AuthPage extends StatelessWidget {
                           child: customSignInButton(
                             color: Colors.blue.shade400,
                             icon: Icon(FontAwesomeIcons.facebookSquare, color: Colors.white),
-                            label: 'Continue with Facebook',
+                            label: 'Login with Facebook',
                             labelColor: Colors.white,
                             onTap: () => _.facebookSignIn(),
                           )
@@ -45,7 +45,7 @@ class AuthPage extends StatelessWidget {
                           child: customSignInButton(
                             color: Colors.red.shade400,
                             icon: Icon(FontAwesomeIcons.google, color: Colors.white),
-                            label: 'Continue with Google',
+                            label: 'Login with Google',
                             labelColor: Colors.white,
                             onTap: () => _.googleSignIn(),
                           )
@@ -59,14 +59,14 @@ class AuthPage extends StatelessWidget {
                           child: customSignInButton(
                             color: Colors.yellow.shade600,
                             svg: SvgPicture.asset(Config.SVG_PATH + 'kakao_talk.svg'),
-                            label: 'Continue with Kakao',
+                            label: 'Login with Kakao',
                             labelColor: Colors.black,
                             onTap: () => _.kakaoSignIn(),
                           )
                         );
                       },
                     ),
-                    // signInWithApple(),
+                    signInWithApple(),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     GetX<AuthController>(
                       builder: (_) {
@@ -115,7 +115,7 @@ class AuthPage extends StatelessWidget {
           child: customSignInButton(
             color: Colors.black,
             icon: Icon(FontAwesomeIcons.apple, color: Colors.white),
-            label: 'Continue with Apple',
+            label: 'Login with Apple',
             labelColor: Colors.white,
             onTap: () => _.appleSignIn(),
           )
@@ -129,14 +129,16 @@ class AuthPage extends StatelessWidget {
       padding: EdgeInsets.only(top: 5, left: 40, right: 40),
       child: RaisedButton(
         color: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15)
+        ),
         child: Container(
-          padding: EdgeInsets.all(8),
           height: 40,
-          width: 280,
+          width: 250,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              icon == null ? svg : icon,
-              Padding(padding: EdgeInsets.symmetric(horizontal: 15)),
+              // icon == null ? svg : icon,
               AutoSizeText(
                 label,
                 textAlign: TextAlign.center,

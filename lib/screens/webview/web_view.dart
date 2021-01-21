@@ -86,7 +86,11 @@ class WebViewPage extends GetView<WebController> {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text('Go back'), 
-        onPressed: () => Get.back(closeOverlays: true)
+        onPressed: () {
+          Get.back(closeOverlays: true);
+          Future.delayed(Duration(seconds: 1));
+          Get.back();
+        }
       ),
     );
   }

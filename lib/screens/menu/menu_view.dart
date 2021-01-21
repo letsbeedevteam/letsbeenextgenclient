@@ -242,7 +242,7 @@ class MenuPage extends GetView<MenuController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(child: Text(e.name)),
-                            Text(e.price == 0.0 ? '' : '(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
+                            Text(e.price == '0.00' ? '' : '(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
                           ],
                         ),
                         value: e.name,

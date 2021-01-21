@@ -125,9 +125,7 @@ class RestaurantPage extends GetView<RestaurantController> {
         },
       ),
       floatingActionButton: GetX<CartController>(
-        init: CartController.to.fetchActiveCarts(getRestaurantId: controller.restaurant.call().id),
         builder: (_) {
-          CartController.to.restaurantId(controller.restaurant.call().id);
           return Badge(
             badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             padding: EdgeInsets.all(10),
@@ -191,7 +189,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Text('₱ ${menu.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
+                    child: Text('₱ ${double.tryParse(menu.price).toStringAsFixed(2)}', style: TextStyle(fontSize: 12), textAlign: TextAlign.start),
                   )
                 ],
               ),
@@ -201,7 +199,7 @@ class RestaurantPage extends GetView<RestaurantController> {
       ),
       onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
         'restaurantId': restaurantId, 
-        'menu': menu.toJson()
+        'menu': menu.toJson(),
       })
     );
   }

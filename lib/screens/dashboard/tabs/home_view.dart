@@ -178,22 +178,23 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildRestaurantItem(RestaurantElement restaurant) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(restaurant.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 10, top: 5),
-            child: Text(restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
-          ),
-          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          GestureDetector(
-            child: Hero(
+    return GestureDetector(
+      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(restaurant.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
+            ),
+            // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Hero(
               tag: restaurant.name, 
               child: Container(
                 height: 200,
@@ -202,72 +203,73 @@ class HomePage extends StatelessWidget {
                 child: SizedBox(
                   width: Get.width,
                   child: restaurant.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                  : Container(child: Center(child: Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))),
+                  : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                 ),
               )
             ),
-            onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson())
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Divider(color: Colors.grey.shade200, thickness: 5, indent: 30, endIndent: 30,),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            height: Get.height * 0.25,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: restaurant.menuCategorized.first.menus.map((e) => _buildAvailableMenu(e, restaurantId: restaurant.id)).toList()
-            ),
-          )
-        ],
+            // Padding(
+            //   padding: EdgeInsets.symmetric(vertical: 10),
+            //   child: Divider(color: Colors.grey.shade200, thickness: 5, indent: 30, endIndent: 30,),
+            // ),
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: 10),
+            //   height: Get.height * 0.25,
+            //   child: ListView(
+            //     scrollDirection: Axis.horizontal,
+            //     children: restaurant.menuCategorized.first.menus.map((e) => _buildAvailableMenu(e, restaurantId: restaurant.id, restaurant: restaurant)).toList()
+            //   ),
+            // )
+          ],
+        ),
       ),
     );
   }
   
-  Widget _buildAvailableMenu(Menu menu, {int restaurantId}) {
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              child: Hero(
-                tag: menu.name,
-                child: Container(
-                  width: 180,
-                  height: 200,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
-                ),
-              )
-            ),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-                    child: Text(menu.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.only(left: 10, right: 10),
-                    child: Text('₱ ${menu.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 13), textAlign: TextAlign.start),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-      onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
-        'restaurantId': restaurantId, 
-        'menu': menu.toJson()
-      })
-    );
-  }
+  // Widget _buildAvailableMenu(Menu menu, {int restaurantId, RestaurantElement restaurant}) {
+  //   return GestureDetector(
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(horizontal: 20),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Flexible(
+  //             child: Hero(
+  //               tag: menu.name,
+  //               child: Container(
+  //                 width: 180,
+  //                 height: 200,
+  //                 child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
+  //               ),
+  //             )
+  //           ),
+  //           Container(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+  //                   child: Text(menu.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+  //                 ),
+  //                 Container(
+  //                   alignment: Alignment.centerLeft,
+  //                   margin: EdgeInsets.only(left: 10, right: 10),
+  //                   child: Text('₱ ${menu.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 13), textAlign: TextAlign.start),
+  //                 )
+  //               ],
+  //             ),
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //     onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
+  //       'restaurant': restaurant.toJson(),
+  //       'restaurantId': restaurantId, 
+  //       'menu': menu.toJson(),
+  //       'type': 'quick_order'
+  //     })
+  //   );
+  // }
 
   // Widget _buildHotMenu() {
   //   return GestureDetector(

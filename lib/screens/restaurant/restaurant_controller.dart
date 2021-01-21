@@ -14,9 +14,13 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     CartController.to.cart.nil();
     restaurant(RestaurantElement.fromJson(Get.arguments));
 
-    var menus = restaurant.call().menuCategorized..map((e) => e.menus);
+    final menus = restaurant.call().menuCategorized..map((e) => e.menus);
   
     tabController = TabController(length: menus.length, vsync: this);
+
+    final restaurantId = restaurant.call().id;
+
+    CartController.to..restaurantId(restaurantId)..fetchActiveCarts(getRestaurantId: restaurantId);
     
     super.onInit();
   }

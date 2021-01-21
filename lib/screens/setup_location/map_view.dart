@@ -41,7 +41,7 @@ class MapPage extends GetView<MapController> {
                         future: Future.delayed(Duration(seconds: 2)),
                         builder: (context, snapshot) {
                           return GoogleMap(
-                            mapType: MapType.hybrid,
+                            mapType: MapType.normal,
                             initialCameraPosition: CameraPosition(
                               zoom: 18,
                               target: _.currentPosition.call()

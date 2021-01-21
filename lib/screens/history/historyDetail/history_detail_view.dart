@@ -272,7 +272,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              Text('₱ ${(menu.price * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+              Text('₱ ${(int.parse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
             ],
           ),
           Container(

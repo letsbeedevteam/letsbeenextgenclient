@@ -19,21 +19,17 @@ class CartPage extends GetView<CartController> {
           titleSpacing: 0.0,
           centerTitle: false,
           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back(closeOverlays: true)),
-          title: GetX<CartController>(
-            builder: (_) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                  Container(
-                    margin: EdgeInsets.only(right: 5),
-                    child: Text(DashboardController.to.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                  )
-                ],
-              );
-            },
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
+              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text(DashboardController.to.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+              )
+            ],
           )
         ),
         body: GetX<CartController>(
@@ -41,7 +37,7 @@ class CartPage extends GetView<CartController> {
           builder: (_) {
             return RefreshIndicator(
               onRefresh: () {
-                _.fetchActiveCarts(getRestaurantId: _.restaurantId.call());
+                controller.fetchActiveCarts(getRestaurantId: controller.restaurantId.call());
                 return _.refreshCompleter.future;
               },
               child: SingleChildScrollView(
@@ -74,11 +70,11 @@ class CartPage extends GetView<CartController> {
                           ],
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
-                      ),
+                      // Container(
+                      //   margin: EdgeInsets.only(top: 10),
+                      //   padding: EdgeInsets.symmetric(horizontal: 15),
+                      //   child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
+                      // ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         child: Column(
@@ -113,27 +109,27 @@ class CartPage extends GetView<CartController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.totalPrice.call().toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.cart.call().deliveryFee.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Container(
-                                  alignment: Alignment.bottomCenter,
-                                  height: 80,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${(_.totalPrice.call() + _.cart.call().deliveryFee).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                    ],
-                                  ),
-                                )
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                //     Text('₱ ${double.tryParse(_.cart.call().deliveryFee).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                //   ],
+                                // ),
+                                // Container(
+                                //   alignment: Alignment.bottomCenter,
+                                //   height: 80,
+                                //   child: Row(
+                                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //     children: [
+                                //       Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                //       Text('₱ ${(double.tryParse(_.cart.call().deliveryFee) + _.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                //     ],
+                                //   ),
+                                // )
                               ],
                             ),
                             Container(
@@ -182,7 +178,7 @@ class CartPage extends GetView<CartController> {
                   ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                          Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
                           RaisedButton(
                             color: Color(Config.LETSBEE_COLOR).withOpacity(1),
                             child: Text('Refresh'),
@@ -213,82 +209,89 @@ class CartPage extends GetView<CartController> {
                 Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 500),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
-                          ),
-                          curve: Curves.easeInOut,
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 500),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
+                        ),
+                        curve: Curves.easeInOut,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // GestureDetector(child: Icon(Icons.error_outline, color: Colors.red), onTap: () => print('Show dialog')),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                                  Expanded(
+                                    child: Container(
+                                      child: Text('${cart.quantity}x ${cart.menuDetails.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    ),
+                                  ),
+                                  Text('₱ ${(double.tryParse(cart.menuDetails.price) * cart.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 5, left: 20),
+                                child: Column(
+                                  children: [
+                                    Column(
+                                      children: cart.additionals.map((e) =>  _buildAdditional(e, cart.quantity)).toList(),
+                                    ),
+                                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                    Column(
+                                      children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
+                                    ),
+                                  ],
+                                )
+                              ),
+                              cart.note != 'N/A' ? Container(
+                                margin: EdgeInsets.only(top: 20),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // GestureDetector(child: Icon(Icons.error_outline, color: Colors.red), onTap: () => print('Show dialog')),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-                                    Expanded(
-                                      child: Container(
-                                        child: Text('${cart.quantity}x ${cart.menuDetails.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                                    Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      margin: EdgeInsets.only(top: 10),
+                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all()
                                       ),
+                                      child: Text(cart.note.toString())
                                     ),
-                                    Text('₱ ' + double.parse('${cart.menuDetails.price * cart.quantity}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
                                   ],
                                 ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 5, left: 20),
-                                  child: Column(
-                                    children: [
-                                      Column(
-                                        children: cart.additionals.map((e) =>  _buildAdditional(e, cart.quantity)).toList(),
-                                      ),
-                                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                      Column(
-                                        children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
-                                      ),
-                                    ],
-                                  )
-                                ),
-                                cart.note != 'N/A' ? Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic)),
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(15),
-                                          border: Border.all()
-                                        ),
-                                        child: Text(cart.note.toString())
-                                      ),
-                                    ],
-                                  ),
-                                ) : Container()
-                              ],
-                            ),
-                          )
-                        ),
-                        onTap: () => _.isEdit.call() ? Get.toNamed(Config.MENU_ROUTE, arguments: {
-                          'type': 'edit',
-                          'restaurant_id': cart.restaurantId,
-                          'restaurant_menu_id': cart.restaurantMenuId,
-                          'cart': cart.toJson()
-                        }) : null,
+                              ) : Container()
+                            ],
+                          ),
+                        )
                       ),
                     ),
-                    AnimatedSwitcher(
-                      duration: Duration(milliseconds: 100),
-                      child: controller.isEdit.call() ? 
-                      GestureDetector(key: UniqueKey(), child: Icon(Icons.delete, color: Colors.red), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
+                    Row(
+                      children: [
+                        AnimatedSwitcher(
+                          duration: Duration(milliseconds: 100),
+                          child: controller.isEdit.call() ? 
+                          GestureDetector(key: UniqueKey(), child: Icon(Icons.edit, color: Colors.orange), onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
+                            'type': 'edit',
+                            'restaurant_id': cart.restaurantId,
+                            'restaurant_menu_id': cart.restaurantMenuId,
+                            'cart': cart.toJson()
+                          })) : Container(key: UniqueKey())
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                        AnimatedSwitcher(
+                          duration: Duration(milliseconds: 100),
+                          child: controller.isEdit.call() ? 
+                          GestureDetector(key: UniqueKey(), child: Icon(Icons.delete, color: Colors.red), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
+                        ),
+                      ],
                     )
                   ],
                 ),
@@ -326,15 +329,16 @@ class CartPage extends GetView<CartController> {
       children: [
         Expanded(
           child: Container(
-            child: Text(pick.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+            child: Text(pick.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14)),
           ),
         ),
-        Text('₱ ' + double.parse('${pick.price * quantity}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + '${double.tryParse(pick.price).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
       ],
     );
   }
 
   Widget _buildChoice(Choice choice, int quantity) {
+    final price = double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,11 +348,11 @@ class CartPage extends GetView<CartController> {
             children: [
               Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
               Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              Expanded(child: Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)))
+              Expanded(child: Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14)))
             ],
           )
         ),
-        Text('₱ ' + double.parse('${(choice.price * quantity)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text(price == '0.00' ? '': '₱ ' + double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
       ],
     );
   }
@@ -499,7 +503,6 @@ class CartPage extends GetView<CartController> {
           ],
         )
       ),
-      isDismissible: false
     );
   }
 }

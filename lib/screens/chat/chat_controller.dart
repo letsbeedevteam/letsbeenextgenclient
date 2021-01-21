@@ -40,6 +40,7 @@ class ChatController extends GetxController {
       print('Connected');
       color(Colors.green);
       connectMessage('Connected');
+      fetchOrderChats(orderId: activeOrderData.call().id);
 
       chat.call().where((data) => !data.isSent).forEach((element) {
         messageRiderRequest(element.message);
@@ -73,7 +74,7 @@ class ChatController extends GetxController {
       connectMessage('Your message can\'t be sent. Please try again');
     });
 
-    fetchOrderChats();
+    fetchOrderChats(orderId: activeOrderData.call().id);
     updadateReceiveChat();
     super.onInit();
   }
@@ -129,11 +130,11 @@ class ChatController extends GetxController {
     });
   }
 
-  fetchOrderChats() {
+  fetchOrderChats({int orderId}) {
     message('Loading conversation...');
     isLoading(true);
 
-    _socketService.socket.emitWithAck('order-chats', {'order_id': activeOrderData.call().id}, ack: (response) {
+    _socketService.socket.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
       'fetch: $response'.printWrapped();
       isLoading(false);
       if (response['status'] == 200) {

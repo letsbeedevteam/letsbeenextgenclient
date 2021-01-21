@@ -156,14 +156,12 @@ class MenuController extends GetxController {
     
       if (response.status == 200) {
         CartController.to..cart.nil()..fetchActiveCarts(getRestaurantId: argument['restaurant_id']);
-        successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
+        successSnackBarTop(title: 'Updated Cart!', message: '${response.message} Please wait...', status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {
         errorSnackbarTop(title: 'Oops!', message: response.message);
         isAddToCartLoading(false);
       }
-
-     
 
     }).catchError((onError) {
       isAddToCartLoading(true);
@@ -179,8 +177,17 @@ class MenuController extends GetxController {
       if (response.status == 200) {
         // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
         CartController.to.cart.nil();
-        Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
-        isAddToCartLoading(true);
+        // Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
+
+        if (argument['type'] == 'quick_order') {
+          Get.offAndToNamed(Config.CART_ROUTE, arguments: {'restaurant': argument['restaurant']});
+        } else {
+          CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+            Get.back();
+            isAddToCartLoading(true);
+          });
+        }
+
       } else {
         if (response.code == 3005) {
           errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending order');

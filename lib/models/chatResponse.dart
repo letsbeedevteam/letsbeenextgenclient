@@ -1,7 +1,10 @@
 
 import 'dart:convert';
 
-String chatResponseToJson(ChatResponse data) => json.encode(data.toJson());
+String chatDataToJson(ChatData data) => json.encode(data.toJson());
+
+ChatData chatDataFromJson(String str) => ChatData.fromJson(json.decode(str));
+
 
 class ChatResponse {
 
@@ -55,7 +58,7 @@ class ChatData {
     "id": id,
     "order_id": orderId,
     // "updatedAt": updatedAt,
-    "createdAt": createdAt,
+    "createdAt": createdAt.toIso8601String(),
     "user_id": userId,
     "message": message
   };

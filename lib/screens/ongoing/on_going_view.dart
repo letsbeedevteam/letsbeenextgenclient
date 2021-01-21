@@ -22,7 +22,7 @@ class OnGoingPage extends GetView<DashboardController> {
           ),
            GetX<DashboardController>(
             builder: (_) {
-              return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.chat_sharp), onPressed: () => controller.goToChatPage()) : Container();
+              return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.chat_sharp), onPressed: () => controller.goToChatPage(fromNotificartion: false)) : Container();
             },
           ),
         ],
@@ -67,21 +67,21 @@ class OnGoingPage extends GetView<DashboardController> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                          Text('₱ ${_.activeOrderData.call().fee.subTotal.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                          Text('₱ ${double.tryParse(_.activeOrderData.call().fee.subTotal).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                          Text('₱ ${_.activeOrderData.call().fee.delivery.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                          Text('₱ ${double.tryParse(_.activeOrderData.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Promo Code Discount', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                          Text('₱ ${_.activeOrderData.call().fee.discountPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                          Text('₱ ${double.tryParse(_.activeOrderData.call().fee.discountPrice).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
                                       Container(
@@ -91,7 +91,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                            Text('₱ ${(_.activeOrderData.call().fee.total + _.activeOrderData.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                            Text('₱ ${(double.parse(_.activeOrderData.call().fee.total + _.activeOrderData.call().fee.delivery)).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                           ],
                                         ),
                                       )
@@ -237,7 +237,7 @@ class OnGoingPage extends GetView<DashboardController> {
                 child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
               ),
             ),
-            Text('₱ ${(menu.price * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+            Text('₱ ${(double.tryParse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
           ],
         ),
         Container(
@@ -302,9 +302,9 @@ class OnGoingPage extends GetView<DashboardController> {
 
   Widget _buildStatus() {
     switch (controller.activeOrderData.call().status) {
-      case 'pending': return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
@@ -316,7 +316,7 @@ class OnGoingPage extends GetView<DashboardController> {
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      default: return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+      default: return Text('Waiting for restaurant...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
     }
   }
 
@@ -349,7 +349,7 @@ class OnGoingPage extends GetView<DashboardController> {
             ],
           )
         ),
-        Text('₱ ' + double.parse('${(choice.price * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }
@@ -364,7 +364,7 @@ class OnGoingPage extends GetView<DashboardController> {
             child: Text(pick.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
           ),
         ),
-        Text('₱ ' + double.parse('${(pick.price * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(pick.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }

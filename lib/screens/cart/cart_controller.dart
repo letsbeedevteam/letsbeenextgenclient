@@ -26,18 +26,14 @@ class CartController extends GetxController {
   var cart = GetCart().obs;
 
   static CartController get to => Get.find();
+
   @override
   void onInit() {
-    this.cart.nil();
     refreshCompleter = Completer();
-        
-    if (restaurantId.call() != 0) {
-      fetchActiveCarts(getRestaurantId: restaurantId.call());
-    }
-    
+ 
     super.onInit();
   }
-  
+
   Future<bool> onWillPopBack() async {
     Get.back(closeOverlays: true);
     return true;
@@ -52,10 +48,10 @@ class CartController extends GetxController {
     isEdit(!isEdit.call());
   }
 
-  fetchActiveCarts({@required int getRestaurantId}) {
+  fetchActiveCarts({@required int getRestaurantId, Function callback}) {
     isLoading(true);
 
-    _apiService.getActiveCarts(restaurantId: getRestaurantId).then((response) {
+    _apiService.getActiveCarts(restaurantId: 1).then((response) {
       isLoading(false);
         _setRefreshCompleter();
       if(response.status == 200) {
@@ -65,10 +61,12 @@ class CartController extends GetxController {
           this.message('No list of carts');
           this.isEdit(false);
         } else {
-          totalPrice(response.data.map((e) => e.totalPrice).reduce((value, element) => value + element).roundToDouble());
+          totalPrice(response.data.map((e) => int.tryParse(e.totalPrice)).reduce((value, element) => value + element).roundToDouble());
           response.data.sort((b, a) => a.createdAt.compareTo(b.createdAt));
           this.cart(response);
         }
+
+        callback();
       
       } else {
         this.message(Config.SOMETHING_WENT_WRONG);
@@ -87,22 +85,24 @@ class CartController extends GetxController {
     Get.back();
     deleteSnackBarTop(title: 'Deleting item..', message: 'Please wait..');
 
-    _apiService.deleteCart(cartId).then((cart) {
-      isLoading(false);
-        _setRefreshCompleter();
+    Future.delayed(Duration(seconds: 2)).then((value) {
+      _apiService.deleteCart(cartId).then((cart) {
+        isLoading(false);
+          _setRefreshCompleter();
 
-      if(cart.status == 200) {
-        fetchActiveCarts(getRestaurantId: restaurantId.call());
-        successSnackBarTop(title: 'Success', message: cart.message);
-      } else {
-        errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
-      }
-      
-    }).catchError((onError) {
-      isLoading(false);
-        _setRefreshCompleter();
-      if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
-      print('Delete cart: $onError');
+        if(cart.status == 200) {
+          fetchActiveCarts(getRestaurantId: restaurantId.call());
+          successSnackBarTop(title: 'Success', message: cart.message);
+        } else {
+          errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
+        }
+        
+      }).catchError((onError) {
+        isLoading(false);
+          _setRefreshCompleter();
+        if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
+        print('Delete cart: $onError');
+      });
     });
   }
 
@@ -124,9 +124,22 @@ class CartController extends GetxController {
           if (order.paymentUrl == null) {
             print('NO URL');
             successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
+
+            Future.delayed(Duration(seconds: 1)).then((value) {
+              fetchActiveCarts(getRestaurantId: restaurantId);
+              if (Get.isSnackbarOpen) {
+                Get.back();
+                Future.delayed(Duration(seconds: 1));
+                Get.back();
+              } else {
+                Get.back();
+              }
+            });
+
           } else {
-            paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
+            // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
             print('GO TO WEBVIEW: ${order.paymentUrl}');
+            fetchActiveCarts(getRestaurantId: restaurantId);
             Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
               'url': order.paymentUrl,
               'order_id': order.data.id
@@ -139,8 +152,6 @@ class CartController extends GetxController {
             errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
           } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
         }
-
-        fetchActiveCarts(getRestaurantId: restaurantId);
         
       }).catchError((onError) {
         isPaymentLoading(false);

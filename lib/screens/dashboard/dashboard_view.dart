@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
@@ -74,9 +75,9 @@ class DashboardPage extends GetView<DashboardController> {
             ],
           ),
           floatingActionButton: Badge(
-            badgeContent: Text('1', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            badgeContent: _.activeOrders.call() == null ? null : Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             padding: EdgeInsets.all(10),
-            showBadge: _.activeOrderData.call() != null,
+            showBadge: _.activeOrders.call() != null,
             child: FloatingActionButton(
               splashColor: Colors.transparent,
               backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
@@ -208,52 +209,56 @@ class DashboardPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildActiveOrderList() {
-    return GetX<DashboardController>(
-      builder: (_) {
-        return GestureDetector(
-          onTap: () {
-            Get.back(result: 'active-dialog');
-            Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
-          },
-          child: Container(
-            margin: EdgeInsets.all(15),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(width: 0.5),
-              borderRadius: BorderRadius.circular(5),
-              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
-            ),
-            child: Row(
+  Widget _buildActiveOrderList(ActiveOrderData data) {
+    
+    if (data.activeRestaurant.locationName.isBlank) {
+      controller.title("${data.activeRestaurant.name}");
+    } else {
+      controller.title("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})");
+    }
+
+    return GestureDetector(
+      onTap: () {
+        controller.activeOrderData(data);
+        Get.back(result: 'active-dialog');
+        Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+      },
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.5),
+          borderRadius: BorderRadius.circular(5),
+          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Text(controller.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                Row(
                   children: [
-                    Text(_.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                    Row(
-                      children: [
-                        Text('Order Status: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
-                        _buildStatus(status: _.activeOrderData.call().status),
-                      ],
-                    )
+                    Text('Order Status: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
+                    _buildStatus(status: data.status),
                   ],
                 )
               ],
-            ),
-          ),
-        );
-      },
+            )
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildStatus({String status}) {
     switch (status) {
-      case 'pending': return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
       case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
@@ -280,16 +285,14 @@ class DashboardPage extends GetView<DashboardController> {
         child: GetX<DashboardController>(
           builder: (_) {
             return Container(
-              height: _.activeOrderData.call() == null ? 100 : 350,
-              child: _.activeOrderData.call() == null ? Container(
+              height: _.activeOrders.call() == null ? 100 : 350,
+              child: _.activeOrders.call() == null ? Container(
                 child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
               ) : Scrollbar(
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildActiveOrderList(),
-                    ],
+                    children: _.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
                   ),
                 ),
               ),

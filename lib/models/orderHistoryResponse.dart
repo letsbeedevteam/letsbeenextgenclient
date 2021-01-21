@@ -201,7 +201,7 @@ class OrderHistoryMenu {
 
     int menuId;
     String name;
-    double price;
+    String price;
     int quantity;
     List<Choice> choices;
     List<Additional> additionals;
@@ -210,7 +210,7 @@ class OrderHistoryMenu {
     factory OrderHistoryMenu.fromJson(Map<String, dynamic> json) => OrderHistoryMenu(
         menuId: json["menu_id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
@@ -242,7 +242,7 @@ class OrderHistoryRestaurant {
   String logoUrl;
 
   factory OrderHistoryRestaurant.fromJson(Map<String, dynamic> json) => OrderHistoryRestaurant(
-    slider: List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
+    slider: json["sliders"] == null ? List<Slider>() : List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
     name: json['name'],
     locationName: json['location_name'],
     logoUrl: json['logo_url']  
