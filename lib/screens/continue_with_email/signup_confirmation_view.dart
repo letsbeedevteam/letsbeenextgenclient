@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
+import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
 
 class SignUpConfirmationPage extends GetView<SignUpController> {
 
@@ -30,7 +30,7 @@ class SignUpConfirmationPage extends GetView<SignUpController> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('We send your confirmation code to your email.', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
+                  child: Text('We send your confirmation code to your email.', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Padding(
@@ -80,7 +80,7 @@ class SignUpConfirmationPage extends GetView<SignUpController> {
                             ),
                           ),
                         ),
-                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                         Container(
                           width: 200,
                           height: 40,
@@ -96,9 +96,49 @@ class SignUpConfirmationPage extends GetView<SignUpController> {
                             onPressed: () {
                               // _.validation(currentIndex: 1);
                               dismissKeyboard(context);
-                              Future.delayed(Duration(seconds: 1)).then((value) => controller.goToSetupLocation());
+                              Future.delayed(Duration(seconds: 1)).then((value) => controller.goToVerifyNumber());
                             },
                           )
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 5,
+                                offset: Offset(0,2)
+                              )
+                            ]
+                          ),
+                          child: SizedBox(
+                            height: 40,
+                            child: RaisedButton(
+                              color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(13),
+                                child: Text('RESEND CONFIRMATION CODE'),
+                              ),
+                              onPressed: () {
+                                dismissKeyboard(context);
+                                print('Resend confirmation code');
+                              },
+                            ),
+                            // width: Get.width * 0.80,
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            '*After 1 minute if you don\'t receive your code, you can resend it again by resending the confirmation code*', 
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                          ),
                         )
                       ],
                     ),

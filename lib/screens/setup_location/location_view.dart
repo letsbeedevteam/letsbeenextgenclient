@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/screens/setup_location/controllers/setup_location_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'dart:math' as math;
 
-class SetupLocationPage extends StatelessWidget {
+class SetupLocationPage extends GetView<SetupLocationController> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.rotationY(math.pi),
+          child: IconButton(icon: Icon(Icons.logout), onPressed: () => controller.logout())
+        ),
       ),
       body: Container(
         child: Column(
@@ -86,7 +93,7 @@ class SetupLocationPage extends StatelessWidget {
                               padding: EdgeInsets.all(13),
                               child: Text('CURRENT LOCATION'),
                             ),
-                            onPressed: _.goToVerifyNumberPage,
+                            onPressed: () => confirmLocationModal(),
                           ),
                         );
                       },
@@ -124,6 +131,130 @@ class SetupLocationPage extends StatelessWidget {
           ],
         ),
       )
+    );
+  }
+
+  confirmLocationModal() {
+    Get.dialog(
+      AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(child: Text('Is this your current location?', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
+            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            Text('House No./Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+            SizedBox(
+              height: 30,
+              child: TextFormField(
+                controller: controller.streetTFController,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 15),
+                keyboardType: TextInputType.emailAddress, 
+                textInputAction: TextInputAction.next,
+                enableSuggestions: false,
+                autocorrect: false,
+                obscureText: false,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade200,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Text('Barangay / Purok', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+            SizedBox(
+              height: 30,
+              child: TextFormField(
+                controller: controller.barangayTFController,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 15),
+                keyboardType: TextInputType.emailAddress, 
+                textInputAction: TextInputAction.next,
+                enableSuggestions: false,
+                autocorrect: false,
+                obscureText: false,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade200,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Text('Municipality / City', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+            SizedBox(
+              height: 30,
+              child: TextFormField(
+                 controller: controller.cityTFController,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 15),
+                keyboardType: TextInputType.emailAddress, 
+                textInputAction: TextInputAction.next,
+                enableSuggestions: false,
+                autocorrect: false,
+                obscureText: false,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  fillColor: Colors.grey.shade200,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                )
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    onPressed: () {
+                      Get.back();
+                      Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
+                    },
+                    child: Text('NO'),
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                  RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    onPressed: () =>  controller.goToDashboardPage(),
+                    child: Text('YES'),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+      barrierDismissible: false
     );
   }
 }

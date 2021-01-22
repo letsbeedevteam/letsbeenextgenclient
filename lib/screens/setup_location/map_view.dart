@@ -114,7 +114,7 @@ class MapPage extends GetView<MapController> {
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
                         ),
-                        onPressed: () => _.isMapLoading.call() ? null : showDialog()
+                        onPressed: () => _.isMapLoading.call() || _.isLoading.call() ? null : confirmLocationModal()
                       );
                     },
                   ),
@@ -128,92 +128,251 @@ class MapPage extends GetView<MapController> {
     );
   }
 
-   showDialog() {
+  // showDialog() {
 
-    Get.defaultDialog(
-      title: 'Confirm your location',
-      content: GetX<MapController>(
-        builder: (_) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(_.userCurrentAddress.call(), textAlign: TextAlign.center),
-              Padding(
-                child: _.argument['type'] != Config.ADD_NEW_ADDRESS ? 
-                Container() : IgnorePointer(
-                  ignoring: _.isAddAddressLoading.call(),
-                  child: TextField(
-                    controller: _.nameTF,
+  //   Get.defaultDialog(
+  //     title: 'Confirm your location',
+  //     content: GetX<MapController>(
+  //       builder: (_) {
+  //         return Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           children: [
+  //             Text(_.userCurrentAddress.call(), textAlign: TextAlign.center),
+  //             Padding(
+  //               child: _.argument['type'] != Config.ADD_NEW_ADDRESS ? 
+  //               Container() : IgnorePointer(
+  //                 ignoring: _.isAddAddressLoading.call(),
+  //                 child: TextField(
+  //                   controller: _.nameTF,
+  //                   cursorColor: Colors.black,
+  //                   decoration: InputDecoration(
+  //                     contentPadding: EdgeInsets.only(left: 10),
+  //                     hintText: 'Name (ex: Home, Work)',
+  //                     fillColor: Colors.grey.shade200,
+  //                     filled: true,
+  //                     enabledBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
+  //                       borderSide: BorderSide.none
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(10.0),
+  //                       borderSide: BorderSide(color: Colors.black),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //               padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+  //             )
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //     barrierDismissible: false,
+  //     cancel: GetBuilder<MapController>(
+  //       builder: (_) {
+  //         return RaisedButton(
+  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(5),
+  //           ),
+  //           child: Text('Cancel'), 
+  //           onPressed: () async {
+  //             _.nameTF.clear();
+  //             if (Get.isSnackbarOpen) {
+  //               Get.back();
+  //               await Future.delayed(Duration(milliseconds: 100));
+  //               Get.back();
+  //             } else {
+  //               Get.back();
+  //             }
+  //             if (_.newAddressSub != null) _.newAddressSub.cancel();
+  //           }
+  //         );
+  //       },
+  //     ),
+  //     confirm: GetX<MapController>(
+  //       builder: (_) {
+  //         return RaisedButton(
+  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(5),
+  //           ),
+  //           child: _.isAddAddressLoading.call() ? SizedBox(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Looks good'), 
+  //           onPressed: () {
+  //             if(_.argument['type'] == Config.ADD_NEW_ADDRESS) {
+  //               if (_.nameTF.text.isBlank) {
+  //                 errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
+  //               } else {
+  //                 if (!_.isAddAddressLoading.call()) _.addAddress();
+  //               }
+  //             } else {
+  //               Get.back();
+  //               Future.delayed(Duration(seconds: 1)).then((value) => Get.toNamed(Config.VERIFY_NUMBER_ROUTE));
+  //             }
+  //           }
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  confirmLocationModal() {
+    Get.dialog(
+      AlertDialog(
+        content: GetX<MapController>(
+          builder: (_) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(child: Text('Is this your Address?', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                Text('House No./Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.streetTFController,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    keyboardType: TextInputType.emailAddress, 
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
                     cursorColor: Colors.black,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 10),
-                      hintText: 'Name (ex: Home, Work)',
                       fillColor: Colors.grey.shade200,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        borderRadius: BorderRadius.circular(5),
                         borderSide: BorderSide.none
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    )
                   ),
                 ),
-                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-              )
-            ],
-          );
-        },
-      ),
-      barrierDismissible: false,
-      cancel: GetBuilder<MapController>(
-        builder: (_) {
-          return RaisedButton(
-            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Text('Cancel'), 
-            onPressed: () async {
-              _.nameTF.clear();
-              if (Get.isSnackbarOpen) {
-                Get.back();
-                await Future.delayed(Duration(milliseconds: 100));
-                Get.back();
-              } else {
-                Get.back();
-              }
-              if (_.newAddressSub != null) _.newAddressSub.cancel();
-            }
-          );
-        },
-      ),
-      confirm: GetX<MapController>(
-        builder: (_) {
-          return RaisedButton(
-            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: _.isAddAddressLoading.call() ? SizedBox(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Looks good'), 
-            onPressed: () {
-              if(_.argument['type'] == Config.ADD_NEW_ADDRESS) {
-                if (_.nameTF.text.isBlank) {
-                  errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
-                } else {
-                  if (!_.isAddAddressLoading.call()) _.addAddress();
-                }
-              } else {
-                Get.back();
-                Future.delayed(Duration(seconds: 1)).then((value) => Get.toNamed(Config.VERIFY_NUMBER_ROUTE));
-              }
-            }
-          );
-        },
-      ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text('Barangay / Purok', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.barangayTFController,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    keyboardType: TextInputType.emailAddress, 
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide.none
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    )
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text('Municipality / City', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.cityTFController,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    keyboardType: TextInputType.emailAddress, 
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide.none
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    )
+                  ),
+                ),
+                _.argument['type'] != Config.ADD_NEW_ADDRESS ? 
+                Container() : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                    Text('Name', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                    IgnorePointer(
+                      ignoring: _.isAddAddressLoading.call(),
+                      child: SizedBox(
+                        height: 30,
+                        child: TextFormField(
+                          controller: _.nameTF,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                            hintText: 'ex: Home, Work',
+                            fillColor: Colors.grey.shade200,
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              borderSide: BorderSide.none
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        onPressed: () => Get.back(),
+                        child: Text('NO'),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        onPressed: () => controller.goToDashboardPage(),
+                        child: _.isAddAddressLoading.call() ? SizedBox(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('YES'),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      )
     );
   }
 }

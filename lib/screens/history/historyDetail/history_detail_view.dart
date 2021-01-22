@@ -147,7 +147,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${(_.data.call().fee.total + _.data.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                      Text('₱ ${(_.data.call().fee.total).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
                                 )
@@ -272,7 +272,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              Text('₱ ${(int.parse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+              Text('₱ ${(double.parse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
             ],
           ),
           Container(

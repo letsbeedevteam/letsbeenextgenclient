@@ -23,7 +23,7 @@ class DashboardPage extends GetView<DashboardController> {
                 alignment: Alignment.topCenter,
                 children: [
                     AnimatedContainer(
-                    height: _.isHideAppBar.call() ? 0 : 100,
+                    height: _.isHideAppBar.call() ? 0 : Get.height / 10,
                     duration: Duration(seconds: 2),
                     curve: Curves.fastLinearToSlowEaseIn,
                     child: AppBar(
@@ -38,15 +38,15 @@ class DashboardPage extends GetView<DashboardController> {
                         children: [
                           Row(
                             children: [
-                              Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-                              Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text('DELIVER TO: ', style: TextStyle(fontSize: 13, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.normal)),
+                              Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0))),
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                           Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                          )
+                          ),
                         ],
                       ),
                         // actions: [
@@ -58,7 +58,7 @@ class DashboardPage extends GetView<DashboardController> {
                     child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
                     width: Get.width, 
                     color: Colors.white
-                  )
+                  ),
                 ],
               ),
               Flexible(
@@ -102,7 +102,7 @@ class DashboardPage extends GetView<DashboardController> {
             fixedColor: Colors.black,
             onTap: (value) =>  _.tapped(value),
             items: [
-              customNavigationBarItem('Home', icon: Icon(Icons.home)),
+              customNavigationBarItem('Food', icon: Icon(Icons.sports_motorsports)),
               customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
               customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),

@@ -5,6 +5,7 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/verify_number/controller/verify_number_controller.dart';
 import 'package:letsbeeclient/screens/verify_number/confirm_code_view.dart';
 import 'package:letsbeeclient/screens/verify_number/contact_number_view.dart';
+import 'dart:math' as math;
 
 class VerifyNumberPage extends GetView<VerifyNumberController> {
   @override
@@ -16,7 +17,15 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => _willPopCallback()),
+            leading: GetX<VerifyNumberController>(
+              builder: (_) {
+                return _.selectedIndex.call() == 0 ? Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: IconButton(icon: Icon(Icons.logout), onPressed: () => _willPopCallback()),
+                ) : IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => _willPopCallback());
+              },
+            ),
           ),
           body: GetBuilder<VerifyNumberController>(
             builder: (_) {
@@ -40,7 +49,7 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
   Future<bool> _willPopCallback() async {
     dismissKeyboard(Get.context);
     if (controller.selectedIndex.call() == 0) {
-      Get.back(closeOverlays: true);
+      controller.logout();
       return true;
     } else {
       controller.changeIndex(0);

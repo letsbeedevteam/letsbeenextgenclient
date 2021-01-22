@@ -30,22 +30,25 @@ class SocialLoginResponse {
 
 class SocialData {
     SocialData({
-        this.id,
-        this.name,
-        this.email,
-        this.accessToken,
+      this.id,
+      this.name,
+      this.email,
+      this.accessToken,
+      this.cellphoneNumber
     });
 
     int id;
     String name;
     String email;
     String accessToken;
+    String cellphoneNumber;
 
     factory SocialData.fromJson(Map<String, dynamic> json) => SocialData(
         id: json["id"],
         name: json["name"],
         email: json["email"],
         accessToken: json["access_token"],
+        cellphoneNumber: json["cellphone_number"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -53,5 +56,6 @@ class SocialData {
         "name": name,
         "email": email,
         "access_token": accessToken,
+        "cellphone_number": cellphoneNumber
     };
 }

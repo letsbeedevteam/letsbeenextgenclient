@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
-import 'package:letsbeeclient/screens/signup/signin_email_view.dart';
-import 'package:letsbeeclient/screens/signup/signup_confirmation_view.dart';
-import 'package:letsbeeclient/screens/signup/signup_email_view.dart';
+import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
+import 'package:letsbeeclient/screens/continue_with_email/signin_email_view.dart';
+import 'package:letsbeeclient/screens/continue_with_email/signup_confirmation_view.dart';
+import 'package:letsbeeclient/screens/continue_with_email/signup_email_view.dart';
 
 class SignUpPage extends GetView<SignUpController>  {
 
@@ -20,15 +20,15 @@ class SignUpPage extends GetView<SignUpController>  {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: _.willPopCallback),
-                actions: [
-                  _.tabController.index == 0 ? IgnorePointer(
-                    ignoring: _.isLoading.call(),
-                    child: FlatButton(
-                      child: Text('Next', style: TextStyle(fontSize: 18)), color: Colors.white, highlightColor: Colors.transparent,
-                      onPressed: () => _.signIn() 
-                    ),
-                  ) : Container()
-                ],
+                // actions: [
+                //   _.tabController.index == 0 ? IgnorePointer(
+                //     ignoring: _.isLoading.call(),
+                //     child: FlatButton(
+                //       child: Text('Next', style: TextStyle(fontSize: 18)), color: Colors.white, highlightColor: Colors.transparent,
+                //       onPressed: () => _.signIn() 
+                //     ),
+                //   ) : Container()
+                // ],
               ),
               body: TabBarView(
                 physics: NeverScrollableScrollPhysics(),

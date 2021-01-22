@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
+import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
 
 class SignUpEmailPage extends StatelessWidget {
 
@@ -19,8 +19,8 @@ class SignUpEmailPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   child: Center(
                     child: SizedBox(
-                      height: 180,
-                      width: 180,
+                      height: 150,
+                      width: 150,
                       child: Image.asset(Config.PNG_PATH + 'sign_up.png'),
                     ),
                   ),
@@ -29,8 +29,8 @@ class SignUpEmailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Center(child: Text('Create your account', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: Center(child: Text('Register your email as an account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Container(
@@ -139,6 +139,50 @@ class SignUpEmailPage extends StatelessWidget {
                                 child: TextFormField(
                                   controller: _.passwordController,
                                   focusNode: _.passwordFN,
+                                  onEditingComplete: () => _.signUpConfirmPasswordFN.requestFocus(),
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(fontSize: 18),
+                                  keyboardType: TextInputType.text, 
+                                  textInputAction: TextInputAction.done,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                  obscureText: true,
+                                  cursorColor: Colors.black,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(RegExp('[ ]'))
+                                  ],
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.grey.shade200,
+                                    filled: true,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.black)
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    contentPadding: EdgeInsets.only(left: 15)
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                child: Text('Confirm Password:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                              ),
+                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              SizedBox(
+                                height: 40,
+                                child: TextFormField(
+                                  controller: _.confirmPasswordController,
+                                  focusNode: _.signUpConfirmPasswordFN,
                                   textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 18),
                                   keyboardType: TextInputType.text, 
@@ -177,9 +221,9 @@ class SignUpEmailPage extends StatelessWidget {
                               color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                               child: _.isLoading.call() ? 
                                Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)))
-                              : Text('Sign Up', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                              : Text('Register', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                if(!_.isLoading.call()) _.signUp();
+                                if(!_.isLoading.call()) _.register();
                               },
                             ),
                           )

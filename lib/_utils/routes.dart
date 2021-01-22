@@ -25,7 +25,7 @@ import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/map_view.dart';
-import 'package:letsbeeclient/screens/signup/tab_signup_view.dart';
+import 'package:letsbeeclient/screens/continue_with_email/tab_signup_view.dart';
 import 'package:letsbeeclient/screens/splash/splash_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/screens/verify_number/tab_verify_number_view.dart';

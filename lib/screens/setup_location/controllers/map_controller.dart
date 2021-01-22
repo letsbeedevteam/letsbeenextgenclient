@@ -39,6 +39,10 @@ class MapController extends GetxController {
   var street = ''.obs;
   var isoCode = ''.obs;
 
+  final streetTFController = TextEditingController();
+  final barangayTFController = TextEditingController();
+  final cityTFController = TextEditingController();
+
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
 
@@ -47,6 +51,22 @@ class MapController extends GetxController {
     setup();
     currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
     super.onInit();
+  }
+
+  void goToDashboardPage() {
+
+    if(argument['type'] == Config.ADD_NEW_ADDRESS) {
+      if (nameTF.text.isBlank) {
+        errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
+      } else {
+        if (!isAddAddressLoading.call()) addAddress();
+      }
+    } else {
+      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}');
+      _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+      _box.write(Config.IS_SETUP_LOCATION, true);
+      Get.offAllNamed(Config.DASHBOARD_ROUTE);
+    }
   }
 
   void setup() async {
@@ -92,8 +112,12 @@ class MapController extends GetxController {
         print(element.toMap());
       });
 
-      if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+      streetTFController.text = response.first.featureName;
+      barangayTFController.text = response.first.subLocality;
+      cityTFController.text = response.first.locality;
 
+      if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+        
         this.country(response.first.countryName);
         this.state(response.first.adminArea);
         this.city(response.first.locality);
@@ -116,6 +140,7 @@ class MapController extends GetxController {
     }).catchError((onError) {
       hasLocation(false);
       getCurrentAddress();
+      Future.delayed(Duration(seconds: 10)).then((value) => getCurrentAddress());
       print('getCurrentAddress: $onError');
     });
   }
@@ -178,6 +203,7 @@ class MapController extends GetxController {
       isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
+        userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}');
         _box.write(Config.USER_CURRENT_STREET, response.data.street);
         _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
         _box.write(Config.USER_CURRENT_STATE, response.data.state);

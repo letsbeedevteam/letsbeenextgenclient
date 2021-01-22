@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
@@ -14,6 +15,12 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Divider(
+          indent: 20,
+          endIndent: 20,
+          color: Colors.black,
+          thickness: 5,
+        ),
         SizedBox(
           height: 35,
           child: Container(
@@ -46,7 +53,6 @@ class HomePage extends StatelessWidget {
             )
           ),
         ),
-        Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
         GetX<DashboardController>(
           builder: (_) {
             return Flexible(
@@ -67,8 +73,25 @@ class HomePage extends StatelessWidget {
                           child: _.restaurants.call() != null ?
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                child: Text('What do you want eat?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
+                              ),
+                              Container(
+                                height: 80,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    _buildCategory(title: 'Filipino Dish'),
+                                    _buildCategory(title: 'Korean Dish'),
+                                    _buildCategory(title: 'Protein'),
+                                    _buildCategory(title: 'Chinese Dish'),
+                                    _buildCategory(title: 'Vietnamese Dish'),
+                                  ]
+                                ),
+                              ),
                               _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +135,7 @@ class HomePage extends StatelessWidget {
                                 ),
                               )
                             ],
-                          ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                          ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call().isEmpty ? Config.SOMETHING_WENT_WRONG : _.message.call(), style: TextStyle(fontSize: 18))),
                         ),
                       ),
                     )
@@ -145,6 +168,38 @@ class HomePage extends StatelessWidget {
           },
         )
       ],
+    );
+  }
+
+  Widget _buildCategory({String title}) {
+    return GestureDetector(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(left: 10, right: 10),
+              padding: EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 4.0,
+                    offset: Offset(2,2)
+                  )
+                ]
+              ),
+              child: Icon(FontAwesomeIcons.pizzaSlice, color: Colors.yellow.shade700),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+            Expanded(child: Text(title))
+          ],
+        ),
+      ),
+      onTap: () => print('Category'),
     );
   }
 

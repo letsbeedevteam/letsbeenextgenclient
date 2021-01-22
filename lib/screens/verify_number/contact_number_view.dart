@@ -98,7 +98,7 @@ class ContactNumberPage extends StatelessWidget {
                       }
                     },
                   ),
-                  width: Get.width * 0.80,
+                  // width: Get.width * 0.80,
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 30)),

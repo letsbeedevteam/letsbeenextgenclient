@@ -296,7 +296,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     onGoingMessage('Loading...');
     if (socketService.socket != null) {
        socketService.socket.emitWithAck('active-orders', '', ack: (response) {
-         print('Active orders: $response');
+         'Active orders: $response'.printWrapped();
          activeOrders(ActiveOrder.fromJson(response));
         if (activeOrders.call().status == 200) {
           if (activeOrders.call().data.isEmpty) {

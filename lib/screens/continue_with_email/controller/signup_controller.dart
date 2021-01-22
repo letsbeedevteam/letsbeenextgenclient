@@ -17,10 +17,12 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
   final signUpEmailFN = FocusNode();
   final signUpPasswordFN = FocusNode();
+  final signUpConfirmPasswordFN = FocusNode();
 
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final codeController = TextEditingController();
 
   final emailFN = FocusNode();
@@ -56,14 +58,24 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             _box.write(Config.USER_EMAIL, response.data.email);
             _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
             _box.write(Config.USER_TOKEN, response.data.accessToken);
-            changeIndex(2);
+            _box.write(Config.IS_LOGGED_IN, true);
+            // changeIndex(2);
+            reset();
+
+            if (response.data.cellphoneNumber == null || response.data.cellphoneNumber == '') {
+              Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
+            } else {
+              _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
+              Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
+            }
+
           } else {
 
             if (response.code == 2000) {
               alertSnackBarTop(title: 'Oops!', message: 'Your password is invalid.');
             } else {
               alertSnackBarTop(title: 'Oops!', message: 'You don\'t have an account, Please create a new one.');
-              changeIndex(1);
+              // changeIndex(1);
             }
           }
 
@@ -80,34 +92,35 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     }
   }
 
-  void signUp() {
+  void register() {
     isLoading(true);
     dismissKeyboard(Get.context);
 
-    if (nameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty) {
+    if (nameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
       isLoading(false);
       errorSnackbarTop(title: 'Oops!', message: 'Please input your required field(s)');
 
     } else {
       
       if(GetUtils.isEmail(emailController.text)) {
-        _apiService.customerSignUp(name: nameController.text, email: emailController.text, password: passwordController.text).then((response) {
-           if (response.status == 200) {
-            successSnackBarTop(title: 'Registered SuccessFully', message: 'Please sign in with your email');
-            changeIndex(0);
-            nameController.clear();
-            emailController.clear();
-            passwordController.clear();
 
-            signInEmailController.clear();
-            signInPasswordController.clear();
+        if (confirmPasswordController.text == passwordController.text) {
+          _apiService.customerSignUp(name: nameController.text, email: emailController.text, password: passwordController.text).then((response) {
+            if (response.status == 200) {
+              successSnackBarTop(title: 'Yay!', message: 'Registered successfully!');
+              reset();
+              changeIndex(2);
 
+              isLoading(false);
+            }
+          }).catchError((onError) {
+            alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
             isLoading(false);
-          }
-        }).catchError((onError) {
-          alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          });
+        } else {
           isLoading(false);
-        });
+          errorSnackbarTop(title: 'Oops!', message: 'Your confirm password is incorrect.');
+        }
 
       } else {
         errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid.');
@@ -116,16 +129,26 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     }
   }
 
-  void goToSetupLocation() {
+  void goToVerifyNumber() {
     _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
     _box.write(Config.IS_LOGGED_IN, true);
-    Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
+    Get.offAllNamed(Config.VERIFY_NUMBER_ROUTE);
   }
 
   void changeIndex(int index) {
     selectedIndex(index);
     tabController.index = selectedIndex.call();
     update();
+  }
+
+  void reset() {
+    nameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+
+    signInEmailController.clear();
+    signInPasswordController.clear();
   }
 
   void confirm() {
@@ -139,7 +162,12 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
       Get.back(closeOverlays: true);
       return true;
     } else {
-      changeIndex(0);
+      selectedIndex.call() == 2 ? changeIndex(1) : changeIndex(0);
+      // if (selectedIndex.call() == 2) {
+      //   changeIndex(1);
+      // } else {
+      //   changeIndex(0);
+      // }
       return false;
     }
   }
