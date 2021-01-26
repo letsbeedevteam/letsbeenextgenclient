@@ -62,7 +62,7 @@ class CartPage extends GetView<CartController> {
                                     borderRadius: BorderRadius.circular(25),
                                   ),
                                   color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                                  child: _.isEdit.call() ? Text('Cancel Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                  child: _.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                   onPressed: controller.setEdit,
                                 )
                               ),
@@ -121,7 +121,7 @@ class CartPage extends GetView<CartController> {
                                 ),
                                 Container(
                                   alignment: Alignment.bottomCenter,
-                                  height: 80,
+                                  height: 50,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
@@ -219,8 +219,15 @@ class CartPage extends GetView<CartController> {
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 500),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            color: controller.isEdit.call() ? Colors.grey.shade200 : Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
+                                blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
+                                offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
+                              )
+                            ]
                           ),
                           curve: Curves.easeInOut,
                           child: Container(
@@ -280,10 +287,11 @@ class CartPage extends GetView<CartController> {
                           )
                         ),
                       ),
+                      Padding(padding: EdgeInsets.only(left: 5)),
                       AnimatedSwitcher(
                         duration: Duration(milliseconds: 100),
                         child: controller.isEdit.call() ? 
-                        GestureDetector(key: UniqueKey(), child: Icon(Icons.delete, color: Colors.red), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
+                        GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
                       ),
                     ],
                   ),
@@ -401,10 +409,10 @@ class CartPage extends GetView<CartController> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
-          image: DecorationImage(
-            image: ExactAssetImage(Config.PNG_PATH + 'letsbee_bg.png'),
-            fit: BoxFit.cover
-          )
+          // image: DecorationImage(
+          //   image: ExactAssetImage(Config.PNG_PATH + 'letsbee_bg.png'),
+          //   fit: BoxFit.cover
+          // )
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -422,9 +430,20 @@ class CartPage extends GetView<CartController> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(13),
-                  child: Text('Cash On Delivery', style: TextStyle(fontWeight: FontWeight.bold)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: Image.asset(Config.PNG_PATH + 'cod.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(13),
+                      child: Text('CASH ON DELIVERY', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                    ),
+                  ],
                 ),
                 onPressed: () => controller.paymentMethod(restaurantId, 'cod'),
               ),
@@ -437,8 +456,8 @@ class CartPage extends GetView<CartController> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: SizedBox(
-                      width: 380,
-                      child: Text('Note: For cancellation of online payment, it will take 5 to 7 days for refund.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                      width: 300,
+                      child: Text('Reminder: For cancellation of online payment, it will take 5 to 7 days for refund.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 13, fontStyle: FontStyle.italic)),
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -450,9 +469,20 @@ class CartPage extends GetView<CartController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.all(13),
-                        child: Text('Credit or Debit Card', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          ),
+                        ],
                       ),
                       onPressed: () => print('Card'),
                     ),
@@ -466,9 +496,15 @@ class CartPage extends GetView<CartController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.all(13),
-                        child: Text('Gcash', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          ),
+                        ],
                       ),
                       onPressed: () => controller.paymentMethod(restaurantId, 'gcash'),
                     ),
@@ -482,9 +518,20 @@ class CartPage extends GetView<CartController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.all(13),
-                        child: Text('Paypal', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: Image.asset(Config.PNG_PATH + 'paypal.png'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          ),
+                        ],
                       ),
                       onPressed: () => controller.paymentMethod(restaurantId, 'paypal'),
                     ),

@@ -95,23 +95,30 @@ class HomePage extends StatelessWidget {
                               _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                     Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 10),
-                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.start),
                                     ),
                                     Container(
-                                      height: 80,
-                                      child: ListView(
+                                      child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
-                                        children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList()
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList(),
+                                        )
                                       ),
                                     ),
-                                    Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
+                                    // Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
                                   ],
                                 ),
                               ) : Container(),
+                              Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.start),
+                              ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                               _.searchRestaurants.call().isNotEmpty ? 
                               Column(
@@ -204,64 +211,94 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildRecentRestaurantItem(RestaurantElement restaurant) {
+    final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
       child: Container(
-      margin: EdgeInsets.only(left: 10, right: 10),
-      child: CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: 30,
-        child: ClipOval(
-          child: FadeInImage.assetNetwork(
-            placeholder: cupertinoActivityIndicatorSmall, 
-            image: restaurant.logoUrl, 
-            fit: BoxFit.cover, 
-            placeholderScale: 5, 
-            imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))
-          ),
-        )
-      ),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.black,
-          width: 2.0,
+        width: 180,
+        margin: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              alignment: Alignment.topCenter,
+              // padding: EdgeInsets.all(10),
+              child: restaurant.sliderUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliderUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+              : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            ),
+            // Padding(padding: EdgeInsets.symmetric(vertical: 10))
+          ],
         ),
-      ),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade400,
+              blurRadius: 1.0,
+              offset: Offset(2.0, 2.0)
+            )
+          ],
+          color: Colors.white
+        ),
       ),
     onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
     );
   }
 
   Widget _buildRestaurantItem(RestaurantElement restaurant) {
+    final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
       onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
       child: Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade400,
+              blurRadius: 1.0,
+              offset: Offset(2.0, 4.0)
+            )
+          ],
+          color: Colors.white
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(restaurant.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
-            ),
-            // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 10),
+            //   child: Text(restaurant.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 10),
+            //   child: Text(restaurant.location.name == null || restaurant.location.name == '' ? 'Test' : restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
+            // ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             Hero(
               tag: restaurant.name, 
               child: Container(
                 height: 200,
                 alignment: Alignment.center,
                 margin: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.all(10),
                 child: SizedBox(
                   width: Get.width,
-                  child: restaurant.sliders.isNotEmpty ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliders.first.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                  child: restaurant.sliderUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliderUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                   : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                 ),
               )
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 10))
             // Padding(
             //   padding: EdgeInsets.symmetric(vertical: 10),
             //   child: Divider(color: Colors.grey.shade200, thickness: 5, indent: 30, endIndent: 30,),

@@ -30,7 +30,7 @@ class WebController extends GetxController {
         isLoading(false);
 
         if(value.status == 200) {
-          DashboardController.to.fetchActiveOrder();
+          DashboardController.to.fetchActiveOrders();
           Get.back(closeOverlays: true);
           Future.delayed(Duration(seconds: 1));
           Get.back();

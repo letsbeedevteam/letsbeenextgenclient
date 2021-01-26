@@ -98,7 +98,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
-      fetchActiveOrder();
+      fetchActiveOrders();
       receiveUpdateOrder();
       receiveChat();
     })
@@ -292,12 +292,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s pick up');
   }
 
-  fetchActiveOrder() {
+  fetchActiveOrders() {
     onGoingMessage('Loading...');
     if (socketService.socket != null) {
        socketService.socket.emitWithAck('active-orders', '', ack: (response) {
-         'Active orders: $response'.printWrapped();
-         activeOrders(ActiveOrder.fromJson(response));
+        'Active orders: $response'.printWrapped();
+        activeOrders(ActiveOrder.fromJson(response));
         if (activeOrders.call().status == 200) {
           if (activeOrders.call().data.isEmpty) {
             onGoingMessage('No Active Order');
@@ -305,6 +305,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             activeOrders.nil();
           } else {
             activeOrders(ActiveOrder.fromJson(response));
+            if (activeOrderData.call() != null) {
+              activeOrderData(activeOrders.call().data.where((element) => element.id == activeOrderData.call().id).single);
+            }
           }
         } else {
           onGoingMessage(Config.SOMETHING_WENT_WRONG);
@@ -319,50 +322,64 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.on('order', (response) {
         'Receive update: $response'.printWrapped();
         String message;
-        fetchActiveOrder();
+        fetchActiveOrders();
         if (response['status'] == 200) {
 
           final order = ActiveOrderData.fromJson(response['data']);
-          
-          final name = order.activeRestaurant.locationName == null ? order.activeRestaurant.name : '${order.activeRestaurant.name} - ${order.activeRestaurant.locationName}';
-          
-          // if (activeOrderData.call().id == order.id) {
-            switch (response['code']) {
-              case 'restaurant-declined': {
-                message = 'Your order in $name has been declined by the Restaurant';
-                pushNotificationService.showNotification(title: 'Hi!', body: message);
+          final name = order.activeRestaurant.locationName == null || order.activeRestaurant.locationName == '' ? order.activeRestaurant.name : '${order.activeRestaurant.name} - ${order.activeRestaurant.locationName}';
+
+          switch (response['code']) {
+            case 'restaurant-declined': {
+              message = 'Your order in $name has been declined by the Restaurant';
+              pushNotificationService.showNotification(title: 'Hi!', body: message);
+              if (activeOrderData.call().id == order.id) {
                 onGoingMessage('No Active Order');
                 activeOrderData.nil();
               }
-                break;
-              case 'restaurant-accepted': {
-                message = 'Your order in $name has been accepted by the Restaurant';
-                pushNotificationService.showNotification(title: 'Hi!', body: message);
-                activeOrderData(ActiveOrderData.fromJson(response['data']));
-              }
-                break;
-              case 'rider-accepted': {
-                message = 'Your order in $name has been accepted by the Let\'s Bee Rider';
-                pushNotificationService.showNotification(title: 'Hi!', body: message);
-                activeOrderData(ActiveOrderData.fromJson(response['data']));
-              }
-                break;
-              case 'rider-picked-up': {
-                message = 'Let\'s Bee Rider has picked up your order';
-                pushNotificationService.showNotification(title: 'Hi!', body: message);
-                activeOrderData(ActiveOrderData.fromJson(response['data']));
-              }
-                break;
-              case 'delivered': {
-                message = 'Your order in ${order.activeRestaurant.name} - ${order.activeRestaurant.locationName} has been delivered';
-                pushNotificationService.showNotification(title: 'Hi!', body: message);
-                onGoingMessage('No Active Order');
-                fetchOrderHistory();
-                activeOrderData.nil();
-              }
-                break;
             }
-          // }
+              break;
+            case 'restaurant-accepted': {
+              message = 'Your order in $name has been accepted by the Restaurant';
+              pushNotificationService.showNotification(title: 'Hi!', body: message);
+              if (activeOrderData.call().id == order.id) {
+                activeOrderData(ActiveOrderData.fromJson(response['data']));
+              }
+            }
+              break;
+            case 'rider-accepted': {
+              message = 'Let\'s Bee Rider is on the way to pick up your food';
+              pushNotificationService.showNotification(title: 'Hi!', body: message);
+              if (activeOrderData.call().id == order.id) {
+                activeOrderData(ActiveOrderData.fromJson(response['data']));
+              }
+            }
+              break;
+            case 'rider-picked-up': {
+              message = 'Let\'s Bee Rider is on the way to your location';
+              pushNotificationService.showNotification(title: 'Hi!', body: message);
+              if (activeOrderData.call().id == order.id) {
+                activeOrderData(ActiveOrderData.fromJson(response['data']));
+              }
+            }
+              break;
+            case 'delivered': {
+              message = 'Your order in $name has been delivered';
+              pushNotificationService.showNotification(title: 'Hi!', body: message);
+              
+              if (activeOrderData.call().id == order.id) {
+                onGoingMessage('No Active Order');
+                activeOrderData.nil();
+
+                if (Get.currentRoute == Config.ACTIVE_ORDER_DETAIL_ROUTE || Get.currentRoute == Config.ACTIVE_ORDER_ROUTE || Get.currentRoute == Config.CHAT_ROUTE || Get.currentRoute == Config.RIDER_LOCATION_ROUTE){
+                  Get.back(closeOverlays: true);
+                }
+              }
+
+              fetchRestaurants();
+              fetchOrderHistory();
+            }
+              break;
+          }
         }
     });
   }
@@ -383,7 +400,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       if (response['status'] == 200) {
         fetchOrderHistory();
-        fetchActiveOrder();
+        fetchActiveOrders();
         Get.back(result: 'cancel-dialog');
         // successSnackBarTop(title: 'Success!', message: response['message']);
         onGoingMessage('No Active Order');

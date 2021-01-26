@@ -5,7 +5,7 @@ import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:intl/intl.dart';
 
-class OnGoingPage extends GetView<DashboardController> {
+class OnGoingDetailPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
@@ -14,18 +14,18 @@ class OnGoingPage extends GetView<DashboardController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-        actions: [
-          GetX<DashboardController>(
-            builder: (_) {
-              return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.location_pin), onPressed: () => controller.goToRiderLocationPage()) : Container();
-            },
-          ),
-           GetX<DashboardController>(
-            builder: (_) {
-              return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.chat_sharp), onPressed: () => controller.goToChatPage(fromNotificartion: false)) : Container();
-            },
-          ),
-        ],
+        // actions: [
+        //   GetX<DashboardController>(
+        //     builder: (_) {
+        //       return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.location_pin), onPressed: () => controller.goToRiderLocationPage()) : Container();
+        //     },
+        //   ),
+        //    GetX<DashboardController>(
+        //     builder: (_) {
+        //       return _.activeOrderData.call() != null ? IconButton(icon: Icon(Icons.chat_sharp), onPressed: () => controller.goToChatPage(fromNotificartion: false)) : Container();
+        //     },
+        //   ),
+        // ],
       ),
       body: Scrollbar(
         child: Column(
@@ -106,7 +106,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Delivery Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                      Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                       Container(
                                         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                         child: Column(
@@ -131,7 +131,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Mode of Payment', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Mode of Payment:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('${_.activeOrderData.call().payment.method.capitalizeFirst}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
@@ -142,7 +142,7 @@ class OnGoingPage extends GetView<DashboardController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Date', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Date:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text(DateFormat('MMMM dd, yyyy (hh:mm a)').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
@@ -151,10 +151,11 @@ class OnGoingPage extends GetView<DashboardController> {
                                   child: Divider(thickness: 2, color: Colors.grey.shade200),
                                 ),
                                 Container(
-                                  child: Row(
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                      Text('Status:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                       _buildStatus()
                                     ],
                                   ),
@@ -308,9 +309,9 @@ class OnGoingPage extends GetView<DashboardController> {
         break;
       case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'rider-picked-up': return Text('Rider picked up', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;

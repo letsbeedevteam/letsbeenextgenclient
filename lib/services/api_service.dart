@@ -10,6 +10,7 @@ import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/newAddressRequest.dart';
 import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/models/numberResponse.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
@@ -34,9 +35,6 @@ class ApiService extends GetConnect {
       {
         'email': email,
         'password': password
-      },
-      headers: {
-        'Content-Type': 'application/json'
       }
     );
 
@@ -53,9 +51,6 @@ class ApiService extends GetConnect {
         'name': name,
         'email': email,
         'password': password
-      },
-      headers: {
-        'Content-Type': 'application/json'
       }
     );
 
@@ -70,9 +65,6 @@ class ApiService extends GetConnect {
       '/auth/customer/refresh-token',
       {
         'token': _box.read(Config.USER_TOKEN)
-      },
-      headers: {
-        'Content-Type': 'application/json'
       }
     );
 
@@ -86,7 +78,6 @@ class ApiService extends GetConnect {
     final response = await get(
       '/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -102,7 +93,6 @@ class ApiService extends GetConnect {
     final response = await get(
       '/restaurants/$restaurantId/menus/$menuId',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -119,7 +109,6 @@ class ApiService extends GetConnect {
       '/carts',
       addToCart.toJson(),
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -135,7 +124,6 @@ class ApiService extends GetConnect {
       '/carts/$cartId',
       addToCart.toJson(),
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -150,7 +138,6 @@ class ApiService extends GetConnect {
     final response = await delete(
       '/carts/$cartId',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -165,7 +152,6 @@ class ApiService extends GetConnect {
     final response = await get(
       '/carts?restaurant_id=$restaurantId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -194,7 +180,6 @@ class ApiService extends GetConnect {
         }
       },
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -209,7 +194,6 @@ class ApiService extends GetConnect {
     final response = await delete(
       '/orders/$orderId',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -224,7 +208,6 @@ class ApiService extends GetConnect {
     final response = await get(
       '/orders/history',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -240,7 +223,6 @@ class ApiService extends GetConnect {
     final response = await get(
       '/addresses',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
@@ -257,7 +239,6 @@ class ApiService extends GetConnect {
       '/addresses',
       request.toJson(),
       headers: <String, String>{
-        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       },
     );
@@ -265,5 +246,20 @@ class ApiService extends GetConnect {
     print('New addresses: ${response.body}');
 
     return newAddressResponseFromJson(response.bodyString);
+  }
+
+  Future<NumberResponse> addCellphoneNumber({String number}) async {
+
+    final response = await post(
+      '/auth/customer/cellphone-number',
+      {'cellphone_number': number},
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+    print('Cellphone Number Response: ${response.body}');
+
+    return numberResponseFromJson(response.bodyString);
   }
 }

@@ -97,7 +97,7 @@ class HistoryPage extends GetView<DashboardController> {
                       child: Text(data.restaurant.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
                     ),
                     Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13)),
-                    Text(data.menus.length == 1 ? '1x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(data.menus.length == 1 ? '${data.menus.first.quantity}x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
                       margin: EdgeInsets.only(right: 10, bottom: 10),
                       alignment: FractionalOffset.bottomRight,

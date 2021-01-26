@@ -66,7 +66,7 @@ class ActiveOrderData {
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
         activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
-        rider: json["rider"] == null ? null : Rider.fromJson(json['rider']),
+        rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
         fee: Fee.fromJson(json["fee"]),
         timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
         address: Address.fromJson(json["address"]),
@@ -399,23 +399,25 @@ class Details {
 class ActiveRestaurant {
 
   ActiveRestaurant({
+    this.logoUrl,
     this.name,
     this.locationName,
     this.latitude,
     this.longitude
   });
 
-  
+  String logoUrl;
   String name;
   String locationName;
   String latitude;
   String longitude;
 
   factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
-      name: json["name"],
-      locationName: json['location_name'] == '' || json['location_name'] == null ? '' : json['location_name'],
-      latitude: json['latitude'],
-      longitude: json['longitude']
+    logoUrl: json["logo_url"] == null || json["logo_url"] == '' ? null : json["logo_url"],
+    name: json["name"],
+    locationName: json['location_name'] == '' || json['location_name'] == null ? '' : json['location_name'],
+    latitude: json['latitude'],
+    longitude: json['longitude']
   );
 
   Map<String, dynamic> toJson() => {

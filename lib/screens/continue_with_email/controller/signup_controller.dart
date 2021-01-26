@@ -61,20 +61,20 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             _box.write(Config.IS_LOGGED_IN, true);
             // changeIndex(2);
             reset();
-
-            if (response.data.cellphoneNumber == null || response.data.cellphoneNumber == '') {
-              Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
-            } else {
-              _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
-              Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
-            }
+            Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
+            // if (response.data.cellphoneNumber == null || response.data.cellphoneNumber == '') {
+            //   Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
+            // } else {
+            //   _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
+            //   Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
+            // }
 
           } else {
 
             if (response.code == 2000) {
-              alertSnackBarTop(title: 'Oops!', message: 'Your password is invalid.');
+              alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
             } else {
-              alertSnackBarTop(title: 'Oops!', message: 'You don\'t have an account, Please create a new one.');
+              alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
               // changeIndex(1);
             }
           }
@@ -107,7 +107,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
         if (confirmPasswordController.text == passwordController.text) {
           _apiService.customerSignUp(name: nameController.text, email: emailController.text, password: passwordController.text).then((response) {
             if (response.status == 200) {
-              successSnackBarTop(title: 'Yay!', message: 'Registered successfully!');
+
               reset();
               changeIndex(2);
 
@@ -130,12 +130,15 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   }
 
   void goToVerifyNumber() {
-    _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
-    _box.write(Config.IS_LOGGED_IN, true);
-    Get.offAllNamed(Config.VERIFY_NUMBER_ROUTE);
+     successSnackBarTop(title: 'Yay!', message: 'Registered successfully! Please sign in your account.');
+     changeIndex(0);
+    // _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
+    // _box.write(Config.IS_LOGGED_IN, true);
+    // Get.offAllNamed(Config.VERIFY_NUMBER_ROUTE);
   }
 
   void changeIndex(int index) {
+    dismissKeyboard(Get.context);
     selectedIndex(index);
     tabController.index = selectedIndex.call();
     update();

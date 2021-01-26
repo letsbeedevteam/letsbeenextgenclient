@@ -56,10 +56,12 @@ class RiderLocationController extends GetxController {
   void receiveRiderLocation() async {
     _socketService.socket.on('rider-location', (response) {
       print('Rider location: $response');
-      final rider = RiderLocationData.fromJson(response['data']);
-      riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
-      markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
-      _setupPolylines(sourceLocation: riderPosition.call());
+      if (response['data']['location'] != null) {
+        final rider = RiderLocationData.fromJson(response['data']);
+        riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
+        markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+        _setupPolylines(sourceLocation: riderPosition.call());
+      }
     });
   }
 

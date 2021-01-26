@@ -22,6 +22,7 @@ class Config {
   static const CHAT_ROUTE = '/chat';
   static const RIDER_LOCATION_ROUTE = '/rider_location';
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
+  static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
   static const ACTIVE_ORDER_ROUTE = '/active_order';
 
   // Storage keys

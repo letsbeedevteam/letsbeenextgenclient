@@ -120,7 +120,7 @@ class CartController extends GetxController {
         isPaymentLoading(false);
 
         if(order.status == 200) {
-          DashboardController.to.fetchActiveOrder();
+          DashboardController.to.fetchActiveOrders();
           if (order.paymentUrl == null) {
             print('NO URL');
             successSnackBarTop(title: 'Success!', message: 'Please check your on going order');

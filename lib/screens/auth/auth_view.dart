@@ -66,7 +66,7 @@ class AuthPage extends StatelessWidget {
                         );
                       },
                     ),
-                    signInWithApple(),
+                    // signInWithApple(),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     GetX<AuthController>(
                       builder: (_) {

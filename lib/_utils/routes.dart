@@ -13,13 +13,14 @@ import 'package:letsbeeclient/binds/signup_bind.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
 import 'package:letsbeeclient/binds/verify_number_bind.dart';
 import 'package:letsbeeclient/binds/webview_bind.dart';
+import 'package:letsbeeclient/screens/active_on_going/active_on_going_view.dart';
 import 'package:letsbeeclient/screens/auth/auth_view.dart';
 import 'package:letsbeeclient/screens/cart/cart_view.dart';
 import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
 import 'package:letsbeeclient/screens/menu/menu_view.dart';
-import 'package:letsbeeclient/screens/ongoing/on_going_view.dart';
+import 'package:letsbeeclient/screens/on_going_detail/on_going_detail_view.dart';
 import 'package:letsbeeclient/screens/restaurant/restaurant_view.dart';
 import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
@@ -47,5 +48,6 @@ routes() => [
   GetPage(name: Config.CHAT_ROUTE, page: () => ChatPage(), binding: ChatBind()),
   GetPage(name: Config.RIDER_LOCATION_ROUTE, page: () => RiderLocationPage(), binding: RiderLocationBind()),
   GetPage(name: Config.HISTORY_DETAIL_ROUTE, page: () => HistoryDetailPage(), binding: HistoryDetailBind()),
-  GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => OnGoingPage())
+  GetPage(name: Config.ACTIVE_ORDER_DETAIL_ROUTE, page: () => OnGoingDetailPage()),
+  GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => ActiveOnGoingPage())
 ];

@@ -7,6 +7,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:loading_gifs/loading_gifs.dart';
 
 class DashboardPage extends GetView<DashboardController> {
   
@@ -86,8 +87,8 @@ class DashboardPage extends GetView<DashboardController> {
                 borderRadius: BorderRadius.circular(30)
               ),
               onPressed: () {
+                _.fetchActiveOrders();
                 _activeOrderDialog();
-                _.fetchActiveOrder();
               },
               child: Icon(Icons.restaurant_sharp),
             ),
@@ -220,33 +221,41 @@ class DashboardPage extends GetView<DashboardController> {
     return GestureDetector(
       onTap: () {
         controller.activeOrderData(data);
-        Get.back(result: 'active-dialog');
+        Get.back();
+        // Get.toNamed(Config.ACTIVE_ORDER_DETAIL_ROUTE);
         Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
       },
       child: Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          border: Border.all(width: 0.5),
+          // border: Border.all(width: 0.5),
           borderRadius: BorderRadius.circular(5),
           color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
         ),
         child: Row(
           children: [
-            CircleAvatar(),
+           Container(
+             height: 55.0,
+             width: 55.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white
+            ),
+            child: ClipOval(
+               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeRestaurant.logoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+            ),
+           ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-            Column(
+            Expanded(
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(controller.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
-                Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                Row(
-                  children: [
-                    Text('Order Status: ', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)),
-                    _buildStatus(status: data.status),
-                  ],
-                )
-              ],
+                children: [
+                  Text(controller.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                  _buildStatus(status: data.status),
+                ],
+              ),
             )
           ],
         ),
@@ -262,9 +271,9 @@ class DashboardPage extends GetView<DashboardController> {
         break;
       case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'rider-picked-up': return Text('Rider picked up', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
       case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
@@ -300,7 +309,6 @@ class DashboardPage extends GetView<DashboardController> {
           },
         ),
       ),
-      name: 'active-dialog'
     );
   }
 }

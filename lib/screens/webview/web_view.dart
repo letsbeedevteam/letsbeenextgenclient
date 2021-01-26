@@ -32,7 +32,7 @@ class WebViewPage extends GetView<WebController> {
                   print('print: $url');
                  
                   if (url.contains('/payment/success-checkout')) {
-                    DashboardController.to.fetchActiveOrder();
+                    DashboardController.to.fetchActiveOrders();
                     paymentSuccessDialog();
                     // successSnackBarTop(title: 'Alert', message: 'Successful checkout!');
                   }

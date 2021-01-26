@@ -184,6 +184,7 @@ class MapController extends GetxController {
   }
 
   void addAddress() {
+    dismissKeyboard(Get.context);
     isAddAddressLoading(true);
     final request = NewAddressRequest(
       name: this.nameTF.text,

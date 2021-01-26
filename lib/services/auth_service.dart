@@ -23,9 +23,6 @@ class AuthService extends GetConnect {
     final response = await post(
       '/auth/customer/${social.toLowerCase()}/login',
       {'token': token},
-      headers: {
-        'Content-Type': 'application/json',
-      },
     );
 
     print('Login response: ${response.body}');
