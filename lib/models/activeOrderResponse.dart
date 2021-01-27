@@ -74,7 +74,7 @@ class ActiveOrderData {
         id: json["id"],
         restaurantId: json["restaurant_id"],
         userId: json["user_id"],
-        riderId: json["rider_id"] == null ? 0 : json["rider_id"],
+        riderId: json["rider_id"] == null || json["rider_id"] == 'null' ? 0 : json["rider_id"],
         status: json["status"],
         reason: json["reason"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -431,15 +431,40 @@ class ActiveRestaurant {
 class Rider {
   Rider({
     this.userId,
-    this.user
+    this.user,
+    this.motorcycleDetails
   });
 
   int userId;
+  MotorcycleDetails motorcycleDetails;
   RiderUser user;
 
   factory Rider.fromJson(Map<String, dynamic> json) => Rider(
     userId: json['user_id'],
+    motorcycleDetails: json['motorcycle_details'] == null ? null : MotorcycleDetails.fromJson(json['motorcycle_details']),
     user: RiderUser.fromJson(json['user'])
+  );
+}
+
+class MotorcycleDetails {
+
+  MotorcycleDetails({
+    this.brand,
+    this.model,
+    this.plateNumber,
+    this.color
+  });
+
+  String brand;
+  String model;
+  String plateNumber;
+  String color;  
+
+  factory MotorcycleDetails.fromJson(Map<String, dynamic> json) => MotorcycleDetails(
+    brand: json['brand'],
+    model: json['model'],
+    plateNumber: json['plate_number'],
+    color: json['color']
   );
 }
 

@@ -183,7 +183,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text('Contact #: ${_.activeOrderData.call().rider.user.number}', style: TextStyle(color: Colors.black, fontSize: 13)),
-                                                Text('Status: On the way to ${_.title}', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                                // Text('Status: On the way to ${_.title}', style: TextStyle(color: Colors.black, fontSize: 13)),
                                               ],
                                             ),
                                           )
@@ -309,7 +309,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
         break;
       case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'rider-accepted': return Text('Driver is on the way to pick up your order...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;

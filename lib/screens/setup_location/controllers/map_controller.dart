@@ -113,7 +113,7 @@ class MapController extends GetxController {
       });
 
       streetTFController.text = response.first.featureName;
-      barangayTFController.text = response.first.subLocality;
+      barangayTFController.text = response.first.thoroughfare;
       cityTFController.text = response.first.locality;
 
       if (argument['type'] == Config.ADD_NEW_ADDRESS) {
@@ -121,7 +121,7 @@ class MapController extends GetxController {
         this.country(response.first.countryName);
         this.state(response.first.adminArea);
         this.city(response.first.locality);
-        this.barangay(response.first.subLocality);
+        this.barangay(response.first.thoroughfare);
         this.street(response.first.featureName);
         this.isoCode(response.first.countryCode);
 
@@ -132,15 +132,16 @@ class MapController extends GetxController {
         _box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
         _box.write(Config.USER_CURRENT_CITY, response.first.locality);
         _box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
-        _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
+        _box.write(Config.USER_CURRENT_BARANGAY, response.first.thoroughfare);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
         _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
       }
       
     }).catchError((onError) {
+      // isLoading(false);
       hasLocation(false);
       getCurrentAddress();
-      Future.delayed(Duration(seconds: 10)).then((value) => getCurrentAddress());
+      // Future.delayed(Duration(seconds: 3)).then((value) => getCurrentAddress());
       print('getCurrentAddress: $onError');
     });
   }

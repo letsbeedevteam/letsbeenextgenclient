@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/screens/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -432,16 +434,20 @@ class CartPage extends GetView<CartController> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset(Config.PNG_PATH + 'cod.png'),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: Image.asset(Config.PNG_PATH + 'cod.png'),
+                      ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(13),
-                      child: Text('CASH ON DELIVERY', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                    Expanded(
+                      flex: 2,
+                      child: Text('CASH ON DELIVERY', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
                     ),
                   ],
                 ),
@@ -471,20 +477,24 @@ class CartPage extends GetView<CartController> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          SizedBox(
-                            height: 30,
-                            width: 30,
-                            child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(13),
-                            child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          Expanded(
+                            flex: 2,
+                            child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
                           ),
                         ],
                       ),
-                      onPressed: () => print('Card'),
+                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -498,15 +508,25 @@ class CartPage extends GetView<CartController> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.all(13),
-                            child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue,),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
                           ),
                         ],
                       ),
-                      onPressed: () => controller.paymentMethod(restaurantId, 'gcash'),
+                      // onPressed: () => controller.paymentMethod(restaurantId, 'gcash'),
+                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -520,20 +540,25 @@ class CartPage extends GetView<CartController> {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 30,
-                            width: 30,
-                            child: Image.asset(Config.PNG_PATH + 'paypal.png'),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Image.asset(Config.PNG_PATH + 'paypal.png'),
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(13),
-                            child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 15)),
+                          Expanded(
+                            flex: 2,
+                            child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
                           ),
                         ],
                       ),
-                      onPressed: () => controller.paymentMethod(restaurantId, 'paypal'),
+                      // onPressed: () => controller.paymentMethod(restaurantId, 'paypal'),
+                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),

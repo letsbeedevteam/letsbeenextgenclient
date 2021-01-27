@@ -59,7 +59,7 @@ class RestaurantElement {
         this.location,
         this.status,
         this.logoUrl,
-        this.sliderUrl,
+        this.photoUrl,
         this.address,
         this.workingDays,
         this.menuCategorized,
@@ -71,7 +71,7 @@ class RestaurantElement {
     Location location;
     String status;
     String logoUrl;
-    String sliderUrl;
+    String photoUrl;
     Address address;
     WorkingDays workingDays;
     List<MenuCategorized> menuCategorized;
@@ -83,7 +83,7 @@ class RestaurantElement {
         location: Location.fromJson(json["location"]),
         status: json["status"],
         logoUrl: json["logo_url"],
-        sliderUrl: json["slider_url"],
+        photoUrl: json["photo_url"],
         address: Address.fromJson(json["address"]),
         workingDays: WorkingDays.fromJson(json["working_days"]),
         menuCategorized: List<MenuCategorized>.from(json["menu_categorized"].map((x) => MenuCategorized.fromJson(x))),
@@ -96,7 +96,7 @@ class RestaurantElement {
         "location": location.toJson(),
         "status": status,
         "logo_url": logoUrl,
-        "slider_url": sliderUrl,
+        "photo_url": photoUrl,
         "address": address.toJson(),
         "working_days": workingDays.toJson(),
         "menu_categorized": List<dynamic>.from(menuCategorized.map((x) => x.toJson())),

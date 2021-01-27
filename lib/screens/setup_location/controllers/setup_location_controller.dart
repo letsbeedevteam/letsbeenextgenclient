@@ -66,7 +66,7 @@ class SetupLocationController extends GetxController {
       hasLocation(true);
 
       streetTFController.text = response.first.featureName;
-      barangayTFController.text = response.first.subLocality;
+      barangayTFController.text = response.first.thoroughfare;
       cityTFController.text = response.first.locality;
 
       box.write(Config.USER_CURRENT_STREET, response.first.featureName);
@@ -74,14 +74,15 @@ class SetupLocationController extends GetxController {
       box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
       box.write(Config.USER_CURRENT_CITY, response.first.locality);
       box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
-      box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
+      box.write(Config.USER_CURRENT_BARANGAY, response.first.thoroughfare);
       box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
       box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
 
     }).catchError((onError) {
       hasLocation(false);
       userCurrentAddress('Getting your address...');
-      Future.delayed(Duration(seconds: 10)).then((value) => _getCurrentLocation());
+      _getCurrentLocation();
+      // Future.delayed(Duration(seconds: 3)).then((value) => _getCurrentLocation());
     });
   }
 

@@ -217,18 +217,19 @@ class HomePage extends StatelessWidget {
         width: 180,
         margin: EdgeInsets.all(10),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              alignment: Alignment.topCenter,
+              height: 130,
+              alignment: Alignment.center,
               // padding: EdgeInsets.all(10),
-              child: restaurant.sliderUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliderUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-              : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+              child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            ),
+            )
             // Padding(padding: EdgeInsets.symmetric(vertical: 10))
           ],
         ),
@@ -289,7 +290,7 @@ class HomePage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: SizedBox(
                   width: Get.width,
-                  child: restaurant.sliderUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.sliderUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                  child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                   : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                 ),
               )

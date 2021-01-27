@@ -19,7 +19,9 @@ class ChatPage extends GetView<ChatController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Bee Driver: ${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                Text('0001 - 0000001 - Honda ABNC 123', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
+                _.activeOrderData.call().rider.motorcycleDetails == null ? Container() :
+                Text(
+                  '${_.activeOrderData.call().rider.motorcycleDetails.plateNumber} - ${_.activeOrderData.call().rider.motorcycleDetails.brand} ${_.activeOrderData.call().rider.motorcycleDetails.color} - ${_.activeOrderData.call().rider.motorcycleDetails.model} ', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
               ],
             );
           },

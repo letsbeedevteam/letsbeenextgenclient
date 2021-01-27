@@ -51,7 +51,7 @@ class CartController extends GetxController {
   fetchActiveCarts({@required int getRestaurantId, Function callback}) {
     isLoading(true);
 
-    _apiService.getActiveCarts(restaurantId: 1).then((response) {
+    _apiService.getActiveCarts(restaurantId: getRestaurantId).then((response) {
       isLoading(false);
         _setRefreshCompleter();
       if(response.status == 200) {

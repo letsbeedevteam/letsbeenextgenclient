@@ -83,7 +83,7 @@ class ApiService extends GetConnect {
     );
 
   // 'Get restaurants: ${response.body}'.printWrapped();
-    print('Get restaurants: ${response.body}');
+    print('Get dashboard: ${response.body}');
 
     return restaurantFromJson(response.bodyString);
   }

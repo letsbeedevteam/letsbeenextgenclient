@@ -41,18 +41,18 @@ class RestaurantPage extends GetView<RestaurantController> {
                         unselectedLabelColor: Colors.grey,
                         unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
                         labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
-                        indicatorWeight: 0.0,
-                        indicator: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade500,
-                              offset: Offset(2.0, 3.0),
-                              blurRadius: 1.0
-                            )
-                          ]
-                        ),
+                        indicatorWeight: 5,
+                        // indicator: BoxDecoration(
+                        //   borderRadius: BorderRadius.circular(20),
+                        //   color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        //   boxShadow: [
+                        //     BoxShadow(
+                        //       color: Colors.grey.shade500,
+                        //       offset: Offset(2.0, 3.0),
+                        //       blurRadius: 1.0
+                        //     )
+                        //   ]
+                        // ),
                         tabs: _.restaurant.call().menuCategorized.map((element) {
                           return Tab(
                             child: Container(
@@ -80,7 +80,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                       tag: _.restaurant.call().name,
                                       child: Container(
                                         width: Get.width,
-                                        child: _.restaurant.call().sliderUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().sliderUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                                        child: _.restaurant.call().photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                                         : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                                       //   child: CarouselSlider(
                                       //   options: CarouselOptions(

@@ -20,8 +20,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
     final restaurantId = restaurant.call().id;
 
-    print('RESTAURANT ID: $restaurantId');
-
     CartController.to..restaurantId(restaurantId)..fetchActiveCarts(getRestaurantId: restaurantId);
     
     super.onInit();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -18,7 +20,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         child: GetX<DashboardController>(
           builder: (_) {
             return _.activeOrderData.call() == null ? Padding(
-                padding: EdgeInsets.only(top: 20),
+                padding: EdgeInsets.only(top: 20, left: 10, right: 10),
                 child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
               ) : Container(
               alignment: Alignment.topCenter,
@@ -57,8 +59,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                               RaisedButton(
                                 onPressed: () => _.goToChatPage(fromNotificartion: false),
                                 splashColor: Colors.transparent,
-                                color: _.activeOrderData.call().rider != null ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
-                                child: Icon(Icons.chat_sharp, size: 40),
+                                color: _.activeOrderData.call().riderId != 0 ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                child: Icon(Icons.chat_bubble_outline_sharp, size: 40),
                                 padding: EdgeInsets.all(15),
                                 shape: CircleBorder(
                                   side: BorderSide()
@@ -74,8 +76,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                               RaisedButton(
                                 onPressed: () => _.goToRiderLocationPage(),
                                 splashColor: Colors.transparent,
-                                color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
-                                child: Icon(Icons.motorcycle, size: 40),
+                                color: _.activeOrderData.call().status == 'rider-picked-up' || _.activeOrderData.call().status == 'delivered' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                child: Icon(FontAwesomeIcons.mapMarkerAlt, size: 40),
                                 padding: EdgeInsets.all(15),
                                 shape: CircleBorder(
                                   side: BorderSide()
@@ -98,11 +100,18 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildStatus(DashboardController controller) {
-    switch (controller.activeOrderData.call().status) {
+  Widget _buildStatus(DashboardController _) {
+    switch (_.activeOrderData.call().status) {
       case 'pending': return Column(
         children: [
-          Icon(Icons.timer, size: 180),
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+              controller: DashboardController.to.changeGifRange(range: 14, duration: 1500),
+              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
+              height: 150,
+            )
+          ),
           Text('Waiting for restaurant...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold)),
         ],
       );
@@ -110,8 +119,15 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'restaurant-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.timer, size: 180),
-          Text('Restaurant is Cooking...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold)),
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+             controller: DashboardController.to.changeGifRange(range: 7, duration: 500),
+              image: AssetImage(Config.GIF_PATH + 'preparing.gif'),
+              height: 150,
+            )
+          ),
+          Text('Restaurant is Cooking...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
           Text('Waiting for rider...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
         ],
@@ -122,26 +138,55 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'rider-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.timer, size: 180),
-          Text('Your rider is driving to pick your order...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold)),
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+              controller: DashboardController.to.changeGifRange(range: 5, duration: 500),
+              image: AssetImage(Config.GIF_PATH + 'takeaway.gif'),
+              height: 150,
+            )
+          ),
+          Text('Driver is on the way to pick up your order...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          controller.activeOrderData.call() == null ? Container() 
-          : Text('Your driver is: ${controller.activeOrderData.call().rider.user.name}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
+          _.activeOrderData.call() == null ? Container() 
+          : Text('Your driver is: ${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
         ],
       );
         break;
       case 'rider-picked-up': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.timer, size: 180),
-          Text('Driver is on the way to your location...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold)),
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+              controller: DashboardController.to.changeGifRange(range: 3, duration: 500),
+              image: AssetImage(Config.GIF_PATH + 'motor.gif'),
+              height: 150,
+            )
+          ),
+          Text('Driver is on the way to your location...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          controller.activeOrderData.call() == null ? Container() 
-          : Text('Your driver is: ${controller.activeOrderData.call().rider.user.name}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
+          _.activeOrderData.call() == null ? Container() 
+          : Text('Your driver is: ${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
         ],
       );
         break;
-      case 'delivered': return Text('Delivered', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, fontWeight: FontWeight.bold));
+      case 'delivered': return Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+              controller: DashboardController.to.changeGifRange(range: 3, duration: 500),
+              image: AssetImage(Config.GIF_PATH + 'house.gif'),
+              height: 150,
+            )
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Your order has been delivered to your location...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          ),
+        ],
+      );
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, fontWeight: FontWeight.bold));
         break;

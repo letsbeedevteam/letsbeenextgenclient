@@ -39,6 +39,9 @@ dependencies:
 
   # Svg 
   flutter_svg: ^0.19.1
+
+  # Gif
+  flutter_gifimage: ^1.0.1
   
   # Permission
   permission_handler: ^5.0.1+1
@@ -88,3 +91,4 @@ flutter:
     - assets/jsons/
     - assets/svg/
     - assets/png/
+    - assets/gifs/

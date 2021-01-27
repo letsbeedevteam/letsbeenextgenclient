@@ -54,6 +54,7 @@ class Config {
   static const JSONS_PATH = 'assets/jsons/';
   static const SVG_PATH = 'assets/svg/';
   static const PNG_PATH = 'assets/png/';
+  static const GIF_PATH = 'assets/gifs/';
 
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';
