@@ -47,6 +47,7 @@ class MapPage extends GetView<MapController> {
                               target: _.currentPosition.call()
                             ),
                             myLocationButtonEnabled: false,
+                            myLocationEnabled: false,
                             compassEnabled: false,
                             onMapCreated: (controller) => _.onMapCreated(controller),
                             onCameraMove: (position) {

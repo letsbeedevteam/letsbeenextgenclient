@@ -39,7 +39,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
       if (response.status == 200) {
         changeIndex(1);
       } else {
-        errorSnackBarBottom(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        errorSnackBarBottom(title: 'Oops!', message: 'Invalid contact number');
       }
 
       isLoading(false);

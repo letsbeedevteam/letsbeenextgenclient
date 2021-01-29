@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/riderLocationResponse.dart';
+// import 'package:letsbeeclient/models/riderLocationResponse.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
 class RiderLocationController extends GetxController {
@@ -57,10 +56,13 @@ class RiderLocationController extends GetxController {
     _socketService.socket.on('rider-location', (response) {
       print('Rider location: $response');
       if (response['data']['location'] != null) {
-        final rider = RiderLocationData.fromJson(response['data']);
-        riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
-        markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
-        _setupPolylines(sourceLocation: riderPosition.call());
+        if (activeOrderData.call() != null) {
+          if (response['data']['order_id'] == activeOrderData.call().id) {
+            riderPosition(LatLng(response['data']['location']['lat'],response['data']['location']['lng']));
+            markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+            _setupPolylines(sourceLocation: riderPosition.call());
+          }
+        }
       }
     });
   }

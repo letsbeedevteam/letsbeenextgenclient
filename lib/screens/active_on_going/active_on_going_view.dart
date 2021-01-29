@@ -14,21 +14,22 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () =>  Get.back()),
       ),
       body: Container(
         child: GetX<DashboardController>(
           builder: (_) {
+
             return _.activeOrderData.call() == null ? Padding(
                 padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                child: Center(child: Text(_.cancelMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
               ) : Container(
               alignment: Alignment.topCenter,
               child: Container(
                 child: Column(
                   children: [
                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                    Text(_.title.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    _.activeOrderData.call().activeRestaurant.locationName.isBlank ? Text("${_.activeOrderData.call().activeRestaurant.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : Text("${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
                     _buildStatus(_),
                     Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -56,14 +57,17 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                           // Padding(padding: EdgeInsets.symmetric(horizontal: 15)),
                           Column(
                             children: [
-                              RaisedButton(
-                                onPressed: () => _.goToChatPage(fromNotificartion: false),
-                                splashColor: Colors.transparent,
-                                color: _.activeOrderData.call().riderId != 0 ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
-                                child: Icon(Icons.chat_bubble_outline_sharp, size: 40),
-                                padding: EdgeInsets.all(15),
-                                shape: CircleBorder(
-                                  side: BorderSide()
+                              IgnorePointer(
+                                ignoring: _.activeOrderData.call().rider == null || _.activeOrderData.call().status == 'delivered',
+                                child: RaisedButton(
+                                  onPressed: () => _.goToChatPage(fromNotificartion: false),
+                                  splashColor: Colors.transparent,
+                                  color: _.activeOrderData.call().status == 'rider-accepted' || _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  child: Icon(Icons.chat_bubble_outline_sharp, size: 40),
+                                  padding: EdgeInsets.all(15),
+                                  shape: CircleBorder(
+                                    side: BorderSide()
+                                  ),
                                 ),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -73,14 +77,17 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                           // Padding(padding: EdgeInsets.symmetric(horizontal: 15)),
                           Column(
                             children: [
-                              RaisedButton(
-                                onPressed: () => _.goToRiderLocationPage(),
-                                splashColor: Colors.transparent,
-                                color: _.activeOrderData.call().status == 'rider-picked-up' || _.activeOrderData.call().status == 'delivered' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
-                                child: Icon(FontAwesomeIcons.mapMarkerAlt, size: 40),
-                                padding: EdgeInsets.all(15),
-                                shape: CircleBorder(
-                                  side: BorderSide()
+                              IgnorePointer(
+                                ignoring: _.activeOrderData.call().status != 'rider-picked-up',
+                                child: RaisedButton(
+                                  onPressed: () => _.goToRiderLocationPage(),
+                                  splashColor: Colors.transparent,
+                                  color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  child: Icon(FontAwesomeIcons.mapMarkerAlt, size: 40),
+                                  padding: EdgeInsets.all(15),
+                                  shape: CircleBorder(
+                                    side: BorderSide()
+                                  ),
                                 ),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -133,7 +140,17 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         ],
       );
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold));
+      case 'restaurant-declined': return Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: Icon(Icons.cancel_outlined, size: 150, color: Colors.red),
+          ),
+          Text('Your order has been declined by the Restaurant', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+          Text('Reason: ${_.activeOrderData.call().reason}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+        ],
+      );
         break;
       case 'rider-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,

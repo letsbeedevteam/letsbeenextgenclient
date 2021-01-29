@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
+// import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -62,7 +63,7 @@ class MapController extends GetxController {
         if (!isAddAddressLoading.call()) addAddress();
       }
     } else {
-      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}');
+      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
       _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
       _box.write(Config.IS_SETUP_LOCATION, true);
       Get.offAllNamed(Config.DASHBOARD_ROUTE);
@@ -103,36 +104,47 @@ class MapController extends GetxController {
       _box.write(Config.USER_CURRENT_LONGITUDE, currentPosition.call().longitude);
     }
 
-    await Geocoder.local.findAddressesFromCoordinates(Coordinates(currentPosition.call().latitude, currentPosition.call().longitude)).then((response) {
+    await placemarkFromCoordinates(currentPosition.call().latitude, currentPosition.call().longitude).then((response) {
       isLoading(false);
       hasLocation(true);
-      // final address = '${response.first.subLocality}, ${response.first.locality}, ${response.first.adminArea}';
-      userCurrentAddress(response.first.addressLine);
-      response.forEach((element) {
-        print(element.toMap());
-      });
 
-      streetTFController.text = response.first.featureName;
-      barangayTFController.text = response.first.thoroughfare;
-      cityTFController.text = response.first.locality;
+      print(response.asMap());
+
+      // final address = '${response.first.subLocality}, ${response.first.locality}, ${response.first.adminArea}';
+
+      // streetTFController.text = response.first.addressLine;
+      // barangayTFController.text = response.first.subThoroughfare == null ? '${response.first.thoroughfare}' : '${response.first.subThoroughfare} ${response.first.thoroughfare}';
+      // barangayTFController.text = response.first.addressLine;
+      // cityTFController.text = '${response.first.locality == null ? response.first.subLocality : response.first.locality} ${response.first.subAdminArea == null ? response.first.adminArea : response.first.subAdminArea}';
+      streetTFController.text = response.first.street;
+      barangayTFController.text = response.first.subLocality;
+      cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
+
+      userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
 
       if (argument['type'] == Config.ADD_NEW_ADDRESS) {
         
-        this.country(response.first.countryName);
-        this.state(response.first.adminArea);
-        this.city(response.first.locality);
-        this.barangay(response.first.thoroughfare);
-        this.street(response.first.featureName);
-        this.isoCode(response.first.countryCode);
+        this.country(response.first.name);
+        this.state(response.first.administrativeArea);
+        // this.city(response.first.locality);
+        this.city(cityTFController.text);
+        // this.barangay(response.first.subLocality);
+        this.barangay(barangayTFController.text);
+        // this.street(response.first.featureName);
+        this.street(streetTFController.text);
+        this.isoCode(response.first.isoCountryCode);
 
       } else {
       
-        _box.write(Config.USER_CURRENT_STREET, response.first.featureName);
-        _box.write(Config.USER_CURRENT_COUNTRY, response.first.countryName);
-        _box.write(Config.USER_CURRENT_STATE, response.first.adminArea);
-        _box.write(Config.USER_CURRENT_CITY, response.first.locality);
-        _box.write(Config.USER_CURRENT_IS_CODE, response.first.countryCode);
-        _box.write(Config.USER_CURRENT_BARANGAY, response.first.thoroughfare);
+        // _box.write(Config.USER_CURRENT_STREET, response.first.featureName);
+        _box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+        _box.write(Config.USER_CURRENT_COUNTRY, response.first.name);
+        _box.write(Config.USER_CURRENT_STATE, response.first.administrativeArea);
+        // _box.write(Config.USER_CURRENT_CITY, response.first.locality);
+        _box.write(Config.USER_CURRENT_CITY, cityTFController.text);
+        _box.write(Config.USER_CURRENT_IS_CODE, response.first.isoCountryCode);
+        // _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
+        _box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
         _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
       }
@@ -186,6 +198,8 @@ class MapController extends GetxController {
 
   void addAddress() {
     dismissKeyboard(Get.context);
+
+    print(streetTFController.text);
     isAddAddressLoading(true);
     final request = NewAddressRequest(
       name: this.nameTF.text,
@@ -195,9 +209,9 @@ class MapController extends GetxController {
       ),
       country: this.country.call(),
       state: this.state.call(),
-      city: this.city.call(),
-      barangay: this.barangay.call(),
-      street: this.street.call(),
+      city: cityTFController.text,
+      barangay: barangayTFController.text,
+      street: streetTFController.text,
       isoCode: this.isoCode.call()
     );
 
@@ -205,7 +219,7 @@ class MapController extends GetxController {
       isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
-        userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}');
+        userCurrentAddress('${response.data.street} ${response.data.barangay} ${response.data.city}'.trim());
         _box.write(Config.USER_CURRENT_STREET, response.data.street);
         _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
         _box.write(Config.USER_CURRENT_STATE, response.data.state);
@@ -219,7 +233,7 @@ class MapController extends GetxController {
         DashboardController.to
         ..isSelectedLocation(true)
         ..userCurrentNameOfLocation(nameTF.text)
-        ..userCurrentAddress(this.userCurrentAddress.call())
+        ..userCurrentAddress(this.userCurrentAddress.call().trim())
         ..isOpenLocationSheet(false)
         ..fetchAllAddresses()
         ..fetchRestaurants();

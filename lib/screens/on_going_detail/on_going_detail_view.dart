@@ -38,7 +38,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                   builder: (_) {
                     return _.activeOrderData.call() == null ? Padding(
                       padding: EdgeInsets.only(top: 20),
-                      child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                      child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
                     ) : Container(
                       margin: EdgeInsets.symmetric(horizontal: 5),
                       padding: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
@@ -48,7 +48,9 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         children: [
                           Container(
                             alignment: Alignment.center,
-                            child: Text(_.title.call(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: _.activeOrderData.call().activeRestaurant.locationName.isBlank ? 
+                            Text("${_.activeOrderData.call().activeRestaurant.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : 
+                            Text("${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
                           Container(
                             child: Column(
@@ -117,7 +119,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                               style: TextStyle(color: Colors.black, fontSize: 14)
                                             ),
                                             Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                            Text('Contact Number: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 14))
+                                            Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                           ],
                                         ),
                                       )
@@ -307,7 +309,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
         break;
       case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-accepted': return Text('Driver is on the way to pick up your order...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
@@ -390,7 +392,9 @@ class OnGoingDetailPage extends GetView<DashboardController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Do you really want to cancel your order at ${controller.title.call()}?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                controller.activeOrderData.call().activeRestaurant.locationName.isBlank ? 
+                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name}?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center) : 
+                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} (${controller.activeOrderData.call().activeRestaurant.locationName})?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 Padding(padding: EdgeInsets.all(10)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),

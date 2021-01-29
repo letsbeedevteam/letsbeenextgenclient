@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -41,13 +41,15 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                   child: Center(
                                     child: Container(
                                       width: Get.width,
-                                      child: CarouselSlider(
-                                      options: CarouselOptions(
-                                        autoPlay: false,
-                                        disableCenter: true,                                    
-                                      ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
-                                    ),
+                                      child: _.data.call().restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                                        : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+                                    //   child: CarouselSlider(
+                                    //   options: CarouselOptions(
+                                    //     autoPlay: false,
+                                    //     disableCenter: true,                                    
+                                    //   ),
+                                    //   items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
+                                    // ),
                                   )
                                 ),
                               ),
@@ -170,8 +172,9 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                             child: Divider(thickness: 5, color: Colors.grey.shade200),
                           ),
                           Container(
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                 _buildStatus()
@@ -179,14 +182,16 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                             ),
                           ),
                           _.data.call().reason == null ? Container() : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 margin: EdgeInsets.only(top: 5),
                                 child: Divider(thickness: 5, color: Colors.grey.shade200),
                               ),
                               Container(
-                                child: Row(
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Reason', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text(_.data.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
@@ -214,7 +219,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         style: TextStyle(color: Colors.black, fontSize: 14)
                                       ),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                      Text('Contact Number: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 14))
+                                      Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                     ],
                                   ),
                                 )
@@ -244,7 +249,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
         break;
       case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;

@@ -33,6 +33,7 @@ class ActiveOrderData {
         this.menus,
         this.activeRestaurant,
         this.rider,
+        this.user,
         this.fee,
         this.timeframe,
         this.address,
@@ -50,6 +51,7 @@ class ActiveOrderData {
     List<ActiveOrderMenu> menus;
     ActiveRestaurant activeRestaurant;
     Rider rider;
+    User user;
     Fee fee;
     Timeframe timeframe;
     Address address;
@@ -67,6 +69,7 @@ class ActiveOrderData {
         menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
         activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
         rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
+        user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
         fee: Fee.fromJson(json["fee"]),
         timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
         address: Address.fromJson(json["address"]),
@@ -465,6 +468,21 @@ class MotorcycleDetails {
     model: json['model'],
     plateNumber: json['plate_number'],
     color: json['color']
+  );
+}
+
+class User {
+  User({
+    this.name,
+    this.number
+  });
+  
+  String name;
+  String number;
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    name: json['name'],
+    number: json['cellphone_number'] == null ? 'None' : json['cellphone_number']
   );
 }
 

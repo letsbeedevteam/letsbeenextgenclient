@@ -148,8 +148,8 @@ class CartPage extends GetView<CartController> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('Name: Let\'s Bee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-                                        Text('Contact #: +23542345345345', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+                                        Text('Name: ${_.box.read(Config.USER_NAME)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+                                        Text('Contact #: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
                                       ],
                                     ),
                                   )
@@ -516,7 +516,7 @@ class CartPage extends GetView<CartController> {
                             child: SizedBox(
                               height: 30,
                               width: 30,
-                              child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue,),
+                              child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue),
                             ),
                           ),
                           Expanded(

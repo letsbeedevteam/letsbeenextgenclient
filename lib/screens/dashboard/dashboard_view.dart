@@ -182,7 +182,7 @@ class DashboardPage extends GetView<DashboardController> {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    final address = '${data.street}, ${data.barangay}, ${data.city}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -211,18 +211,10 @@ class DashboardPage extends GetView<DashboardController> {
   }
 
   Widget _buildActiveOrderList(ActiveOrderData data) {
-    
-    if (data.activeRestaurant.locationName.isBlank) {
-      controller.title("${data.activeRestaurant.name}");
-    } else {
-      controller.title("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})");
-    }
-
     return GestureDetector(
       onTap: () {
-        controller.activeOrderData(data);
         Get.back();
-        // Get.toNamed(Config.ACTIVE_ORDER_DETAIL_ROUTE);
+        controller.activeOrderData(data);
         Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
       },
       child: Container(
@@ -251,7 +243,9 @@ class DashboardPage extends GetView<DashboardController> {
               child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(controller.title.call(), style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
+                  data.activeRestaurant.locationName.isBlank ? 
+                  Text("${data.activeRestaurant.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
+                  Text("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                   _buildStatus(status: data.status),
                 ],

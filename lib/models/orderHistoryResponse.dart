@@ -231,18 +231,18 @@ class OrderHistoryMenu {
 class OrderHistoryRestaurant {
   OrderHistoryRestaurant({
     this.locationName,
-    this.slider,
+    this.photoUrl,
     this.name,
     this.logoUrl
   });
 
-  List<Slider> slider;
+  String photoUrl;
   String name;
   String locationName;
   String logoUrl;
 
   factory OrderHistoryRestaurant.fromJson(Map<String, dynamic> json) => OrderHistoryRestaurant(
-    slider: json["sliders"] == null ? List<Slider>() : List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
+    photoUrl: json["photo_url"],
     name: json['name'],
     locationName: json['location_name'],
     logoUrl: json['logo_url']  
@@ -250,7 +250,7 @@ class OrderHistoryRestaurant {
 
   Map<String, dynamic> toJson() => {
     'location_name': locationName,
-    'sliders': List<dynamic>.from(slider.map((x) => x.toJson())),
+    'photo_url': photoUrl,
     'name': name,
     'logo_url': logoUrl
   };

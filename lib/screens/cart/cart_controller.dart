@@ -30,6 +30,8 @@ class CartController extends GetxController {
   @override
   void onInit() {
     refreshCompleter = Completer();
+
+    // fetchActiveCarts(getRestaurantId: 1);
  
     super.onInit();
   }

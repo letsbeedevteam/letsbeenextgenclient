@@ -38,7 +38,7 @@ class RiderLocationPage extends GetView<RiderLocationController> {
                       target: _.currentPosition.call()
                     ),
                     myLocationButtonEnabled: true,
-                    myLocationEnabled: true,
+                    myLocationEnabled: false,
                     compassEnabled: false,
                     markers: Set<Marker>.of(_.markers.values),
                     polylines: Set<Polyline>.of(_.polylines.values),

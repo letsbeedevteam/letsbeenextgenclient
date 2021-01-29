@@ -32,6 +32,7 @@ class SocketService extends GetxService {
     if(this.socket != null) {
       this.socket.disconnect();
       this.socket.on("disconnect", (_) => print('Disconnected: $_'));
+      this.socket = null;
     }
   }
 }

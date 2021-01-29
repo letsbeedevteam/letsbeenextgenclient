@@ -124,9 +124,13 @@ class ChatController extends GetxController {
   updadateReceiveChat() {
     _socketService.socket.on('order-chat', (response) {
       print('receive message: $response');
-      final test = ChatData.fromJson(response['data']);
-      chat.call().add(test);
-      chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      final orderChat = ChatData.fromJson(response['data']);
+      if (activeOrderData.call() != null) {
+        if (orderChat.id == activeOrderData.call().id) {
+          chat.call().add(orderChat);
+          chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        }
+      }
     });
   }
 
