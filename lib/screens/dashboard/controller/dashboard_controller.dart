@@ -108,8 +108,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     ..on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
-      receiveUpdateOrder();
-      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -129,6 +127,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       onGoingMessage('Loading...');
       print('Error socket: $_');
     });
+
+    receiveUpdateOrder();
+    receiveChat();
   }
 
   // void setupScrollControllers() {
@@ -303,26 +304,22 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   fetchActiveOrders() {
     onGoingMessage('Loading...');
-    if (socketService.socket != null) {
-       socketService.socket.emitWithAck('active-orders', '', ack: (response) {
-        'Active orders: $response'.printWrapped();
-        activeOrders(ActiveOrder.fromJson(response));
-        if (activeOrders.call().status == 200) {
-          onGoingMessage('No Active Order');
-          if (activeOrders.call().data.isEmpty) {
-            // activeOrderData.nil();
-            activeOrders.nil();
-          } else {
-            activeOrders(ActiveOrder.fromJson(response));
-            activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
-          }
+    socketService.socket.emitWithAck('active-orders', '', ack: (response) {
+      'Active orders: $response'.printWrapped();
+      activeOrders(ActiveOrder.fromJson(response));
+      if (activeOrders.call().status == 200) {
+        onGoingMessage('No Active Order');
+        if (activeOrders.call().data.isEmpty) {
+          // activeOrderData.nil();
+          activeOrders.nil();
         } else {
-          onGoingMessage(Config.SOMETHING_WENT_WRONG);
+          activeOrders(ActiveOrder.fromJson(response));
+          activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
         }
-      });
-    } else {
-      socketSetup();
-    }
+      } else {
+        onGoingMessage(Config.SOMETHING_WENT_WRONG);
+      }
+    });
   }
 
   receiveUpdateOrder() {
@@ -510,6 +507,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       } 
 
       Future.delayed(Duration(seconds: 1)).then((value) {
+        if (socketService.socket == null) socketSetup(); else socketService.socket..disconnect()..connect();
         fetchActiveOrders();
         fetchAllAddresses();
       });
