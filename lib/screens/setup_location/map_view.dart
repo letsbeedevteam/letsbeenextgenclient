@@ -316,7 +316,7 @@ class MapPage extends GetView<MapController> {
                       contentPadding: EdgeInsets.symmetric(horizontal: 15)
                     ),
                     onEditingComplete: () {
-                      if (_.argument['type'] != Config.ADD_NEW_ADDRESS) {
+                      if (_.argument['type'] == Config.ADD_NEW_ADDRESS) {
                         controller.nameTF.selection = TextSelection.fromPosition(TextPosition(offset: controller.nameTF.text.length));
                         controller.nameNode.requestFocus();
                       }
@@ -339,6 +339,7 @@ class MapPage extends GetView<MapController> {
                           height: 30,
                           child: TextFormField(
                             controller: _.nameTF,
+                            focusNode: _.nameNode,
                             cursorColor: Colors.black,
                             enableSuggestions: false,
                             autocorrect: false,
@@ -365,16 +366,19 @@ class MapPage extends GetView<MapController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
+                      IgnorePointer(
+                        ignoring: _.isAddAddressLoading.call(),
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                          onPressed: () {
+                            Get.back();
+                            Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
+                          },
+                          child: Text('NO'),
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                        onPressed: () {
-                          Get.back();
-                          Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
-                        },
-                        child: Text('NO'),
                       ),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                       RaisedButton(
@@ -383,7 +387,7 @@ class MapPage extends GetView<MapController> {
                         ),
                         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                         onPressed: () =>  controller.goToDashboardPage(),
-                        child: Text('YES'),
+                        child: _.isAddAddressLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       )
                     ],
                   ),

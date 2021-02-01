@@ -14,20 +14,20 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
   final signInEmailController = TextEditingController();
   final signInPasswordController = TextEditingController();
-
-  final signUpEmailFN = FocusNode();
-  final signUpPasswordFN = FocusNode();
-  final signUpConfirmPasswordFN = FocusNode();
+  final signInEmailFN = FocusNode();
+  final signInPasswordFN = FocusNode();
 
   final emailController = TextEditingController();
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final codeController = TextEditingController();
 
   final emailFN = FocusNode();
   final nameFN = FocusNode();
   final passwordFN = FocusNode();
+  final confirmPasswordFN = FocusNode();
+
+  final codeController = TextEditingController();
 
   var selectedIndex = 0.obs;
   var isLoading = false.obs;

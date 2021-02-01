@@ -14,7 +14,8 @@ import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
+// import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -43,7 +44,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final scrollController = ScrollController();
   final widgets = [
     HomePage(), 
-    NotificationPage(), 
+    MartPage(),
+    // NotificationPage(), 
     ReviewsPage(), 
     OrderPage(),
     AccountSettingsPage(), 

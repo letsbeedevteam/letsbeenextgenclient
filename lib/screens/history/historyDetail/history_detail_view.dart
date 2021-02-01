@@ -97,7 +97,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          Text('Items:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                           Column(
                             children: _.data.call().menus.map((e) => _buildMenu(e)).toList(),
@@ -106,7 +106,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Promo Code Used', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                              Text('Promo Code Used:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                               Align(
                                 alignment: Alignment.center,
@@ -124,21 +124,21 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('₱ ${_.data.call().fee.subTotal.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('₱ ${_.data.call().fee.delivery.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Promo Code Discount', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Promo Code Discount:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('₱ ${_.data.call().fee.discountPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
@@ -148,7 +148,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                      Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                       Text('₱ ${(_.data.call().fee.total).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
@@ -163,7 +163,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Mode of Payment', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                              Text('Mode of Payment:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                               Text('${_.data.call().payment.method.capitalizeFirst}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                             ],
                           ),
@@ -176,7 +176,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                Text('Status:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                 _buildStatus()
                               ],
                             ),
@@ -193,7 +193,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Reason', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Reason:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text(_.data.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
@@ -208,7 +208,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Delivery Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                 Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                   child: Column(

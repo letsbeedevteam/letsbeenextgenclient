@@ -104,7 +104,8 @@ class DashboardPage extends GetView<DashboardController> {
             onTap: (value) =>  _.tapped(value),
             items: [
               customNavigationBarItem('Food', icon: Icon(Icons.sports_motorsports)),
-              customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
+              customNavigationBarItem('Mart', icon: Icon(Icons.storefront)),
+              // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
               customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
               customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),

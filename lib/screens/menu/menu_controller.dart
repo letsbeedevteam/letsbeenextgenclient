@@ -28,7 +28,7 @@ class MenuController extends GetxController {
   var argument = Get.arguments;
   var message = ''.obs;
 
-  var hasNoChoices = false.obs;
+  var hasChoices = false.obs;
 
   @override
   void onInit() {
@@ -99,9 +99,9 @@ class MenuController extends GetxController {
     additionalIds.clear();
 
     if (menu.value.choices.isEmpty) {
-      hasNoChoices(true);
+      hasChoices(false);
     } else {
-      hasNoChoices(false);
+      hasChoices(true);
       menu.value.choices.forEach((choice) {
         choice.options.forEach((element) {
           if (element.name == element.selectedValue) {
@@ -138,7 +138,7 @@ class MenuController extends GetxController {
       updateCartRequest(addToCart);
     } else {
 
-      if(hasNoChoices.call()) {
+      if(!hasChoices.call()) {
         sendCartRequest(addToCart);
       } else {
         if (choiceIds.isNotEmpty) {
@@ -179,14 +179,23 @@ class MenuController extends GetxController {
         CartController.to.cart.nil();
         // Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
 
-        if (argument['type'] == 'quick_order') {
-          Get.offAndToNamed(Config.CART_ROUTE, arguments: {'restaurant': argument['restaurant']});
-        } else {
-          CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+        // if (argument['type'] == 'quick_order') {
+        //   Get.offAndToNamed(Config.CART_ROUTE, arguments: {'restaurant': argument['restaurant']});
+        // } else {
+        //   CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+        //     Future.delayed(Duration(seconds: 1)).then((data) {
+        //       Get.back();
+        //       isAddToCartLoading(true);
+        //     });
+        //   });
+        // }
+
+        CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+          Future.delayed(Duration(seconds: 1)).then((data) {
             Get.back();
             isAddToCartLoading(true);
           });
-        }
+        });
 
       } else {
         if (response.code == 3005) {
