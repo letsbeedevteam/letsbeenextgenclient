@@ -25,6 +25,14 @@ class CartController extends GetxController {
   var restaurantId = 0.obs;
   var cart = GetCart().obs;
 
+  final streetTFController = TextEditingController();
+  final barangayTFController = TextEditingController();
+  final cityTFController = TextEditingController();
+
+  final streetNode = FocusNode();
+  final barangayNode = FocusNode();
+  final cityNode = FocusNode();
+
   static CartController get to => Get.find();
 
   @override
@@ -161,5 +169,20 @@ class CartController extends GetxController {
         print('Payment method: $onError');
       });
     }
+  }
+
+  getCurrentLocationText() {
+    streetTFController.text = box.read(Config.USER_CURRENT_STREET);
+    cityTFController.text = box.read(Config.USER_CURRENT_CITY);
+    barangayTFController.text = box.read(Config.USER_CURRENT_BARANGAY);
+  }
+
+  saveConfirmLocation() {
+    final address = '${streetTFController.text} ${cityTFController.text} ${barangayTFController.text}';
+    box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+    box.write(Config.USER_CURRENT_CITY, cityTFController.text);
+    box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+    box.write(Config.USER_CURRENT_ADDRESS, address);
+    DashboardController.to.userCurrentAddress(address);
   }
 }

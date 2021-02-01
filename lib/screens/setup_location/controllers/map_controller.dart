@@ -22,7 +22,6 @@ class MapController extends GetxController {
   final SecretLoader _secretLoader = Get.find();
   final ApiService _apiService = Get.find();
   final Completer<GoogleMapController> _mapController = Completer();
-  final nameTF = TextEditingController();
   final argument = Get.arguments;
   
   var isMapLoading = true.obs;
@@ -40,9 +39,15 @@ class MapController extends GetxController {
   var street = ''.obs;
   var isoCode = ''.obs;
 
+  final nameTF = TextEditingController();
   final streetTFController = TextEditingController();
   final barangayTFController = TextEditingController();
   final cityTFController = TextEditingController();
+
+  final nameNode = FocusNode();
+  final streetNode = FocusNode();
+  final barangayNode = FocusNode();
+  final cityNode = FocusNode();
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
@@ -224,7 +229,7 @@ class MapController extends GetxController {
         _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
         _box.write(Config.USER_CURRENT_STATE, response.data.state);
         _box.write(Config.USER_CURRENT_CITY, response.data.city);
-        _box.write(Config.USER_CURRENT_IS_CODE, response.data.street);
+        _box.write(Config.USER_CURRENT_IS_CODE, response.data.isoCode);
         _box.write(Config.USER_CURRENT_BARANGAY, response.data.barangay);
         _box.write(Config.USER_CURRENT_LATITUDE, response.data.location.lat);
         _box.write(Config.USER_CURRENT_LONGITUDE,  response.data.location.lng);

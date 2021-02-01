@@ -182,7 +182,7 @@ class DashboardPage extends GetView<DashboardController> {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}';
+    final address = '${data.street} ${data.barangay} ${data.city}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),

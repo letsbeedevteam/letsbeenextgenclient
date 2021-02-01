@@ -15,6 +15,7 @@ class CartPage extends GetView<CartController> {
     return WillPopScope(
       onWillPop: controller.onWillPopBack,
       child: Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -27,9 +28,13 @@ class CartPage extends GetView<CartController> {
             children: [
               Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
               Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text(DashboardController.to.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+              GetX<DashboardController>(
+                builder: (_) {
+                  return Container(
+                    margin: EdgeInsets.only(right: 5),
+                    child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                  );
+                },
               )
             ],
           )
@@ -451,7 +456,7 @@ class CartPage extends GetView<CartController> {
                     ),
                   ],
                 ),
-                onPressed: () => controller.paymentMethod(restaurantId, 'cod'),
+                onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'cod'),
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -525,7 +530,7 @@ class CartPage extends GetView<CartController> {
                           ),
                         ],
                       ),
-                      // onPressed: () => controller.paymentMethod(restaurantId, 'gcash'),
+                      // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'gcash'),
                       onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
                     ),
                   ),
@@ -557,7 +562,7 @@ class CartPage extends GetView<CartController> {
                           ),
                         ],
                       ),
-                      // onPressed: () => controller.paymentMethod(restaurantId, 'paypal'),
+                      // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'paypal'),
                       onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
                     ),
                   ),
@@ -568,6 +573,143 @@ class CartPage extends GetView<CartController> {
           ],
         )
       ),
+    );
+  }
+
+  confirmLocationModal({int restaurantID, String paymentMethod}) {
+    Get.back();
+    Get.dialog(
+      AlertDialog(
+        content: GetBuilder<CartController>(
+          initState: (state) => controller.getCurrentLocationText(),
+          builder: (_) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(child: Text('Confirm your location', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                Text('Lot No., Block No., Bldg Name, Floor No. / Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.streetTFController,
+                    focusNode: controller.streetNode,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    ),
+                    onEditingComplete: () {
+                      controller.barangayTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.barangayTFController.text.length));
+                      controller.barangayNode.requestFocus();
+                    },
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text('Barangay / Purok', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.barangayTFController,
+                    focusNode: controller.barangayNode,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    ),
+                    onEditingComplete: () {
+                      controller.cityTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.cityTFController.text.length));
+                      controller.cityNode.requestFocus();
+                    },
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text('Municipality / City', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+                SizedBox(
+                  height: 30,
+                  child: TextFormField(
+                    controller: controller.cityTFController,
+                    focusNode: controller.cityNode,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 15),
+                    textInputAction: TextInputAction.next,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    obscureText: false,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey.shade200,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
+                    )
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        onPressed: () => Get.back(),
+                        child: Text('CANCEL'),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        onPressed: () {
+                          controller..saveConfirmLocation()..paymentMethod(restaurantID, paymentMethod);
+                        },
+                        child: Text('PROCEED'),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      ),
+      barrierDismissible: true
     );
   }
 }

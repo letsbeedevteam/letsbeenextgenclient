@@ -21,6 +21,10 @@ class SetupLocationController extends GetxController {
   final barangayTFController = TextEditingController();
   final cityTFController = TextEditingController();
 
+  final streetNode = FocusNode();
+  final barangayNode = FocusNode();
+  final cityNode = FocusNode();
+
   @override
   void onInit() {
     _locationPermission();

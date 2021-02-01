@@ -143,14 +143,14 @@ class SetupLocationPage extends GetView<SetupLocationController> {
           children: [
             Center(child: Text('Is this your current location?', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            Text('House No./Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+            Text('Lot No., Block No., Bldg Name, Floor No. / Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
             SizedBox(
               height: 30,
               child: TextFormField(
                 controller: controller.streetTFController,
+                focusNode: controller.streetNode,
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 15),
-                keyboardType: TextInputType.emailAddress, 
                 textInputAction: TextInputAction.next,
                 enableSuggestions: false,
                 autocorrect: false,
@@ -166,7 +166,11 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 15)
-                )
+                ),
+                onEditingComplete: () {
+                  controller.barangayTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.barangayTFController.text.length));
+                  controller.barangayNode.requestFocus();
+                },
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -175,9 +179,9 @@ class SetupLocationPage extends GetView<SetupLocationController> {
               height: 30,
               child: TextFormField(
                 controller: controller.barangayTFController,
+                focusNode: controller.barangayNode,
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 15),
-                keyboardType: TextInputType.emailAddress, 
                 textInputAction: TextInputAction.next,
                 enableSuggestions: false,
                 autocorrect: false,
@@ -193,7 +197,11 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 15)
-                )
+                ),
+                onEditingComplete: () {
+                  controller.cityTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.cityTFController.text.length));
+                  controller.cityNode.requestFocus();
+                },
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -201,10 +209,10 @@ class SetupLocationPage extends GetView<SetupLocationController> {
             SizedBox(
               height: 30,
               child: TextFormField(
-                 controller: controller.cityTFController,
+                controller: controller.cityTFController,
+                focusNode: controller.cityNode,
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 15),
-                keyboardType: TextInputType.emailAddress, 
                 textInputAction: TextInputAction.next,
                 enableSuggestions: false,
                 autocorrect: false,

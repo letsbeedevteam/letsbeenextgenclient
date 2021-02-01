@@ -211,7 +211,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
     box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
 
-    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    final address = '${data.street} ${data.barangay} ${data.city}';
     isSelectedLocation(true);
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
