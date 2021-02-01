@@ -172,7 +172,7 @@ class CartPage extends GetView<CartController> {
                                   ),
                                   child: Padding(
                                     padding: EdgeInsets.all(10),
-                                    child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    child: Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                   ),
                                   onPressed: () => paymentBottomsheet(_.cart.call().data.first.restaurantId)
                                 ),
@@ -580,7 +580,7 @@ class CartPage extends GetView<CartController> {
     Get.back();
     Get.dialog(
       AlertDialog(
-        content: GetBuilder<CartController>(
+        content: GetX<CartController>(
           initState: (state) => controller.getCurrentLocationText(),
           builder: (_) {
             return Column(
@@ -699,7 +699,7 @@ class CartPage extends GetView<CartController> {
                         onPressed: () {
                           controller..saveConfirmLocation()..paymentMethod(restaurantID, paymentMethod);
                         },
-                        child: Text('PROCEED'),
+                        child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       )
                     ],
                   ),
