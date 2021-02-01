@@ -45,6 +45,7 @@ class CartController extends GetxController {
   }
 
   Future<bool> onWillPopBack() async {
+    isEdit(false);
     Get.back(closeOverlays: true);
     return true;
   }

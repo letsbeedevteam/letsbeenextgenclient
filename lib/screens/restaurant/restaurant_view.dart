@@ -164,7 +164,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                           GetX<CartController>(
                             builder: (_) {
                               return Badge(
-                                badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                 showBadge: CartController.to.cart.call() != null,
                                 padding: EdgeInsets.all(10),
                               );

@@ -21,7 +21,10 @@ class CartPage extends GetView<CartController> {
           elevation: 0,
           titleSpacing: 0.0,
           centerTitle: false,
-          leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back(closeOverlays: true)),
+          leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () {
+            controller.isEdit(false);
+            Get.back(closeOverlays: true);
+          }),
           title: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,111 +208,114 @@ class CartPage extends GetView<CartController> {
   }
 
   Widget _buildMenuItem(CartData cart, CartController _) {
-    return GestureDetector(
-      onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
-        'type': 'edit',
-        'restaurant_id': cart.restaurantId,
-        'restaurant_menu_id': cart.restaurantMenuId,
-        'cart': cart.toJson()
-      }),
-      child: Container(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 500),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: controller.isEdit.call() ? Colors.grey.shade200 : Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
-                                blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
-                                offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
-                              )
-                            ]
-                          ),
-                          curve: Curves.easeInOut,
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // GestureDetector(child: Icon(Icons.error_outline, color: Colors.red), onTap: () => print('Show dialog')),
-                                    Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-                                    Expanded(
-                                      child: Container(
-                                        child: Text('${cart.quantity}x ${cart.menuDetails.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      ),
-                                    ),
-                                    Text('₱ ${(double.tryParse(cart.menuDetails.price) * cart.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 5, left: 20),
-                                  child: Column(
-                                    children: [
-                                      Column(
-                                        children: cart.additionals.map((e) =>  _buildAdditional(e, cart.quantity)).toList(),
-                                      ),
-                                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                      Column(
-                                        children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
-                                      ),
-                                    ],
-                                  )
-                                ),
-                                cart.note != 'N/A' ? Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  child: Column(
+    return IgnorePointer(
+      ignoring: !_.isEdit.call(),
+      child: GestureDetector(
+        onTap: () => Get.toNamed(Config.MENU_ROUTE, arguments: {
+          'type': 'edit',
+          'restaurant_id': cart.restaurantId,
+          'restaurant_menu_id': cart.restaurantMenuId,
+          'cart': cart.toJson()
+        }),
+        child: Container(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 500),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: controller.isEdit.call() ? Colors.grey.shade200 : Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: controller.isEdit.call() ? Colors.grey.shade300 : Colors.white,
+                                  blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
+                                  offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
+                                )
+                              ]
+                            ),
+                            curve: Curves.easeInOut,
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
-                                      Container(
-                                        alignment: Alignment.centerLeft,
-                                        margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(15),
-                                          border: Border.all()
+                                      // GestureDetector(child: Icon(Icons.error_outline, color: Colors.red), onTap: () => print('Show dialog')),
+                                      Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                                      Expanded(
+                                        child: Container(
+                                          child: Text('${cart.quantity}x ${cart.menuDetails.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                         ),
-                                        child: Text(cart.note.toString())
                                       ),
+                                      Text('₱ ${(double.tryParse(cart.menuDetails.price) * cart.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
                                     ],
                                   ),
-                                ) : Container()
-                              ],
-                            ),
-                          )
+                                  Container(
+                                    margin: EdgeInsets.only(top: 5, left: 20),
+                                    child: Column(
+                                      children: [
+                                        Column(
+                                          children: cart.additionals.map((e) =>  _buildAdditional(e, cart.quantity)).toList(),
+                                        ),
+                                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                        Column(
+                                          children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
+                                        ),
+                                      ],
+                                    )
+                                  ),
+                                  cart.note != 'N/A' ? Container(
+                                    margin: EdgeInsets.only(top: 20),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
+                                        Container(
+                                          alignment: Alignment.centerLeft,
+                                          margin: EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(15),
+                                            border: Border.all()
+                                          ),
+                                          child: Text(cart.note.toString())
+                                        ),
+                                      ],
+                                    ),
+                                  ) : Container()
+                                ],
+                              ),
+                            )
+                          ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 5)),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 100),
-                        child: controller.isEdit.call() ? 
-                        GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
-                  ),
-                ],
-              ),
-            )
-          ],
+                        Padding(padding: EdgeInsets.only(left: 5)),
+                        AnimatedSwitcher(
+                          duration: Duration(milliseconds: 100),
+                          child: controller.isEdit.call() ? 
+                          GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.menuDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 5),
+                      child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
