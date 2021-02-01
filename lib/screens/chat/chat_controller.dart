@@ -16,12 +16,65 @@ class ChatController extends GetxController {
   
   var activeOrderData = ActiveOrderData().obs;
   var chat = RxList<ChatData>().obs;
+  var connectMessage = 'Connecting'.obs;
   var message = ''.obs;
+  var title = ''.obs;
+  var isLoading = false.obs;
+  var isSending = false.obs;
+  var isConnected = true.obs;
+  var color = Colors.orange.obs;
 
   @override
   void onInit() {
     activeOrderData(arguments);
-    fetchOrderChats();
+
+    if (activeOrderData.call().activeRestaurant.locationName.isBlank) {
+      this.title("${activeOrderData.call().activeRestaurant.name}");
+    } else {
+      this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
+    }
+
+    _socketService.socket
+    ..on('connect', (_) {
+      Future.delayed(Duration(seconds: 2)).then((value) => isConnected(true));
+      print('Connected');
+      color(Colors.green);
+      connectMessage('Connected');
+      fetchOrderChats(orderId: activeOrderData.call().id);
+
+      chat.call().where((data) => !data.isSent).forEach((element) {
+        messageRiderRequest(element.message);
+      });
+    })
+    ..on('connecting', (_) {
+      isConnected(false);
+      print('Connecting');
+      color(Colors.orange);
+      connectMessage('Connecting');
+    })
+    ..on('reconnecting', (_) {
+      isConnected(false);
+      isSending(false);
+      print('Reconnecting');
+      color(Colors.orange);
+      connectMessage('Reconnecting');
+    })
+    ..on('disconnect', (_) {
+      isConnected(false);
+      isSending(false);
+      color(Colors.red);
+      connectMessage('Disconnected');
+      print('Disconnected');
+    })
+    ..on('error', (_) {
+      isConnected(false);
+      isSending(false);
+      color(Colors.red);
+      print('Error socket: $_');
+      connectMessage('Your message can\'t be sent. Please try again');
+    });
+
+    fetchOrderChats(orderId: activeOrderData.call().id);
     updadateReceiveChat();
     super.onInit();
   }
@@ -32,38 +85,73 @@ class ChatController extends GetxController {
   }
 
   sendMessageToRider() {
-    if (replyTF.text.isNullOrBlank) {
+    if (replyTF.text == null) {
       alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
     } else {
-      _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': replyTF.text});
+
+      String sendMessage = replyTF.text;
+
+      chat.call().add(ChatData(
+        id: chat.call().last.id + 1,
+        orderId: activeOrderData.call().id,
+        userId: activeOrderData.call().userId,
+        message: replyTF.text,
+        createdAt: DateTime.now(),
+        isSent: false
+      ));
+
       replyTF.clear();
-      scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+      messageRiderRequest(sendMessage);
     }
+  }
+
+  messageRiderRequest(String message) {
+    _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
+      print('sent $response');
+      if (response['status'] == 200) {
+        final test = ChatData.fromJson(response['data']);
+        chat.call().removeWhere((element) => !element.isSent);
+        chat.call().add(test);
+        chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        replyTF.clear();
+        scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+      } else {
+        errorSnackbarTop(title: 'Oops!', message: 'Your message cannot be sent. Please try again');
+      }
+    });
   }
 
   updadateReceiveChat() {
     _socketService.socket.on('order-chat', (response) {
       print('receive message: $response');
-      final test = ChatData.fromJson(response['data']);
-      chat.call().add(test);
-      chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      final orderChat = ChatData.fromJson(response['data']);
+      if (activeOrderData.call() != null) {
+        if (orderChat.id == activeOrderData.call().id) {
+          chat.call().add(orderChat);
+          chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        }
+      }
     });
   }
 
-  fetchOrderChats() {
-    _socketService.socket.emitWithAck('order-chats', {'order_id': activeOrderData.call().id}, ack: (response) {
+  fetchOrderChats({int orderId}) {
+    message('Loading conversation...');
+    isLoading(true);
+
+    _socketService.socket.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
       'fetch: $response'.printWrapped();
+      isLoading(false);
       if (response['status'] == 200) {
-          
-        var getResponse = ChatResponse.fromJson(response);
 
-        chat.call().addAll(getResponse.data);
-        chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        final chatResponse = ChatResponse.fromJson(response);
 
+        chat.call().addAll(chatResponse.data);
+        chat.call().sort((a, b) => a.id.compareTo(b.id));
         if(chat.call().isEmpty) message('No Messages');
 
       } else {
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        chat.call().clear();
+        message(Config.SOMETHING_WENT_WRONG);
       }
     });
   }

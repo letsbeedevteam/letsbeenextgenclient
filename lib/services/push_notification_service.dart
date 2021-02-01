@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/chatResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class PushNotificationService extends GetxService {
@@ -38,13 +40,23 @@ class PushNotificationService extends GetxService {
   }
 
   Future onSelectionNotification(String payload) async {
-    switch (payload) {
-      case 'rider-chat':
-        DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
-        break;
-      case 'active-order':
-        DashboardController.to..tapped(4)..tabController.index = 0;
-        break;
+    // switch (payload) {
+    //   case 'rider-chat':
+        // DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
+        // DashboardController.to..goToChatPage(fromNotificartion: true);
+        // break;
+      // case 'active-order':
+      //   DashboardController.to..tapped(4)..tabController.index = 0;
+      //   break;
+    // }
+
+    final chatData = chatDataFromJson(payload);
+
+    if (payload != null) {
+      if (Get.currentRoute == Config.ACTIVE_ORDER_DETAIL_ROUTE) {
+        Get.back();
+      }
+      DashboardController.to.goToChatPage(fromNotificartion: true, data: chatData);
     }
   }
 

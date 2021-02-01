@@ -59,7 +59,7 @@ class RestaurantElement {
         this.location,
         this.status,
         this.logoUrl,
-        this.sliders,
+        this.photoUrl,
         this.address,
         this.workingDays,
         this.menuCategorized,
@@ -71,7 +71,7 @@ class RestaurantElement {
     Location location;
     String status;
     String logoUrl;
-    List<Slider> sliders;
+    String photoUrl;
     Address address;
     WorkingDays workingDays;
     List<MenuCategorized> menuCategorized;
@@ -83,7 +83,7 @@ class RestaurantElement {
         location: Location.fromJson(json["location"]),
         status: json["status"],
         logoUrl: json["logo_url"],
-        sliders: List<Slider>.from(json["sliders"].map((x) => Slider.fromJson(x))),
+        photoUrl: json["photo_url"],
         address: Address.fromJson(json["address"]),
         workingDays: WorkingDays.fromJson(json["working_days"]),
         menuCategorized: List<MenuCategorized>.from(json["menu_categorized"].map((x) => MenuCategorized.fromJson(x))),
@@ -96,7 +96,7 @@ class RestaurantElement {
         "location": location.toJson(),
         "status": status,
         "logo_url": logoUrl,
-        "sliders": List<dynamic>.from(sliders.map((x) => x.toJson())),
+        "photo_url": photoUrl,
         "address": address.toJson(),
         "working_days": workingDays.toJson(),
         "menu_categorized": List<dynamic>.from(menuCategorized.map((x) => x.toJson())),
@@ -191,7 +191,7 @@ class Menu {
 
     int id;
     String name;
-    double price;
+    String price;
     String description;
     String image;
     List<Choice> choices;
@@ -203,7 +203,7 @@ class Menu {
     factory Menu.fromJson(Map<String, dynamic> json) => Menu(
         id: json["id"],
         name: json["name"] == null ? "" : json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         description: json["description"] == null ? "No description" : json["description"],
         image: json["image"] == null ? "" : json["image"],
         choices: json["choices"] == null ? List<Choice>() : List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
@@ -260,14 +260,14 @@ class AdditionalOption {
 
     int id;
     String name;
-    double price;
+    String price;
     int status;
     bool selectedValue;
 
     factory AdditionalOption.fromJson(Map<String, dynamic> json) => AdditionalOption(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         status: json["status"],
         selectedValue: false
     );
@@ -323,14 +323,14 @@ class ChoiceOption {
 
     int id;
     String name;
-    double price;
+    String price;
     dynamic status;
     String selectedValue;
 
     factory ChoiceOption.fromJson(Map<String, dynamic> json) => ChoiceOption(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         status: json["status"],
         selectedValue: null
     );

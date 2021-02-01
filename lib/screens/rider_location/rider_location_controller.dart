@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/riderLocationResponse.dart';
+// import 'package:letsbeeclient/models/riderLocationResponse.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
 class RiderLocationController extends GetxController {
@@ -30,6 +29,8 @@ class RiderLocationController extends GetxController {
   var isMapLoading = true.obs;
   var message = 'Loading google map...'.obs;
 
+  var hasPolyline = false.obs;
+
   BitmapDescriptor riderIcon;
 
   @override
@@ -41,6 +42,12 @@ class RiderLocationController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    hasPolyline(false);
+    super.onClose();
+  }
+
   void setupIcon() async {
     riderIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), Config.PNG_PATH + 'driver_marker.png');
   }
@@ -48,40 +55,44 @@ class RiderLocationController extends GetxController {
   void receiveRiderLocation() async {
     _socketService.socket.on('rider-location', (response) {
       print('Rider location: $response');
-      final rider = RiderLocationData.fromJson(response['data']);
-      riderPosition(LatLng(rider.location.latitude,rider.location.longitude));
-      markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+      if (response['data']['location'] != null) {
+        if (activeOrderData.call() != null) {
+          if (response['data']['order_id'] == activeOrderData.call().id) {
+            riderPosition(LatLng(response['data']['location']['lat'],response['data']['location']['lng']));
+            markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
+            _setupPolylines(sourceLocation: riderPosition.call());
+          }
+        }
+      }
     });
   }
 
   void setupMarker() async {
-    double latitude = double.parse(activeOrderData.call().activeRestaurant.latitude);
-    double longitude = double.parse(activeOrderData.call().activeRestaurant.longitude);
-    final restaurantLocation = LatLng(latitude, longitude);
+    // double latitude = double.parse(activeOrderData.call().activeRestaurant.latitude);
+    // double longitude = double.parse(activeOrderData.call().activeRestaurant.longitude);
+    // // final restaurantLocation = LatLng(latitude, longitude);
 
-    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.value, infoWindow: InfoWindow(title: 'You'));
-    markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
+    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), infoWindow: InfoWindow(title: 'You'));
+    // markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
     // markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
-
-    _setupPolylines(destLocation: currentPosition.value, sourceLocation: restaurantLocation);
   }
 
-  void _setupPolylines({LatLng destLocation, LatLng sourceLocation}) async {
+  void _setupPolylines({LatLng sourceLocation}) async {
     message('Loading coordinates...');
-
     final secretLoad = await _secretLoader.loadKey();
-
-    await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(destLocation.latitude, destLocation.longitude)).then((result) {
+    await polylinePoints.getRouteBetweenCoordinates(secretLoad.googleMapKey, PointLatLng(sourceLocation.latitude, sourceLocation.longitude), PointLatLng(currentPosition.call().latitude, currentPosition.call().longitude)).then((result) {
+      polylineCoordinates.call().clear();
       if (result.points.isNotEmpty) {
+        
         result.points.forEach((PointLatLng point){
-          polylineCoordinates.value.add(LatLng(point.latitude,point.longitude));
+          polylineCoordinates.call().add(LatLng(point.latitude,point.longitude));
         });
           
-        polylines[PolylineId('poly')] =  Polyline(polylineId: PolylineId('poly'), width: 5, color: Colors.red, points: polylineCoordinates.value);
+        polylines[PolylineId('poly')] = Polyline(polylineId: PolylineId('poly'), width: 5, geodesic: true, jointType: JointType.round, color: Colors.red, points: polylineCoordinates.call());
         isMapLoading(false);
       }
     }).catchError((onError) {
-      setupMarker();
+      _setupPolylines(sourceLocation: riderPosition.call());
       print('Polyline error: $onError');
     });
   }
@@ -96,5 +107,10 @@ class RiderLocationController extends GetxController {
     setupMarker();
   }
 
-  onCameraMovePosition(CameraPosition position) => currentPosition(LatLng(position.target.latitude, position.target.longitude));
+  gpsLocation() async {
+    final c = await _mapController.future;
+    c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: currentPosition.call(), zoom: 18)));
+  }
+
+  // onCameraMovePosition(CameraPosition position) => currentPosition(LatLng(position.target.latitude, position.target.longitude));
 }

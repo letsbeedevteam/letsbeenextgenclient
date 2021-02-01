@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/screens/signup/controller/signup_controller.dart';
+import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
 
 class SignInEmailPage extends StatelessWidget {
 
@@ -33,13 +33,13 @@ class SignInEmailPage extends StatelessWidget {
                       child: Text('What\'s your email?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.left),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('We\'ll check if you have an account', style: TextStyle(fontSize: 15)),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20),
+                    //   child: Text('We\'ll check if you have an account', style: TextStyle(fontSize: 15)),
+                    // ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Container(
-                      padding: EdgeInsets.only(left: 30, right: 30, top: 10),
+                      padding: EdgeInsets.only(left: 30, right: 30),
                       child: Column(
                         children: [
                           Column(
@@ -135,7 +135,49 @@ class SignInEmailPage extends StatelessWidget {
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                          _.isLoading.call() ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Container(),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 3),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text('Forgot Password?', style: TextStyle(fontSize: 14)),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                  Text('Click', style: TextStyle(fontSize: 14)),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                  GestureDetector(onTap: () => print('Forgot password'), child: Text('Here', style: TextStyle(color: Colors.blue, fontSize: 14)))
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 15, bottom: 10),
+                            child: SizedBox(
+                              width: 150,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)
+                                ),
+                                color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                                child: _.isLoading.call() ? 
+                               Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('LOGIN'),
+                                onPressed: () => _.signIn()
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('No account yet?', style: TextStyle(fontSize: 14)),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              GestureDetector(onTap: () => _.changeIndex(1), child: Text('Register', style: TextStyle(color: Colors.blue, fontSize: 14))),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              Text('here', style: TextStyle(fontSize: 14)),
+                            ],
+                          ),
+                          // _.isLoading.call() ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Container(),
                         ],
                       ),
                     )

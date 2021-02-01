@@ -13,15 +13,12 @@ import 'package:letsbeeclient/services/api_service.dart';
 class MenuController extends GetxController {
 
   final ApiService apiService = Get.find();
-
-  CartController cartController;
   Completer<void> refreshCompleter;
 
   var menu = Menu().obs;
   var cart = CartData().obs;
   var countQuantity = 1.obs;
   var restaurantId = 0.obs;
-  var menuId = 0.obs;
   var choiceIds = List<ChoiceCart>().obs;
   var additionalIds =  List<AdditionalCart>().obs;
   var tFRequestController = TextEditingController();
@@ -31,6 +28,8 @@ class MenuController extends GetxController {
   var argument = Get.arguments;
   var message = ''.obs;
 
+  var hasNoChoices = false.obs;
+
   @override
   void onInit() {
     refreshCompleter = Completer();
@@ -38,7 +37,6 @@ class MenuController extends GetxController {
     cart.nil();
     if (argument['type'] == 'edit') {
       
-      cartController = Get.find();
       cart(CartData.fromJson(argument['cart']));
       
       countQuantity(cart.value.quantity);
@@ -48,7 +46,6 @@ class MenuController extends GetxController {
     } else {
       
       restaurantId(argument['restaurantId']);
-      menuId(argument['menuId']);
       menu(Menu.fromJson(argument['menu']));
     }
 
@@ -101,18 +98,23 @@ class MenuController extends GetxController {
     choiceIds.clear();
     additionalIds.clear();
 
-    menu.value.choices.forEach((choice) {
-      choice.options.forEach((element) {
-        if (element.name == element.selectedValue) {
-          choiceIds.add(
-            ChoiceCart(
-              id: choice.id,
-              optionId: element.name == element.selectedValue ? element.id : null
-            )
-          );
-        }
+    if (menu.value.choices.isEmpty) {
+      hasNoChoices(true);
+    } else {
+      hasNoChoices(false);
+      menu.value.choices.forEach((choice) {
+        choice.options.forEach((element) {
+          if (element.name == element.selectedValue) {
+            choiceIds.add(
+              ChoiceCart(
+                id: choice.id,
+                optionId: element.name == element.selectedValue ? element.id : null
+              )
+            );
+          }
+        });
       });
-    });
+    }
 
     menu.value.additionals.forEach((additional) {
       additionalIds.add(
@@ -125,7 +127,7 @@ class MenuController extends GetxController {
 
     var addToCart = AddToCart(
       restaurantId: restaurantId.call(),
-      menuId: menuId.call(),
+      menuId: menu.call().id,
       choices: choiceIds,
       additionals: additionalIds.toList(),
       quantity: countQuantity.call(),
@@ -136,11 +138,15 @@ class MenuController extends GetxController {
       updateCartRequest(addToCart);
     } else {
 
-      if (choiceIds.isNotEmpty) {
+      if(hasNoChoices.call()) {
         sendCartRequest(addToCart);
       } else {
-        isAddToCartLoading(false);
-        errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+        if (choiceIds.isNotEmpty) {
+          sendCartRequest(addToCart);
+        } else {
+          isAddToCartLoading(false);
+          errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+        }
       }
     }
   }
@@ -149,15 +155,13 @@ class MenuController extends GetxController {
      apiService.updateCart(addToCart, cart.value.id).then((response) {
     
       if (response.status == 200) {
-        cartController.fetchActiveCarts();
-        successSnackBarTop(title: 'Updated Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
+        CartController.to..cart.nil()..fetchActiveCarts(getRestaurantId: argument['restaurant_id']);
+        successSnackBarTop(title: 'Updated Cart!', message: '${response.message} Please wait...', status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {
         errorSnackbarTop(title: 'Oops!', message: response.message);
         isAddToCartLoading(false);
       }
-
-     
 
     }).catchError((onError) {
       isAddToCartLoading(true);
@@ -172,8 +176,18 @@ class MenuController extends GetxController {
       
       if (response.status == 200) {
         // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-        Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value);
-        isAddToCartLoading(true);
+        CartController.to.cart.nil();
+        // Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
+
+        if (argument['type'] == 'quick_order') {
+          Get.offAndToNamed(Config.CART_ROUTE, arguments: {'restaurant': argument['restaurant']});
+        } else {
+          CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+            Get.back();
+            isAddToCartLoading(true);
+          });
+        }
+
       } else {
         if (response.code == 3005) {
           errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending order');
@@ -203,6 +217,7 @@ class MenuController extends GetxController {
       menu(restaurant);
 
       for (var item in cart.value.additionals) {
+        print(item.name);
         menu.value.additionals.map((e) => e.options).forEach((element) {
             var name = item.picks.map((e) => e.name);
             name.forEach((additional) {

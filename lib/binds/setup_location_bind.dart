@@ -4,6 +4,6 @@ import 'package:letsbeeclient/screens/setup_location/controllers/setup_location_
 class SetupLocationBind extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<SetupLocationController>(() => SetupLocationController());
+    Get.put(SetupLocationController());
   }
 }

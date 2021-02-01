@@ -4,12 +4,12 @@
 
 import 'dart:convert';
 
-Social facebookFromJson(String str) => Social.fromJson(json.decode(str));
+SocialLoginResponse socialFromJson(String str) => SocialLoginResponse.fromJson(json.decode(str));
 
-String facebookToJson(Social data) => json.encode(data.toJson());
+String socialToJson(SocialLoginResponse data) => json.encode(data.toJson());
 
-class Social {
-    Social({
+class SocialLoginResponse {
+    SocialLoginResponse({
         this.status,
         this.data,
     });
@@ -17,7 +17,7 @@ class Social {
     int status;
     SocialData data;
 
-    factory Social.fromJson(Map<String, dynamic> json) => Social(
+    factory SocialLoginResponse.fromJson(Map<String, dynamic> json) => SocialLoginResponse(
         status: json["status"],
         data: SocialData.fromJson(json["data"]),
     );
@@ -30,22 +30,25 @@ class Social {
 
 class SocialData {
     SocialData({
-        this.id,
-        this.name,
-        this.email,
-        this.accessToken,
+      this.id,
+      this.name,
+      this.email,
+      this.accessToken,
+      this.cellphoneNumber
     });
 
     int id;
     String name;
     String email;
     String accessToken;
+    String cellphoneNumber;
 
     factory SocialData.fromJson(Map<String, dynamic> json) => SocialData(
         id: json["id"],
         name: json["name"],
         email: json["email"],
         accessToken: json["access_token"],
+        cellphoneNumber: json["cellphone_number"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -53,5 +56,6 @@ class SocialData {
         "name": name,
         "email": email,
         "access_token": accessToken,
+        "cellphone_number": cellphoneNumber
     };
 }

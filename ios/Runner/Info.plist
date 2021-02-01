@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -25,7 +25,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.584985850630-qnr2b171fsf4r1uiclm6h91scsorgq40</string>
+				<string>com.googleusercontent.apps.584985850630-71n4c0ek0aglr19ignat4odgrmjr3tai</string>
 			</array>
 		</dict>
 		<dict>
@@ -36,11 +36,13 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
 	<string>829806494451132</string>
 	<key>FacebookDisplayName</key>
 	<string>Let's bee</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -60,14 +62,24 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow apple music access</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Allow calendar access</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow contact access</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Always and when in use</string>
+	<string>App would like to use your current location to display it on the app</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I has location always</string>
+	<string>App would like to use your current location to display it on the app</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
+	<string>App would like to use your current location to display it on the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location when in use</string>
+	<string>App would like to use your current location to display it on the app</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Allow motion access</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Allow speech recognition access</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -17,7 +17,7 @@ class SocketService extends GetxService {
       'extraHeaders': {'x-auth-token': _box.read(Config.USER_TOKEN)}
     });
     
-    this.socket.connect();
+    this.socket..disconnect()..connect();
 
     // this.socket.on("connect", (_) => print('Connected'));
     // this.socket.on("connecting", (_) => print('Connecting'));
@@ -32,6 +32,7 @@ class SocketService extends GetxService {
     if(this.socket != null) {
       this.socket.disconnect();
       this.socket.on("disconnect", (_) => print('Disconnected: $_'));
+      this.socket = null;
     }
   }
 }

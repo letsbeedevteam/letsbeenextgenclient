@@ -1,7 +1,10 @@
 
 import 'dart:convert';
 
-String chatResponseToJson(ChatResponse data) => json.encode(data.toJson());
+String chatDataToJson(ChatData data) => json.encode(data.toJson());
+
+ChatData chatDataFromJson(String str) => ChatData.fromJson(json.decode(str));
+
 
 class ChatResponse {
 
@@ -32,7 +35,7 @@ class ChatData {
     this.userId,
     this.message,
     this.createdAt,
-    this.updatedAt
+    this.isSent
   });
 
   int id;
@@ -40,7 +43,7 @@ class ChatData {
   int userId;
   String message;
   DateTime createdAt;
-  DateTime updatedAt;
+  bool isSent;
 
   factory ChatData.fromJson(Map<String, dynamic> json) => ChatData(
     id: json["id"],
@@ -48,14 +51,14 @@ class ChatData {
     userId: json["user_id"],
     message: json["message"],
     createdAt: DateTime.parse(json["createdAt"]),
-    // updatedAt: DateTime.parse(json["updatedAt"])
+    isSent: true
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "order_id": orderId,
     // "updatedAt": updatedAt,
-    "createdAt": createdAt,
+    "createdAt": createdAt.toIso8601String(),
     "user_id": userId,
     "message": message
   };

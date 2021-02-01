@@ -1,8 +1,8 @@
 class Config {
 
   // Base URLs
-  static const BASE_URL = 'http://192.168.100.14:8000';
-  // static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
+  // static const BASE_URL = 'http://192.168.100.14:8000';
+  static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -22,6 +22,8 @@ class Config {
   static const CHAT_ROUTE = '/chat';
   static const RIDER_LOCATION_ROUTE = '/rider_location';
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
+  static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
+  static const ACTIVE_ORDER_ROUTE = '/active_order';
 
   // Storage keys
   static const USER_ID = 'user_id';
@@ -45,12 +47,14 @@ class Config {
   static const SOCIAL_LOGIN_TYPE = 'social_login_type';
 
   static const IS_SETUP_LOCATION = 'is_setup_location';
+  static const IS_VERIFY_NUMBER = 'is_verify_number';
   static const IS_LOGGED_IN = 'is_logged_in';
 
   // Paths
   static const JSONS_PATH = 'assets/jsons/';
   static const SVG_PATH = 'assets/svg/';
   static const PNG_PATH = 'assets/png/';
+  static const GIF_PATH = 'assets/gifs/';
 
   // Error message
   static const NO_INTERNET_CONNECTION = 'No internet connection';

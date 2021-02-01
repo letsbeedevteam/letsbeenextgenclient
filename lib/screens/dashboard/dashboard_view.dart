@@ -1,12 +1,15 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:loading_gifs/loading_gifs.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends GetView<DashboardController> {
   
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class DashboardPage extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                     AnimatedContainer(
-                    height: _.isHideAppBar.call() ? 0 : 100,
+                    height: _.isHideAppBar.call() ? 0 : Get.height / 10,
                     duration: Duration(seconds: 2),
                     curve: Curves.fastLinearToSlowEaseIn,
                     child: AppBar(
@@ -36,15 +39,15 @@ class DashboardPage extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-                              Text(_.userCurrentNameOfLocation.call().isNullOrBlank ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                              Text('DELIVER TO: ', style: TextStyle(fontSize: 13, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.normal)),
+                              Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0))),
                             ],
                           ),
                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                           Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                          )
+                          ),
                         ],
                       ),
                         // actions: [
@@ -56,41 +59,39 @@ class DashboardPage extends StatelessWidget {
                     child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
                     width: Get.width, 
                     color: Colors.white
-                  )
+                  ),
                 ],
               ),
               Flexible(
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    PageView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: _.pageController,
-                      onPageChanged: (index) {
-                        _.pageIndex(index);
-                        _.showLocationSheet(false);
-                      },
-                      children: _.widgets,
-                    ),
-                    // _.activeOrderData.call() == null ? Container() :
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    //   child: SizedBox(
-                    //     width: Get.width,
-                    //     child: RaisedButton(
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //       color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                    //       child: Text('Order on going'),
-                    //       onPressed: () => print('On going'),
-                    //     ),
-                    //   ),
-                    // )
-                  ],
-                )
+                child: PageView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _.pageController,
+                  onPageChanged: (index) {
+                    _.pageIndex(index);
+                    _.showLocationSheet(false);
+                  },
+                  children: _.widgets,
+                ),
               )
             ],
+          ),
+          floatingActionButton: Badge(
+            badgeContent: _.activeOrders.call() == null ? null : Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            padding: EdgeInsets.all(10),
+            showBadge: _.activeOrders.call() != null,
+            child: FloatingActionButton(
+              splashColor: Colors.transparent,
+              backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.circular(30)
+              ),
+              onPressed: () {
+                _.fetchActiveOrders();
+                _activeOrderDialog();
+              },
+              child: Icon(Icons.restaurant_sharp),
+            ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
@@ -102,11 +103,11 @@ class DashboardPage extends StatelessWidget {
             fixedColor: Colors.black,
             onTap: (value) =>  _.tapped(value),
             items: [
-              customNavigationBarItem('Home', icon: Icon(Icons.home)),
+              customNavigationBarItem('Food', icon: Icon(Icons.sports_motorsports)),
               customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-              customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              customNavigationBarItem('Order', icon: Icon(FontAwesomeIcons.clipboardList))
+              customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+              customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
             ],
           )
         );
@@ -147,7 +148,7 @@ class DashboardPage extends StatelessWidget {
             ],
           ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
-          _.addresses.call().isNull ? Container(
+          _.addresses.call() == null ? Container(
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
@@ -181,7 +182,7 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    final address = '${data.street} ${data.barangay} ${data.city}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -196,7 +197,7 @@ class DashboardPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child:  Text(address)),
-                GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
+                // GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
               ],
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -206,6 +207,102 @@ class DashboardPage extends StatelessWidget {
       onTap: () {
         DashboardController.to.updateCurrentLocation(data);
       },
+    );
+  }
+
+  Widget _buildActiveOrderList(ActiveOrderData data) {
+    return GestureDetector(
+      onTap: () {
+        Get.back();
+        controller.activeOrderData(data);
+        Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+      },
+      child: Container(
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          // border: Border.all(width: 0.5),
+          borderRadius: BorderRadius.circular(5),
+          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+        ),
+        child: Row(
+          children: [
+           Container(
+             height: 55.0,
+             width: 55.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white
+            ),
+            child: ClipOval(
+               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeRestaurant.logoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+            ),
+           ),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+            Expanded(
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  data.activeRestaurant.locationName.isBlank ? 
+                  Text("${data.activeRestaurant.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
+                  Text("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                  _buildStatus(status: data.status),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatus({String status}) {
+    switch (status) {
+      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+        break;
+      default: return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+    }
+  }
+
+  _activeOrderDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        backgroundColor: Colors.white,
+        insetPadding: EdgeInsets.all(20),
+        child: GetX<DashboardController>(
+          builder: (_) {
+            return Container(
+              height: _.activeOrders.call() == null ? 100 : 350,
+              child: _.activeOrders.call() == null ? Container(
+                child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
+              ) : Scrollbar(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: _.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

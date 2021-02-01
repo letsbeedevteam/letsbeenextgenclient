@@ -28,6 +28,13 @@ class ConfirmCodePage extends StatelessWidget {
                   ),
                 ),
               ),
+              Container(
+                padding: EdgeInsets.all(5),
+                child: Center(
+                  child: Text('We send confirmation code to this number: +63${controller.numberController.text}.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+                )
+              ),
+              // Padding(padding: EdgeInsets.symmetric(vertical: 10)),
               Center(child: Text('Please enter your confirmation code.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
               SizedBox(
@@ -60,7 +67,7 @@ class ConfirmCodePage extends StatelessWidget {
                   cursorColor: Colors.black,
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -91,10 +98,10 @@ class ConfirmCodePage extends StatelessWidget {
                       //   _.goToDashboardPage();
                       // }
                       dismissKeyboard(context);
-                       _.goToDashboardPage();
+                       _.goToSetupLocation();
                     },
                   ),
-                  width: Get.width * 0.80,
+                  width: 200,
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -125,10 +132,18 @@ class ConfirmCodePage extends StatelessWidget {
                       print('Resend confirmation code');
                     },
                   ),
-                  width: Get.width * 0.80,
+                  // width: Get.width * 0.80,
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 30)),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Container(
+                padding: EdgeInsets.all(5),
+                child: Text(
+                  '*After 1 minute if you don\'t receive your code, you can resend it again by resending the confirmation code*', 
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                ),
+              )
             ],
           ),
         );

@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/link.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
-import 'package:letsbeeclient/screens/splash/splash_view.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
@@ -56,7 +55,8 @@ class MyApp extends StatelessWidget {
       transitionDuration: Duration(milliseconds: 300),
       defaultTransition: Transition.topLevel,
       initialBinding: SplashBind(),
-      home: SplashPage(),
+      initialRoute: Config.SPLASH_ROUTE,
+      // home: SplashPage(),
     );
   }
 }

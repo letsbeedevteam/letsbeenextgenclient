@@ -1,9 +1,11 @@
 import 'package:get/instance_manager.dart';
+import 'package:letsbeeclient/screens/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class DashboardBind extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<DashboardController>(() => DashboardController());
+    Get.put(DashboardController());
+    Get.put(CartController());
   }
 }

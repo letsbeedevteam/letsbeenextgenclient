@@ -22,7 +22,7 @@ class RiderLocationData {
   Location location;
 
   factory RiderLocationData.fromJson(Map<String, dynamic> json) => RiderLocationData(
-    location: Location.fromJson(json['location'])
+    location: json['location'] == null ? null : Location.fromJson(json['location'])
   );
 }
 

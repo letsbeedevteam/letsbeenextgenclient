@@ -15,16 +15,16 @@ class ActiveOrder {
     });
 
     int status;
-    ActiveOrderData data;
+    List<ActiveOrderData> data;
 
     factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
         status: json["status"],
-        data: json['data'] == null ? null : ActiveOrderData.fromJson(json["data"]),
+        data: json["data"] == null ? List<ActiveOrderData>() : List<ActiveOrderData>.from(json["data"].map((x) => ActiveOrderData.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
-        "data": data.toJson(),
+        "data": List<ActiveOrderData>.from(data.map((x) => x.toJson())),
     };
 }
 
@@ -33,6 +33,7 @@ class ActiveOrderData {
         this.menus,
         this.activeRestaurant,
         this.rider,
+        this.user,
         this.fee,
         this.timeframe,
         this.address,
@@ -50,6 +51,7 @@ class ActiveOrderData {
     List<ActiveOrderMenu> menus;
     ActiveRestaurant activeRestaurant;
     Rider rider;
+    User user;
     Fee fee;
     Timeframe timeframe;
     Address address;
@@ -66,7 +68,8 @@ class ActiveOrderData {
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
         activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
-        rider: json["rider"] == null ? null : Rider.fromJson(json['rider']),
+        rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
+        user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
         fee: Fee.fromJson(json["fee"]),
         timeframe: json["timeframe"] == null || json["timeframe"] == "" ? null : Timeframe.fromJson(json["timeframe"]),
         address: Address.fromJson(json["address"]),
@@ -74,7 +77,7 @@ class ActiveOrderData {
         id: json["id"],
         restaurantId: json["restaurant_id"],
         userId: json["user_id"],
-        riderId: json["rider_id"] == null ? 0 : json["rider_id"],
+        riderId: json["rider_id"] == null || json["rider_id"] == 'null' ? 0 : json["rider_id"],
         status: json["status"],
         reason: json["reason"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -225,18 +228,18 @@ class Fee {
         this.total,
     });
 
-    double subTotal;
-    int delivery;
+    String subTotal;
+    String delivery;
     String discountCode;
-    double discountPrice;
-    double total;
+    String discountPrice;
+    String total;
 
     factory Fee.fromJson(Map<String, dynamic> json) => Fee(
-        subTotal: json["sub_total"].toDouble(),
-        delivery: json["delivery"],
+        subTotal: json["sub_total"].toString(),
+        delivery: json["delivery"].toString(),
         discountCode: json["discount_code"] == null ? '' : json["discount_code"],
-        discountPrice: json["discount_price"].toDouble(),
-        total: json["total"].toDouble(),
+        discountPrice: json["discount_price"].toString(),
+        total: json["total"].toString(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -261,16 +264,16 @@ class ActiveOrderMenu {
 
     int menuId;
     String name;
-    double price;
+    String price;
     int quantity;
     List<Choice> choices;
     List<Additional> additionals;
-    dynamic note;
+    String note;
 
     factory ActiveOrderMenu.fromJson(Map<String, dynamic> json) => ActiveOrderMenu(
         menuId: json["menu_id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
@@ -317,12 +320,12 @@ class Pick {
 
     int id;
     String name;
-    double price;
+    String price;
 
     factory Pick.fromJson(Map<String, dynamic> json) => Pick(
         id: json["id"],
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -340,12 +343,12 @@ class Choice {
     });
 
     String name;
-    double price;
+    String price;
     String pick;
 
     factory Choice.fromJson(Map<String, dynamic> json) => Choice(
         name: json["name"],
-        price: json["price"].toDouble(),
+        price: json["price"].toString(),
         pick: json["pick"],
     );
 
@@ -399,38 +402,87 @@ class Details {
 class ActiveRestaurant {
 
   ActiveRestaurant({
+    this.logoUrl,
     this.name,
     this.locationName,
     this.latitude,
     this.longitude
   });
 
-  
+  String logoUrl;
   String name;
   String locationName;
   String latitude;
   String longitude;
 
   factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
-      name: json["name"],
-      locationName: json['location_name'],
-      latitude: json['latitude'],
-      longitude: json['longitude']
+    logoUrl: json["logo_url"] == null || json["logo_url"] == '' ? null : json["logo_url"],
+    name: json["name"],
+    locationName: json['location_name'] == '' || json['location_name'] == null ? '' : json['location_name'],
+    latitude: json['latitude'],
+    longitude: json['longitude']
   );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "location_name": locationName,
+    "latitude": latitude,
+    "longitude": longitude
+  };
 }
 
 class Rider {
   Rider({
     this.userId,
-    this.user
+    this.user,
+    this.motorcycleDetails
   });
 
   int userId;
+  MotorcycleDetails motorcycleDetails;
   RiderUser user;
 
   factory Rider.fromJson(Map<String, dynamic> json) => Rider(
     userId: json['user_id'],
+    motorcycleDetails: json['motorcycle_details'] == null ? null : MotorcycleDetails.fromJson(json['motorcycle_details']),
     user: RiderUser.fromJson(json['user'])
+  );
+}
+
+class MotorcycleDetails {
+
+  MotorcycleDetails({
+    this.brand,
+    this.model,
+    this.plateNumber,
+    this.color
+  });
+
+  String brand;
+  String model;
+  String plateNumber;
+  String color;  
+
+  factory MotorcycleDetails.fromJson(Map<String, dynamic> json) => MotorcycleDetails(
+    brand: json['brand'],
+    model: json['model'],
+    plateNumber: json['plate_number'],
+    color: json['color']
+  );
+}
+
+class User {
+  User({
+    this.name,
+    this.number
+  });
+  
+  String name;
+  String number;
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    name: json['name'],
+    number: json['cellphone_number'] == null ? 'None' : json['cellphone_number']
   );
 }
 

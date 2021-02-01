@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -26,7 +26,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   title: GetX<HistoryDetailController>(
-                    builder: (_) => Text('${_.data.call().restaurant.name} - ${_.data.call().restaurant.locationName}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    builder: (_) => Text(_.title.call(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   ),
                   centerTitle: true,
                   background: GetX<HistoryDetailController>(
@@ -37,18 +37,19 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             children: [
                               Container(
-                                color: Colors.black,
                                 height: 200,
                                   child: Center(
                                     child: Container(
                                       width: Get.width,
-                                      child: CarouselSlider(
-                                      options: CarouselOptions(
-                                        autoPlay: false,
-                                        disableCenter: true,                                    
-                                      ),
-                                      items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))).toList(),
-                                    ),
+                                      child: _.data.call().restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                                        : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+                                    //   child: CarouselSlider(
+                                    //   options: CarouselOptions(
+                                    //     autoPlay: false,
+                                    //     disableCenter: true,                                    
+                                    //   ),
+                                    //   items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
+                                    // ),
                                   )
                                 ),
                               ),
@@ -63,12 +64,12 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(width: 2),
-                                color: Colors.transparent
+                                color: Colors.white
                               ),
                               child: Hero(
                                 tag: _.data.call().id,
                                 child: ClipOval(
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                                 ),
                               )
                             ),
@@ -101,7 +102,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Column(
                             children: _.data.call().menus.map((e) => _buildMenu(e)).toList(),
                           ),
-                           _.data.call().fee.discountCode.isNullOrBlank ? Container() :
+                          _.data.call().fee.discountCode == null ? Container() :
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -148,7 +149,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${_.data.call().fee.total.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                      Text('₱ ${(_.data.call().fee.total).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
                                 )
@@ -171,23 +172,26 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                             child: Divider(thickness: 5, color: Colors.grey.shade200),
                           ),
                           Container(
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('Status', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                 _buildStatus()
                               ],
                             ),
                           ),
-                          _.data.call().reason.isNullOrBlank ? Container() : Column(
+                          _.data.call().reason == null ? Container() : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 margin: EdgeInsets.only(top: 5),
                                 child: Divider(thickness: 5, color: Colors.grey.shade200),
                               ),
                               Container(
-                                child: Row(
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Reason', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text(_.data.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
@@ -215,7 +219,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         style: TextStyle(color: Colors.black, fontSize: 14)
                                       ),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                      Text('Contact Number: +23542345345345', style: TextStyle(color: Colors.black, fontSize: 14))
+                                      Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                     ],
                                   ),
                                 )
@@ -245,7 +249,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
         break;
       case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
@@ -273,7 +277,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              Text('₱ ${(menu.price * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+              Text('₱ ${(double.parse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
             ],
           ),
           Container(

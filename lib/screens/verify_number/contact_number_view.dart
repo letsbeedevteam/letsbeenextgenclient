@@ -11,7 +11,7 @@ class ContactNumberPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<VerifyNumberController>(
+    return GetX<VerifyNumberController>(
       builder: (controller) {
         return Container(
           child: Column(
@@ -44,24 +44,23 @@ class ContactNumberPage extends StatelessWidget {
                     FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
                   ],
                   decoration: InputDecoration(
-                    prefixIcon: SizedBox(
-                      child: Center(
-                        widthFactor: 1.2,
-                        child: Padding(padding: EdgeInsets.only(left: 20), child: Text('+63', style: TextStyle(fontSize: 18)),),
-                      ),
-                    ),
+                    isDense: true,
+                    prefixIcon: Padding(padding: EdgeInsets.only(left: 10, right: 5), child: Text(' +63', style: TextStyle(color: Colors.black, fontSize: 18))),
+                    prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
+                    // prefixStyle: TextStyle(color: Colors.black, fontSize: 18),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(color: Colors.black)
+                      borderSide: BorderSide(color: Colors.black),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: Colors.black),
                     ),
+                    hintText: '(Ex: 9061234567)',
                     fillColor: Colors.grey.shade200,
                     filled: true,
                     counterText: "",
-                    contentPadding: EdgeInsets.all(0)
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10)
                   ),
                 ),
               ),
@@ -79,6 +78,7 @@ class ContactNumberPage extends StatelessWidget {
                 ),
                 child: SizedBox(
                   height: 40,
+                  width: 280,
                   child: RaisedButton(
                     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
                     shape: RoundedRectangleBorder(
@@ -86,18 +86,19 @@ class ContactNumberPage extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(13),
-                      child: Text('SEND CONFIRMATION CODE'),
+                      child: _.isLoading.call() ? 
+                      Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('SEND CONFIRMATION CODE', style: TextStyle(fontSize: 15)),
                     ),
                     onPressed: () {
                       if (_.numberController.text.isEmpty) {
                         errorSnackBarBottom(title: 'Required', message: 'Please input your mobile number');
                       } else {
                         dismissKeyboard(context);
-                        _.changeIndex(1);
+                        _.sendCode();
                       }
                     },
                   ),
-                  width: Get.width * 0.80,
+                  // width: Get.width * 0.80,
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 30)),

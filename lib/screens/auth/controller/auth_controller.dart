@@ -50,14 +50,19 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onSocialSignInSuccess(String social, SocialData data) {
-      print('LOL: ${data.toJson()}');
       _box.write(Config.SOCIAL_LOGIN_TYPE, social);
       _box.write(Config.IS_LOGGED_IN, true);
       _box.write(Config.USER_ID, data.id);
       _box.write(Config.USER_NAME, data.name);
       _box.write(Config.USER_EMAIL, data.email);
       _box.write(Config.USER_TOKEN, data.accessToken);
-      Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
+
+      if (data.cellphoneNumber == null) {
+        Get.offAllNamed(Config.VERIFY_NUMBER_ROUTE);
+      } else {
+        _box.write(Config.USER_MOBILE_NUMBER, data.cellphoneNumber);
+        Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
+      }
   }
 
   @override

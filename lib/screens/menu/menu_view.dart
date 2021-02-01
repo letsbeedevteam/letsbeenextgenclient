@@ -39,7 +39,7 @@ class MenuPage extends GetView<MenuController> {
                                 child: Container(
                                   width: 160,
                                   height: 160,
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.call().image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png'))),
+                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.menu.call().image.toString(), placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
                                 ),
                               ),
                             )
@@ -114,35 +114,33 @@ class MenuPage extends GetView<MenuController> {
                               ),
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 20),
-                                child: IgnorePointer(
-                                  ignoring: _.isAddToCartLoading.call(),
-                                  child: TextFormField(
-                                    controller: _.tFRequestController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Type something...',
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          width: 0, 
-                                          color: Colors.black
-                                        )
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: BorderSide(
-                                          width: 0, 
-                                          color: Colors.black
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Colors.grey.shade200,
-                                      contentPadding: EdgeInsets.only(top: 10, left: 10, bottom: 10)
+                                child: TextFormField(
+                                  controller: _.tFRequestController,
+                                  enabled: !_.isAddToCartLoading.call(),
+                                  decoration: InputDecoration(
+                                    hintText: 'Type something...',
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                        width: 0, 
+                                        color: Colors.black
+                                      )
                                     ),
-                                    keyboardType: TextInputType.text,
-                                    enableSuggestions: false,
-                                    textAlign: TextAlign.start,
-                                    cursorColor: Colors.black,
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                        width: 0, 
+                                        color: Colors.black
+                                      ),
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    contentPadding: EdgeInsets.only(top: 10, left: 10, bottom: 10)
                                   ),
+                                  keyboardType: TextInputType.text,
+                                  enableSuggestions: false,
+                                  textAlign: TextAlign.start,
+                                  cursorColor: Colors.black,
                                 )
                               ),
                               Container(
@@ -242,7 +240,7 @@ class MenuPage extends GetView<MenuController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(child: Text(e.name)),
-                            Text(e.price == 0.0 ? '' : '(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
+                            Text(e.price == '0.00' ? '' : '(₱ ${e.price})', style: TextStyle(color: Colors.black.withOpacity(0.35)),)
                           ],
                         ),
                         value: e.name,

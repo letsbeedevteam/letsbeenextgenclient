@@ -19,7 +19,9 @@ class ChatPage extends GetView<ChatController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Bee Driver: ${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                Text('0001 - 0000001 - Honda ABNC 123', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
+                _.activeOrderData.call().rider.motorcycleDetails == null ? Container() :
+                Text(
+                  '${_.activeOrderData.call().rider.motorcycleDetails.plateNumber} - ${_.activeOrderData.call().rider.motorcycleDetails.brand} ${_.activeOrderData.call().rider.motorcycleDetails.color} - ${_.activeOrderData.call().rider.motorcycleDetails.model} ', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
               ],
             );
           },
@@ -35,20 +37,43 @@ class ChatPage extends GetView<ChatController> {
             GetX<ChatController>(
               builder: (_) => Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(15),
-                child: Text('${_.activeOrderData.call().activeRestaurant.name} - ${_.activeOrderData.call().activeRestaurant.locationName}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                padding: EdgeInsets.all(10),
+                child: Text(_.title.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
               ),
             ),
             Container(color: Colors.grey,width: Get.width, height: 1),
+            GetX<ChatController>(
+              builder: (_) {
+                return AnimatedContainer(
+                  width: double.infinity,
+                  color: _.color.call(),
+                  duration: Duration(milliseconds: 500),
+                  height: _.isConnected.call() ? 0 : 25,
+                  child: Center(
+                    child: Text(_.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  )
+                );
+              },
+            ),
             Expanded(
               child: GetX<ChatController>(
                 builder: (_) {
-                  return SingleChildScrollView(
+                  return _.isLoading.call() ? Center(child: Text(_.message.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))) : 
+                  _.chat.call().isEmpty ? Column(
+                      children: [
+                        Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                        RaisedButton(
+                          color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                          child: Text('Refresh'),
+                          onPressed: () => _.fetchOrderChats(),
+                        )
+                      ],
+                    ) : SingleChildScrollView(
                     reverse: true,
                     controller: _.scrollController,
                     child: Column(
                       children: [
-                        _.chat.call().isNullOrBlank || _.chat.call().isEmpty ? Container() : Column(
+                        _.chat.call() == null || _.chat.call().isEmpty ? Container() : Column(
                           children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
                         ),
                         // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => print('Go back on top'))
@@ -58,44 +83,57 @@ class ChatPage extends GetView<ChatController> {
                 },
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey)
-                )
-              ),
-              padding: EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(15)
-                      ),
-                      child: TextFormField(
-                        controller: controller.replyTF,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your message',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(12.0)
-                        ),
-                        autocorrect: false,
-                        cursorColor: Colors.black,
-                        maxLines: 5,
-                        minLines: 1,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.done,
-                      ),
+            GetX<ChatController>(
+              builder: (_) {
+                return IgnorePointer(
+                  ignoring: _.isLoading.call(),
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey)
+                      )
                     ),
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(15)
+                            ),
+                            child: IgnorePointer(
+                              ignoring: _.isSending.call(),
+                              child: TextFormField(
+                                controller: controller.replyTF,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter your message',
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12.0)
+                                ),
+                                autocorrect: false,
+                                cursorColor: Colors.black,
+                                maxLines: 5,
+                                minLines: 1,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.done,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 20, right: 10),
+                          child: IconButton(icon: Icon(Icons.send, size: 30), onPressed: () => controller.sendMessageToRider()),
+                        )
+                      ],
+                    )
                   ),
-                  IconButton(icon: Icon(Icons.send), onPressed: controller.sendMessageToRider)
-                ],
-              )
-            ),
+                );
+              },
+            )
           ],
         ),
       ),
@@ -137,7 +175,7 @@ class ChatPage extends GetView<ChatController> {
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(DateFormat('MMMM dd, yyyy HH:mm a').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                      child: Text(DateFormat('MMMM dd, yyyy (hh:mm a)').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
                     )
                   ],
                 ),
@@ -173,11 +211,20 @@ class ChatPage extends GetView<ChatController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(data.message, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), textAlign: TextAlign.right),
+                    Text(data.message, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), textAlign: TextAlign.left),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Text(DateFormat('MMMM dd, yyyy HH:mm a').format(data.createdAt), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                      child: Text(DateFormat('MMMM dd, yyyy (hh:mm a)').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                    ),
+                    Column(
+                      children: [
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(data.isSent ? 'Sent' : 'Sending...', style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                        ),
+                      ],
                     )
                   ],
                 ),

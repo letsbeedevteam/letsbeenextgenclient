@@ -23,7 +23,7 @@ class HistoryPage extends GetView<DashboardController> {
             physics: AlwaysScrollableScrollPhysics(),
             child: GetX<DashboardController>(
               builder: (_) {
-                return _.history.call().isNull ? Container(
+                return _.history.call() == null ? Container(
                   alignment: Alignment.topCenter,
                   padding: EdgeInsets.only(top: 20),
                   child: _.isLoading.call() ? Column(
@@ -31,13 +31,13 @@ class HistoryPage extends GetView<DashboardController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CupertinoActivityIndicator(),
-                      Text('Loading', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+                      Text('Loading', style: TextStyle(fontSize: 18))
                     ],
-                  ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18)),
                 ) : Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Column(
-                    children: _.history.call().data.reversed.map((e) => _buildHistoryItem(e)).toList(),
+                    children: _.history.call().data.map((e) => _buildHistoryItem(e)).toList(),
                   ),
                 );
               },
@@ -80,7 +80,7 @@ class HistoryPage extends GetView<DashboardController> {
               child: Hero(
                 tag: data.id,
                 child: ClipOval(
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Image.asset(Config.PNG_PATH + 'letsbee_logo.png')))
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                 ),
               )
             ),
@@ -96,8 +96,8 @@ class HistoryPage extends GetView<DashboardController> {
                       padding: EdgeInsets.only(right: 10),
                       child: Text(data.restaurant.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
                     ),
-                    Text(DateFormat('MMMM dd, yyyy').format(data.createdAt), style: TextStyle(fontSize: 13)),
-                    Text(data.menus.length == 1 ? '1x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13)),
+                    Text(data.menus.length == 1 ? '${data.menus.first.quantity}x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
                       margin: EdgeInsets.only(right: 10, bottom: 10),
                       alignment: FractionalOffset.bottomRight,

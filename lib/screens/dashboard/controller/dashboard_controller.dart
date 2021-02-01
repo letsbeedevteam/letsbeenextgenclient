@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -27,6 +29,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   PageController pageController;
   Animation<Offset> offsetAnimation;
   Completer<void> refreshCompleter;
+  GifController gifController;
   // GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
   final ApiService apiService = Get.find();
@@ -38,27 +41,42 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   
   final tfSearchController = TextEditingController();
   final scrollController = ScrollController();
-  final widgets = [HomePage(), NotificationPage(), AccountSettingsPage(), ReviewsPage(), OrderPage()];
+  final widgets = [
+    HomePage(), 
+    NotificationPage(), 
+    ReviewsPage(), 
+    OrderPage(),
+    AccountSettingsPage(), 
+  ];
 
   var pageIndex = 0.obs;
   var userCurrentNameOfLocation = ''.obs;
   var userCurrentAddress = ''.obs;
+  var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
   var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
   var isSearching = false.obs;
   var isOnChat = false.obs;
+  var isSelectedLocation = false.obs;
   var message = ''.obs;
-  var onGoingMessage = 'No Active Order'.obs;
+  var onGoingMessage = 'No Active Orders...'.obs;
+  var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
   var historyMessage = 'No list of history'.obs;
-  var addressMessage = 'No list of address'.obs;
+  var addressMessage = 'Loading...'.obs;
   var history = OrderHistoryResponse().obs;
   var addresses = GetAllAddressResponse().obs;
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
   var activeOrderData = ActiveOrderData().obs;
+  var activeOrders = ActiveOrder().obs;
 
   static DashboardController get to => Get.find();
+
+  GifController changeGifRange({double range, int duration}) {
+    gifController.repeat(min:0, max:range,period: Duration(milliseconds: duration));
+    return gifController;
+  }
 
   @override
   void onInit() {
@@ -67,16 +85,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     restaurants.nil();
     activeOrderData.nil();
     addresses.nil();
+    activeOrders.nil();
 
     userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
     pushNotificationService.initialise();
 
+    // setupScrollControllers();
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
     refreshToken();
-    
+
+    gifController = GifController(vsync: this);
+
     super.onInit();
   }
 
@@ -85,28 +107,47 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
-      fetchActiveOrder();
-      receiveUpdateOrder();
-      receiveChat();
+      fetchActiveOrders();
     })
     ..on('connecting', (_) {
       print('Connecting');
-      onGoingMessage('Connecting');
+      onGoingMessage('Loading...');
     })
     ..on('reconnecting', (_) {
       print('Reconnecting');
-      onGoingMessage('Reconnecting');
+      onGoingMessage('Loading...');
     })
     ..on('disconnect', (_) {
-      onGoingMessage('No Active Order');
-      activeOrderData.nil();
+      onGoingMessage('Loading...');
+      // activeOrderData.nil();
+      activeOrders.nil();
       print('Disconnected');
     })
     ..on('error', (_) {
-      onGoingMessage('No Active Order');
+      onGoingMessage('Loading...');
       print('Error socket: $_');
     });
+
+    receiveUpdateOrder();
+    receiveChat();
   }
+
+  // void setupScrollControllers() {
+  //   isFloatVisible(true);
+  //   scrollController.addListener(() {
+  //      if(scrollController.position.userScrollDirection == ScrollDirection.reverse){
+  //       if(isFloatVisible.call()) {
+  //         isFloatVisible(false);
+  //       }
+  //     } else {
+  //       if(scrollController.position.userScrollDirection == ScrollDirection.forward){
+  //         if(!isFloatVisible.call()) {
+  //           isFloatVisible(true);  
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
   void setupRefreshIndicator() {
     // refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -115,7 +156,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     //   refreshIndicatorKey.currentState?.show(); 
     // });
   }
-  
+
   void setupAnimation() {
 
     animationController = AnimationController(
@@ -133,21 +174,24 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void setupTabs() {
-    tabController = TabController(length: 2, vsync: this)..addListener(() {
-      tabController.index == 0 ?  animationController.reverse() :  animationController.forward();
-    });
+    // tabController = TabController(length: 2, vsync: this)..addListener(() {
+    //   if(tabController.index == 0) {
+    //     animationController.reverse();
+    //   } else {
+    //     animationController.forward();
+    //   }
+    // });
 
+    tabController = TabController(length: 1, vsync: this);
     pageController = PageController();
   }
 
-  void showLocationSheet(bool isOpenLocationSheet) {
-    this.isOpenLocationSheet(isOpenLocationSheet);
-  }
+  void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
 
   void tapped(int tappedIndex) {
     tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
-    if (tappedIndex == 4) {
-      fetchActiveOrder();
+    if (tappedIndex == 3) {
+      // fetchActiveOrder();
       fetchOrderHistory();
     }
     tfSearchController.clear();
@@ -167,7 +211,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
     box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
 
-    final address = '${data.street}, ${data.barangay}, ${data.city}, ${data.state}, ${data.country}';
+    final address = '${data.street} ${data.barangay} ${data.city}';
+    isSelectedLocation(true);
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
@@ -175,9 +220,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     fetchRestaurants();
   }
 
+  void clearData() {
+    box.erase();
+    history.nil();
+    addresses.nil();
+    restaurants.nil();
+    searchRestaurants.nil();
+    // activeOrderData.nil();
+    activeOrders.nil();
+  }
+
   void signOut() {
     socketService.disconnectSocket();
-    box.erase();
+    clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
         case Config.GOOGLE: _googleSignOut();
         break;
@@ -231,76 +286,91 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     refreshCompleter = Completer();
   }
 
-  goToChatPage() {
-    to.isOnChat(true);
-    activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
-    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+  goToChatPage({@required bool fromNotificartion, ChatData data}) {
+    if (fromNotificartion) {
+      activeOrderData(activeOrders.call().data.where((element) => element.id == data.orderId).first);
+      Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
+    } else {
+      isOnChat(true);
+      activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
+      : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+    }
   }
 
   goToRiderLocationPage() {
-    activeOrderData.call().rider != null ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
-    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+    activeOrderData.call().status == 'rider-picked-up' ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
+    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s pick up');
   }
 
-  fetchActiveOrder() {
-    if (socketService.socket != null) {
-       socketService.socket.emitWithAck('active-order', '', ack: (response) {
-        'Active order $response'.printWrapped();
-        if (response['status'] == 200) {
-          if (response['data'] == null) {
-            onGoingMessage('No Active Order');
-            activeOrderData.nil();
-          } else {
-            activeOrderData(ActiveOrderData.fromJson(response['data']));
-          }
+  fetchActiveOrders() {
+    onGoingMessage('Loading...');
+    socketService.socket.emitWithAck('active-orders', '', ack: (response) {
+      'Active orders: $response'.printWrapped();
+      activeOrders(ActiveOrder.fromJson(response));
+      if (activeOrders.call().status == 200) {
+        onGoingMessage('No Active Order');
+        if (activeOrders.call().data.isEmpty) {
+          // activeOrderData.nil();
+          activeOrders.nil();
         } else {
-          onGoingMessage(Config.SOMETHING_WENT_WRONG);
+          activeOrders(ActiveOrder.fromJson(response));
+          activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
         }
-      });
-    } else {
-      socketSetup();
-    }
+      } else {
+        onGoingMessage(Config.SOMETHING_WENT_WRONG);
+      }
+    });
   }
 
   receiveUpdateOrder() {
     socketService.socket.on('order', (response) {
       'Receive update: $response'.printWrapped();
-      final order = ActiveOrder.fromJson(response);
+      fetchActiveOrders();
       String message;
-      if (order.status == 200) {
-        final name = '${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName}';
-        switch (order.data.status) {
+      if (response['status'] == 200) {
+        
+        if (activeOrderData.call() != null) {
+          if (activeOrderData.call().id == response['data']['id']) {
+            activeOrderData(ActiveOrderData.fromJson(response['data']));
+          }
+        }
+
+        switch (response['code']) {
           case 'restaurant-declined': {
+            final order = ActiveOrderData.fromJson(response['data']);
+            final name = order.activeRestaurant.locationName == null || order.activeRestaurant.locationName == '' ? order.activeRestaurant.name : '${order.activeRestaurant.name} - ${order.activeRestaurant.locationName}';
+
             message = 'Your order in $name has been declined by the Restaurant';
-            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
-            onGoingMessage('No Active Order');
-            activeOrderData.nil();
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'restaurant-accepted': {
+            final order = ActiveOrderData.fromJson(response['data']);
+            final name = order.activeRestaurant.locationName == null || order.activeRestaurant.locationName == '' ? order.activeRestaurant.name : '${order.activeRestaurant.name} - ${order.activeRestaurant.locationName}';
+
             message = 'Your order in $name has been accepted by the Restaurant';
-            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
-            activeOrderData(ActiveOrderData.fromJson(response['data']));
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'rider-accepted': {
-            message = 'Your order in $name has been accepted by the Let\'s Bee Rider';
-            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
-            activeOrderData(ActiveOrderData.fromJson(response['data']));
+            message = 'Let\'s Bee Rider is on the way to pick up your food';
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'rider-picked-up': {
-            message = 'Let\'s Bee Rider has picked up your order';
-            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
-            activeOrderData(ActiveOrderData.fromJson(response['data']));
+            message = 'Let\'s Bee Rider is on the way to your location';
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'delivered': {
-            message = 'Your order in ${order.data.activeRestaurant.name} - ${order.data.activeRestaurant.locationName} has been delivered';
-            pushNotificationService.showNotification(title: 'Hi!', body: message, payload: 'active-order');
-            onGoingMessage('No Active Order');
+            final order = ActiveOrderData.fromJson(response['data']);
+            final name = order.activeRestaurant.locationName == null || order.activeRestaurant.locationName == '' ? order.activeRestaurant.name : '${order.activeRestaurant.name} - ${order.activeRestaurant.locationName}';
+
+            message = 'Your order in $name has been delivered';
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+
+            fetchRestaurants();
             fetchOrderHistory();
-            activeOrderData.nil();
           }
             break;
         }
@@ -312,10 +382,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.on('order-chat', (response) {
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
-      if (!isOnChat.call()) {
-        if (box.read(Config.USER_ID) != test.userId) {
-          pushNotificationService.showNotification(title: 'You have a new message from Rider', body: test.message, payload: 'rider-chat');
-        }
+      // activeOrderData(activeOrders.call().data.where((element) => element.id == test.orderId).first);
+
+      if(Get.currentRoute != Config.CHAT_ROUTE) {
+        pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
       }
     });
   }
@@ -323,10 +393,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   cancelOrderById() {
     socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       if (response['status'] == 200) {
-        successSnackBarTop(title: 'Success!', message: response['message']);
-        onGoingMessage('No Active Order');
-        activeOrderData.nil();
         fetchOrderHistory();
+        fetchActiveOrders();
+        Get.back(result: 'cancel-dialog');
+        cancelMessage('Your order has been cancelled. Please see the order history.');
+        activeOrderData.nil();
+        Get.back(closeOverlays: true);
       } else {
         errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       }
@@ -342,6 +414,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (response.data.isNotEmpty) {
           history(response);
+          history.call().data.sort((b, a) => a.id.compareTo(b.id));
         } else {
           historyMessage('No list of history orders');
           history.nil();
@@ -355,11 +428,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        message(Config.NO_INTERNET_CONNECTION);
+        historyMessage(Config.NO_INTERNET_CONNECTION);
       } else if (onError.toString().contains('Operation timed out')) {
-        message(Config.TIMED_OUT);
+        historyMessage(Config.TIMED_OUT);
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        historyMessage(Config.SOMETHING_WENT_WRONG);
       }
       print('Error fetch history orders: $onError');
     });
@@ -371,10 +444,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
     apiService.getAllRestaurants().then((response) {
       isLoading(false);
+      isSelectedLocation(false);
       tfSearchController.text = '';
       _setRefreshCompleter();
       if (response.status == 200) {
-        
         restaurants(response);
 
         searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
@@ -387,6 +460,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       
     }).catchError((onError) {
          isLoading(false);
+         isSelectedLocation(false);
         _setRefreshCompleter();
         if (onError.toString().contains('Connection failed')) {
           message(Config.NO_INTERNET_CONNECTION);
@@ -425,15 +499,18 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     isLoading(true);
 
     apiService.refreshToken().then((response) {
-      isLoading(false);
+      // isLoading(false);
+      message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
         box.write(Config.USER_TOKEN, response.data.accessToken);
       } 
 
-      fetchAllAddresses();
-      fetchRestaurants();
-      socketSetup();
+      Future.delayed(Duration(seconds: 1)).then((value) {
+        if (socketService.socket == null) socketSetup(); else socketService.socket..disconnect()..connect();
+        fetchActiveOrders();
+        fetchAllAddresses();
+      });
       
     }).catchError((onError) {
       isLoading(false);
@@ -451,12 +528,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
 
-  fetchAllAddresses() { 
+  fetchAllAddresses() {
     isLoading(true);
     apiService.getAllAddress().then((response) {
       isLoading(false);
       if (response.status == 200) {
-
+        fetchRestaurants();
         if (response.data.isNotEmpty) {
           addresses(response);
         } else {
