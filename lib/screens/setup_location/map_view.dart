@@ -377,7 +377,7 @@ class MapPage extends GetView<MapController> {
                             Get.back();
                             Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
                           },
-                          child: Text('NO'),
+                          child: Text('NO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                       ),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
@@ -387,7 +387,7 @@ class MapPage extends GetView<MapController> {
                         ),
                         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                         onPressed: () =>  controller.goToDashboardPage(),
-                        child: _.isAddAddressLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                        child: _.isAddAddressLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       )
                     ],
                   ),

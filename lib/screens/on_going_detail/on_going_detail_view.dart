@@ -401,10 +401,11 @@ class OnGoingDetailPage extends GetView<DashboardController> {
             margin: EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              image: DecorationImage(
-                image: ExactAssetImage(Config.PNG_PATH + 'letsbee_bg.png'),
-                fit: BoxFit.cover
-              )
+              // image: DecorationImage(
+              //   image: ExactAssetImage(Config.PNG_PATH + 'letsbee_bg.png'),
+              //   fit: BoxFit.cover
+              // )
+              color: Colors.white
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

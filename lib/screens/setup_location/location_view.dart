@@ -245,7 +245,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                       Get.back();
                       Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
                     },
-                    child: Text('NO'),
+                    child: Text('NO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                   ),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                   RaisedButton(
@@ -254,7 +254,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     ),
                     color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                     onPressed: () =>  controller.goToDashboardPage(),
-                    child: Text('YES'),
+                    child: Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                   )
                 ],
               ),

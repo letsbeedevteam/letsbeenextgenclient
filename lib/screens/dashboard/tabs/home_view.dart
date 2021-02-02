@@ -15,12 +15,6 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Divider(
-          indent: 20,
-          endIndent: 20,
-          color: Colors.black,
-          thickness: 5,
-        ),
         SizedBox(
           height: 35,
           child: Container(
@@ -116,16 +110,16 @@ class HomePage extends StatelessWidget {
                                 ),
                               ) : Container(),
                               Container(
-                                margin: EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
-                                child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.start),
+                                margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
+                                child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                               _.searchRestaurants.call().isNotEmpty ? 
                               Column(
                                 children: [
                                   Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
-                                  _.searchRestaurants.call().length == 1 ? Container() : 
-                                  IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
+                                  // _.searchRestaurants.call().length == 1 ? Container() : 
+                                  // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
                                 ],
                               ) : Container(
                                   height: 250,
@@ -235,13 +229,13 @@ class HomePage extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade400,
-              blurRadius: 1.0,
-              offset: Offset(2.0, 2.0)
-            )
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.shade400,
+          //     blurRadius: 1.0,
+          //     offset: Offset(2.0, 2.0)
+          //   )
+          // ],
           color: Colors.white
         ),
       ),
@@ -256,15 +250,15 @@ class HomePage extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: Colors.black, width: 1),
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade400,
-              blurRadius: 1.0,
-              offset: Offset(2.0, 4.0)
-            )
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.grey.shade400,
+          //     blurRadius: 1.0,
+          //     offset: Offset(0.0, 3.0)
+          //   )
+          // ],
           color: Colors.white
         ),
         child: Column(
@@ -279,26 +273,33 @@ class HomePage extends StatelessWidget {
             //   padding: EdgeInsets.only(left: 10),
             //   child: Text(restaurant.location.name == null || restaurant.location.name == '' ? 'Test' : restaurant.location.name, style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
             // ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            Hero(
-              tag: restaurant.name, 
-              child: Container(
-                height: 200,
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                padding: EdgeInsets.all(10),
-                child: SizedBox(
-                  width: Get.width,
-                  child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                  : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
-                ),
-              )
+            // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Hero(
+                tag: restaurant.name, 
+                child: Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  // margin: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: SizedBox(
+                    width: Get.width,
+                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                    : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+                  ),
+                )
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
             ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 10))
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5))
             // Padding(
             //   padding: EdgeInsets.symmetric(vertical: 10),
             //   child: Divider(color: Colors.grey.shade200, thickness: 5, indent: 30, endIndent: 30,),

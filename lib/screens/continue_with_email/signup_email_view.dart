@@ -49,6 +49,7 @@ class SignUpEmailPage extends StatelessWidget {
                               SizedBox(
                                 height: 40,
                                 child: TextFormField(
+                                  enabled: !_.isLoading.call(),
                                   controller: _.emailController,
                                   focusNode: _.emailFN,
                                   onEditingComplete: () {
@@ -96,6 +97,7 @@ class SignUpEmailPage extends StatelessWidget {
                               SizedBox(
                                 height: 40,
                                 child: TextFormField(
+                                  enabled: !_.isLoading.call(),
                                   controller: _.nameController,
                                   focusNode: _.nameFN,
                                   onEditingComplete: () {
@@ -143,6 +145,7 @@ class SignUpEmailPage extends StatelessWidget {
                               SizedBox(
                                 height: 40,
                                 child: TextFormField(
+                                  enabled: !_.isLoading.call(),
                                   controller: _.passwordController,
                                   focusNode: _.passwordFN,
                                   onEditingComplete: () {
@@ -190,6 +193,7 @@ class SignUpEmailPage extends StatelessWidget {
                               SizedBox(
                                 height: 40,
                                 child: TextFormField(
+                                  enabled: !_.isLoading.call(),
                                   controller: _.confirmPasswordController,
                                   focusNode: _.confirmPasswordFN,
                                   textAlign: TextAlign.start,

@@ -10,13 +10,14 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
+// import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/meal_kit_view.dart';
 // import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
+// import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -44,10 +45,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final scrollController = ScrollController();
   final widgets = [
     HomePage(), 
+    MealKitPage(),
     MartPage(),
     // NotificationPage(), 
     ReviewsPage(), 
-    OrderPage(),
+    // OrderPage(),
     AccountSettingsPage(), 
   ];
 
@@ -64,9 +66,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var message = ''.obs;
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
-  var historyMessage = 'No list of history'.obs;
+  // var historyMessage = 'No list of history'.obs;
   var addressMessage = 'Loading...'.obs;
-  var history = OrderHistoryResponse().obs;
+  // var history = OrderHistoryResponse().obs;
   var addresses = GetAllAddressResponse().obs;
   var restaurants = Restaurant().obs;
   var searchRestaurants = RxList<RestaurantElement>().obs;
@@ -83,7 +85,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   @override
   void onInit() {
     print('Access Token: ${box.read(Config.USER_TOKEN)}');
-    history.nil();
+    // history.nil();
     restaurants.nil();
     activeOrderData.nil();
     addresses.nil();
@@ -191,10 +193,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
 
   void tapped(int tappedIndex) {
-    tappedIndex == 0 ? isHideAppBar(false) : isHideAppBar(true); 
-    if (tappedIndex == 3) {
+    tappedIndex == 0 || tappedIndex == 1 || tappedIndex == 2 ? isHideAppBar(false) : isHideAppBar(true); 
+    if (tappedIndex == 0) {
+      if (scrollController.hasClients) scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
       // fetchActiveOrder();
-      fetchOrderHistory();
+      // fetchOrderHistory();
     }
     tfSearchController.clear();
     searchRestaurant('');
@@ -224,7 +227,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void clearData() {
     box.erase();
-    history.nil();
+    // history.nil();
     addresses.nil();
     restaurants.nil();
     searchRestaurants.nil();
@@ -372,7 +375,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
 
             fetchRestaurants();
-            fetchOrderHistory();
+            // fetchOrderHistory();
           }
             break;
         }
@@ -395,7 +398,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   cancelOrderById() {
     socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       if (response['status'] == 200) {
-        fetchOrderHistory();
+        // fetchOrderHistory();
         fetchActiveOrders();
         Get.back(result: 'cancel-dialog');
         cancelMessage('Your order has been cancelled. Please see the order history.');
@@ -407,38 +410,38 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  fetchOrderHistory() {
-    isLoading(true);
-    apiService.orderHistory().then((response) {
-      isLoading(false);
-      _setRefreshCompleter();
-      if (response.status == 200) {
+  // fetchOrderHistory() {
+  //   isLoading(true);
+  //   apiService.orderHistory().then((response) {
+  //     isLoading(false);
+  //     _setRefreshCompleter();
+  //     if (response.status == 200) {
 
-        if (response.data.isNotEmpty) {
-          history(response);
-          history.call().data.sort((b, a) => a.id.compareTo(b.id));
-        } else {
-          historyMessage('No list of history orders');
-          history.nil();
-        }
+  //       if (response.data.isNotEmpty) {
+  //         history(response);
+  //         history.call().data.sort((b, a) => a.id.compareTo(b.id));
+  //       } else {
+  //         historyMessage('No list of history orders');
+  //         history.nil();
+  //       }
 
-      } else {
-        historyMessage(Config.SOMETHING_WENT_WRONG);
-      }
+  //     } else {
+  //       historyMessage(Config.SOMETHING_WENT_WRONG);
+  //     }
       
-    }).catchError((onError) {
-      isLoading(false);
-      _setRefreshCompleter();
-      if (onError.toString().contains('Connection failed')) {
-        historyMessage(Config.NO_INTERNET_CONNECTION);
-      } else if (onError.toString().contains('Operation timed out')) {
-        historyMessage(Config.TIMED_OUT);
-      } else {
-        historyMessage(Config.SOMETHING_WENT_WRONG);
-      }
-      print('Error fetch history orders: $onError');
-    });
-  }
+  //   }).catchError((onError) {
+  //     isLoading(false);
+  //     _setRefreshCompleter();
+  //     if (onError.toString().contains('Connection failed')) {
+  //       historyMessage(Config.NO_INTERNET_CONNECTION);
+  //     } else if (onError.toString().contains('Operation timed out')) {
+  //       historyMessage(Config.TIMED_OUT);
+  //     } else {
+  //       historyMessage(Config.SOMETHING_WENT_WRONG);
+  //     }
+  //     print('Error fetch history orders: $onError');
+  //   });
+  // }
 
   fetchRestaurants() {
 
