@@ -57,8 +57,11 @@ class SignInEmailPage extends StatelessWidget {
                                   height: 40,
                                   child: TextFormField(
                                     controller: _.signInEmailController,
-                                    focusNode: _.signUpEmailFN,
-                                    onEditingComplete: () => _.signUpPasswordFN.requestFocus(),
+                                    focusNode: _.signInEmailFN,
+                                    onEditingComplete: () {
+                                      _.signInPasswordController.selection = TextSelection.fromPosition(TextPosition(offset: _.signInPasswordController.text.length));
+                                      _.signInPasswordFN.requestFocus();
+                                    },
                                     textAlign: TextAlign.start,
                                     style: TextStyle(fontSize: 18),
                                     keyboardType: TextInputType.emailAddress, 
@@ -104,7 +107,7 @@ class SignInEmailPage extends StatelessWidget {
                                   height: 40,
                                   child: TextFormField(
                                     controller: _.signInPasswordController,
-                                    focusNode: _.signUpPasswordFN,
+                                    focusNode: _.signInPasswordFN,
                                     textAlign: TextAlign.start,
                                     style: TextStyle(fontSize: 18),
                                     keyboardType: TextInputType.text, 
@@ -128,7 +131,7 @@ class SignInEmailPage extends StatelessWidget {
                                         borderSide: BorderSide(color: Colors.black),
                                       ),
                                       contentPadding: EdgeInsets.only(left: 15)
-                                    ),
+                                    ), 
                                   ),
                                 ),
                               )

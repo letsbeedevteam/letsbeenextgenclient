@@ -15,7 +15,6 @@ class CartPage extends GetView<CartController> {
     return WillPopScope(
       onWillPop: controller.onWillPopBack,
       child: Scaffold(
-        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -62,7 +61,7 @@ class CartPage extends GetView<CartController> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Items', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                            Text('Items:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
                             IgnorePointer(
                               ignoring: _.isLoading.call(),
                               child: SizedBox(
@@ -118,14 +117,14 @@ class CartPage extends GetView<CartController> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                     Text('₱ ${double.tryParse(_.cart.call().deliveryFee).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
@@ -135,7 +134,7 @@ class CartPage extends GetView<CartController> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                      Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                       Text('₱ ${(double.tryParse(_.cart.call().deliveryFee) + _.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
@@ -150,7 +149,7 @@ class CartPage extends GetView<CartController> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Delivery Details', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                  Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                     child: Column(
@@ -694,7 +693,7 @@ class CartPage extends GetView<CartController> {
                         ),
                         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                         onPressed: () => Get.back(),
-                        child: Text('CANCEL'),
+                        child: Text('CANCEL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       ),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                       RaisedButton(

@@ -57,7 +57,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                                Text('Items', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text('Items:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                 Column(
                                   children: _.activeOrderData.call().menus.map((e) => _buildMenu(e, _)).toList(),
@@ -68,21 +68,21 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Sub Total', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                          Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                           Text('₱ ${double.tryParse(_.activeOrderData.call().fee.subTotal).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Delivery Fee', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                          Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                           Text('₱ ${double.tryParse(_.activeOrderData.call().fee.delivery).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Promo Code Discount', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                          Text('Promo Code Discount:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                           Text('₱ ${double.tryParse(_.activeOrderData.call().fee.discountPrice).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                         ],
                                       ),
@@ -92,7 +92,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('TOTAL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                            Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                             Text('₱ ${(double.parse(_.activeOrderData.call().fee.total + _.activeOrderData.call().fee.delivery)).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                           ],
                                         ),
@@ -161,6 +161,25 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                       _buildStatus()
                                     ],
                                   ),
+                                ),
+                                _.activeOrderData.call().reason == null ? Container() : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 5),
+                                      child: Divider(thickness: 2, color: Colors.grey.shade200),
+                                    ),
+                                    Container(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Reason:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                          Text(_.activeOrderData.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 _.activeOrderData.call().rider != null ? Column(
                                   children: [

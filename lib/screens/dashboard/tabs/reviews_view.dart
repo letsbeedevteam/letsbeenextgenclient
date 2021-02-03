@@ -6,88 +6,91 @@ class ReviewsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SafeArea(
-          minimum: EdgeInsets.only(top: 35),
-          child: SizedBox(
-            height: 35,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                cursorColor: Colors.black,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 15),
-                  hintText: 'Search...',
-                  fillColor: Colors.grey.shade200,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    borderSide: BorderSide.none
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 10)),
-        Flexible(
-          child: Scrollbar(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('TOP VIEWS', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                    height: 200,
-                    child:  ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildTopViewItem('1'),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('RECENTLY UPLOAD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                    height: 200,
-                    child:  ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildRecentlyUploadItem('4'),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('UPLOADED PHOTO', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ),
-                  Container(
-                    height: 200,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildUploadedPhotoItem('7'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+    return Center(
+      child: Text('(Reviews) - Work In Progress...'),
     );
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     SafeArea(
+    //       minimum: EdgeInsets.only(top: 35),
+    //       child: SizedBox(
+    //         height: 35,
+    //         child: Container(
+    //           margin: EdgeInsets.symmetric(horizontal: 20),
+    //           child: TextField(
+    //             cursorColor: Colors.black,
+    //             decoration: InputDecoration(
+    //               contentPadding: EdgeInsets.only(left: 15),
+    //               hintText: 'Search...',
+    //               fillColor: Colors.grey.shade200,
+    //               filled: true,
+    //               enabledBorder: OutlineInputBorder(
+    //                 borderRadius: BorderRadius.all(Radius.circular(5)),
+    //                 borderSide: BorderSide.none
+    //               ),
+    //               focusedBorder: OutlineInputBorder(
+    //                 borderRadius: BorderRadius.circular(10),
+    //                 borderSide: BorderSide(color: Colors.black),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //     Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 10)),
+    //     Flexible(
+    //       child: Scrollbar(
+    //         child: SingleChildScrollView(
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Text('TOP VIEWS', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    //               ),
+    //               Container(
+    //                 height: 200,
+    //                 child:  ListView(
+    //                   scrollDirection: Axis.horizontal,
+    //                   children: [
+    //                     _buildTopViewItem('1'),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Text('RECENTLY UPLOAD', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    //               ),
+    //               Container(
+    //                 height: 200,
+    //                 child:  ListView(
+    //                   scrollDirection: Axis.horizontal,
+    //                   children: [
+    //                     _buildRecentlyUploadItem('4'),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Text('UPLOADED PHOTO', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    //               ),
+    //               Container(
+    //                 height: 200,
+    //                 child: ListView(
+    //                   scrollDirection: Axis.horizontal,
+    //                   children: [
+    //                     _buildUploadedPhotoItem('7'),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
   }
 
   Widget _buildTopViewItem(String tag) {

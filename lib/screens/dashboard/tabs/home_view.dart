@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
@@ -75,23 +75,23 @@ class HomePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                child: Text('What do you want eat?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
-                              ),
-                              Container(
-                                height: 80,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    _buildCategory(title: 'Filipino Dish'),
-                                    _buildCategory(title: 'Korean Dish'),
-                                    _buildCategory(title: 'Protein'),
-                                    _buildCategory(title: 'Chinese Dish'),
-                                    _buildCategory(title: 'Vietnamese Dish'),
-                                  ]
-                                ),
-                              ),
+                              // Container(
+                              //   padding: EdgeInsets.all(10),
+                              //   child: Text('What do you want eat?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
+                              // ),
+                              // Container(
+                              //   height: 80,
+                              //   child: ListView(
+                              //     scrollDirection: Axis.horizontal,
+                              //     children: [
+                              //       _buildCategory(title: 'Filipino Dish'),
+                              //       _buildCategory(title: 'Korean Dish'),
+                              //       _buildCategory(title: 'Protein'),
+                              //       _buildCategory(title: 'Chinese Dish'),
+                              //       _buildCategory(title: 'Vietnamese Dish'),
+                              //     ]
+                              //   ),
+                              // ),
                               _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +116,7 @@ class HomePage extends StatelessWidget {
                                 ),
                               ) : Container(),
                               Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                margin: EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
                                 child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.start),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -178,44 +178,43 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategory({String title}) {
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
-              padding: EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.grey),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 4.0,
-                    offset: Offset(2,2)
-                  )
-                ]
-              ),
-              child: Icon(FontAwesomeIcons.pizzaSlice, color: Colors.yellow.shade700),
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            Expanded(child: Text(title))
-          ],
-        ),
-      ),
-      onTap: () => print('Category'),
-    );
-  }
+  // Widget _buildCategory({String title}) {
+  //   return GestureDetector(
+  //     child: Container(
+  //       margin: EdgeInsets.symmetric(horizontal: 5),
+  //       child: Column(
+  //         children: [
+  //           Container(
+  //             margin: EdgeInsets.only(left: 10, right: 10),
+  //             padding: EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(5),
+  //               border: Border.all(color: Colors.grey),
+  //               color: Colors.white,
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                   color: Colors.grey,
+  //                   blurRadius: 4.0,
+  //                   offset: Offset(2,2)
+  //                 )
+  //               ]
+  //             ),
+  //             child: Icon(FontAwesomeIcons.pizzaSlice, color: Colors.yellow.shade700),
+  //           ),
+  //           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+  //           Expanded(child: Text(title))
+  //         ],
+  //       ),
+  //     ),
+  //     onTap: () => print('Category'),
+  //   );
+  // }
 
   Widget _buildRecentRestaurantItem(RestaurantElement restaurant) {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
       child: Container(
-        width: 180,
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +227,7 @@ class HomePage extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+              child: Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
             )
             // Padding(padding: EdgeInsets.symmetric(vertical: 10))
           ],

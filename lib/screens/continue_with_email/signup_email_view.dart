@@ -51,7 +51,10 @@ class SignUpEmailPage extends StatelessWidget {
                                 child: TextFormField(
                                   controller: _.emailController,
                                   focusNode: _.emailFN,
-                                  onEditingComplete: () => _.nameFN.requestFocus(),
+                                  onEditingComplete: () {
+                                    _.nameController.selection = TextSelection.fromPosition(TextPosition(offset: _.nameController.text.length));
+                                    _.nameFN.requestFocus();
+                                  },
                                   textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 18),
                                   keyboardType: TextInputType.emailAddress, 
@@ -95,7 +98,10 @@ class SignUpEmailPage extends StatelessWidget {
                                 child: TextFormField(
                                   controller: _.nameController,
                                   focusNode: _.nameFN,
-                                  onEditingComplete: () => _.passwordFN.requestFocus(),
+                                  onEditingComplete: () {
+                                    _.passwordController.selection = TextSelection.fromPosition(TextPosition(offset: _.passwordController.text.length));
+                                    _.passwordFN.requestFocus();
+                                  },
                                   textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 18),
                                   keyboardType: TextInputType.text, 
@@ -139,11 +145,14 @@ class SignUpEmailPage extends StatelessWidget {
                                 child: TextFormField(
                                   controller: _.passwordController,
                                   focusNode: _.passwordFN,
-                                  onEditingComplete: () => _.signUpConfirmPasswordFN.requestFocus(),
+                                  onEditingComplete: () {
+                                    _.confirmPasswordController.selection = TextSelection.fromPosition(TextPosition(offset: _.confirmPasswordController.text.length));
+                                    _.confirmPasswordFN.requestFocus();
+                                  },
                                   textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 18),
                                   keyboardType: TextInputType.text, 
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.next,
                                   enableSuggestions: false,
                                   autocorrect: false,
                                   obscureText: true,
@@ -182,7 +191,7 @@ class SignUpEmailPage extends StatelessWidget {
                                 height: 40,
                                 child: TextFormField(
                                   controller: _.confirmPasswordController,
-                                  focusNode: _.signUpConfirmPasswordFN,
+                                  focusNode: _.confirmPasswordFN,
                                   textAlign: TextAlign.start,
                                   style: TextStyle(fontSize: 18),
                                   keyboardType: TextInputType.text, 
