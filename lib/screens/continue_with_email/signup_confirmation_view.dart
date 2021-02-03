@@ -95,8 +95,7 @@ class SignUpConfirmationPage extends GetView<SignUpController> {
                             ),
                             onPressed: () {
                               // _.validation(currentIndex: 1);
-                              dismissKeyboard(context);
-                              Future.delayed(Duration(seconds: 1)).then((value) => controller.goToVerifyNumber());
+                              controller.goToVerifyNumber();
                             },
                           )
                         ),

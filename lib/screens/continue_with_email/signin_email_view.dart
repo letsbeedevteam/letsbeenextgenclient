@@ -166,7 +166,7 @@ class SignInEmailPage extends StatelessWidget {
                                 color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
                                 child: _.isLoading.call() ? 
                                Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('LOGIN'),
-                                onPressed: () => _.signIn()
+                                onPressed: () => _.isLoading.call() ? null : _.signIn()
                               ),
                             ),
                           ),

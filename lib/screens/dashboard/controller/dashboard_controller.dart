@@ -15,10 +15,10 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/meal_kit_view.dart';
+// import 'package:letsbeeclient/screens/dashboard/tabs/meal_kit_view.dart';
 // import 'package:letsbeeclient/screens/dashboard/tabs/notification_view.dart';
 // import 'package:letsbeeclient/screens/dashboard/tabs/order_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
+// import 'package:letsbeeclient/screens/dashboard/tabs/reviews_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
@@ -45,10 +45,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final scrollController = ScrollController();
   final widgets = [
     HomePage(), 
-    MealKitPage(),
+    // MealKitPage(),
     MartPage(),
     // NotificationPage(), 
-    ReviewsPage(), 
+    // ReviewsPage(), 
     // OrderPage(),
     AccountSettingsPage(), 
   ];
@@ -193,7 +193,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
 
   void tapped(int tappedIndex) {
-    tappedIndex == 0 || tappedIndex == 1 || tappedIndex == 2 ? isHideAppBar(false) : isHideAppBar(true); 
+    tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 0) {
       if (scrollController.hasClients) scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
       // fetchActiveOrder();
@@ -310,22 +310,24 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   fetchActiveOrders() {
     onGoingMessage('Loading...');
-    socketService.socket.emitWithAck('active-orders', '', ack: (response) {
-      'Active orders: $response'.printWrapped();
-      activeOrders(ActiveOrder.fromJson(response));
-      if (activeOrders.call().status == 200) {
-        onGoingMessage('No Active Order');
-        if (activeOrders.call().data.isEmpty) {
-          // activeOrderData.nil();
-          activeOrders.nil();
+    if (socketService.socket != null) {
+      socketService.socket.emitWithAck('active-orders', '', ack: (response) {
+        'Active orders: $response'.printWrapped();
+        activeOrders(ActiveOrder.fromJson(response));
+        if (activeOrders.call().status == 200) {
+          onGoingMessage('No Active Order');
+          if (activeOrders.call().data.isEmpty) {
+            // activeOrderData.nil();
+            activeOrders.nil();
+          } else {
+            activeOrders(ActiveOrder.fromJson(response));
+            activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
+          }
         } else {
-          activeOrders(ActiveOrder.fromJson(response));
-          activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
+          onGoingMessage(Config.SOMETHING_WENT_WRONG);
         }
-      } else {
-        onGoingMessage(Config.SOMETHING_WENT_WRONG);
-      }
-    });
+      });
+    }
   }
 
   receiveUpdateOrder() {

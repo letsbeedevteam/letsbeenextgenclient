@@ -93,8 +93,8 @@ class HomePage extends StatelessWidget {
                                   children: [
                                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                     Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.start),
+                                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
                                     ),
                                     Container(
                                       child: SingleChildScrollView(
@@ -110,7 +110,7 @@ class HomePage extends StatelessWidget {
                                 ),
                               ) : Container(),
                               Container(
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
+                                margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
                                 child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -209,25 +209,30 @@ class HomePage extends StatelessWidget {
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+        width: 200,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 130,
+              margin: EdgeInsets.only(bottom: 5),
               alignment: Alignment.center,
               // padding: EdgeInsets.all(10),
-              child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
+              child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text(name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
-            )
-            // Padding(padding: EdgeInsets.symmetric(vertical: 10))
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5))
           ],
         ),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
           // boxShadow: [
           //   BoxShadow(
@@ -285,7 +290,7 @@ class HomePage extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 10),
                   child: SizedBox(
                     width: Get.width,
-                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                     : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                   ),
                 )
@@ -293,7 +298,7 @@ class HomePage extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+              child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),

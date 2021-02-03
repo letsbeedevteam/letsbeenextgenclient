@@ -15,6 +15,7 @@ import 'package:letsbeeclient/services/api_service.dart';
 import 'package:location/location.dart' as lct;
 import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class MapController extends GetxController {
 
@@ -38,6 +39,7 @@ class MapController extends GetxController {
   var barangay = ''.obs;
   var street = ''.obs;
   var isoCode = ''.obs;
+  var mapStyle = ''.obs;
 
   final nameTF = TextEditingController();
   final streetTFController = TextEditingController();
@@ -81,6 +83,9 @@ class MapController extends GetxController {
   void setup() async {
     final secretLoad = await _secretLoader.loadKey();
     _places = GoogleMapsPlaces(apiKey: secretLoad.googleMapKey);
+    rootBundle.loadString(Config.JSONS_PATH + 'map_style.json').then((string) {
+      mapStyle(string);
+    });
   }
 
   void gpsLocation() async {
@@ -91,8 +96,10 @@ class MapController extends GetxController {
     isBounced(false);
   }
 
-  void onMapCreated(GoogleMapController controller) {
+  void onMapCreated(GoogleMapController controller) async {
     _mapController.complete(controller);
+    final c = await _mapController.future;
+    c.setMapStyle(mapStyle.call());
     if (currentPosition.call() != null) {
       Future.delayed(Duration(seconds: 2)).then((value) => isMapLoading(false));
     }

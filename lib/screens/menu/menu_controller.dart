@@ -8,6 +8,7 @@ import 'package:letsbeeclient/models/addToCart.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/screens/cart/cart_controller.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class MenuController extends GetxController {
@@ -51,6 +52,12 @@ class MenuController extends GetxController {
 
     super.onInit();
   }
+
+  @override
+    void onClose() {
+      DashboardController.to.fetchRestaurants();
+      super.onClose();
+    }
 
   void _setRefreshCompleter() {
     refreshCompleter?.complete();
