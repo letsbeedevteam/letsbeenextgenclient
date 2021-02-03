@@ -57,7 +57,6 @@ class RiderLocationController extends GetxController {
   void setupIcon() async {
     riderIcon = await getBytesFromAsset(Config.PNG_PATH + 'rider_marker.png', 100);
     customerIcon = await getBytesFromAsset(Config.PNG_PATH + 'customer_marker.png', 100);
-    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), icon: BitmapDescriptor.fromBytes(customerIcon), infoWindow: InfoWindow(title: 'You'));
     // riderIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5), Config.PNG_PATH + 'driver_marker.png');
   }
 
@@ -86,7 +85,8 @@ class RiderLocationController extends GetxController {
       mapStyle(string);
       c.setMapStyle(mapStyle.call());
     });
-   
+    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), icon: BitmapDescriptor.fromBytes(customerIcon), infoWindow: InfoWindow(title: 'You'));
+
     // markers[MarkerId('restaurant')] = Marker(markerId: MarkerId('restaurant'), position: restaurantLocation, icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure), infoWindow: InfoWindow(title: 'Restaurant'));
     // markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: riderIcon, infoWindow: InfoWindow(title: 'Rider'));
   }
