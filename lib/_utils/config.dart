@@ -22,6 +22,7 @@ class Config {
   static const WEBVIEW_ROUTE = '/webview';
   static const CHAT_ROUTE = '/chat';
   static const RIDER_LOCATION_ROUTE = '/rider_location';
+  static const HISTORY_ROUTE = '/history';
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
   static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
   static const ACTIVE_ORDER_ROUTE = '/active_order';
@@ -48,7 +49,7 @@ class Config {
   static const SOCIAL_LOGIN_TYPE = 'social_login_type';
 
   static const IS_SETUP_LOCATION = 'is_setup_location';
-  static const IS_VERIFY_NUMBER = 'is_verify_number';
+  // static const IS_VERIFY_NUMBER = 'is_verify_number';
   static const IS_LOGGED_IN = 'is_logged_in';
 
   // Paths

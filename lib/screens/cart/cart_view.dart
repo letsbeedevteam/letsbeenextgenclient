@@ -164,7 +164,7 @@ class CartPage extends GetView<CartController> {
                               ),
                             ),
                             IgnorePointer(
-                              ignoring: _.isLoading.call() || _.isEdit.call() || _.isPaymentLoading.call(),
+                              ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
                               child: Container(
                                 width: Get.width,
                                 child: RaisedButton(
@@ -174,9 +174,9 @@ class CartPage extends GetView<CartController> {
                                   ),
                                   child: Padding(
                                     padding: EdgeInsets.all(10),
-                                    child: Text('PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                    child: Text(_.isEdit.call() ? 'Done' : 'PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                   ),
-                                  onPressed: () => paymentBottomsheet(_.cart.call().data.first.restaurantId)
+                                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.cart.call().data.first.restaurantId)
                                 ),
                               ),
                             )

@@ -6,43 +6,36 @@ class SignInResponse {
   SignInResponse({
     this.status,
     this.data,
-    this.message,
-    this.code
+    this.message
   });
 
   int status;
-  String message;
-  int code;
   SignInData data;
+  int message;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(
     status: json['status'],
-    message: json['message'] == null ? null : json['message'],
-    code: json['code'] == null ? null : json['code'],
-    data: json['data'] == null ? null : SignInData.fromJson(json['data'])
+    data: json['data'] == null ? null : SignInData.fromJson(json['data']),
+    message: json['message'] == null || json['message'] == '' ? null : json['message'],
   );
 }
 
 class SignInData {
   SignInData({
-    this.id,
-    this.name,
-    this.email,
-    this.cellphoneNumber,
-    this.accessToken
+    this.token,
+    this.sentConfirmation
   });
 
-  int id;
-  String name;
-  String email;
-  String cellphoneNumber;
-  String accessToken;
+  String token;
+  bool sentConfirmation;
 
   factory SignInData.fromJson(Map<String, dynamic> json) => SignInData(
-    id: json['id'],
-    name: json['name'],
-    email: json['email'],
-    cellphoneNumber: json['cellphone_number'],
-    accessToken: json['access_token']
+    token: json['token'],
+    sentConfirmation: json['sent_confirmation']
   );
+
+  Map<String, dynamic> toJson() => {
+    'token': token,
+    'sent_confirmation': sentConfirmation
+  };
 }

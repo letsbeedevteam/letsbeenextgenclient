@@ -17,15 +17,16 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: GetX<VerifyNumberController>(
-              builder: (_) {
-                return _.selectedIndex.call() == 0 ? Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: IconButton(icon: Icon(Icons.logout), onPressed: () => _willPopCallback()),
-                ) : IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => _willPopCallback());
-              },
-            ),
+            // leading: GetX<VerifyNumberController>(
+            //   builder: (_) {
+            //     return _.selectedIndex.call() == 0 ? Transform(
+            //       alignment: Alignment.center,
+            //       transform: Matrix4.rotationY(math.pi),
+            //       child: IconButton(icon: Icon(Icons.logout), onPressed: () => _willPopCallback()),
+            //     ) : IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => _willPopCallback());
+            //   },
+            // ),
+            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => _willPopCallback()),
           ),
           body: GetBuilder<VerifyNumberController>(
             builder: (_) {
@@ -52,7 +53,12 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
       controller.logout();
       return true;
     } else {
-      controller.changeIndex(0);
+      if (controller.signInData.call().sentConfirmation) {
+        controller.logout();
+      } else {
+        controller.changeIndex(0);
+      }
+     
       return false;
     }
   }

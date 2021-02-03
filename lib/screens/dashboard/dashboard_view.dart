@@ -63,14 +63,25 @@ class DashboardPage extends GetView<DashboardController> {
                 ],
               ),
               Flexible(
-                child: PageView(
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: _.pageController,
-                  onPageChanged: (index) {
-                    _.pageIndex(index);
-                    _.showLocationSheet(false);
-                  },
-                  children: _.widgets,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(right: 20, left: 20, bottom: 10, top: 5),
+                      color: Colors.black,
+                      height: _.isHideAppBar.call() ? 0 : 5,
+                    ),
+                    Expanded(
+                      child: PageView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: _.pageController,
+                        onPageChanged: (index) {
+                          _.pageIndex(index);
+                          _.showLocationSheet(false);
+                        },
+                        children: _.widgets,
+                      ),
+                    ),
+                  ],
                 ),
               )
             ],
@@ -104,10 +115,11 @@ class DashboardPage extends GetView<DashboardController> {
             onTap: (value) =>  _.tapped(value),
             items: [
               customNavigationBarItem('Food', icon: Icon(Icons.sports_motorsports)),
+              customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
               customNavigationBarItem('Mart', icon: Icon(Icons.storefront)),
               // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
               customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+              // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
               customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
             ],
           )

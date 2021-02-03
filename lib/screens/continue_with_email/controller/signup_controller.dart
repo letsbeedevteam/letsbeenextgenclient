@@ -9,7 +9,7 @@ import 'package:letsbeeclient/services/api_service.dart';
 
 class SignUpController extends GetxController with SingleGetTickerProviderMixin {
 
-  GetStorage _box = Get.find();
+  // GetStorage _box = Get.find();
   ApiService _apiService = Get.find();
 
   final signInEmailController = TextEditingController();
@@ -54,34 +54,29 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
         _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).then((response) {
           
           if (response.status == 200) {
-            _box.write(Config.USER_NAME, response.data.name);
-            _box.write(Config.USER_EMAIL, response.data.email);
-            _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
-            _box.write(Config.USER_TOKEN, response.data.accessToken);
-            _box.write(Config.IS_LOGGED_IN, true);
-            _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
-            // changeIndex(2);
+            // _box.write(Config.USER_NAME, response.data.name);
+            // _box.write(Config.USER_EMAIL, response.data.email);
+            // _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
+            // _box.write(Config.USER_TOKEN, response.data.accessToken);
+            // _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             reset();
-            Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
-            // if (response.data.cellphoneNumber == null || response.data.cellphoneNumber == '') {
-            //   Get.offAndToNamed(Config.VERIFY_NUMBER_ROUTE);
-            // } else {
-            //   _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
-            //   Get.offAndToNamed(Config.SETUP_LOCATION_ROUTE);
-            // }
+            Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson());
 
           } else {
 
-            if (response.code == 2000) {
-              alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
-            } else {
-              alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
-              // changeIndex(1);
-            }
+            // if (response.code == 2000) {
+            //   alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+            // } else {
+            //   alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
+            //   // changeIndex(1);
+            // }
+
+            alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
           }
 
           isLoading(false);
         }).catchError((onError) {
+          print('Sign In: $onError');
           alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
           isLoading(false);
         });

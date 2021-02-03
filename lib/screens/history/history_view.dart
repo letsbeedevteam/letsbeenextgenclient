@@ -3,44 +3,54 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
-import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:letsbeeclient/screens/history/history_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
-class HistoryPage extends GetView<DashboardController> {
+class HistoryPage extends GetView<HistoryController> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () {
-        controller.fetchOrderHistory();
-        return controller.refreshCompleter.future;
-      },
-      child: Container(
-        height: Get.height,
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: GetX<DashboardController>(
-              builder: (_) {
-                return _.history.call() == null ? Container(
-                  alignment: Alignment.topCenter,
-                  padding: EdgeInsets.only(top: 20),
-                  child: _.isLoading.call() ? Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CupertinoActivityIndicator(),
-                      Text('Loading', style: TextStyle(fontSize: 18))
-                    ],
-                  ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18)),
-                ) : Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: _.history.call().data.map((e) => _buildHistoryItem(e)).toList(),
-                  ),
-                );
-              },
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text('Order History'),
+        centerTitle: false,
+      ),
+      body: RefreshIndicator(
+        onRefresh: () {
+          controller.fetchOrderHistory();
+          return controller.refreshCompleter.future;
+        },
+        child: Container(
+          height: Get.height,
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: GetX<HistoryController>(
+                initState: controller.fetchOrderHistory(),
+                builder: (_) {
+                  return _.history.call() == null ? Container(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.only(top: 20),
+                    child: _.isLoading.call() ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CupertinoActivityIndicator(),
+                        Text('Loading', style: TextStyle(fontSize: 18))
+                      ],
+                    ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18)),
+                  ) : Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: _.history.call().data.map((e) => _buildHistoryItem(e)).toList(),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),

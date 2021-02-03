@@ -63,7 +63,7 @@ class ConfirmCodePage extends StatelessWidget {
                     fillColor: Colors.grey.shade200,
                     filled: true
                   ),
-                  maxLength: 5,
+                  maxLength: 6,
                   cursorColor: Colors.black,
                 ),
               ),
@@ -88,7 +88,7 @@ class ConfirmCodePage extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(13),
-                      child: Text('CONFIRM'),
+                      child: _.isLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('CONFIRM', style: TextStyle(color: Colors.black, fontSize: 15)),
                     ),
                     onPressed: () {
                       // if (_.codeController.text.isEmpty) {
@@ -98,7 +98,7 @@ class ConfirmCodePage extends StatelessWidget {
                       //   _.goToDashboardPage();
                       // }
                       dismissKeyboard(context);
-                       _.goToSetupLocation();
+                       _.confirmCode();
                     },
                   ),
                   width: 200,
@@ -125,7 +125,7 @@ class ConfirmCodePage extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(13),
-                      child: Text('RESEND CONFIRMATION CODE'),
+                      child: Text('RESEND CONFIRMATION CODE', style: TextStyle(color: Colors.black, fontSize: 15)),
                     ),
                     onPressed: () {
                       dismissKeyboard(context);

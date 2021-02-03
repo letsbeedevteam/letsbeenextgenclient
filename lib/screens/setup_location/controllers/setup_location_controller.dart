@@ -52,8 +52,8 @@ class SetupLocationController extends GetxController {
   }
 
   void logout() {
-    box.write(Config.IS_LOGGED_IN, false);
-    box.write(Config.IS_VERIFY_NUMBER, false);
+    box.erase();
+    // box.write(Config.IS_VERIFY_NUMBER, false);
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
@@ -97,6 +97,9 @@ class SetupLocationController extends GetxController {
 
   void goToDashboardPage() {
     userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
+    box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+    box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+    box.write(Config.USER_CURRENT_CITY, cityTFController.text);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
     box.write(Config.IS_SETUP_LOCATION, true);
     Get.offAllNamed(Config.DASHBOARD_ROUTE);

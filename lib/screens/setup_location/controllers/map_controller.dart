@@ -69,6 +69,9 @@ class MapController extends GetxController {
       }
     } else {
       userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
+      _box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+      _box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+      _box.write(Config.USER_CURRENT_CITY, cityTFController.text);
       _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
       _box.write(Config.IS_SETUP_LOCATION, true);
       Get.offAllNamed(Config.DASHBOARD_ROUTE);
