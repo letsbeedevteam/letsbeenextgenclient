@@ -233,6 +233,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     searchRestaurants.nil();
     // activeOrderData.nil();
     activeOrders.nil();
+    box.erase();
   }
 
   void signOut() {
@@ -259,9 +260,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     //   Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
     // });
     _facebookLogin.logOut();
-    box.write(Config.IS_LOGGED_IN, false);
-    box.write(Config.IS_SETUP_LOCATION, false);
-    box.remove(Config.USER_TOKEN);
+    // box.write(Config.IS_LOGGED_IN, false);
+    // box.write(Config.IS_SETUP_LOCATION, false);
+    // box.remove(Config.USER_TOKEN);
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
@@ -273,16 +274,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     //   Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
     // });
     _googleSignIn.disconnect();
-    box.write(Config.IS_LOGGED_IN, false);
-    box.write(Config.IS_SETUP_LOCATION, false);
-    box.remove(Config.USER_TOKEN);
+    // box.write(Config.IS_LOGGED_IN, false);
+    // box.write(Config.IS_SETUP_LOCATION, false);
+    // box.remove(Config.USER_TOKEN);
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
   void _signOut() {
-    box.write(Config.IS_LOGGED_IN, false);
-    box.write(Config.IS_SETUP_LOCATION, false);
-    box.remove(Config.USER_TOKEN);
+    // box.write(Config.IS_LOGGED_IN, false);
+    // box.write(Config.IS_SETUP_LOCATION, false);
+    // box.remove(Config.USER_TOKEN);
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 

@@ -155,7 +155,7 @@ class MartPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                height: 200,
+                height: 150,
                 alignment: Alignment.center,
                 child: ClipRRect(
                   child: Image.asset(Config.PNG_PATH + 'banner.png', fit: BoxFit.cover, width: Get.width),

@@ -52,8 +52,8 @@ class SetupLocationController extends GetxController {
   }
 
   void logout() {
-    box.write(Config.IS_LOGGED_IN, false);
-    box.write(Config.IS_VERIFY_NUMBER, false);
+    box.erase();
+    // box.write(Config.IS_VERIFY_NUMBER, false);
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 

@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/addToCart.dart';
 import 'package:letsbeeclient/models/addToCartResponse.dart';
+import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
@@ -248,18 +249,33 @@ class ApiService extends GetConnect {
     return newAddressResponseFromJson(response.bodyString);
   }
 
-  Future<NumberResponse> addCellphoneNumber({String number}) async {
+  Future<NumberResponse> updateCellphoneNumber({String number, String token}) async {
 
     final response = await post(
-      '/auth/customer/cellphone-number',
-      {'cellphone_number': number},
-      headers: <String, String>{
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      '/auth/customer/cellphone-update',
+      {
+        'token': token,
+        'cellphone_number': number
       },
     );
 
     print('Cellphone Number Response: ${response.body}');
 
     return numberResponseFromJson(response.bodyString);
+  }
+
+  Future<CellphoneConfirmationResponse> cellphoneConfirmaation({String code, String token}) async {
+
+    final response = await post(
+      '/auth/customer/cellphone-confirmation',
+      {
+        'token': token,
+        'code': code
+      },
+    );
+
+    print('Cellphone Confirmation Response: ${response.body}');
+
+    return cellphoneConfirmationResponseFromJson(response.bodyString);
   }
 }

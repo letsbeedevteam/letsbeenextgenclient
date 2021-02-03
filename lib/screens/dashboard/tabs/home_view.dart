@@ -279,13 +279,13 @@ class HomePage extends StatelessWidget {
               child: Hero(
                 tag: restaurant.name, 
                 child: Container(
-                  height: 200,
+                 height: 150,
                   alignment: Alignment.center,
                   // margin: EdgeInsets.symmetric(horizontal: 10),
                   padding: EdgeInsets.only(bottom: 10),
                   child: SizedBox(
                     width: Get.width,
-                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                     : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                   ),
                 )
