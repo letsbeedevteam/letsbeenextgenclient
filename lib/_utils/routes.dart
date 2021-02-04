@@ -12,23 +12,25 @@ import 'package:letsbeeclient/binds/rider_location_bind.dart';
 import 'package:letsbeeclient/binds/setup_location_bind.dart';
 import 'package:letsbeeclient/binds/signup_bind.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
+import 'package:letsbeeclient/binds/store_bind.dart';
 import 'package:letsbeeclient/binds/verify_number_bind.dart';
 import 'package:letsbeeclient/binds/webview_bind.dart';
-import 'package:letsbeeclient/screens/active_on_going/active_on_going_view.dart';
-import 'package:letsbeeclient/screens/auth/auth_view.dart';
-import 'package:letsbeeclient/screens/cart/cart_view.dart';
+import 'package:letsbeeclient/screens/active_orders/active_on_going/active_on_going_view.dart';
+import 'package:letsbeeclient/screens/active_orders/on_going_detail/on_going_detail_view.dart';
+import 'package:letsbeeclient/screens/auth/continue_with_email/tab_signup_view.dart';
+import 'package:letsbeeclient/screens/auth/social/auth_view.dart';
 import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_view.dart';
+import 'package:letsbeeclient/screens/food/menu/menu_view.dart';
+import 'package:letsbeeclient/screens/food/restaurant/restaurant_view.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
 import 'package:letsbeeclient/screens/history/history_view.dart';
-import 'package:letsbeeclient/screens/menu/menu_view.dart';
-import 'package:letsbeeclient/screens/on_going_detail/on_going_detail_view.dart';
-import 'package:letsbeeclient/screens/restaurant/restaurant_view.dart';
+import 'package:letsbeeclient/screens/mart/store/store_view.dart';
 import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/map_view.dart';
-import 'package:letsbeeclient/screens/continue_with_email/tab_signup_view.dart';
 import 'package:letsbeeclient/screens/splash/splash_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/screens/verify_number/tab_verify_number_view.dart';
@@ -52,5 +54,6 @@ routes() => [
   GetPage(name: Config.HISTORY_ROUTE, page: () => HistoryPage(), binding: HistoryBind()),
   GetPage(name: Config.HISTORY_DETAIL_ROUTE, page: () => HistoryDetailPage(), binding: HistoryDetailBind()),
   GetPage(name: Config.ACTIVE_ORDER_DETAIL_ROUTE, page: () => OnGoingDetailPage()),
-  GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => ActiveOnGoingPage())
+  GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => ActiveOnGoingPage()),
+  GetPage(name: Config.STORE_ROUTE, page: () => StorePage(), binding: StoreBind())
 ];

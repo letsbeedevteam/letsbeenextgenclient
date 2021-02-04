@@ -1,5 +1,5 @@
 import 'package:get/instance_manager.dart';
-import 'package:letsbeeclient/screens/cart/cart_controller.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 
 class CartBind extends Bindings {
 

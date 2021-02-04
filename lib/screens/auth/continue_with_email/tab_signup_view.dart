@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
-import 'package:letsbeeclient/screens/continue_with_email/signin_email_view.dart';
-import 'package:letsbeeclient/screens/continue_with_email/signup_confirmation_view.dart';
-import 'package:letsbeeclient/screens/continue_with_email/signup_email_view.dart';
+import 'package:letsbeeclient/screens/auth/continue_with_email/signin_email_view.dart';
+import 'package:letsbeeclient/screens/auth/continue_with_email/signup_confirmation_view.dart';
+import 'package:letsbeeclient/screens/auth/continue_with_email/signup_email_view.dart';
+
+import 'controller/signup_controller.dart';
 
 class SignUpPage extends GetView<SignUpController>  {
 

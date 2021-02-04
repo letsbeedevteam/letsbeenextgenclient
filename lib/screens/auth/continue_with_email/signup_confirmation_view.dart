@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
+import 'controller/signup_controller.dart';
 
 class SignUpConfirmationPage extends GetView<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<SignUpController>(
-      builder: (controller) {
+    return GetX<SignUpController>(
+      builder: (_) {
         return SingleChildScrollView(
           child: Container(
             child: Column(
@@ -22,8 +22,8 @@ class SignUpConfirmationPage extends GetView<SignUpController> {
                   padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   child: Center(
                     child: SizedBox(
-                      height: 180,
-                      width: 180,
+                      height: _.isKeyboardVisible() ? 0 : 180,
+                      width: _.isKeyboardVisible() ? 0 : 180,
                       child: Image.asset(Config.PNG_PATH + 'frame_email_sent.png'),
                     ),
                   ),

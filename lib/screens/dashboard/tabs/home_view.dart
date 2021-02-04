@@ -60,84 +60,82 @@ class HomePage extends StatelessWidget {
                     },
                     child: IgnorePointer(
                       ignoring: _.isSelectedLocation.call(),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          controller: _.scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: _.restaurants.call() != null ?
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Container(
-                              //   padding: EdgeInsets.all(10),
-                              //   child: Text('What do you want eat?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
-                              // ),
-                              // Container(
-                              //   height: 80,
-                              //   child: ListView(
-                              //     scrollDirection: Axis.horizontal,
-                              //     children: [
-                              //       _buildCategory(title: 'Filipino Dish'),
-                              //       _buildCategory(title: 'Korean Dish'),
-                              //       _buildCategory(title: 'Protein'),
-                              //       _buildCategory(title: 'Chinese Dish'),
-                              //       _buildCategory(title: 'Vietnamese Dish'),
-                              //     ]
-                              //   ),
-                              // ),
-                              _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
-                                    ),
-                                    Container(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList(),
-                                        )
-                                      ),
-                                    ),
-                                    // Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
-                                  ],
-                                ),
-                              ) : Container(),
-                              Container(
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
-                                child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                              _.searchRestaurants.call().isNotEmpty ? 
-                              Column(
+                      child: SingleChildScrollView(
+                        controller: _.foodScrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: _.restaurants.call() != null ?
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Padding(
+                            //   padding: EdgeInsets.only(left: 20, right: 20, bottom: 5, top: 10),
+                            //   child: Text('What do you want eat?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
+                            // ),
+                            // Container(
+                            //   height: 80,
+                            //   child: ListView(
+                            //     scrollDirection: Axis.horizontal,
+                            //     children: [
+                            //       _buildCategory(title: 'Filipino Dish'),
+                            //       _buildCategory(title: 'Korean Dish'),
+                            //       _buildCategory(title: 'Protein'),
+                            //       _buildCategory(title: 'Chinese Dish'),
+                            //       _buildCategory(title: 'Vietnamese Dish'),
+                            //     ]
+                            //   ),
+                            // ),
+                            _.restaurants.call().data.recentRestaurants.isNotEmpty ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
-                                  // _.searchRestaurants.call().length == 1 ? Container() : 
-                                  // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                                    child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
+                                  ),
+                                  Container(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: _.restaurants.call().data.recentRestaurants.map((data) => _buildRecentRestaurantItem(data)).toList(),
+                                      )
+                                    ),
+                                  ),
+                                  // Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 8)),
                                 ],
-                              ) : Container(
-                                  height: 250,
-                                  child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
-                                    RaisedButton(
-                                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                                      child: Text('Refresh'),
-                                      onPressed: () => _.refreshToken(),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call().isEmpty ? Config.SOMETHING_WENT_WRONG : _.message.call(), style: TextStyle(fontSize: 18))),
-                        ),
+                              ),
+                            ) : Container(),
+                            Container(
+                              margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
+                              child: Text('All Restaurants Near By', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            _.searchRestaurants.call().isNotEmpty ? 
+                            Column(
+                              children: [
+                                Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()),
+                                // _.searchRestaurants.call().length == 1 ? Container() : 
+                                // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => _.scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate), iconSize: 30)
+                              ],
+                            ) : Container(
+                                height: 250,
+                                child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                                  RaisedButton(
+                                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                                    child: Text('Refresh'),
+                                    onPressed: () => _.refreshToken(),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call().isEmpty ? Config.SOMETHING_WENT_WRONG : _.message.call(), style: TextStyle(fontSize: 18))),
                       ),
                     )
                   ),
@@ -175,11 +173,10 @@ class HomePage extends StatelessWidget {
   // Widget _buildCategory({String title}) {
   //   return GestureDetector(
   //     child: Container(
-  //       margin: EdgeInsets.symmetric(horizontal: 5),
+  //       margin: EdgeInsets.only(left: 20),
   //       child: Column(
   //         children: [
   //           Container(
-  //             margin: EdgeInsets.only(left: 10, right: 10),
   //             padding: EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15),
   //             decoration: BoxDecoration(
   //               borderRadius: BorderRadius.circular(5),
@@ -196,7 +193,7 @@ class HomePage extends StatelessWidget {
   //             child: Icon(FontAwesomeIcons.pizzaSlice, color: Colors.yellow.shade700),
   //           ),
   //           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-  //           Expanded(child: Text(title))
+  //           Expanded(child: Text(title, style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.normal)))
   //         ],
   //       ),
   //     ),
@@ -224,10 +221,10 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 10),
+            //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            // ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5))
           ],
         ),
@@ -280,30 +277,22 @@ class HomePage extends StatelessWidget {
             // ),
             // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Hero(
-                tag: restaurant.name, 
-                child: Container(
-                 height: 150,
-                  alignment: Alignment.center,
-                  // margin: EdgeInsets.symmetric(horizontal: 10),
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: SizedBox(
-                    width: Get.width,
-                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                    : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
-                  ),
-                )
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+              child: SizedBox(
+                width: Get.width,
+                child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 150, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
               ),
             ),
+            Padding(padding: EdgeInsets.only(top: 10)),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 10),
+            //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            // ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5))
             // Padding(
             //   padding: EdgeInsets.symmetric(vertical: 10),

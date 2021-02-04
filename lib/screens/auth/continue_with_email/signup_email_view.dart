@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/screens/continue_with_email/controller/signup_controller.dart';
+import 'controller/signup_controller.dart';
 
 class SignUpEmailPage extends StatelessWidget {
 
@@ -19,8 +19,8 @@ class SignUpEmailPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   child: Center(
                     child: SizedBox(
-                      height: 150,
-                      width: 150,
+                      height: _.isKeyboardVisible() ? 0 : 150,
+                      width: _.isKeyboardVisible() ? 0 : 150,
                       child: Image.asset(Config.PNG_PATH + 'sign_up.png'),
                     ),
                   ),

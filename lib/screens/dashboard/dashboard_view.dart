@@ -121,7 +121,7 @@ class DashboardPage extends GetView<DashboardController> {
                 // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
                 // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
                 // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-                customNavigationBarItem('Account', image: Image.asset(Config.PNG_PATH + 'account.png', height: 27, width: 27, color: _.pageIndex.call() == 2 ? Colors.black : Colors.grey)),
+                customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined, size: 27, color: _.pageIndex.call() == 2 ? Colors.black : Colors.grey)),
               ],
             ),
           )
@@ -197,7 +197,7 @@ class DashboardPage extends GetView<DashboardController> {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street} ${data.barangay} ${data.city}';
+    final address = '${data.street}, ${data.barangay}, ${data.city}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),

@@ -42,7 +42,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final FacebookLogin _facebookLogin = Get.find();
   
   final tfSearchController = TextEditingController();
-  final scrollController = ScrollController();
+  final foodScrollController = ScrollController();
+  final martScrollController = ScrollController();
   final widgets = [
     HomePage(), 
     // MealKitPage(),
@@ -195,9 +196,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void tapped(int tappedIndex) {
     tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 0) {
-      if (scrollController.hasClients) scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+      if (foodScrollController.hasClients) foodScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
       // fetchActiveOrder();
       // fetchOrderHistory();
+    } else if (tappedIndex == 1) {
+      if (martScrollController.hasClients) martScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     }
     tfSearchController.clear();
     searchRestaurant('');
@@ -216,7 +219,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
     box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
 
-    final address = '${data.street} ${data.barangay} ${data.city}';
+    final address = '${data.street}, ${data.barangay}, ${data.city}';
     isSelectedLocation(true);
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
@@ -534,7 +537,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
+  addAddress() {
+    Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS}).whenComplete(() {
+      showLocationSheet(false);
+    });
+  }
 
   fetchAllAddresses() {
     isLoading(true);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
-import 'package:letsbeeclient/screens/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 
 class RestaurantController extends GetxController with SingleGetTickerProviderMixin {
 

@@ -6,13 +6,11 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/verify_number/controller/verify_number_controller.dart';
 
 class ConfirmCodePage extends StatelessWidget {
-
-  final VerifyNumberController _ = Get.find();
   
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<VerifyNumberController>(
-      builder: (controller) {
+    return GetX<VerifyNumberController>(
+      builder: (_) {
         return Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -22,8 +20,8 @@ class ConfirmCodePage extends StatelessWidget {
                 padding: EdgeInsets.only(left: 10, right: 10),
                 child: Center(
                   child: SizedBox(
-                    height: 180,
-                    width: 180,
+                    height: _.isKeyboardVisible() ? 0 : 180,
+                    width: _.isKeyboardVisible() ? 0 : 180,
                     child: Image.asset(Config.PNG_PATH + 'frame_number_sent.png'),
                   ),
                 ),
@@ -31,7 +29,7 @@ class ConfirmCodePage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(5),
                 child: Center(
-                  child: Text('We send confirmation code to this number: +63${controller.numberController.text}.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+                  child: Text('We send confirmation code to this number: +63${_.numberController.text}.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
                 )
               ),
               // Padding(padding: EdgeInsets.symmetric(vertical: 10)),
