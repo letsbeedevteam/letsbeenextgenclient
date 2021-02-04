@@ -119,7 +119,6 @@ class MartPage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
               child: Container(
-                height: 130,
                 alignment: Alignment.center,
                 child: Image.asset(Config.PNG_PATH + 'banner.png', fit: BoxFit.cover, width: Get.width),
               ),

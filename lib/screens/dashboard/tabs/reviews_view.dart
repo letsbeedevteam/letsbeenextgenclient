@@ -37,7 +37,7 @@ class ReviewsPage extends StatelessWidget {
         ),
         Container(height: 1, color: Colors.grey.shade300, margin: EdgeInsets.only(top: 10)),
         Flexible(
-          child: Center(child: Text('Work In Progress...')),
+          child: Center(child: Text('(Reviews) - Work In Progress...')),
           // child: Scrollbar(
           //   child: SingleChildScrollView(
           //     child: Column(

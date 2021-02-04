@@ -6,17 +6,20 @@ class SignInResponse {
   SignInResponse({
     this.status,
     this.data,
-    this.message
+    this.message,
+    this.code
   });
 
   int status;
   SignInData data;
   int message;
+  int code;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(
     status: json['status'],
     data: json['data'] == null ? null : SignInData.fromJson(json['data']),
     message: json['message'] == null || json['message'] == '' ? null : json['message'],
+    code: json['code'] == null || json['code'] == '' ? null : json['code']
   );
 }
 

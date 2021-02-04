@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -64,14 +64,14 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
           } else {
 
-            // if (response.code == 2000) {
-            //   alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
-            // } else {
-            //   alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
-            //   // changeIndex(1);
-            // }
+            if (response.code != 2012) {
+              alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+            } else {
+              alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
+              // changeIndex(1);
+            }
 
-            alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+            // alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
           }
 
           isLoading(false);
@@ -126,6 +126,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   }
 
   void goToVerifyNumber() {
+     dismissKeyboard(Get.context);
      successSnackBarTop(title: 'Yay!', message: 'Registered successfully! Please sign in your account.');
      changeIndex(0);
     // _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
@@ -149,19 +150,14 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
     signInEmailController.clear();
     signInPasswordController.clear();
   }
-
-  void confirm() {
-    print('Email: ${emailController.text}');
-    print('Code: ${codeController.text}');
-  }
-
+  
   Future<bool> willPopCallback() async {
     dismissKeyboard(Get.context);
     if (selectedIndex.call() == 0) {
       Get.back(closeOverlays: true);
       return true;
     } else {
-      selectedIndex.call() == 2 ? changeIndex(1) : changeIndex(0);
+      if (!isLoading.call()) selectedIndex.call() == 2 ? changeIndex(1) : changeIndex(0);
       // if (selectedIndex.call() == 2) {
       //   changeIndex(1);
       // } else {

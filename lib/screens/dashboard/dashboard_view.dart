@@ -1,6 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -32,7 +32,7 @@ class DashboardPage extends GetView<DashboardController> {
                       backgroundColor: Colors.white,
                       titleSpacing: 0.0,
                       centerTitle: false,
-                      leading: IconButton(icon: Icon(Icons.gps_fixed, size: 20), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
+                      leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
                       title: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,16 +43,13 @@ class DashboardPage extends GetView<DashboardController> {
                               Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0))),
                             ],
                           ),
-                          Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                          Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                          ),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                          Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold)),
                         ],
                       ),
-                        // actions: [
-                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'frame_bee_cart.png', gaplessPlayback: true), iconSize: 50, onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
-                        // ],
+                      // actions: [
+                      //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                      // ],
                     ),
                   ),
                   Container(
@@ -104,24 +101,29 @@ class DashboardPage extends GetView<DashboardController> {
               child: Icon(Icons.restaurant_sharp),
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentIndex,
-            selectedFontSize: 10.0,
-            unselectedFontSize: 10.0,
-            selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-            iconSize: 25,
-            fixedColor: Colors.black,
-            onTap: (value) =>  _.tapped(value),
-            items: [
-              customNavigationBarItem('Food', icon: Icon(Icons.sports_motorsports)),
-              customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
-              customNavigationBarItem('Mart', icon: Icon(Icons.storefront)),
-              // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-              customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-              customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined)),
-            ],
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.grey))
+            ),
+            child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: currentIndex,
+              selectedFontSize: 10.0,
+              unselectedFontSize: 10.0,
+              selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+              iconSize: 25,
+              fixedColor: Colors.black,
+              onTap: (value) =>  _.tapped(value),
+              items: [
+                customNavigationBarItem('Food', image: Image.asset(Config.PNG_PATH + 'food.png', height: 27, width: 27, color: _.pageIndex.call() == 0 ? Colors.black : Colors.grey)),
+                // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
+                customNavigationBarItem('Mart', image: Image.asset(Config.PNG_PATH + 'mart.png', height: 27, width: 27, color: _.pageIndex.call() == 1 ? Colors.black : Colors.grey)),
+                // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
+                // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
+                // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+                customNavigationBarItem('Account', image: Image.asset(Config.PNG_PATH + 'account.png', height: 27, width: 27, color: _.pageIndex.call() == 2 ? Colors.black : Colors.grey)),
+              ],
+            ),
           )
         );
       },

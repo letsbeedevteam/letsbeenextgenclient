@@ -1,7 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'dart:ui' as ui;
 
 extension StringExtension on String {
 
@@ -51,3 +53,10 @@ void paymentSnackBarTop({String title , String message, SnackbarStatusCallback s
 void dismissKeyboard(BuildContext context) => FocusScope.of(context).requestFocus(FocusNode());
 
 void copyText(String value) => Clipboard.setData(ClipboardData(text: value));
+
+Future<Uint8List> getBytesFromAsset(String path, int width) async {
+  ByteData data = await rootBundle.load(path);
+  ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+  ui.FrameInfo fi = await codec.getNextFrame();
+  return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
+}
