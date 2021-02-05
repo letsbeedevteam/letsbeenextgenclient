@@ -45,7 +45,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.only(left: 30, right: 30),
                     decoration: BoxDecoration(
-                      color: Color(Config.WHITE).withOpacity(0.5),
+                      color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
                     child: GetX<SetupLocationController>(
@@ -137,6 +137,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
   confirmLocationModal() {
     Get.dialog(
       AlertDialog(
+        backgroundColor: Color(Config.WHITE),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

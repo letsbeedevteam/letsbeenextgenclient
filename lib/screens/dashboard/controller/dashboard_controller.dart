@@ -11,7 +11,8 @@ import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 // import 'package:letsbeeclient/models/orderHistoryResponse.dart';
-import 'package:letsbeeclient/models/restaurant.dart';
+// import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
@@ -70,8 +71,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var addressMessage = 'Loading...'.obs;
   // var history = OrderHistoryResponse().obs;
   var addresses = GetAllAddressResponse().obs;
-  var restaurants = Restaurant().obs;
-  var searchRestaurants = RxList<RestaurantElement>().obs;
+  // var restaurants = Restaurant().obs;
+  // var searchRestaurants = RxList<RestaurantElement>().obs;
+  var searchRestaurants = RxList<RestaurantStores>().obs;
+  var restaurantDashboard = RestaurantDashboardResponse().obs;
   var activeOrderData = ActiveOrderData().obs;
   var activeOrders = ActiveOrder().obs;
 
@@ -86,7 +89,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   void onInit() {
     print('Access Token: ${box.read(Config.USER_TOKEN)}');
     // history.nil();
-    restaurants.nil();
+    // restaurants.nil();
+    restaurantDashboard.nil();
     activeOrderData.nil();
     addresses.nil();
     activeOrders.nil();
@@ -200,9 +204,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       // fetchOrderHistory();
     }
     tfSearchController.clear();
-    searchRestaurant('');
+    // searchRestaurant('');
     pageIndex(tappedIndex);
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
+    dismissKeyboard(Get.context);
   }
 
   void updateCurrentLocation(AddressData data) {
@@ -222,16 +227,18 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
     showLocationSheet(false);
-    fetchRestaurants();
+    // fetchRestaurants();
+    fetchRestaurantDashboard();
   }
 
   void clearData() {
     box.erase();
     // history.nil();
     addresses.nil();
-    restaurants.nil();
+    // restaurants.nil();
     searchRestaurants.nil();
     // activeOrderData.nil();
+    restaurantDashboard.nil();
     activeOrders.nil();
     box.erase();
   }
@@ -377,7 +384,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             message = 'Your order in $name has been delivered';
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
 
-            fetchRestaurants();
+            // fetchRestaurants();
+            fetchRestaurantDashboard();
             // fetchOrderHistory();
           }
             break;
@@ -446,49 +454,49 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   //   });
   // }
 
-  fetchRestaurants() {
+  // fetchRestaurants() {
 
-    isLoading(true);
+  //   isLoading(true);
 
-    apiService.getAllRestaurants().then((response) {
-      isLoading(false);
-      isSelectedLocation(false);
-      tfSearchController.text = '';
-      _setRefreshCompleter();
-      if (response.status == 200) {
-        restaurants(response);
+  //   apiService.getAllRestaurants().then((response) {
+  //     isLoading(false);
+  //     isSelectedLocation(false);
+  //     tfSearchController.text = '';
+  //     _setRefreshCompleter();
+  //     if (response.status == 200) {
+  //       restaurants(response);
 
-        searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
-        if(searchRestaurants.call().isEmpty) message('No restaurant found');
+  //       searchRestaurants.call()..clear()..assignAll(response.data.restaurants);
+  //       if(searchRestaurants.call().isEmpty) message('No restaurant found');
       
-      } else {
+  //     } else {
 
-        message(Config.SOMETHING_WENT_WRONG);
-      }
+  //       message(Config.SOMETHING_WENT_WRONG);
+  //     }
       
-    }).catchError((onError) {
-         isLoading(false);
-         isSelectedLocation(false);
-        _setRefreshCompleter();
-        if (onError.toString().contains('Connection failed')) {
-          message(Config.NO_INTERNET_CONNECTION);
-        } else if (onError.toString().contains('Operation timed out')) {
-          message(Config.TIMED_OUT);
-        } else {
-          message(Config.SOMETHING_WENT_WRONG);
-        }
-        print('Error fetch restaurant: $onError');
-    });
-  }
+  //   }).catchError((onError) {
+  //        isLoading(false);
+  //        isSelectedLocation(false);
+  //       _setRefreshCompleter();
+  //       if (onError.toString().contains('Connection failed')) {
+  //         message(Config.NO_INTERNET_CONNECTION);
+  //       } else if (onError.toString().contains('Operation timed out')) {
+  //         message(Config.TIMED_OUT);
+  //       } else {
+  //         message(Config.SOMETHING_WENT_WRONG);
+  //       }
+  //       print('Error fetch restaurant: $onError');
+  //   });
+  // }
 
   searchRestaurant(String value) {
     
-    if (restaurants.call() != null) {
+    if (restaurantDashboard.call() != null) {
       isSearching(value.trim().isNotEmpty);
       searchRestaurants.call().clear();
       if (isSearching.call()) {
         
-        var restaurant = restaurants.call().data.restaurants.where((element) => element.name.toLowerCase().contains(value.trim().toLowerCase()));
+        var restaurant = restaurantDashboard.call().data.stores.where((element) => element.name.toLowerCase().contains(value.trim().toLowerCase()));
 
         if (restaurant.isEmpty) {
           searchRestaurants.call().clear();
@@ -498,7 +506,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         }
       
       } else {
-        searchRestaurants.call().assignAll(restaurants.call().data.restaurants);
+        searchRestaurants.call().assignAll(restaurantDashboard.call().data.stores);
       }
     }
   }
@@ -541,7 +549,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     apiService.getAllAddress().then((response) {
       isLoading(false);
       if (response.status == 200) {
-        fetchRestaurants();
+        // fetchRestaurants();
+        fetchRestaurantDashboard();
         if (response.data.isNotEmpty) {
           addresses(response);
         } else {
@@ -559,6 +568,38 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isLoading(false);
       addressMessage(Config.SOMETHING_WENT_WRONG);
       print('Error fetch all address: $onError');
+    });
+  }
+
+  fetchRestaurantDashboard() {
+     apiService.getRestaurantDashboard().then((response) {
+      isLoading(false);
+      isSelectedLocation(false);
+      tfSearchController.text = '';
+      _setRefreshCompleter();
+      if (response.status == 200) {
+        restaurantDashboard(response);
+
+      searchRestaurants.call()..clear()..assignAll(response.data.stores);
+      if(searchRestaurants.call().isEmpty) message('No restaurant found');
+      
+      } else {
+
+        message(Config.SOMETHING_WENT_WRONG);
+      }
+      
+    }).catchError((onError) {
+         isLoading(false);
+         isSelectedLocation(false);
+        _setRefreshCompleter();
+        if (onError.toString().contains('Connection failed')) {
+          message(Config.NO_INTERNET_CONNECTION);
+        } else if (onError.toString().contains('Operation timed out')) {
+          message(Config.TIMED_OUT);
+        } else {
+          message(Config.SOMETHING_WENT_WRONG);
+        }
+        print('Error fetch restaurant: $onError');
     });
   }
 }

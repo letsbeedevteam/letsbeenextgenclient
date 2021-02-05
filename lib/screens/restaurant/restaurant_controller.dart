@@ -28,7 +28,8 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   @override
     void onClose() {
-      DashboardController.to.fetchRestaurants();
+      // DashboardController.to.fetchRestaurants();
+      DashboardController.to.fetchRestaurantDashboard();
       super.onClose();
     }
 }

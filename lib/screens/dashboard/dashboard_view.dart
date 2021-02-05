@@ -64,7 +64,7 @@ class DashboardPage extends GetView<DashboardController> {
                                 )
                               ],
                             ),
-                            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                             Row(
                               children: [
                                 Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15),
@@ -128,24 +128,27 @@ class DashboardPage extends GetView<DashboardController> {
               child: Icon(Icons.restaurant_sharp),
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentIndex,
-            selectedFontSize: 10.0,
-            unselectedFontSize: 10.0,
-            iconSize: 25,
-            fixedColor: Colors.black,
-            backgroundColor: Colors.white,
-            onTap: (value) =>  _.tapped(value),
-            items: [
-              customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
-              // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
-              customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
-              // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-              // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-              // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-              customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
-            ],
+          bottomNavigationBar: Theme(
+            data: Get.theme.copyWith(
+              splashColor: Colors.transparent
+            ),
+            child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: currentIndex,
+              selectedFontSize: 10.0,
+              unselectedFontSize: 10.0,
+              iconSize: 25,
+              onTap: (value) =>  _.tapped(value),
+              items: [
+                customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
+                // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
+                customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
+                // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
+                // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
+                // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+                customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+              ],
+            ),
           )
         );
       },
@@ -159,7 +162,7 @@ class DashboardPage extends GetView<DashboardController> {
           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
           SizedBox(height: 23, width: 23, child: image),
           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-          Text(label, style: TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold))
+          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold))
         ],
       ) : icon,
       activeIcon: Container(
@@ -342,7 +345,7 @@ class DashboardPage extends GetView<DashboardController> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10)
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(Config.WHITE),
         insetPadding: EdgeInsets.all(20),
         child: GetX<DashboardController>(
           builder: (_) {

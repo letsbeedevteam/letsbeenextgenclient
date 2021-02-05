@@ -15,10 +15,12 @@ class MartPage extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: TextField(
               cursorColor: Colors.black,
+              style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(left: 10),
-                hintText: 'Search mart...',
-                fillColor: Colors.grey.shade200,
+                hintText: 'Search for grocery here',
+                hintStyle: TextStyle(fontSize: 14),
+                fillColor: Colors.white,
                 filled: true,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -51,7 +53,7 @@ class MartPage extends StatelessWidget {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                    child: Text('Recent Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+                    child: Text('Recent Supermarkets', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
@@ -77,7 +79,7 @@ class MartPage extends StatelessWidget {
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                  child: Text('All Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+                  child: Text('All Supermarkets', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
                 ),
                 Container(
                     margin: EdgeInsets.symmetric(horizontal: 20),
@@ -105,11 +107,11 @@ class MartPage extends StatelessWidget {
       child: Container(
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(5),
           color: Colors.white,
-          border: Border.all(color: Colors.black),
         ),
         margin: EdgeInsets.only(right: 20),
+        padding: EdgeInsets.all(10),
         width: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -117,7 +119,7 @@ class MartPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+              borderRadius: BorderRadius.all(Radius.circular(5)),
               child: Container(
                 alignment: Alignment.center,
                 child: Image.asset(Config.PNG_PATH + 'banner.png', fit: BoxFit.cover, width: Get.width),
@@ -127,10 +129,10 @@ class MartPage extends StatelessWidget {
               padding: EdgeInsets.only(top: 10, left: 5, right: 5),
               child: Text('Puregold - Friendship', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
-              child: Text('(1.2 km away)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10), overflow: TextOverflow.ellipsis),
-            )
+            // Container(
+            //   padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+            //   child: Text('(1.2 km away)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10), overflow: TextOverflow.ellipsis),
+            // )
           ],
         ),
       ),
@@ -145,30 +147,33 @@ class MartPage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
           color: Colors.white,
-          border: Border.all(color: Colors.black),
         ),
         margin: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                height: 150,
-                alignment: Alignment.center,
-                child: ClipRRect(
-                  child: Image.asset(Config.PNG_PATH + 'banner.png', fit: BoxFit.cover, width: Get.width),
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+            ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              child: Container(
+                  height: 170,
+                  alignment: Alignment.center,
+                  child: ClipRRect(
+                    child: Image.asset(Config.PNG_PATH + 'banner.png', fit: BoxFit.cover, width: Get.width),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8.0), topRight: Radius.circular(8.0)),
+                  ),
                 ),
-              ),
+            ),
             Container(
               padding: EdgeInsets.only(top: 10, left: 5, right: 5),
               child: Text('Supermarket - SM CLARK', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
-              child: Text('(5.2 km away)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10), overflow: TextOverflow.ellipsis),
-            )
+            // Container(
+            //   padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
+            //   child: Text('(5.2 km away)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10), overflow: TextOverflow.ellipsis),
+            // )
           ],
         ),
       ),

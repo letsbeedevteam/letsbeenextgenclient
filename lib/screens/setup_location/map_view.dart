@@ -221,6 +221,7 @@ class MapPage extends GetView<MapController> {
   confirmLocationModal() {
     Get.dialog(
       AlertDialog(
+        backgroundColor: Color(Config.WHITE),
         content: GetX<MapController>(
           builder: (_) {
             return Column(

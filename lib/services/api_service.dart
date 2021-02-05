@@ -15,6 +15,7 @@ import 'package:letsbeeclient/models/numberResponse.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/models/refreshTokenResponse.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
@@ -277,5 +278,20 @@ class ApiService extends GetConnect {
     print('Cellphone Confirmation Response: ${response.body}');
 
     return cellphoneConfirmationResponseFromJson(response.bodyString);
+  }
+
+  Future<RestaurantDashboardResponse> getRestaurantDashboard() async {
+
+    final response = await get(
+      '/stores/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+  // 'Get restaurants: ${response.body}'.printWrapped();
+    print('Get restaurant dashboard: ${response.body}');
+
+    return restaurantDashboardFromJson(response.bodyString);
   }
 }
