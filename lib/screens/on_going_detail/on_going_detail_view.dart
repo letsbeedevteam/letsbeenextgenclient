@@ -425,7 +425,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Text('NO'),
                         onPressed: () => Get.back(),
                       ),
@@ -433,7 +433,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Text('YES'),
                         onPressed: () => controller.cancelOrderById(),
                       )

@@ -80,7 +80,7 @@ class ContactNumberPage extends StatelessWidget {
                   height: 40,
                   width: 280,
                   child: RaisedButton(
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                    color: Color(Config.LETSBEE_COLOR),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

@@ -43,7 +43,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                               RaisedButton(
                                 onPressed: () => Get.toNamed(Config.ACTIVE_ORDER_DETAIL_ROUTE),
                                 splashColor: Colors.transparent,
-                                color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                                color: Color(Config.LETSBEE_COLOR),
                                 child: Icon(Icons.local_dining, size: 40),
                                 padding: EdgeInsets.all(15),
                                 shape: CircleBorder(
@@ -62,7 +62,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                                 child: RaisedButton(
                                   onPressed: () => _.goToChatPage(fromNotificartion: false),
                                   splashColor: Colors.transparent,
-                                  color: _.activeOrderData.call().status == 'rider-accepted' || _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  color: _.activeOrderData.call().status == 'rider-accepted' || _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR): Colors.grey,
                                   child: Icon(Icons.chat_bubble_outline_sharp, size: 40),
                                   padding: EdgeInsets.all(15),
                                   shape: CircleBorder(
@@ -82,7 +82,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                                 child: RaisedButton(
                                   onPressed: () => _.goToRiderLocationPage(),
                                   splashColor: Colors.transparent,
-                                  color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR) : Colors.grey,
                                   child: Icon(FontAwesomeIcons.mapMarkerAlt, size: 40),
                                   padding: EdgeInsets.all(15),
                                   shape: CircleBorder(

@@ -47,7 +47,7 @@ void deleteSnackBarTop({String title , String message, SnackbarStatusCallback st
 
 void paymentSnackBarTop({String title , String message, SnackbarStatusCallback status}) {
   if (Get.isSnackbarOpen) Get.back();
-  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.payment, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status);
+  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.payment, color: Color(Config.LETSBEE_COLOR)), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status);
 }
 
 void dismissKeyboard(BuildContext context) => FocusScope.of(context).requestFocus(FocusNode());

@@ -80,6 +80,8 @@ class Config {
   static const SETUP_ADDRESS = 'setup_address';
 
   // Colors 
-  static const LETSBEE_COLOR = 0xFBD10B;
-  static const WHITE = 0xD8DFE3;
+  static const LETSBEE_COLOR = 0xFFFCD000;
+  static const WHITE = 0xFFF8F8FA;
+  static const SEARCH_TEXT_COLOR = 0xFF999999;
+  static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
 }

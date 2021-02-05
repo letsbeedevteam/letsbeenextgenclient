@@ -70,7 +70,7 @@ class CartPage extends GetView<CartController> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25),
                                   ),
-                                  color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                                  color: Color(Config.LETSBEE_COLOR),
                                   child: _.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                   onPressed: controller.setEdit,
                                 )
@@ -102,7 +102,7 @@ class CartPage extends GetView<CartController> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(25),
                                         ),
-                                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                                        color: Color(Config.LETSBEE_COLOR),
                                         child: Text('Use', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                         onPressed: () => _.isEdit.call() ? null : print('Promo code')
                                       )
@@ -168,7 +168,7 @@ class CartPage extends GetView<CartController> {
                               child: Container(
                                 width: Get.width,
                                 child: RaisedButton(
-                                  color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                                  color: Color(Config.LETSBEE_COLOR),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -189,7 +189,7 @@ class CartPage extends GetView<CartController> {
                         children: [
                           Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
                           RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            color: Color(Config.LETSBEE_COLOR),
                             child: Text('Refresh'),
                             onPressed: () => _.fetchActiveCarts(getRestaurantId: _.restaurantId.call()),
                           )
@@ -393,7 +393,7 @@ class CartPage extends GetView<CartController> {
       confirmTextColor: Colors.black,
       cancelTextColor: Colors.black,
       cancel: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+        color: Color(Config.LETSBEE_COLOR),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
@@ -438,7 +438,7 @@ class CartPage extends GetView<CartController> {
               width: Get.width,
               padding: EdgeInsets.symmetric(horizontal: 30),
               child: RaisedButton(
-                color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                color: Color(Config.LETSBEE_COLOR),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -481,7 +481,7 @@ class CartPage extends GetView<CartController> {
                     width: Get.width,
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                      color: Color(Config.LETSBEE_COLOR),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -512,7 +512,7 @@ class CartPage extends GetView<CartController> {
                     width: Get.width,
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                      color: Color(Config.LETSBEE_COLOR),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -544,7 +544,7 @@ class CartPage extends GetView<CartController> {
                     width: Get.width,
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                      color: Color(Config.LETSBEE_COLOR),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -691,7 +691,7 @@ class CartPage extends GetView<CartController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         onPressed: () => Get.back(),
                         child: Text('CANCEL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       ),
@@ -700,7 +700,7 @@ class CartPage extends GetView<CartController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         onPressed: () {
                           controller..saveConfirmLocation()..paymentMethod(restaurantID, paymentMethod);
                         },

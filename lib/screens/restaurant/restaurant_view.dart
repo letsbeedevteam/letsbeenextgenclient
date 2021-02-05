@@ -29,7 +29,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                       expandedHeight: 300.0,
                       floating: true,
                       pinned: true,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Color(Config.WHITE),
                       elevation: 0,
                       bottom: TabBar(
                         controller: _.tabController,
@@ -44,7 +44,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                         indicatorWeight: 5,
                         // indicator: BoxDecoration(
                         //   borderRadius: BorderRadius.circular(20),
-                        //   color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        //   color: Color(Config.LETSBEE_COLOR),
                         //   boxShadow: [
                         //     BoxShadow(
                         //       color: Colors.grey.shade500,
@@ -151,7 +151,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)
                       ),
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                      color: Color(Config.LETSBEE_COLOR),
                       child: Stack(
                         alignment: Alignment.centerRight,
                         children: [
@@ -189,7 +189,7 @@ class RestaurantPage extends GetView<RestaurantController> {
       //       showBadge: CartController.to.cart.call() != null,
       //       child: FloatingActionButton(
       //         splashColor: Colors.transparent,
-      //         backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+      //         backgroundColor: Color(Config.LETSBEE_COLOR),
       //         shape: RoundedRectangleBorder(
       //           side: BorderSide(color: Colors.black),
       //           borderRadius: BorderRadius.circular(30)
@@ -299,7 +299,7 @@ class RestaurantPage extends GetView<RestaurantController> {
   //                 height: 20,
   //                 width: Get.width,
   //                 color: Colors.black,
-  //                 child: Text('Not Available', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0))),
+  //                 child: Text('Not Available', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR))),
   //               ),
   //             ),
   //           ),

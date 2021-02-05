@@ -110,7 +110,7 @@ class MapPage extends GetView<MapController> {
                   child: GetBuilder<MapController>(
                     builder: (_) {
                       return RaisedButton(
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Padding(
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
@@ -173,7 +173,7 @@ class MapPage extends GetView<MapController> {
   //     cancel: GetBuilder<MapController>(
   //       builder: (_) {
   //         return RaisedButton(
-  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           color: Color(Config.LETSBEE_COLOR),
   //           shape: RoundedRectangleBorder(
   //             borderRadius: BorderRadius.circular(5),
   //           ),
@@ -195,7 +195,7 @@ class MapPage extends GetView<MapController> {
   //     confirm: GetX<MapController>(
   //       builder: (_) {
   //         return RaisedButton(
-  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           color: Color(Config.LETSBEE_COLOR),
   //           shape: RoundedRectangleBorder(
   //             borderRadius: BorderRadius.circular(5),
   //           ),
@@ -372,7 +372,7 @@ class MapPage extends GetView<MapController> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)
                           ),
-                          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                          color: Color(Config.LETSBEE_COLOR),
                           onPressed: () {
                             Get.back();
                             Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
@@ -385,7 +385,7 @@ class MapPage extends GetView<MapController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         onPressed: () =>  controller.goToDashboardPage(),
                         child: _.isAddAddressLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       )

@@ -27,10 +27,12 @@ class HomePage extends StatelessWidget {
                     controller: _.tfSearchController,
                     onChanged: _.searchRestaurant,
                     cursorColor: Colors.black,
+                    style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
-                      hintText: 'Search restaurant...',
-                      fillColor: Colors.grey.shade200,
+                      hintText: 'Search for food or restaurant here',
+                      hintStyle: TextStyle(fontSize: 14),
+                      fillColor: Colors.white,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -128,7 +130,7 @@ class HomePage extends StatelessWidget {
                                   children: [
                                     Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
                                     RaisedButton(
-                                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                                      color: Color(Config.LETSBEE_COLOR),
                                       child: Text('Refresh'),
                                       onPressed: () => _.refreshToken(),
                                     )
@@ -146,7 +148,7 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+                      color: Color(Config.LETSBEE_COLOR)
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

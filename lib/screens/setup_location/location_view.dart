@@ -85,7 +85,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                         return IgnorePointer(
                           ignoring: !_.hasLocation.call(),
                           child: RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            color: Color(Config.LETSBEE_COLOR),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -114,7 +114,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                       ]
                     ),
                     child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                      color: Color(Config.LETSBEE_COLOR),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -240,7 +240,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)
                     ),
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    color: Color(Config.LETSBEE_COLOR),
                     onPressed: () {
                       Get.back();
                       Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.SETUP_ADDRESS});
@@ -252,7 +252,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)
                     ),
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    color: Color(Config.LETSBEE_COLOR),
                     onPressed: () =>  controller.goToDashboardPage(),
                     child: Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                   )

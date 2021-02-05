@@ -231,7 +231,7 @@ class SignUpEmailPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)
                               ),
-                              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                              color: Color(Config.LETSBEE_COLOR),
                               child: _.isLoading.call() ? 
                                Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)))
                               : Text('Register', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),

@@ -20,7 +20,7 @@ class NotificationPage extends GetView<DashboardController> {
                 SizedBox(
                   height: 40,
                   child: RaisedButton(
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                    color: Color(Config.LETSBEE_COLOR),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
