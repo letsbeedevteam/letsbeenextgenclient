@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
                 return IgnorePointer(
                   ignoring: _.isLoading.call(),
                   child: TextField(
-                    controller: _.tfSearchController,
+                    controller: _.restaurantSearchController,
                     onChanged: _.searchRestaurant,
                     cursorColor: Colors.black,
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
@@ -56,81 +56,26 @@ class HomePage extends StatelessWidget {
                 children: [
                   RefreshIndicator(
                     onRefresh: () {
-                      _.refreshToken();
+                      _.refreshToken('Loading Restaurants...');
                       return _.refreshCompleter.future;
                     },
-                    child: IgnorePointer(
-                      ignoring: _.isSelectedLocation.call(),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          controller: _.scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: _.restaurantDashboard.call() != null ?
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 80,
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    _buildCategory(title: 'Filipino'),
-                                    _buildCategory(title: 'Korean'),
-                                    _buildCategory(title: 'Protein'),
-                                    _buildCategory(title: 'Chinese'),
-                                    _buildCategory(title: 'Vietnamese'),
-                                  ]
-                                ),
-                              ),
-                              _.restaurantDashboard.call().data.recentStores.isNotEmpty ? Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                                      child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), textAlign: TextAlign.start),
-                                    ),
-                                    Container(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: _.restaurantDashboard.call().data.recentStores.map((data) => _buildRecentRestaurantItem(data)).toList(),
-                                        )
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ) : Container(),
-                              Container(
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
-                                child: Text('All Restaurants', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                              _.searchRestaurants.call().isNotEmpty ? 
-                              Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()) : Container(
-                                  height: 250,
-                                  child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
-                                    RaisedButton(
-                                      color: Color(Config.LETSBEE_COLOR),
-                                      child: Text('Refresh'),
-                                      onPressed: () => _.refreshToken(),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ) : Container(height: 250, margin: EdgeInsets.only(top: 40),child: _.isLoading.call() ? CupertinoActivityIndicator() : Text(_.message.call().isEmpty ? Config.SOMETHING_WENT_WRONG : _.message.call(), style: TextStyle(fontSize: 18))),
+                    child: _.restaurantDashboard.call() == null ? Container(
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                            CupertinoActivityIndicator(radius: 20),
+                            Text(_.message.call()),
+                            _.hasRestaurantError.call() ? RaisedButton(
+                              color: Color(Config.LETSBEE_COLOR),
+                              child: Text('Refresh'),
+                              onPressed: () => _.refreshToken('Loading Restaurants...'),
+                            ) : Container() 
+                          ],
                         ),
                       ),
-                    )
+                    ) : _scrollView(_)
                   ),
                   _.isSelectedLocation.call() ? Container(
                     margin: EdgeInsets.only(top: 70),
@@ -163,68 +108,131 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategory({String title}) {
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: Image.asset(Config.PNG_PATH + 'fil.png', height: 50, width: 50),
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            Expanded(child: Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)))
-          ],
-        ),
-      ),
-      onTap: () => print('Category'),
-    );
-  }
-
-  Widget _buildRecentRestaurantItem(RestaurantStores restaurant) {
-    final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-        padding: EdgeInsets.all(10),
-        width: 200,
+  Widget _scrollView(DashboardController _) {
+    return IgnorePointer(
+      ignoring: _.isSelectedLocation.call(),
+      child: SingleChildScrollView(
+        controller: _.foodScrollController,
+        physics: AlwaysScrollableScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: Container(
-                margin: EdgeInsets.only(bottom: 5),
-                alignment: Alignment.center,
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
+            // Container(
+            //   margin: EdgeInsets.only(top: 10),
+            //   height: 80,
+            //   child: ListView(
+            //     scrollDirection: Axis.horizontal,
+            //     children: [
+            //       _buildCategory(title: 'Filipino'),
+            //       _buildCategory(title: 'Korean'),
+            //       _buildCategory(title: 'Protein'),
+            //       _buildCategory(title: 'Chinese'),
+            //       _buildCategory(title: 'Vietnamese'),
+            //     ]
+            //   ),
+            // ),
+            _.restaurantDashboard.call().data.recentStores.isNotEmpty ? Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                    child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
+                  ),
+                  Container(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: _.restaurantDashboard.call().data.recentStores.map((data) => _buildRecentRestaurantItem(data)).toList(),
+                      )
+                    ),
+                  ),
+                ],
               ),
+            ) : Container(),
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
+              child: Text('All Restaurants', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5))
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            _.searchRestaurants.call().isNotEmpty ? 
+            Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()) : Container(
+                height: 250,
+                alignment: Alignment.topCenter,
+                child: Text(_.message.call(), style: TextStyle(fontSize: 18)),
+            )
           ],
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.white
-        ),
+        )
       ),
-    onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
+    );
+  }
+
+  // Widget _buildCategory({String title}) {
+  //   return GestureDetector(
+  //     child: Container(
+  //       margin: EdgeInsets.symmetric(horizontal: 5),
+  //       child: Column(
+  //         children: [
+  //           Container(
+  //             margin: EdgeInsets.only(left: 10, right: 10),
+  //             child: Image.asset(Config.PNG_PATH + 'fil.png', height: 50, width: 50),
+  //           ),
+  //           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+  //           Expanded(child: Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)))
+  //         ],
+  //       ),
+  //     ),
+  //     onTap: () => print('Category'),
+  //   );
+  // }
+
+  Widget _buildRecentRestaurantItem(RestaurantStores restaurant) {
+    final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
+    return GestureDetector(
+        child: Container(
+          margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+          padding: EdgeInsets.all(10),
+          width: 200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 5),
+                  alignment: Alignment.center,
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
+              ),
+              // Padding(
+              //   padding: EdgeInsets.symmetric(horizontal: 10),
+              //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+              // ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5))
+            ],
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.white
+          ),
+        ),
+      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id}),
     );
   }
 
   Widget _buildRestaurantItem(RestaurantStores restaurant) {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
-      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: restaurant.toJson()),
+      onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id}),
       child: Container(
         margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         decoration: BoxDecoration(
@@ -254,6 +262,7 @@ class HomePage extends StatelessWidget {
                 )
               ),
             ),
+            Padding(padding: EdgeInsets.only(top: 10)),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start),

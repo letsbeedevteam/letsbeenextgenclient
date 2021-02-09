@@ -28,10 +28,10 @@ class ChatController extends GetxController {
   void onInit() {
     activeOrderData(arguments);
 
-    if (activeOrderData.call().activeRestaurant.locationName.isBlank) {
-      this.title("${activeOrderData.call().activeRestaurant.name}");
+    if (activeOrderData.call().activeStore.locationName.isBlank) {
+      this.title("${activeOrderData.call().activeStore.name}");
     } else {
-      this.title("${activeOrderData.call().activeRestaurant.name} (${activeOrderData.call().activeRestaurant.locationName})");
+      this.title("${activeOrderData.call().activeStore.name} (${activeOrderData.call().activeStore.locationName})");
     }
 
     _socketService.socket

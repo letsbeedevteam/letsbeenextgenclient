@@ -49,7 +49,7 @@ class RiderLocationPage extends GetView<RiderLocationController> {
             ),
             GetX<RiderLocationController>(
               builder: (_) {
-                return _.isMapLoading.call() ? Container(color: Colors.white, child: Center(child: Text(_.message.call()))) : Container();
+                return _.isMapLoading.call() ? Container(color: Color(Config.WHITE), child: Center(child: Text(_.message.call()))) : Container();
               }, 
             )
           ],

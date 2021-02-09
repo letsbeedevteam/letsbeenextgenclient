@@ -26,6 +26,9 @@ class Config {
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
   static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
   static const ACTIVE_ORDER_ROUTE = '/active_order';
+  static const STORE_ROUTE = '/store';
+  static const STORE_MENU_ROUTE = '/store_menu';
+  static const STORE_CART = '/store_cart';
 
   // Storage keys
   static const USER_ID = 'user_id';

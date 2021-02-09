@@ -21,7 +21,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                 expandedHeight: 280.0,
                 floating: true,
                 pinned: true,
-                backgroundColor: Colors.white,
+                backgroundColor: Color(Config.WHITE),
                 elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
@@ -41,7 +41,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                   child: Center(
                                     child: Container(
                                       width: Get.width,
-                                      child: _.data.call().restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                                      child: _.data.call().store.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().store.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                                         : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                                     //   child: CarouselSlider(
                                     //   options: CarouselOptions(
@@ -66,11 +66,8 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                 border: Border.all(width: 2),
                                 color: Colors.white
                               ),
-                              child: Hero(
-                                tag: _.data.call().id,
-                                child: ClipOval(
-                                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-                                ),
+                              child: ClipOval(
+                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                               )
                             ),
                           )
@@ -100,7 +97,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Text('Items:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                           Column(
-                            children: _.data.call().menus.map((e) => _buildMenu(e)).toList(),
+                            children: _.data.call().products.map((e) => _buildMenu(e)).toList(),
                           ),
                           _.data.call().fee.discountCode == null ? Container() :
                           Column(
@@ -125,14 +122,14 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.data.call().fee.subTotal.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${_.data.call().fee.subTotal}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.data.call().fee.delivery.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                    Text('₱ ${_.data.call().fee.delivery}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                   ],
                                 ),
                                 Row(
@@ -149,7 +146,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${(_.data.call().fee.total).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                      Text('₱ ${_.data.call().fee.customerTotalPrice}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                     ],
                                   ),
                                 )
@@ -284,9 +281,16 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             margin: EdgeInsets.only(top: 5, left: 20),
             child: Column(
               children: [
+                menu.additionals.isEmpty ? Container() :
                 Column(
-                  children: menu.additionals.map((e) => _buildAdditional(e, menu.quantity)).toList()
-                ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Adds-on:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                  Column(
+                    children: menu.additionals.map((e) => _buildAddsOn(e, menu.quantity)).toList(),
+                  )
+                ],
+              ),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Column(
                   children: menu.choices.map((e) => _buildChoice(e, menu.quantity)).toList(),
@@ -303,32 +307,20 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
     );
   }
 
-  Widget _buildAdditional(Additional additional, int quantity) {
-    return additional.picks.isNotEmpty ? Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('${additional.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-        Expanded(
-          child: Column(
-            children: additional.picks.map((e) => _buildAddsOn(e, quantity)).toList()
-          ),
-        ),
-      ],
-    ) : Container();
-  }
-
-  Widget _buildAddsOn(Pick pick, int quantity) {
+  Widget _buildAddsOn(Additional additional, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Container(
-            child: Text(pick.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+            child: Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.start),
+            ),
           ),
         ),
-        Text('₱ ' + double.parse('${(pick.price * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(additional.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }
@@ -347,7 +339,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             ],
           )
         ),
-        Text('₱ ' + double.parse('${(choice.price * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(choice.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }

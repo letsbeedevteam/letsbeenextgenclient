@@ -1,5 +1,5 @@
 import 'package:get/instance_manager.dart';
-import 'package:letsbeeclient/screens/menu/menu_controller.dart';
+import 'package:letsbeeclient/screens/food/menu/menu_controller.dart';
 
 class MenuBind extends Bindings {
 

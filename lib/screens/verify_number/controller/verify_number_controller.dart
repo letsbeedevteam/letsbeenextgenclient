@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 // import 'package:http/http.dart';
@@ -12,11 +13,13 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
   final ApiService _apiService = Get.find();
   final GetStorage _box = Get.find();
+  final keyboardVisibilityController = KeyboardVisibilityController();
 
   TabController tabController;
 
   var selectedIndex = 0.obs;
   var isLoading = false.obs;
+  var isKeyboardVisible = false.obs;
 
   var numberController = TextEditingController();
   var codeController = TextEditingController();
@@ -35,6 +38,10 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
         changeIndex(0);
       }
     } 
+
+    keyboardVisibilityController.onChange.listen((bool visible) {
+      isKeyboardVisible(visible);
+    });
 
     super.onInit();
   }

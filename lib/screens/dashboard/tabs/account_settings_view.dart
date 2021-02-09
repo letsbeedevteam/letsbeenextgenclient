@@ -36,7 +36,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
                       Container(height: 5),
                       Text('Using ${controller.box.read(Config.SOCIAL_LOGIN_TYPE)} account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black), textAlign: TextAlign.start),
                       Container(height: 5),
-                      Text('+63${controller.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
+                      Text('${controller.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(fontSize: 15), textAlign: TextAlign.start),
                       Container(height: 5),
                       Text(controller.userCurrentAddress.call(), style: TextStyle(fontSize: 15), textAlign: TextAlign.start)
                     ],

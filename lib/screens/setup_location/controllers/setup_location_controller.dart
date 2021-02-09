@@ -73,7 +73,7 @@ class SetupLocationController extends GetxController {
       barangayTFController.text = response.first.subLocality;
       cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
 
-      userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
+      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
 
       // box.write(Config.USER_CURRENT_STREET, response.first.featureName);
         box.write(Config.USER_CURRENT_STREET, streetTFController.text);
@@ -96,7 +96,7 @@ class SetupLocationController extends GetxController {
   }
 
   void goToDashboardPage() {
-    userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
+    userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
     box.write(Config.USER_CURRENT_STREET, streetTFController.text);
     box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
     box.write(Config.USER_CURRENT_CITY, cityTFController.text);

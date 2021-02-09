@@ -1,14 +1,16 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/addToCart.dart';
+import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/addToCartResponse.dart';
+import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
-import 'package:letsbeeclient/models/getCart.dart';
+import 'package:letsbeeclient/models/mart_dashboard_response.dart';
+// import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/newAddressRequest.dart';
 import 'package:letsbeeclient/models/newAddressResponse.dart';
 import 'package:letsbeeclient/models/numberResponse.dart';
@@ -18,6 +20,7 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
+import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetConnect {
@@ -90,19 +93,19 @@ class ApiService extends GetConnect {
     return restaurantFromJson(response.bodyString);
   }
 
-  Future<Menu> getMenuById({int restaurantId, int menuId}) async {
+  Future<Product> getProductById({int productId}) async {
 
     final response = await get(
-      '/restaurants/$restaurantId/menus/$menuId',
+      '/stores/products/$productId',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-    print('Menu by id: ${response.body}');
+    print('Product by id: ${response.body}');
 
     var json = response.body;
-    return Menu.fromJson(json['data']);
+    return Product.fromJson(json['data']);
   } 
 
   Future<AddToCartResponse> addToCart(AddToCart addToCart) async {
@@ -149,10 +152,10 @@ class ApiService extends GetConnect {
     return deleteCartResponseFromJson(response.bodyString);
   }
 
-  Future<GetCart> getActiveCarts({int restaurantId}) async {
+  Future<ActiveCartResponse> getActiveCarts({int storeId}) async {
 
     final response = await get(
-      '/carts?restaurant_id=$restaurantId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      '/carts?store_id=$storeId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
@@ -160,15 +163,15 @@ class ApiService extends GetConnect {
 
     print('Get carts: ${response.body}');
 
-    return getCartFromJson(response.bodyString);
+    return activeCartResponseFromJson(response.bodyString);
   }
 
-  Future<CreateOrderResponse> createOrder({int restaurantId, String paymentMethod}) async {
+  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod}) async {
 
     final response = await put(
       '/orders',
       {
-        'restaurant_id': restaurantId,
+        'store_id': storeId,
         'payment_method': paymentMethod,
         'location': {
           'lat': _box.read(Config.USER_CURRENT_LATITUDE),
@@ -293,5 +296,35 @@ class ApiService extends GetConnect {
     print('Get restaurant dashboard: ${response.body}');
 
     return restaurantDashboardFromJson(response.bodyString);
+  }
+
+  Future<MartDashboardResponse> getMartDashboard() async {
+
+    final response = await get(
+      '/stores/marts/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+  // 'Get restaurants: ${response.body}'.printWrapped();
+    print('Get mart dashboard: ${response.body}');
+
+    return martDashboardFromJson(response.bodyString);
+  }
+
+  Future<StoreResponse> fetchStoreById({int id}) async {
+
+    final response = await get(
+      '/stores/$id',
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+  // 'Get restaurants: ${response.body}'.printWrapped();
+    print('Get store: ${response.body}');
+
+    return storeResponseFromJson(response.bodyString);
   }
 }

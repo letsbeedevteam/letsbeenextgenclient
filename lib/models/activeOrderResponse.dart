@@ -31,7 +31,7 @@ class ActiveOrder {
 class ActiveOrderData {
     ActiveOrderData({
         this.menus,
-        this.activeRestaurant,
+        this.activeStore,
         this.rider,
         this.user,
         this.fee,
@@ -49,7 +49,7 @@ class ActiveOrderData {
     });
 
     List<ActiveOrderMenu> menus;
-    ActiveRestaurant activeRestaurant;
+    ActiveStore activeStore;
     Rider rider;
     User user;
     Fee fee;
@@ -66,8 +66,8 @@ class ActiveOrderData {
     DateTime updatedAt;
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
-        menus: json["menus"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["menus"].map((x) => ActiveOrderMenu.fromJson(x))),
-        activeRestaurant: ActiveRestaurant.fromJson(json["restaurant"]),
+        menus: json["products"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["products"].map((x) => ActiveOrderMenu.fromJson(x))),
+        activeStore: ActiveStore.fromJson(json["store"]),
         rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
         user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
         fee: Fee.fromJson(json["fee"]),
@@ -225,21 +225,21 @@ class Fee {
         this.delivery,
         this.discountCode,
         this.discountPrice,
-        this.total,
+        this.customerTotalPrice,
     });
 
     String subTotal;
     String delivery;
     String discountCode;
     String discountPrice;
-    String total;
+    String customerTotalPrice;
 
     factory Fee.fromJson(Map<String, dynamic> json) => Fee(
         subTotal: json["sub_total"].toString(),
         delivery: json["delivery"].toString(),
         discountCode: json["discount_code"] == null ? '' : json["discount_code"],
         discountPrice: json["discount_price"].toString(),
-        total: json["total"].toString(),
+        customerTotalPrice: json["customer_total_price"].toString(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -247,33 +247,36 @@ class Fee {
         "delivery": delivery,
         "discount_code": discountCode,
         "discount_price": discountPrice,
-        "total": total,
+        "customer_total_price": customerTotalPrice,
     };
 }
 
 class ActiveOrderMenu {
     ActiveOrderMenu({
-        this.menuId,
+        this.productId,
         this.name,
         this.price,
+        this.customerPrice,
         this.quantity,
         this.choices,
         this.additionals,
         this.note,
     });
 
-    int menuId;
+    int productId;
     String name;
     String price;
+    String customerPrice;
     int quantity;
     List<Choice> choices;
     List<Additional> additionals;
     String note;
 
     factory ActiveOrderMenu.fromJson(Map<String, dynamic> json) => ActiveOrderMenu(
-        menuId: json["menu_id"],
+        productId: json["product_id"],
         name: json["name"],
         price: json["price"].toString(),
+        customerPrice: json["customer_price"],
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
@@ -281,7 +284,7 @@ class ActiveOrderMenu {
     );
 
     Map<String, dynamic> toJson() => {
-        "menu_id": menuId,
+        "product_id": productId,
         "name": name,
         "price": price,
         "quantity": quantity,
@@ -293,21 +296,25 @@ class ActiveOrderMenu {
 
 class Additional {
     Additional({
-        this.name,
-        this.picks,
+      this.id,
+      this.name,
+      this.customerPrice,
     });
 
+    int id;
     String name;
-    List<Pick> picks;
+    String customerPrice;
 
     factory Additional.fromJson(Map<String, dynamic> json) => Additional(
-        name: json["name"],
-        picks: List<Pick>.from(json["picks"].map((x) => Pick.fromJson(x))),
+      id: json["id"],
+      name: json["name"],
+      customerPrice: json["customer_price"]
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
-        "picks": List<dynamic>.from(picks.map((x) => x.toJson())),
+      "id": id,
+      "name": name,
+      "customer_price": customerPrice,
     };
 }
 
@@ -338,23 +345,23 @@ class Pick {
 class Choice {
     Choice({
         this.name,
-        this.price,
+        this.customerPrice,
         this.pick,
     });
 
     String name;
-    String price;
+    String customerPrice;
     String pick;
 
     factory Choice.fromJson(Map<String, dynamic> json) => Choice(
         name: json["name"],
-        price: json["price"].toString(),
+        customerPrice: json["customer_price"],
         pick: json["pick"],
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
-        "price": price,
+        "customer_price": customerPrice,
         "pick": pick,
     };
 }
@@ -399,14 +406,15 @@ class Details {
     };
 }
 
-class ActiveRestaurant {
+class ActiveStore {
 
-  ActiveRestaurant({
+  ActiveStore({
     this.logoUrl,
     this.name,
     this.locationName,
     this.latitude,
-    this.longitude
+    this.longitude,
+    this.type
   });
 
   String logoUrl;
@@ -414,9 +422,11 @@ class ActiveRestaurant {
   String locationName;
   String latitude;
   String longitude;
+  String type;
 
-  factory ActiveRestaurant.fromJson(Map<String, dynamic> json) => ActiveRestaurant(
+  factory ActiveStore.fromJson(Map<String, dynamic> json) => ActiveStore(
     logoUrl: json["logo_url"] == null || json["logo_url"] == '' ? null : json["logo_url"],
+    type: json["type"],
     name: json["name"],
     locationName: json['location_name'] == '' || json['location_name'] == null ? '' : json['location_name'],
     latitude: json['latitude'],
@@ -425,6 +435,7 @@ class ActiveRestaurant {
 
   Map<String, dynamic> toJson() => {
     "name": name,
+    "type": type,
     "location_name": locationName,
     "latitude": latitude,
     "longitude": longitude

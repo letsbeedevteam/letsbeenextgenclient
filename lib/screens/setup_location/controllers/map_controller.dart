@@ -135,7 +135,7 @@ class MapController extends GetxController {
       barangayTFController.text = response.first.subLocality;
       cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
 
-      userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
+      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
 
       if (argument['type'] == Config.ADD_NEW_ADDRESS) {
         
@@ -234,7 +234,7 @@ class MapController extends GetxController {
       isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
-        userCurrentAddress('${response.data.street} ${response.data.barangay} ${response.data.city}'.trim());
+        userCurrentAddress('${response.data.street}, ${response.data.barangay}, ${response.data.city}'.trim());
         _box.write(Config.USER_CURRENT_STREET, response.data.street);
         _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
         _box.write(Config.USER_CURRENT_STATE, response.data.state);

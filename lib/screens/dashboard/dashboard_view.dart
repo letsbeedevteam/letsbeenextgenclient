@@ -83,7 +83,7 @@ class DashboardPage extends GetView<DashboardController> {
                   Container(
                     child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
                     width: Get.width, 
-                    color: Colors.white
+                    color: Color(Config.WHITE)
                   ),
                 ],
               ),
@@ -110,8 +110,8 @@ class DashboardPage extends GetView<DashboardController> {
               )
             ],
           ),
-          floatingActionButton: Badge(
-            badgeContent: _.activeOrders.call() == null ? null : Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+            badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             padding: EdgeInsets.all(10),
             showBadge: _.activeOrders.call() != null,
             child: FloatingActionButton(
@@ -186,7 +186,7 @@ class DashboardPage extends GetView<DashboardController> {
 
   Widget _topSheet(DashboardController _) {
     return SafeArea(
-      minimum: EdgeInsets.all(10),
+      minimum: EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
           Row(
@@ -209,7 +209,7 @@ class DashboardPage extends GetView<DashboardController> {
               ),
             ],
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
+          Container(height: 1, width: Get.width, color: Colors.grey.shade200),
           _.addresses.call() == null ? Container(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -218,7 +218,7 @@ class DashboardPage extends GetView<DashboardController> {
                 RaisedButton(
                   color: Color(Config.LETSBEE_COLOR),
                   child: Text('Refresh'),
-                  onPressed: () => _.refreshToken(),
+                  onPressed: () => _.refreshToken('Loading...'),
                 )
               ],
             ),
@@ -244,7 +244,7 @@ class DashboardPage extends GetView<DashboardController> {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street} ${data.barangay} ${data.city}';
+    final address = '${data.street}, ${data.barangay}, ${data.city}';
     return GestureDetector(
       child: Container(
         padding: EdgeInsets.all(10),
@@ -297,7 +297,7 @@ class DashboardPage extends GetView<DashboardController> {
                 color: Colors.white
             ),
             child: ClipOval(
-               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeRestaurant.logoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
             ),
            ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
@@ -305,9 +305,9 @@ class DashboardPage extends GetView<DashboardController> {
               child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  data.activeRestaurant.locationName.isBlank ? 
-                  Text("${data.activeRestaurant.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
-                  Text("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  data.activeStore.locationName.isBlank ? 
+                  Text("${data.activeStore.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
+                  Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                   _buildStatus(status: data.status),
                 ],
@@ -323,9 +323,9 @@ class DashboardPage extends GetView<DashboardController> {
     switch (status) {
       case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
       case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
@@ -335,7 +335,7 @@ class DashboardPage extends GetView<DashboardController> {
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      default: return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
     }
   }
 
