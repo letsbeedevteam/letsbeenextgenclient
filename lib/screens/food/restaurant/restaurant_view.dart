@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
-import 'package:letsbeeclient/screens/cart/cart_controller.dart';
-import 'package:letsbeeclient/screens/restaurant/restaurant_controller.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
+import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
 class RestaurantPage extends GetView<RestaurantController> {
@@ -36,8 +36,6 @@ class RestaurantPage extends GetView<RestaurantController> {
                         isScrollable: true,
                         indicatorSize: TabBarIndicatorSize.tab,
                         labelColor: Colors.black,
-                        indicatorPadding: EdgeInsets.zero,
-                        labelPadding: EdgeInsets.zero,
                         unselectedLabelColor: Colors.grey,
                         unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
                         labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
@@ -56,8 +54,6 @@ class RestaurantPage extends GetView<RestaurantController> {
                         tabs: _.restaurant.call().menuCategorized.map((element) {
                           return Tab(
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              margin: EdgeInsets.symmetric(horizontal: 10),
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(element.name.capitalizeFirst),
@@ -76,21 +72,8 @@ class RestaurantPage extends GetView<RestaurantController> {
                                 Container(
                                   height: 200,
                                   child: Center(
-                                    child: Hero(
-                                      tag: _.restaurant.call().name,
-                                      child: Container(
-                                        width: Get.width,
-                                        child: _.restaurant.call().photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.restaurant.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                                        : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
-                                      //   child: CarouselSlider(
-                                      //   options: CarouselOptions(
-                                      //     autoPlay: false,
-                                      //     disableCenter: true, 
-                                      //   ),
-                                      //   items: _.restaurant.call().sliders.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
-                                      // ),
-                                    ),
-                                  ),
+                                    child: _.restaurant.call().photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.restaurant.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                                    : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                                 ),
                               ),
                               Flexible(
@@ -143,38 +126,67 @@ class RestaurantPage extends GetView<RestaurantController> {
                   controller: _.tabController,
                   children: _.restaurant.call().menuCategorized.map((e) => _buildItem(e.menus, restaurantId: _.restaurant.call().id)).toList(),
                 ),
-                Container(
-                  margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                  child: SizedBox(
-                    width: Get.width,
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                      child: Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('VIEW YOUR CART', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                            ],
+                GetX<CartController>(
+                  builder: (_) {
+                    // return _.cart.call() == null ? Container() : Container(
+                    //   margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    //   child: SizedBox(
+                    //     width: Get.width,
+                    //     child: RaisedButton(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(20)
+                    //       ),
+                    //       color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    //       child: Stack(
+                    //         alignment: Alignment.centerRight,
+                    //         children: [
+                    //           Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               Text('VIEW YOUR CART', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                    //             ],
+                    //           ),
+                    //           Badge(
+                    //             badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    //             showBadge: CartController.to.cart.call() != null,
+                    //             padding: EdgeInsets.all(10),
+                    //           )
+                    //         ],
+                    //       ),
+                    //       onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id),
+                    //     ),
+                    //   ),
+                    // );
+                    return Container(
+                      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      child: SizedBox(
+                        width: Get.width,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)
                           ),
-                          GetX<CartController>(
-                            builder: (_) {
-                              return Badge(
+                          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                          child: Stack(
+                            alignment: Alignment.centerRight,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('VIEW YOUR CART', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+                                ],
+                              ),
+                              Badge(
                                 badgeContent: Text(_.cart.call() == null ? '' : _.cart.call().data.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                 showBadge: CartController.to.cart.call() != null,
                                 padding: EdgeInsets.all(10),
-                              );
-                            },
+                              )
+                            ],
                           ),
-                        ],
+                          onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id),
+                        ),
                       ),
-                      onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.restaurant.call().id),
-                    ),
-                  ),
+                    );
+                  },
                 )
               ],
             ),
@@ -218,11 +230,11 @@ class RestaurantPage extends GetView<RestaurantController> {
   Widget _buildAvailableMenu(Menu menu, {int restaurantId}) {
     return GestureDetector(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        padding: EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.only(bottom: 5),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: Colors.grey.shade300, width: 3)
+            bottom: BorderSide(color: Colors.grey.shade300, width: 2)
           )
         ),
         child: Row(
@@ -257,11 +269,7 @@ class RestaurantPage extends GetView<RestaurantController> {
             SizedBox(
               child: Hero(
                 tag: menu.name,
-                child: Container(
-                  width: 140,
-                  height: 150,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
-                ), 
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: menu.image, height: 120, width: 140, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))), 
               ),
             )
           ],

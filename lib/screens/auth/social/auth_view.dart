@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/screens/auth/controller/auth_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/screens/auth/social/controller/auth_controller.dart';
 
 class AuthPage extends StatelessWidget {
   @override

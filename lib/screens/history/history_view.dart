@@ -87,11 +87,8 @@ class HistoryPage extends GetView<HistoryController> {
                 border: Border.all(color: Colors.black, width: 1.5),
                 color: Colors.transparent
               ),
-              child: Hero(
-                tag: data.id,
-                child: ClipOval(
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-                ),
+              child: ClipOval(
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
               )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),

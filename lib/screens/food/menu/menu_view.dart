@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
-import 'package:letsbeeclient/screens/menu/menu_controller.dart';
+import 'package:letsbeeclient/screens/food/menu/menu_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
 class MenuPage extends GetView<MenuController> {

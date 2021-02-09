@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -29,14 +30,22 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
 
   final codeController = TextEditingController();
 
+  final keyboardVisibilityController = KeyboardVisibilityController();
+
   var selectedIndex = 0.obs;
   var isLoading = false.obs;
+  var isKeyboardVisible = false.obs;
   
   TabController tabController;
 
   @override
   void onInit() {
     tabController = TabController(length: 3, vsync: this);
+
+    keyboardVisibilityController.onChange.listen((bool visible) {
+      isKeyboardVisible(visible);
+    });
+
     super.onInit();
   }
 

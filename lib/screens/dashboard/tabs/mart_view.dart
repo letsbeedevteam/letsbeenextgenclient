@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
-class MartPage extends StatelessWidget {
+class MartPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
@@ -40,68 +41,71 @@ class MartPage extends StatelessWidget {
   }
 
   Widget _scrollView() {
-    return Scrollbar(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Column(
+    return GetBuilder<DashboardController>(
+      builder: (_) {
+        return SingleChildScrollView(
+          controller: _.martScrollController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                      child: Text('Recent Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildRecentMart(),
+                            _buildRecentMart(),
+                            _buildRecentMart(),
+                            _buildRecentMart()
+                          ],
+                        ),
+                      ),
+                    )
+                  ],  
+                ),
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                    child: Text('Recent Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
+                    margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
+                    child: Text('All Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _buildRecentMart(),
-                          _buildRecentMart(),
-                          _buildRecentMart(),
-                          _buildRecentMart()
+                          _buildMart(),
+                          _buildMart(),
+                          _buildMart(),
+                          _buildMart()
                         ],
                       ),
-                    ),
                   )
                 ],  
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 5),
-                  child: Text('All Supermarket', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
-                ),
-                Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildMart(),
-                        _buildMart(),
-                        _buildMart(),
-                        _buildMart()
-                      ],
-                    ),
-                )
-              ],  
-            )
-          ],
-        ),
-      ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildRecentMart() {
     return GestureDetector(
-      onTap: () => print('Clicked'),
+      onTap: () => Get.toNamed(Config.STORE_ROUTE),
       child: Container(
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(
@@ -139,7 +143,7 @@ class MartPage extends StatelessWidget {
 
   Widget _buildMart() {
     return GestureDetector(
-      onTap: () => print('Clicked'),
+      onTap: () => Get.toNamed(Config.STORE_ROUTE),
       child: Container(
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(

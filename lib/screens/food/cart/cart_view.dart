@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/_utils/extensions.dart';
+// import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/getCart.dart';
-import 'package:letsbeeclient/screens/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 
 class CartPage extends GetView<CartController> {
 
@@ -429,9 +429,14 @@ class CartPage extends GetView<CartController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: Center(child:  Text('SELECT PAYMENT METHOD', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),),
+              flex: 0,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Center(child:  Text('SELECT PAYMENT METHOD', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),),
+              ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
             Container(
@@ -465,116 +470,116 @@ class CartPage extends GetView<CartController> {
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: SizedBox(
-                      width: 300,
-                      child: Text('Reminder: For cancellation of online payment, it will take 5 to 7 days for refund.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 13, fontStyle: FontStyle.italic)),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                  Container(
-                    width: Get.width,
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                          ),
-                        ],
-                      ),
-                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                  Container(
-                    width: Get.width,
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                          ),
-                        ],
-                      ),
-                      // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'gcash'),
-                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                  Container(
-                    width: Get.width,
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: Image.asset(Config.PNG_PATH + 'paypal.png'),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                          ),
-                        ],
-                      ),
-                      // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'paypal'),
-                      onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                    ),
-                  ),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                ],
-              ),
-            )
+            // Container(
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       Padding(
+            //         padding: EdgeInsets.symmetric(horizontal: 10),
+            //         child: SizedBox(
+            //           width: 300,
+            //           child: Text('Reminder: For cancellation of online payment, it will take 5 to 7 days for refund.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 13, fontStyle: FontStyle.italic)),
+            //         ),
+            //       ),
+            //       Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  // Container(
+                  //   width: Get.width,
+                  //   padding: EdgeInsets.symmetric(horizontal: 30),
+                  //   child: RaisedButton(
+                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       // crossAxisAlignment: CrossAxisAlignment.center,
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Expanded(
+                  //           flex: 1,
+                  //           child: SizedBox(
+                  //             height: 30,
+                  //             width: 30,
+                  //             child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
+                  //           ),
+                  //         ),
+                  //         Expanded(
+                  //           flex: 2,
+                  //           child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
+                  //   ),
+                  // ),
+                  // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                  // Container(
+                  //   width: Get.width,
+                  //   padding: EdgeInsets.symmetric(horizontal: 30),
+                  //   child: RaisedButton(
+                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       // crossAxisAlignment: CrossAxisAlignment.center,
+                  //       children: [
+                  //         Expanded(
+                  //           flex: 1,
+                  //           child: SizedBox(
+                  //             height: 30,
+                  //             width: 30,
+                  //             child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue),
+                  //           ),
+                  //         ),
+                  //         Expanded(
+                  //           flex: 2,
+                  //           child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'gcash'),
+                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
+                  //   ),
+                  // ),
+                  // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                  // Container(
+                  //   width: Get.width,
+                  //   padding: EdgeInsets.symmetric(horizontal: 30),
+                  //   child: RaisedButton(
+                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       // crossAxisAlignment: CrossAxisAlignment.center,
+                  //       children: [
+                  //         Expanded(
+                  //           flex: 1,
+                  //           child: SizedBox(
+                  //             height: 30,
+                  //             width: 30,
+                  //             child: Image.asset(Config.PNG_PATH + 'paypal.png'),
+                  //           ),
+                  //         ),
+                  //         Expanded(
+                  //           flex: 2,
+                  //           child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'paypal'),
+                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
+                  //   ),
+                  // ),
+                  // Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            //     ],
+            //   ),
+            // )
           ],
         )
       ),

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/screens/auth/controller/auth_contract.dart';
+import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 

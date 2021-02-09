@@ -37,6 +37,7 @@ class CartController extends GetxController {
 
   @override
   void onInit() {
+    cart.nil();
     refreshCompleter = Completer();
 
     // fetchActiveCarts(getRestaurantId: 1);
@@ -179,7 +180,7 @@ class CartController extends GetxController {
   }
 
   saveConfirmLocation() {
-    final address = '${streetTFController.text} ${cityTFController.text} ${barangayTFController.text}';
+    final address = '${streetTFController.text}, ${cityTFController.text}, ${barangayTFController.text}';
     box.write(Config.USER_CURRENT_STREET, streetTFController.text);
     box.write(Config.USER_CURRENT_CITY, cityTFController.text);
     box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);

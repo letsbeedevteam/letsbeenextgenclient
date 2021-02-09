@@ -46,8 +46,12 @@ dependencies:
   # Permission
   permission_handler: ^5.0.1+1
 
+  # Keyboard visibility
+  flutter_keyboard_visibility: ^4.0.3
+
   # Locations
-  google_maps_flutter: ^1.0.6
+  google_maps_flutter: ^1.1.1
+
   # geocoder: ^0.2.1
   geocoding: ^1.0.5
   location: ^3.0.2
