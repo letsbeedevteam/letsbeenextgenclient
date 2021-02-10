@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signInResponse.dart';
+// import 'package:letsbeeclient/models/social.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_presenter.dart';
 
@@ -49,20 +50,9 @@ class AuthController extends GetxController implements AuthViewContract {
   }
 
   @override
-  void onSocialSignInSuccess(String social, SocialData data) {
-      _box.write(Config.SOCIAL_LOGIN_TYPE, social);
-      _box.write(Config.IS_LOGGED_IN, true);
-      _box.write(Config.USER_ID, data.id);
-      _box.write(Config.USER_NAME, data.name);
-      _box.write(Config.USER_EMAIL, data.email);
-      _box.write(Config.USER_TOKEN, data.accessToken);
-
-      if (data.cellphoneNumber == null) {
-        Get.offAllNamed(Config.VERIFY_NUMBER_ROUTE);
-      } else {
-        _box.write(Config.USER_MOBILE_NUMBER, data.cellphoneNumber);
-        Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
-      }
+  void onSocialSignInSuccess(String social, SignInData data) {
+    _box.write(Config.SOCIAL_LOGIN_TYPE, social);
+    Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
   }
 
   @override

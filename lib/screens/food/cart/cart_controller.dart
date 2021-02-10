@@ -19,6 +19,7 @@ class CartController extends GetxController {
 
   var message = ''.obs;
   var totalPrice = 0.0.obs;
+  var subTotal = 0.0.obs;
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
   var isEdit = false.obs;
@@ -74,7 +75,8 @@ class CartController extends GetxController {
           this.message('No list of carts');
           this.isEdit(false);
         } else {
-          totalPrice(response.data.map((e) => double.tryParse(e.totalPrice.toString())).reduce((value, element) => value + element).roundToDouble());
+          totalPrice(response.data.map((e) => double.tryParse(e.customerTotalPrice.toString()) + response.deliveryFee).reduce((value, element) => value + element).roundToDouble());
+          subTotal(response.data.map((e) => double.tryParse(e.totalPrice.toString())).reduce((value, element) => value + element).roundToDouble());
           response.data.sort((b, a) => a.createdAt.compareTo(b.createdAt));
           this.cart(response);
         }

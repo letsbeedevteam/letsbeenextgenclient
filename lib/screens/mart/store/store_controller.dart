@@ -18,6 +18,7 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
 
   var store = StoreResponse().obs;
 
+  var readOnly = false.obs;
   var hasError = false.obs;
   var message = ''.obs;
   var isAddToCartLoading = false.obs;

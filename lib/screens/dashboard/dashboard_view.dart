@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -16,140 +17,146 @@ class DashboardPage extends GetView<DashboardController> {
     return GetX<DashboardController>(
       builder: (_) {
         final currentIndex = _.pageIndex.call();
-        return Scaffold(
-          resizeToAvoidBottomPadding: false,
-          body: Column(
-            children: [
-              Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                    AnimatedContainer(
-                    height: _.isHideAppBar.call() ? 0 : Get.height / 10,
-                    duration: Duration(seconds: 2),
-                    curve: Curves.fastLinearToSlowEaseIn,
-                    child: AppBar(
-                      elevation: 0,
-                      backgroundColor: Color(Config.WHITE),
-                      titleSpacing: 0.0,
-                      centerTitle: false,
-                      // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
-                      title: Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                                GestureDetector(
-                                  onTap: () => _.showLocationSheet(true),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    height: 20,
-                                    alignment: Alignment.centerLeft,
-                                    decoration: BoxDecoration(
-                                      color: Color(Config.LETSBEE_COLOR),
-                                      borderRadius: BorderRadius.circular(25)
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                                        Icon(Icons.keyboard_arrow_down, size: 20,)
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                            Row(
-                              children: [
-                                Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15),
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 13, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      // actions: [
-                      //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
-                      // ],
-                    ),
-                  ),
-                  Container(
-                    child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
-                    width: Get.width, 
-                    color: Color(Config.WHITE)
-                  ),
-                ],
-              ),
-              Flexible(
-                child: Column(
+        return GestureDetector(
+          onTap: () => dismissKeyboard(Get.context),
+          child: Scaffold(
+            resizeToAvoidBottomPadding: false,
+            body: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.topCenter,
                   children: [
-                    Container(
-                      margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(bottom: 10),
-                      child: _.isHideAppBar.call() ? Container() : Divider(),
-                    ),
-                    Expanded(
-                      child: PageView(
-                        physics: NeverScrollableScrollPhysics(),
-                        controller: _.pageController,
-                        onPageChanged: (index) {
-                          _.pageIndex(index);
-                          _.showLocationSheet(false);
-                        },
-                        children: _.widgets,
+                      AnimatedContainer(
+                      height: _.isHideAppBar.call() ? 0 : Get.height / 8.5,
+                      duration: Duration(seconds: 2),
+                      curve: Curves.fastLinearToSlowEaseIn,
+                      child: AppBar(
+                        elevation: 0,
+                        backgroundColor: Color(Config.WHITE),
+                        titleSpacing: 0.0,
+                        centerTitle: false,
+                        // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
+                        title: Padding(
+                          padding: EdgeInsets.only(left: 15, right: 15),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                              Row(
+                                children: [
+                                  Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                                  GestureDetector(
+                                    onTap: () => _.showLocationSheet(true),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      height: 20,
+                                      alignment: Alignment.centerLeft,
+                                      decoration: BoxDecoration(
+                                        color: Color(Config.LETSBEE_COLOR),
+                                        borderRadius: BorderRadius.circular(25)
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
+                                          Icon(Icons.keyboard_arrow_down, size: 20,)
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                              Row(
+                                children: [
+                                  Image.asset(Config.PNG_PATH + 'address.png', height: 18, width: 18),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                  Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
+                                ],
+                              ),
+                              // Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                            ],
+                          ),
+                        ),
+                        // actions: [
+                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                        // ],
                       ),
+                    ),
+                    Container(
+                      child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
+                      width: Get.width, 
+                      color: Color(Config.WHITE)
                     ),
                   ],
                 ),
-              )
-            ],
-          ),
-          floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
-            badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            padding: EdgeInsets.all(10),
-            showBadge: _.activeOrders.call() != null,
-            child: FloatingActionButton(
-              splashColor: Colors.transparent,
-              backgroundColor: Color(Config.LETSBEE_COLOR),
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: Colors.black),
-                borderRadius: BorderRadius.circular(30)
-              ),
-              onPressed: () {
-                _.fetchActiveOrders();
-                _activeOrderDialog();
-              },
-              child: Icon(Icons.restaurant_sharp),
-            ),
-          ),
-          bottomNavigationBar: Theme(
-            data: Get.theme.copyWith(
-              splashColor: Colors.transparent
-            ),
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: currentIndex,
-              selectedFontSize: 10.0,
-              unselectedFontSize: 10.0,
-              iconSize: 25,
-              onTap: (value) =>  _.tapped(value),
-              items: [
-                customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
-                // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
-                customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
-                // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-                // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-                // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-                customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+                Flexible(
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(bottom: 10),
+                        child: _.isHideAppBar.call() ? Container() : Divider(),
+                      ),
+                      Expanded(
+                        child: PageView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _.pageController,
+                          onPageChanged: (index) {
+                            _.pageIndex(index);
+                            _.showLocationSheet(false);
+                          },
+                          children: _.widgets,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
+            floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+              badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              padding: EdgeInsets.all(10),
+              showBadge: _.activeOrders.call() != null,
+              child: FloatingActionButton(
+                splashColor: Colors.transparent,
+                backgroundColor: Color(Config.LETSBEE_COLOR),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(30)
+                ),
+                onPressed: () {
+                  _.fetchActiveOrders();
+                  _activeOrderDialog();
+                },
+                child: Icon(Icons.restaurant_sharp),
+              ),
+            ),
+            bottomNavigationBar: Theme(
+              data: Get.theme.copyWith(
+                splashColor: Colors.transparent
+              ),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                currentIndex: currentIndex,
+                selectedFontSize: 10.0,
+                unselectedFontSize: 10.0,
+                iconSize: 25,
+                onTap: (value) =>  _.tapped(value),
+                items: [
+                  customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
+                  // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
+                  customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
+                  // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
+                  // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
+                  // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
+                  customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+                ],
+              ),
+            )
+          ),
         );
       },
     );
@@ -350,7 +357,7 @@ class DashboardPage extends GetView<DashboardController> {
         child: GetX<DashboardController>(
           builder: (_) {
             return Container(
-              height: _.activeOrders.call() == null ? 100 : 350,
+              height: _.activeOrders.call() == null ? 100 : 380,
               child: _.activeOrders.call() == null ? Container(
                 child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
               ) : Scrollbar(

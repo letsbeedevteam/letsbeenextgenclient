@@ -27,6 +27,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   var listOfProcucts = RxList<Product>().obs;
 
+  var readOnly = false.obs;
   var productName = ''.obs;
   
   @override

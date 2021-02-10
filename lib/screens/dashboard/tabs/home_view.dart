@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                            CupertinoActivityIndicator(radius: 20),
+                            _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
                             Text(_.message.call()),
                             _.hasRestaurantError.call() ? RaisedButton(
                               color: Color(Config.LETSBEE_COLOR),
@@ -160,10 +160,20 @@ class HomePage extends StatelessWidget {
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             _.searchRestaurants.call().isNotEmpty ? 
-            Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()) : Container(
-                height: 250,
-                alignment: Alignment.topCenter,
-                child: Text(_.message.call(), style: TextStyle(fontSize: 18)),
+            Column(children: _.searchRestaurants.call().map((e) => _buildRestaurantItem(e)).toList()) : Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                  Text(_.message.call()),
+                  _.hasMartError.call() ? RaisedButton(
+                    color: Color(Config.LETSBEE_COLOR),
+                    child: Text('Refresh'),
+                    onPressed: () => _.refreshToken('Loading Restaurants...'),
+                  ) : Container() 
+                ],
+              ),
             )
           ],
         )

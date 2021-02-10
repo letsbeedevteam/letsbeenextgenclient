@@ -135,7 +135,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                          Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                          Text('₱ ${(_.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                         ],
                       ),
                       Row(
@@ -152,7 +152,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                            Text('₱ ${(_.cart.call().deliveryFee + _.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                            Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                           ],
                         ),
                       )
@@ -794,7 +794,15 @@ class StoreCartPage extends GetView<StoreCartController> {
         ),
         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
         child: Text('Back', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-        onPressed: () => Get.back(),
+        onPressed: () {
+          if (Get.isSnackbarOpen) {
+            Get.back();
+            Future.delayed(Duration(milliseconds: 500));
+            Get.back();
+          } else {
+            Get.back();
+          }
+        },
       ),
     );
   }
