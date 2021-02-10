@@ -88,7 +88,7 @@ class MapPage extends GetView<MapController> {
                           ],
                         ),
                       ),
-                      _.isMapLoading.call() ? Container(color: Colors.white, child: Center(child: Text('Loading google map...'))) : Container(),
+                      _.isMapLoading.call() ? Container(color: Color(Config.WHITE), child: Center(child: Text('Loading google map...'))) : Container(),
                     ],
                   ),
                 );
@@ -110,7 +110,7 @@ class MapPage extends GetView<MapController> {
                   child: GetBuilder<MapController>(
                     builder: (_) {
                       return RaisedButton(
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Padding(
                           padding: EdgeInsets.all(13),
                           child: Text('SAVE LOCATION'),
@@ -173,7 +173,7 @@ class MapPage extends GetView<MapController> {
   //     cancel: GetBuilder<MapController>(
   //       builder: (_) {
   //         return RaisedButton(
-  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           color: Color(Config.LETSBEE_COLOR),
   //           shape: RoundedRectangleBorder(
   //             borderRadius: BorderRadius.circular(5),
   //           ),
@@ -195,7 +195,7 @@ class MapPage extends GetView<MapController> {
   //     confirm: GetX<MapController>(
   //       builder: (_) {
   //         return RaisedButton(
-  //           color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+  //           color: Color(Config.LETSBEE_COLOR),
   //           shape: RoundedRectangleBorder(
   //             borderRadius: BorderRadius.circular(5),
   //           ),
@@ -230,7 +230,7 @@ class MapPage extends GetView<MapController> {
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: Colors.white
+                  color: Color(Config.WHITE)
                 ),
                 padding: EdgeInsets.all(20),
                 margin: EdgeInsets.symmetric(horizontal: 20),
@@ -328,12 +328,6 @@ class MapPage extends GetView<MapController> {
                             ),
                             contentPadding: EdgeInsets.symmetric(horizontal: 15)
                           ),
-                          onEditingComplete: () {
-                            if (_.argument['type'] == Config.ADD_NEW_ADDRESS) {
-                              controller.nameTF.selection = TextSelection.fromPosition(TextPosition(offset: controller.nameTF.text.length));
-                              controller.nameNode.requestFocus();
-                            }
-                          },
                         ),
                       ),
                       _.argument['type'] != Config.ADD_NEW_ADDRESS ? 

@@ -48,9 +48,9 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         children: [
                           Container(
                             alignment: Alignment.center,
-                            child: _.activeOrderData.call().activeRestaurant.locationName.isBlank ? 
-                            Text("${_.activeOrderData.call().activeRestaurant.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : 
-                            Text("${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            child: _.activeOrderData.call().activeStore.locationName.isBlank ? 
+                            Text("${_.activeOrderData.call().activeStore.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : 
+                            Text("${_.activeOrderData.call().activeStore.name} (${_.activeOrderData.call().activeStore.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                           ),
                           Container(
                             child: Column(
@@ -93,7 +93,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                            Text('₱ ${(double.parse(_.activeOrderData.call().fee.total + _.activeOrderData.call().fee.delivery)).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                                            Text('₱ ${(double.tryParse(_.activeOrderData.call().fee.customerTotalPrice)).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                                           ],
                                         ),
                                       )
@@ -217,7 +217,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                   margin: EdgeInsets.only(top: 5),
                                   child: Divider(thickness: 2, color: Colors.grey.shade200),
                                 ),
-                                _.activeOrderData.call().status != 'pending' ? Container() : Container(
+                                (_.activeOrderData.call().status != 'pending' && _.activeOrderData.call().activeStore.type != 'mart') || (_.activeOrderData.call().status != 'store-accepted' && _.activeOrderData.call().activeStore.type == 'mart') ? Container() : Container(
                                   alignment: Alignment.center,
                                   margin: EdgeInsets.all(10),
                                   child: RaisedButton(
@@ -266,8 +266,15 @@ class OnGoingDetailPage extends GetView<DashboardController> {
           margin: EdgeInsets.only(top: 5, left: 20),
           child: Column(
             children: [
+              menu.additionals.isEmpty ? Container() :
               Column(
-                children: menu.additionals.map((e) => _buildAdditional(e, menu.quantity)).toList()
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Adds-on:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                  Column(
+                    children: menu.additionals.map((e) => _buildAddsOn(e, menu.quantity)).toList(),
+                  ),
+                ],
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               Column(
@@ -326,9 +333,9 @@ class OnGoingDetailPage extends GetView<DashboardController> {
     switch (controller.activeOrderData.call().status) {
       case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: controller.activeOrderData.call().activeStore.type == 'mart' ? Colors.orange : Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'store-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-accepted': return Text('Driver is on the way to pick up your order...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
@@ -338,24 +345,24 @@ class OnGoingDetailPage extends GetView<DashboardController> {
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      default: return Text('Waiting for restaurant...', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
     }
   }
 
-  Widget _buildAdditional(Additional additional, int quantity) {
-    return additional.picks.isNotEmpty ? Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('${additional.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-        Expanded(
-          child: Column(
-            children: additional.picks.map((e) => _buildAddsOn(e, quantity)).toList()
-          ),
-        ),
-      ],
-    ) : Container();
-  }
+  // Widget _buildAdditional(Additional additional, int quantity) {
+  //   return additional.picks.isNotEmpty ? Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text('${additional.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+  //       Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+  //       Expanded(
+  //         child: Column(
+  //           children: additional.picks.map((e) =>cc).toList()
+  //         ),
+  //       ),
+  //     ],
+  //   ) : Container();
+  // }
 
   Widget _buildChoice(Choice choice, int quantity) {
     return Row(
@@ -371,22 +378,25 @@ class OnGoingDetailPage extends GetView<DashboardController> {
             ],
           )
         ),
-        Text('₱ ' + double.parse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(choice.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }
 
-  Widget _buildAddsOn(Pick pick, int quantity) {
+  Widget _buildAddsOn(Additional additional, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Container(
-            child: Text(pick.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+            child: Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.start),
+            ),
           ),
         ),
-        Text('₱ ' + double.parse('${(double.tryParse(pick.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱ ' + double.parse('${(double.tryParse(additional.customerPrice) * quantity)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
       ],
     );
   }
@@ -412,9 +422,9 @@ class OnGoingDetailPage extends GetView<DashboardController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                controller.activeOrderData.call().activeRestaurant.locationName.isBlank ? 
-                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name}?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center) : 
-                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeRestaurant.name} (${controller.activeOrderData.call().activeRestaurant.locationName})?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                controller.activeOrderData.call().activeStore.locationName.isBlank ? 
+                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeStore.name}?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center) : 
+                Text("Do you really want to cancel your order at ${controller.activeOrderData.call().activeStore.name} (${controller.activeOrderData.call().activeStore.locationName})?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                 Padding(padding: EdgeInsets.all(10)),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 15),
@@ -425,7 +435,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Text('NO'),
                         onPressed: () => Get.back(),
                       ),
@@ -433,7 +443,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
                         ),
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         child: Text('YES'),
                         onPressed: () => controller.cancelOrderById(),
                       )

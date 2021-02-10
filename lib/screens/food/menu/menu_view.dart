@@ -24,7 +24,7 @@ class MenuPage extends GetView<MenuController> {
                     floating: true,
                     pinned: true,
                     forceElevated: innerBoxIsScrolled,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Color(Config.WHITE),
                     elevation: 0,
                     flexibleSpace: FlexibleSpaceBar(
                       background: _.menu.call() != null ? Column(
@@ -181,7 +181,7 @@ class MenuPage extends GetView<MenuController> {
                           margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                           width: Get.width,
                           child: RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            color: Color(Config.LETSBEE_COLOR),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -220,7 +220,7 @@ class MenuPage extends GetView<MenuController> {
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                        color: Color(Config.LETSBEE_COLOR),
                         borderRadius: BorderRadius.circular(20)
                       ),
                       child: Text('Required', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/addToCart.dart';
+import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
-import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+// import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -55,14 +55,14 @@ class MenuController extends GetxController {
 
   @override
     void onClose() {
-      DashboardController.to.fetchRestaurants();
+      // DashboardController.to.fetchRestaurants();
       super.onClose();
     }
 
-  void _setRefreshCompleter() {
-    refreshCompleter?.complete();
-    refreshCompleter = Completer();
-  }
+  // void _setRefreshCompleter() {
+  //   refreshCompleter?.complete();
+  //   refreshCompleter = Completer();
+  // }
 
   void increment() {
     countQuantity.value++;
@@ -101,68 +101,68 @@ class MenuController extends GetxController {
 
   addToCart() {
     
-    isAddToCartLoading(true);
-    choiceIds.clear();
-    additionalIds.clear();
+    // isAddToCartLoading(true);
+    // choiceIds.clear();
+    // additionalIds.clear();
 
-    if (menu.value.choices.isEmpty) {
-      hasChoices(false);
-    } else {
-      hasChoices(true);
-      menu.value.choices.forEach((choice) {
-        choice.options.forEach((element) {
-          if (element.name == element.selectedValue) {
-            choiceIds.add(
-              ChoiceCart(
-                id: choice.id,
-                optionId: element.name == element.selectedValue ? element.id : null
-              )
-            );
-          }
-        });
-      });
-    }
+    // if (menu.value.choices.isEmpty) {
+    //   hasChoices(false);
+    // } else {
+    //   hasChoices(true);
+    //   menu.value.choices.forEach((choice) {
+    //     choice.options.forEach((element) {
+    //       if (element.name == element.selectedValue) {
+    //         choiceIds.add(
+    //           ChoiceCart(
+    //             id: choice.id,
+    //             optionId: element.name == element.selectedValue ? element.id : null
+    //           )
+    //         );
+    //       }
+    //     });
+    //   });
+    // }
 
-    menu.value.additionals.forEach((additional) {
-      additionalIds.add(
-        AdditionalCart(
-          id: additional.id,
-          optionIds: additional.options.where((element) => element.selectedValue).map((e) => e.id).toList()
-        )
-      );
-    });
+    // menu.value.additionals.forEach((additional) {
+    //   additionalIds.add(
+    //     AdditionalCart(
+    //       id: additional.id,
+    //       optionIds: additional.options.where((element) => element.selectedValue).map((e) => e.id).toList()
+    //     )
+    //   );
+    // });
 
-    var addToCart = AddToCart(
-      restaurantId: restaurantId.call(),
-      menuId: menu.call().id,
-      choices: choiceIds,
-      additionals: additionalIds.toList(),
-      quantity: countQuantity.call(),
-      note: tFRequestController.text
-    );
+    // var addToCart = AddToCart(
+    //   restaurantId: restaurantId.call(),
+    //   menuId: menu.call().id,
+    //   choices: choiceIds,
+    //   additionals: additionalIds.toList(),
+    //   quantity: countQuantity.call(),
+    //   note: tFRequestController.text
+    // );
 
-    if (argument['type'] == 'edit') {
-      updateCartRequest(addToCart);
-    } else {
+    // if (argument['type'] == 'edit') {
+    //   updateCartRequest(addToCart);
+    // } else {
 
-      if(!hasChoices.call()) {
-        sendCartRequest(addToCart);
-      } else {
-        if (choiceIds.isNotEmpty) {
-          sendCartRequest(addToCart);
-        } else {
-          isAddToCartLoading(false);
-          errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
-        }
-      }
-    }
+    //   if(!hasChoices.call()) {
+    //     sendCartRequest(addToCart);
+    //   } else {
+    //     if (choiceIds.isNotEmpty) {
+    //       sendCartRequest(addToCart);
+    //     } else {
+    //       isAddToCartLoading(false);
+    //       errorSnackbarTop(title: 'Oops!', message: 'Please select your required choices');
+    //     }
+    //   }
+    // }
   }
 
   updateCartRequest(AddToCart addToCart) {
      apiService.updateCart(addToCart, cart.value.id).then((response) {
     
       if (response.status == 200) {
-        CartController.to..cart.nil()..fetchActiveCarts(getRestaurantId: argument['restaurant_id']);
+        // CartController.to..cart.nil()..fetchActiveCarts(getRestaurantId: argument['restaurant_id']);
         successSnackBarTop(title: 'Updated Cart!', message: '${response.message} Please wait...', status: (status) => status == SnackbarStatus.CLOSED ? Get.back() : null);
         isAddToCartLoading(true);
       } else {
@@ -197,12 +197,12 @@ class MenuController extends GetxController {
         //   });
         // }
 
-        CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
-          Future.delayed(Duration(seconds: 1)).then((data) {
-            Get.back();
-            isAddToCartLoading(true);
-          });
-        });
+        // CartController.to.fetchActiveCarts(getRestaurantId: restaurantId.call(), callback: ()  {
+        //   Future.delayed(Duration(seconds: 1)).then((data) {
+        //     Get.back();
+        //     isAddToCartLoading(true);
+        //   });
+        // });
 
       } else {
         if (response.code == 3005) {
@@ -224,39 +224,39 @@ class MenuController extends GetxController {
 
   fetchMenuById() {
 
-    isLoading(true);
+    // isLoading(true);
    
-    apiService.getMenuById(restaurantId: argument['restaurant_id'], menuId: argument['restaurant_menu_id']).then((restaurant) {
-      isLoading(false);
-      _setRefreshCompleter();
+    // apiService.getMenuById(restaurantId: argument['restaurant_id'], menuId: argument['restaurant_menu_id']).then((restaurant) {
+    //   isLoading(false);
+    //   _setRefreshCompleter();
 
-      menu(restaurant);
+    //   menu(restaurant);
 
-      for (var item in cart.value.additionals) {
-        print(item.name);
-        menu.value.additionals.map((e) => e.options).forEach((element) {
-            var name = item.picks.map((e) => e.name);
-            name.forEach((additional) {
-              element.where((element) => element.name.contains(additional)).forEach((element) {
-                element.selectedValue = true;
-              });
-            });
-        });
-      }
+    //   for (var item in cart.value.additionals) {
+    //     print(item.name);
+    //     menu.value.additionals.map((e) => e.options).forEach((element) {
+    //         var name = item.picks.map((e) => e.name);
+    //         name.forEach((additional) {
+    //           element.where((element) => element.name.contains(additional)).forEach((element) {
+    //             element.selectedValue = true;
+    //           });
+    //         });
+    //     });
+    //   }
 
-      for (var item in cart.value.choices) {
-        menu.value.choices.map((e) => e.options).forEach((element) {
-          element.where((element) => item.pick.contains(element.name)).forEach((element) {
-            element.selectedValue = item.pick;
-          });
-        });
-      }
+    //   for (var item in cart.value.choices) {
+    //     menu.value.choices.map((e) => e.options).forEach((element) {
+    //       element.where((element) => item.pick.contains(element.name)).forEach((element) {
+    //         element.selectedValue = item.pick;
+    //       });
+    //     });
+    //   }
               
-    }).catchError((onError) {
-        isLoading(false);
-        _setRefreshCompleter();
-        if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
-        print('Error fetch restaurant: $onError');
-    });
+    // }).catchError((onError) {
+    //     isLoading(false);
+    //     _setRefreshCompleter();
+    //     if (onError.toString().contains('Connection failed')) message.value = Config.NO_INTERNET_CONNECTION; else message.value = Config.SOMETHING_WENT_WRONG;
+    //     print('Error fetch restaurant: $onError');
+    // });
   }
 }

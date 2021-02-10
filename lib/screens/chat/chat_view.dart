@@ -63,7 +63,7 @@ class ChatPage extends GetView<ChatController> {
                       children: [
                         Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
                         RaisedButton(
-                          color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                          color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
                           onPressed: () => _.fetchOrderChats(),
                         )

@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/active_cart_response.dart';
-// import 'package:letsbeeclient/_utils/extensions.dart';
-// import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
-import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
+import 'package:letsbeeclient/screens/mart/store_cart/store_cart_controller.dart';
+import 'package:loading_gifs/loading_gifs.dart';
 
-class CartPage extends GetView<CartController> {
+class StoreCartPage extends GetView<StoreCartController> {
 
   @override
   Widget build(BuildContext context) {
@@ -17,32 +15,30 @@ class CartPage extends GetView<CartController> {
       onWillPop: controller.onWillPopBack,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
           elevation: 0,
-          titleSpacing: 0.0,
-          centerTitle: false,
+          backgroundColor: Colors.transparent,
           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () {
             controller.isEdit(false);
             Get.back(closeOverlays: true);
           }),
           title: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
-              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-              GetX<DashboardController>(
-                builder: (_) {
-                  return Container(
-                    margin: EdgeInsets.only(right: 5),
-                    child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                  );
-                },
-              )
-            ],
-          )
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('DELIVER TO: ', style: TextStyle(fontSize: 13)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+            GetX<DashboardController>(
+              builder: (_) {
+                return Container(
+                  margin: EdgeInsets.only(right: 5),
+                  child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                );
+              },
+            )
+          ],
+        )
         ),
-        body: GetX<CartController>(
+        body: GetX<StoreCartController>(
           initState: controller.fetchActiveCarts(storeId: controller.storeId.call()),
           builder: (_) {
             return RefreshIndicator(
@@ -50,173 +46,171 @@ class CartPage extends GetView<CartController> {
                 controller.fetchActiveCarts(storeId: controller.storeId.call());
                 return _.refreshCompleter.future;
               },
-              child: SingleChildScrollView(
-                physics: _.cart.call() == null ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: _.cart.call() != null ? 
-                  Column(
+              child: _.cart.call() == null ? Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Items:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                            IgnorePointer(
-                              ignoring: _.isLoading.call(),
-                              child: SizedBox(
-                                height: 30,
-                                child: RaisedButton(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  color: Color(Config.LETSBEE_COLOR),
-                                  child: _.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                  onPressed: controller.setEdit,
-                                )
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedContainer(
-                              duration: Duration(milliseconds: 500),
-                              height: _.isEdit.call() ? 0 : 100,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(child: Text('Want to use Promo code?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),),
-                                  Expanded(
-                                    child: Center(
-                                      child: RaisedButton(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        color: Color(Config.LETSBEE_COLOR),
-                                        child: Text('Use', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                        onPressed: () => _.isEdit.call() ? null : print('Promo code')
-                                      )
-                                    )
-                                  ),
-                                  Expanded(child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.transparent : Colors.grey.shade200))
-                                ],
-                              ),
-                            ),
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.cart.call().deliveryFee.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Container(
-                                  alignment: Alignment.bottomCenter,
-                                  height: 50,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${(_.cart.call().deliveryFee + _.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 5),
-                              child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
-                            ),
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Name: ${_.box.read(Config.USER_NAME)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-                                        Text('Contact #: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            IgnorePointer(
-                              ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
-                              child: Container(
-                                width: Get.width,
-                                child: RaisedButton(
-                                  color: Color(Config.LETSBEE_COLOR),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text(_.isEdit.call() ? 'Done' : 'PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                  ),
-                                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.cart.call().data.first.storeId)
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                      Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
+                      RaisedButton(
+                        color: Color(Config.LETSBEE_COLOR),
+                        child: Text('Refresh'),
+                        onPressed: () => _.fetchActiveCarts(storeId: _.storeId.call()),
                       )
                     ],
-                  ) : Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
-                          RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR),
-                            child: Text('Refresh'),
-                            onPressed: () => _.fetchActiveCarts(storeId: _.storeId.call()),
-                          )
-                        ],
-                      )
-                    )
                   )
                 )
-              ),
+              ) : _scrollView(_)
             );
-          }
+          },
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(ActiveCartData cart, CartController _) {
+  Widget _scrollView(StoreCartController _) {
+    return SingleChildScrollView(
+      physics: _.cart.call() == null ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Items:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                  IgnorePointer(
+                    ignoring: _.isLoading.call(),
+                    child: SizedBox(
+                      height: 30,
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        color: Color(Config.LETSBEE_COLOR),
+                        child: _.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                        onPressed: controller.setEdit,
+                      )
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 500),
+                    height: _.isEdit.call() ? 0 : 100,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: Text('Want to use Promo code?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),),
+                        Expanded(
+                          child: Center(
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              color: Color(Config.LETSBEE_COLOR),
+                              child: Text('Use', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                              onPressed: () => _.isEdit.call() ? null : print('Promo code')
+                            )
+                          )
+                        ),
+                        Expanded(child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.transparent : Colors.grey.shade200))
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text('₱ ${_.cart.call().deliveryFee.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                        ],
+                      ),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                            Text('₱ ${(_.cart.call().deliveryFee + _.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
+                  ),
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Name: ${_.box.read(Config.USER_NAME)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('Contact #: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  IgnorePointer(
+                    ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
+                    child: Container(
+                      width: Get.width,
+                      child: RaisedButton(
+                        color: Color(Config.LETSBEE_COLOR),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(_.isEdit.call() ? 'Done' : 'PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                        ),
+                        onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.cart.call().data.first.storeId)
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(ActiveCartData cart, StoreCartController _) {
     return IgnorePointer(
       ignoring: !_.isEdit.call(),
       child: GestureDetector(
-        onTap: () => Get.toNamed(Config.STORE_MENU_ROUTE, arguments: {
-          'type': 'edit',
-          'store_id': cart.storeId,
-          'product_id': cart.storeProductId,
-          'cart': cart.toJson()
-        }),
+        onTap: () => updateCart(cart),
         child: Container(
           child: Column(
             children: [
@@ -367,7 +361,7 @@ class CartPage extends GetView<CartController> {
 
   deleteDialog({String menu, int cartId}) {
     Get.defaultDialog(
-      content: GetX<CartController>(
+      content: GetX<StoreCartController>(
         builder: (_) {
           return  Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -585,7 +579,7 @@ class CartPage extends GetView<CartController> {
     Get.back();
     Get.dialog(
       AlertDialog(
-        content: GetX<CartController>(
+        content: GetX<StoreCartController>(
           initState: (state) => controller.getCurrentLocationText(),
           builder: (_) {
             return Column(
@@ -692,7 +686,15 @@ class CartPage extends GetView<CartController> {
                           borderRadius: BorderRadius.circular(10)
                         ),
                         color: Color(Config.LETSBEE_COLOR),
-                        onPressed: () => Get.back(),
+                        onPressed: () {
+                          if (Get.isSnackbarOpen) {
+                            Get.back();
+                            Future.delayed(Duration(milliseconds: 500));
+                            Get.back();
+                          } else {
+                            Get.back();
+                          }
+                        },
                         child: Text('CANCEL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       ),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
@@ -715,6 +717,85 @@ class CartPage extends GetView<CartController> {
         ),
       ),
       barrierDismissible: true
+    );
+  }
+
+  updateCart(ActiveCartData data) {
+    controller.quantity(data.quantity);
+    Get.defaultDialog(
+      title: '',
+      content: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: FadeInImage.assetNetwork(
+                placeholder: cupertinoActivityIndicatorSmall, 
+                image: data.productDetails.image, 
+                fit: BoxFit.fitHeight,
+                height: 150, 
+                placeholderScale: 5, 
+                imageErrorBuilder: (context, error, stackTrace) => Container(
+                  width: 140,
+                  height: 120,
+                  child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                )
+              ),
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Text(data.productDetails.name, style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            GetX<StoreCartController>(
+              builder: (_) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                    IconButton(icon: Icon(Icons.remove_circle_outline_rounded, size: 30), onPressed: () =>_.decrement()),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.grey.shade200
+                      ),
+                      child: Text('${_.quantity.call()}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                    IconButton(icon: Icon(Icons.add_circle_outline_rounded, size: 30), onPressed: () => _.increment()),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                  ],
+                );
+              },
+            ),            
+          ],
+        ),
+      ),
+      confirm: GetX<StoreCartController>(
+        builder: (_) {
+          return RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+            child: _.isUpdateCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Update cart', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+            onPressed: () => _.isUpdateCartLoading.call() ? null : _.updateCartRequest(data),
+          );
+        },
+      ),
+      cancel: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+        child: Text('Back', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+        onPressed: () => Get.back(),
+      ),
     );
   }
 }

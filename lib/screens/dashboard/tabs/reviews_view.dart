@@ -98,7 +98,7 @@ class ReviewsPage extends StatelessWidget {
   //       margin: EdgeInsets.symmetric(horizontal: 10),
   //       decoration: BoxDecoration(
   //         borderRadius: BorderRadius.all(Radius.circular(15)),
-  //         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+  //         color: Color(Config.LETSBEE_COLOR),
   //       ),
   //       child: Column(
   //         mainAxisSize: MainAxisSize.max,
@@ -138,7 +138,7 @@ class ReviewsPage extends StatelessWidget {
   //       margin: EdgeInsets.symmetric(horizontal: 10),
   //       decoration: BoxDecoration(
   //         borderRadius: BorderRadius.all(Radius.circular(15)),
-  //         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+  //         color: Color(Config.LETSBEE_COLOR),
   //       ),
   //       child: Column(
   //         mainAxisSize: MainAxisSize.max,
@@ -157,7 +157,7 @@ class ReviewsPage extends StatelessWidget {
   //                   topLeft: Radius.circular(15),
   //                   topRight: Radius.circular(15)
   //                 ),
-  //                 color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+  //                 color: Color(Config.LETSBEE_COLOR),
   //               ),
   //             ),
   //           ),
@@ -180,7 +180,7 @@ class ReviewsPage extends StatelessWidget {
   //       margin: EdgeInsets.symmetric(horizontal: 10),
   //       decoration: BoxDecoration(
   //         borderRadius: BorderRadius.all(Radius.circular(15)),
-  //         color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+  //         color: Color(Config.LETSBEE_COLOR),
   //       ),
   //       child: Column(
   //         mainAxisSize: MainAxisSize.max,

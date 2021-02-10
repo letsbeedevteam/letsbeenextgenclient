@@ -29,23 +29,51 @@ class DashboardPage extends GetView<DashboardController> {
                     curve: Curves.fastLinearToSlowEaseIn,
                     child: AppBar(
                       elevation: 0,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Color(Config.WHITE),
                       titleSpacing: 0.0,
                       centerTitle: false,
-                      leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text('DELIVER TO: ', style: TextStyle(fontSize: 13, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.normal)),
-                              Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.LETSBEE_COLOR).withOpacity(1.0))),
-                            ],
-                          ),
-                          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                          Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold)),
-                        ],
+                      // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
+                      title: Padding(
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                                GestureDetector(
+                                  onTap: () => _.showLocationSheet(true),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    height: 20,
+                                    alignment: Alignment.centerLeft,
+                                    decoration: BoxDecoration(
+                                      color: Color(Config.LETSBEE_COLOR),
+                                      borderRadius: BorderRadius.circular(25)
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
+                                        Icon(Icons.keyboard_arrow_down, size: 20,)
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                            Row(
+                              children: [
+                                Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15),
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 13, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                       // actions: [
                       //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
@@ -55,7 +83,7 @@ class DashboardPage extends GetView<DashboardController> {
                   Container(
                     child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
                     width: Get.width, 
-                    color: Colors.white
+                    color: Color(Config.WHITE)
                   ),
                 ],
               ),
@@ -63,9 +91,8 @@ class DashboardPage extends GetView<DashboardController> {
                 child: Column(
                   children: [
                     Container(
-                      margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(right: 20, left: 20, bottom: 10, top: 5),
-                      color: Colors.black,
-                      height: _.isHideAppBar.call() ? 0 : 5,
+                      margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(bottom: 10),
+                      child: _.isHideAppBar.call() ? Container() : Divider(),
                     ),
                     Expanded(
                       child: PageView(
@@ -83,13 +110,13 @@ class DashboardPage extends GetView<DashboardController> {
               )
             ],
           ),
-          floatingActionButton: Badge(
-            badgeContent: _.activeOrders.call() == null ? null : Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+            badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             padding: EdgeInsets.all(10),
             showBadge: _.activeOrders.call() != null,
             child: FloatingActionButton(
               splashColor: Colors.transparent,
-              backgroundColor: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+              backgroundColor: Color(Config.LETSBEE_COLOR),
               shape: RoundedRectangleBorder(
                 side: BorderSide(color: Colors.black),
                 borderRadius: BorderRadius.circular(30)
@@ -101,27 +128,25 @@ class DashboardPage extends GetView<DashboardController> {
               child: Icon(Icons.restaurant_sharp),
             ),
           ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.grey))
+          bottomNavigationBar: Theme(
+            data: Get.theme.copyWith(
+              splashColor: Colors.transparent
             ),
             child: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               currentIndex: currentIndex,
               selectedFontSize: 10.0,
               unselectedFontSize: 10.0,
-              selectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
               iconSize: 25,
-              fixedColor: Colors.black,
               onTap: (value) =>  _.tapped(value),
               items: [
-                customNavigationBarItem('Food', image: Image.asset(Config.PNG_PATH + 'food.png', height: 27, width: 27, color: _.pageIndex.call() == 0 ? Colors.black : Colors.grey)),
+                customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
                 // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
-                customNavigationBarItem('Mart', image: Image.asset(Config.PNG_PATH + 'mart.png', height: 27, width: 27, color: _.pageIndex.call() == 1 ? Colors.black : Colors.grey)),
+                customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
                 // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
                 // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
                 // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-                customNavigationBarItem('Account', icon: Icon(Icons.account_circle_outlined, size: 27, color: _.pageIndex.call() == 2 ? Colors.black : Colors.grey)),
+                customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
               ],
             ),
           )
@@ -132,14 +157,36 @@ class DashboardPage extends GetView<DashboardController> {
 
   BottomNavigationBarItem customNavigationBarItem(String label, {Image image, Icon icon}) {
     return BottomNavigationBarItem(
-      icon: icon == null ? image : icon,
-      label: label,
+      icon: icon == null ? Column(
+        children: [
+          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+          SizedBox(height: 23, width: 23, child: image),
+          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold))
+        ],
+      ) : icon,
+      activeIcon: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        decoration: BoxDecoration(
+          color: Color(Config.LETSBEE_COLOR),
+          borderRadius: BorderRadius.circular(5)
+        ),
+        child: Column(
+          children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+            SizedBox(height: 30, width: 30, child: image),
+            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+            Text(label, style: TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold))
+          ],
+        )
+      ),
+      label: '',
     );
   }
 
   Widget _topSheet(DashboardController _) {
     return SafeArea(
-      minimum: EdgeInsets.all(10),
+      minimum: EdgeInsets.symmetric(vertical: 10),
       child: Column(
         children: [
           Row(
@@ -162,16 +209,16 @@ class DashboardPage extends GetView<DashboardController> {
               ),
             ],
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
+          Container(height: 1, width: Get.width, color: Colors.grey.shade200),
           _.addresses.call() == null ? Container(
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
                 Text(_.addressMessage.call()),
                 RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                  color: Color(Config.LETSBEE_COLOR),
                   child: Text('Refresh'),
-                  onPressed: () => _.refreshToken(),
+                  onPressed: () => _.refreshToken('Loading...'),
                 )
               ],
             ),
@@ -206,7 +253,7 @@ class DashboardPage extends GetView<DashboardController> {
           children: [
             Container(
               width: Get.width,
-              child: Text(data.name, style: TextStyle(color: Color(Config.LETSBEE_COLOR).withOpacity(1.0), fontWeight: FontWeight.bold)),
+              child: Text(data.name, style: TextStyle(color: Color(Config.LETSBEE_COLOR), fontWeight: FontWeight.bold)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,7 +285,7 @@ class DashboardPage extends GetView<DashboardController> {
         decoration: BoxDecoration(
           // border: Border.all(width: 0.5),
           borderRadius: BorderRadius.circular(5),
-          color: Color(Config.LETSBEE_COLOR).withOpacity(1.0)
+          color: Color(Config.LETSBEE_COLOR)
         ),
         child: Row(
           children: [
@@ -250,7 +297,7 @@ class DashboardPage extends GetView<DashboardController> {
                 color: Colors.white
             ),
             child: ClipOval(
-               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeRestaurant.logoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
             ),
            ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
@@ -258,9 +305,9 @@ class DashboardPage extends GetView<DashboardController> {
               child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  data.activeRestaurant.locationName.isBlank ? 
-                  Text("${data.activeRestaurant.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
-                  Text("${data.activeRestaurant.name} (${data.activeRestaurant.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  data.activeStore.locationName.isBlank ? 
+                  Text("${data.activeStore.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
+                  Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                   Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                   _buildStatus(status: data.status),
                 ],
@@ -276,9 +323,9 @@ class DashboardPage extends GetView<DashboardController> {
     switch (status) {
       case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'restaurant-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      case 'restaurant-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
       case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
@@ -288,7 +335,7 @@ class DashboardPage extends GetView<DashboardController> {
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
         break;
-      default: return Text('Pending', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
     }
   }
 
@@ -298,7 +345,7 @@ class DashboardPage extends GetView<DashboardController> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10)
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(Config.WHITE),
         insetPadding: EdgeInsets.all(20),
         child: GetX<DashboardController>(
           builder: (_) {

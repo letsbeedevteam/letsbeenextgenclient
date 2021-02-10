@@ -27,6 +27,8 @@ class Config {
   static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
   static const ACTIVE_ORDER_ROUTE = '/active_order';
   static const STORE_ROUTE = '/store';
+  static const STORE_MENU_ROUTE = '/store_menu';
+  static const STORE_CART = '/store_cart';
 
   // Storage keys
   static const USER_ID = 'user_id';
@@ -81,6 +83,8 @@ class Config {
   static const SETUP_ADDRESS = 'setup_address';
 
   // Colors 
-  static const LETSBEE_COLOR = 0xFBD10B;
-  static const WHITE = 0xD8DFE3;
+  static const LETSBEE_COLOR = 0xFFFCD000;
+  static const WHITE = 0xFFF8F8FA;
+  static const SEARCH_TEXT_COLOR = 0xFF999999;
+  static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
 }

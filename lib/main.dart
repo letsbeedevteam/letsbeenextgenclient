@@ -46,8 +46,10 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           brightness: Brightness.light
         ),
-        scaffoldBackgroundColor: Colors.white,
-        primarySwatch: Colors.yellow,
+        backgroundColor: Color(Config.WHITE),
+        scaffoldBackgroundColor: Color(Config.WHITE),
+        primaryColor: Color(Config.LETSBEE_COLOR),
+        primarySwatch: Colors.yellow
       ),
       enableLog: true,
       debugShowCheckedModeBanner: false,

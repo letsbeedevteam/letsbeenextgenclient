@@ -251,7 +251,8 @@ class MapController extends GetxController {
         ..userCurrentAddress(this.userCurrentAddress.call().trim())
         ..isOpenLocationSheet(false)
         ..fetchAllAddresses()
-        ..fetchRestaurants();
+        ..fetchRestaurantDashboard();
+        // ..fetchRestaurants();
         Get.back(closeOverlays: true);
         
       } else {

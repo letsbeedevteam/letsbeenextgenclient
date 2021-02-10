@@ -29,7 +29,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                 child: Column(
                   children: [
                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
-                    _.activeOrderData.call().activeRestaurant.locationName.isBlank ? Text("${_.activeOrderData.call().activeRestaurant.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : Text("${_.activeOrderData.call().activeRestaurant.name} (${_.activeOrderData.call().activeRestaurant.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    _.activeOrderData.call().activeStore.locationName.isBlank ? Text("${_.activeOrderData.call().activeStore.name}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)) : Text("${_.activeOrderData.call().activeStore.name} (${_.activeOrderData.call().activeStore.locationName})", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     Padding(padding: EdgeInsets.symmetric(vertical: 20)),
                     _buildStatus(_),
                     Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -43,8 +43,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                               RaisedButton(
                                 onPressed: () => Get.toNamed(Config.ACTIVE_ORDER_DETAIL_ROUTE),
                                 splashColor: Colors.transparent,
-                                color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                                child: Icon(Icons.local_dining, size: 40),
+                                color: Color(Config.LETSBEE_COLOR),
+                                child: Icon(_.activeOrderData.call().activeStore.type == 'mart' ? Icons.store : Icons.local_dining, size: 40),
                                 padding: EdgeInsets.all(15),
                                 shape: CircleBorder(
                                   side: BorderSide()
@@ -62,7 +62,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                                 child: RaisedButton(
                                   onPressed: () => _.goToChatPage(fromNotificartion: false),
                                   splashColor: Colors.transparent,
-                                  color: _.activeOrderData.call().status == 'rider-accepted' || _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  color: _.activeOrderData.call().status == 'rider-accepted' || _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR): Colors.grey,
                                   child: Icon(Icons.chat_bubble_outline_sharp, size: 40),
                                   padding: EdgeInsets.all(15),
                                   shape: CircleBorder(
@@ -82,7 +82,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                                 child: RaisedButton(
                                   onPressed: () => _.goToRiderLocationPage(),
                                   splashColor: Colors.transparent,
-                                  color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR).withOpacity(1.0) : Colors.grey,
+                                  color: _.activeOrderData.call().status == 'rider-picked-up' ? Color(Config.LETSBEE_COLOR) : Colors.grey,
                                   child: Icon(FontAwesomeIcons.mapMarkerAlt, size: 40),
                                   padding: EdgeInsets.all(15),
                                   shape: CircleBorder(
@@ -123,24 +123,28 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         ],
       );
         break;
-      case 'restaurant-accepted': return Column(
+      case 'store-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 30),
-            child: GifImage(
+            child:  _.activeOrderData.call().activeStore.type == 'mart' ? GifImage(
+              controller: DashboardController.to.changeGifRange(range: 14, duration: 1500),
+              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
+              height: 150,
+            ) : GifImage(
              controller: DashboardController.to.changeGifRange(range: 7, duration: 500),
               image: AssetImage(Config.GIF_PATH + 'preparing.gif'),
               height: 150,
             )
           ),
-          Text('Restaurant is Cooking...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          Text(_.activeOrderData.call().activeStore.type == 'mart' ? 'Waiting for rider...' : 'Restaurant is Cooking...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          Text('Waiting for rider...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
+          _.activeOrderData.call().activeStore.type == 'mart' ? Container() : Text('Waiting for rider...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
         ],
       );
         break;
-      case 'restaurant-declined': return Column(
+      case 'store-declined': return Column(
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 30),
@@ -207,7 +211,19 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         break;
       case 'cancelled': return Text('Cancelled', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, fontWeight: FontWeight.bold));
         break;
-      default: return Text('Waiting for restaurant...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 18, fontWeight: FontWeight.bold));
+      default: return Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 30),
+            child: GifImage(
+              controller: DashboardController.to.changeGifRange(range: 14, duration: 1500),
+              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
+              height: 150,
+            )
+          ),
+          Text('Waiting for rider...', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16, fontWeight: FontWeight.bold)),
+        ],
+      );
     }
   }
 }

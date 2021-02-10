@@ -14,10 +14,10 @@ class HistoryDetailController extends GetxController {
   void onInit() {
     data(OrderHistoryData.fromJson(argument));
     
-    if(data.call().restaurant.locationName.isBlank) {
-      this.title("${data.call().restaurant.name}");
+    if(data.call().store.locationName.isBlank) {
+      this.title("${data.call().store.name}");
     } else {
-      this.title("${data.call().restaurant.name} (${data.call().restaurant.locationName})");
+      this.title("${data.call().store.name} (${data.call().store.locationName})");
     }
 
     super.onInit();

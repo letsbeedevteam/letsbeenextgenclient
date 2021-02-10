@@ -38,7 +38,7 @@ class HistoryController extends GetxController {
 
         if (response.data.isNotEmpty) {
           history(response);
-          history.call().data.sort((b, a) => a.id.compareTo(b.id));
+          history.call().data.sort((b, a) => a.updatedAt.compareTo(b.updatedAt));
         } else {
           historyMessage('No list of history orders');
           history.nil();

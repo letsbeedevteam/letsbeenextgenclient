@@ -59,6 +59,7 @@ class HistoryPage extends GetView<HistoryController> {
   }
 
   Widget _buildHistoryItem(OrderHistoryData data) {
+    var title = data.store.locationName.isBlank ? data.store.name : '${data.store.name} (${data.store.locationName})';
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
@@ -88,7 +89,7 @@ class HistoryPage extends GetView<HistoryController> {
                 color: Colors.transparent
               ),
               child: ClipOval(
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.restaurant.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
               )
             ),
             Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
@@ -101,14 +102,14 @@ class HistoryPage extends GetView<HistoryController> {
                     Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Container(
                       padding: EdgeInsets.only(right: 10),
-                      child: Text(data.restaurant.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
+                      child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
                     ),
                     Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13)),
-                    Text(data.menus.length == 1 ? '${data.menus.first.quantity}x ${data.menus.first.name}' : '${data.menus.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
                       margin: EdgeInsets.only(right: 10, bottom: 10),
                       alignment: FractionalOffset.bottomRight,
-                      child: Text('₱ ${data.fee.total.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      child: Text('₱ ${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                     )
                 ],
               )

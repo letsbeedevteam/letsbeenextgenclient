@@ -208,7 +208,7 @@ class ReviewDetailPage extends GetView<DashboardController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    color: Color(Config.LETSBEE_COLOR),
                     onPressed: () => print('Comment')
                   ),
                 ],
@@ -277,7 +277,7 @@ class ReviewDetailPage extends GetView<DashboardController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+                    color: Color(Config.LETSBEE_COLOR),
                     onPressed: () => print('Reply')
                   ),
                 ],

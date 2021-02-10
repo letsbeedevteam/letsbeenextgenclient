@@ -45,7 +45,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.only(left: 30, right: 30),
                     decoration: BoxDecoration(
-                      color: Color(Config.WHITE).withOpacity(0.5),
+                      color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
                     child: GetX<SetupLocationController>(
@@ -85,7 +85,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                         return IgnorePointer(
                           ignoring: !_.hasLocation.call(),
                           child: RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                            color: Color(Config.LETSBEE_COLOR),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -114,7 +114,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
                       ]
                     ),
                     child: RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                      color: Color(Config.LETSBEE_COLOR),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -144,7 +144,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
-              color: Colors.white
+              color: Color(Config.WHITE)
             ),
             padding: EdgeInsets.all(20),
             margin: EdgeInsets.symmetric(horizontal: 20),

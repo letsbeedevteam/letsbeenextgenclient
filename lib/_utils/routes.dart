@@ -13,6 +13,8 @@ import 'package:letsbeeclient/binds/setup_location_bind.dart';
 import 'package:letsbeeclient/binds/signup_bind.dart';
 import 'package:letsbeeclient/binds/splash_bind.dart';
 import 'package:letsbeeclient/binds/store_bind.dart';
+import 'package:letsbeeclient/binds/store_cart_bind.dart';
+import 'package:letsbeeclient/binds/store_menu_bind.dart';
 import 'package:letsbeeclient/binds/verify_number_bind.dart';
 import 'package:letsbeeclient/binds/webview_bind.dart';
 import 'package:letsbeeclient/screens/active_orders/active_on_going/active_on_going_view.dart';
@@ -24,9 +26,11 @@ import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_view.dart';
 import 'package:letsbeeclient/screens/food/menu/menu_view.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_view.dart';
+import 'package:letsbeeclient/screens/food/store_menu/store_menu_view.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
 import 'package:letsbeeclient/screens/history/history_view.dart';
 import 'package:letsbeeclient/screens/mart/store/store_view.dart';
+import 'package:letsbeeclient/screens/mart/store_cart/store_cart_view.dart';
 import 'package:letsbeeclient/screens/reviews/review_detail_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/location_view.dart';
@@ -55,5 +59,7 @@ routes() => [
   GetPage(name: Config.HISTORY_DETAIL_ROUTE, page: () => HistoryDetailPage(), binding: HistoryDetailBind()),
   GetPage(name: Config.ACTIVE_ORDER_DETAIL_ROUTE, page: () => OnGoingDetailPage()),
   GetPage(name: Config.ACTIVE_ORDER_ROUTE, page: () => ActiveOnGoingPage()),
-  GetPage(name: Config.STORE_ROUTE, page: () => StorePage(), binding: StoreBind())
+  GetPage(name: Config.STORE_ROUTE, page: () => StorePage(), binding: StoreBind()),
+  GetPage(name: Config.STORE_MENU_ROUTE, page: () => StoreMenuPage(), binding: StoreMenuBind()),
+  GetPage(name: Config.STORE_CART, page: () => StoreCartPage(), binding: StoreCartBind()),
 ];

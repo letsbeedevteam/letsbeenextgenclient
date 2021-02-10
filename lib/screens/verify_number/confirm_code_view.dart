@@ -29,7 +29,7 @@ class ConfirmCodePage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(5),
                 child: Center(
-                  child: Text('We send confirmation code to this number: +63${_.numberController.text}.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+                  child: Text('We send confirmation code to this number: ${_.signInData.call().cellphoneNumber}.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
                 )
               ),
               // Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -80,7 +80,7 @@ class ConfirmCodePage extends StatelessWidget {
                 child: SizedBox(
                   height: 40,
                   child: RaisedButton(
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                    color: Color(Config.LETSBEE_COLOR),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -117,7 +117,7 @@ class ConfirmCodePage extends StatelessWidget {
                 child: SizedBox(
                   height: 40,
                   child: RaisedButton(
-                    color: Color(Config.LETSBEE_COLOR).withOpacity(1),
+                    color: Color(Config.LETSBEE_COLOR),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
