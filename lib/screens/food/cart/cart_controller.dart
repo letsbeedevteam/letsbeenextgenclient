@@ -136,29 +136,34 @@ class CartController extends GetxController {
 
         if(order.status == 200) {
           DashboardController.to.fetchActiveOrders();
-          if (order.paymentUrl == null) {
-            print('NO URL');
-            successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
-
-            Future.delayed(Duration(seconds: 1)).then((value) {
-              fetchActiveCarts(storeId: storeId);
-              if (Get.isSnackbarOpen) {
-                Get.back();
-                Future.delayed(Duration(seconds: 1));
-                Get.back();
-              } else {
-                Get.back();
-              }
-            });
-
+          
+          if (order.code == 3506) {
+            errorSnackbarTop(title: 'Oops!', message: 'The store has been closed');
           } else {
-            // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
-            print('GO TO WEBVIEW: ${order.paymentUrl}');
-            fetchActiveCarts(storeId: storeId);
-            Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
-              'url': order.paymentUrl,
-              'order_id': order.data.id
-            });
+            if (order.paymentUrl == null) {
+              print('NO URL');
+              successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
+
+              Future.delayed(Duration(seconds: 1)).then((value) {
+                fetchActiveCarts(storeId: storeId);
+                if (Get.isSnackbarOpen) {
+                  Get.back();
+                  Future.delayed(Duration(seconds: 1));
+                  Get.back();
+                } else {
+                  Get.back();
+                }
+              });
+
+            } else {
+              // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
+              print('GO TO WEBVIEW: ${order.paymentUrl}');
+              fetchActiveCarts(storeId: storeId);
+              Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
+                'url': order.paymentUrl,
+                'order_id': order.data.id
+              });
+            }
           }
 
         } else {

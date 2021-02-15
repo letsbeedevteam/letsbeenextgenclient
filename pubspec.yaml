@@ -59,7 +59,7 @@ dependencies:
   flutter_polyline_points: ^0.2.4
 
   # Notification builder
-  flutter_local_notifications: ^3.0.2
+  flutter_local_notifications: ^4.0.1
 
   # Socket IO
   socket_io_client: ^0.9.12

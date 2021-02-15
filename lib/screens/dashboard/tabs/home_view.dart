@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
             //     ]
             //   ),
             // ),
-            _.restaurantDashboard.call().data.recentStores.isNotEmpty ? Container(
+            _.recentRestaurants.call().isNotEmpty ? Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -147,7 +147,7 @@ class HomePage extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: _.restaurantDashboard.call().data.recentStores.map((data) => _buildRecentRestaurantItem(data)).toList(),
+                        children: _.recentRestaurants.call().map((data) => _buildRecentRestaurantItem(data)).toList(),
                       )
                     ),
                   ),
@@ -204,7 +204,7 @@ class HomePage extends StatelessWidget {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
         child: Container(
-          margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+          margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
           padding: EdgeInsets.all(10),
           width: 200,
           child: Column(
@@ -255,21 +255,18 @@ class HomePage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Hero(
-                tag: restaurant.name, 
-                child: Container(
-                  height: 170,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    child: SizedBox(
-                      width: Get.width,
-                      child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                      : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
-                    ),
+              child: Container(
+                height: 170,
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: SizedBox(
+                    width: Get.width,
+                    child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
+                    : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                   ),
-                )
+                ),
               ),
             ),
             Padding(padding: EdgeInsets.only(top: 10)),

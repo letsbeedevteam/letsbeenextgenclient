@@ -85,7 +85,7 @@ class ChatController extends GetxController {
   }
 
   sendMessageToRider() {
-    if (replyTF.text == null) {
+    if (replyTF.text.trim() == null || replyTF.text.trim() == '') {
       alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
     } else {
 
