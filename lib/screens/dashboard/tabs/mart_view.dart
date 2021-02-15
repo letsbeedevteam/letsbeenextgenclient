@@ -91,21 +91,20 @@ class MartPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _.martDashboard.call().data.recentStores.isNotEmpty != null ? Container() : Container(
+                _.recentMarts.call().isEmpty ? Container() : Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                        child: Text('Recent Supermarket', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                        child: Text('Recent Supermarkets', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: _.martDashboard.call().data.recentStores.map((recentStore) => _buildRecentMart(recentStore)).toList(),
+                            children: _.recentMarts.call().map((recentStore) => _buildRecentMart(recentStore)).toList(),
                           ),
                         ),
                       )
@@ -150,38 +149,37 @@ class MartPage extends StatelessWidget {
   Widget _buildRecentMart(MartStores mart) {
     final name = mart.location.name == null || mart.location.name == '' ? '${mart.name}' : '${mart.name} - ${mart.location.name}';
     return GestureDetector(
-      onTap: () => Get.toNamed(Config.STORE_ROUTE, arguments: {'id': mart.id}),
+      onTap: () =>  Get.toNamed(Config.STORE_ROUTE, arguments: {'id': mart.id}),
       child: Container(
-        alignment: Alignment.topCenter,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.white,
-        ),
-        margin: EdgeInsets.only(right: 20),
+        margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
         padding: EdgeInsets.all(10),
         width: 200,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               child: Container(
+                margin: EdgeInsets.only(bottom: 5),
                 alignment: Alignment.center,
-                child: mart.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: mart.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                      : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: mart.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(top: 10, left: 5, right: 5),
-              child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
             ),
-            // Container(
-            //   padding: EdgeInsets.only(left: 5, right: 5, bottom: 10),
-            //   child: Text('(1.2 km away)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10), overflow: TextOverflow.ellipsis),
-            // )
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 10),
+            //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            // ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5))
           ],
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white
         ),
       ),
     );

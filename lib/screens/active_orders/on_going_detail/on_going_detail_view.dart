@@ -436,7 +436,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                           borderRadius: BorderRadius.circular(10)
                         ),
                         color: Color(Config.LETSBEE_COLOR),
-                        child: Text('NO'),
+                        child: Text('NO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                         onPressed: () => Get.back(),
                       ),
                       RaisedButton(
@@ -444,7 +444,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                           borderRadius: BorderRadius.circular(10)
                         ),
                         color: Color(Config.LETSBEE_COLOR),
-                        child: Text('YES'),
+                        child: Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                         onPressed: () => controller.cancelOrderById(),
                       )
                     ],

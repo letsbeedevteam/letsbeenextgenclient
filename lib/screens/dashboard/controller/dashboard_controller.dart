@@ -63,7 +63,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
   var addresses = GetAllAddressResponse().obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
+  var recentRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
+  var recentMarts = RxList<MartStores>().obs;
   var restaurantDashboard = RestaurantDashboardResponse().obs;
   var martDashboard = MartDashboardResponse().obs;
   var activeOrderData = ActiveOrderData().obs;
@@ -454,6 +456,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       if (response.status == 200) {
         restaurantDashboard(response);
 
+        final Map<int, RestaurantStores> newMap = Map();
+        response.data.recentStores.forEach((item) {
+          newMap[item.id] = item;
+        });
+        recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
         if(searchRestaurants.call().isEmpty) {
           // restaurantDashboard.nil();
@@ -491,7 +498,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (response.status == 200) {
         martDashboard(response);
-
+        final Map<int, MartStores> newMap = Map();
+        response.data.recentStores.forEach((item) {
+          newMap[item.id] = item;
+        });
+        recentMarts.call()..clear()..assignAll(newMap.values.toList());
         searchMarts.call()..clear()..assignAll(response.data.stores);
         if(searchMarts.call().isEmpty) {
           // martDashboard.nil();

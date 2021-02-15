@@ -145,7 +145,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
                     child: FlatButton(
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
-                        onPressed: () => controller.signOut(), 
+                        onPressed: _logoutModal, 
                         child: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -164,6 +164,32 @@ class AccountSettingsPage extends GetView<DashboardController> {
           ),
         )
       ],
+    );
+  }
+
+  _logoutModal() {
+    Get.defaultDialog(
+      title: 'Do you really want to log out your account?',
+      titleStyle: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+      radius: 8,
+      content: Container(),
+      confirm: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        color: Color(Config.LETSBEE_COLOR),
+        onPressed: () =>  controller.signOut(),
+        child: Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+      ),
+      cancel: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        color: Color(Config.LETSBEE_COLOR),
+        onPressed: () => Get.back(),
+        child: Text('NO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+      ),
+      barrierDismissible: false
     );
   }
 }
