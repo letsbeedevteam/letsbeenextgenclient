@@ -61,7 +61,14 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
         signInData(SignInData.fromJson(response.data.toJson()));
         changeIndex(1);
       } else {
-        errorSnackBarBottom(title: 'Oops!', message: 'Invalid contact number');
+
+        if (response.code == 2018) {
+          errorSnackBarBottom(title: 'Oops!', message: 'Cellphone number is already in use');
+        } else if (response.code == 2012) {
+          errorSnackBarBottom(title: 'Oops!', message: 'User not found');
+        } else {
+          errorSnackBarBottom(title: 'Oops!', message: 'Invalid contact number');
+        }
       }
 
       isLoading(false);

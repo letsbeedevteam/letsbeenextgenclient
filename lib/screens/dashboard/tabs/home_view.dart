@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                           children: [
                             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                             _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                            Text(_.message.call()),
+                            Text(_.restaurantErrorMessage.call()),
                             _.hasRestaurantError.call() ? RaisedButton(
                               color: Color(Config.LETSBEE_COLOR),
                               child: Text('Refresh'),
@@ -166,7 +166,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                   _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                  Text(_.message.call()),
+                  Text(_.restaurantErrorMessage.call()),
                   _.hasMartError.call() ? RaisedButton(
                     color: Color(Config.LETSBEE_COLOR),
                     child: Text('Refresh'),

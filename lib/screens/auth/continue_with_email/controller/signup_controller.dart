@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class SignUpController extends GetxController with SingleGetTickerProviderMixin {
@@ -38,6 +39,8 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   
   TabController tabController;
 
+  StreamSubscription<SignInResponse> signInSub;
+
   @override
   void onInit() {
     tabController = TabController(length: 3, vsync: this);
@@ -59,9 +62,9 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
       isLoading(false);
     } else {
       if(GetUtils.isEmail(signInEmailController.text)) {
+        
+        signInSub = _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).asStream().listen((response) {
 
-        _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).then((response) {
-          
           if (response.status == 200) {
             // _box.write(Config.USER_NAME, response.data.name);
             // _box.write(Config.USER_EMAIL, response.data.email);
@@ -84,12 +87,42 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             // alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
           }
 
-          isLoading(false);
-        }).catchError((onError) {
+        })..onError((onError) {
           print('Sign In: $onError');
           alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
           isLoading(false);
         });
+
+        // _apiService.customerSignIn(email: signInEmailController.text, password: signInPasswordController.text).then((response) {
+          
+        //   if (response.status == 200) {
+        //     // _box.write(Config.USER_NAME, response.data.name);
+        //     // _box.write(Config.USER_EMAIL, response.data.email);
+        //     // _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
+        //     // _box.write(Config.USER_TOKEN, response.data.accessToken);
+        //     // _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
+        //     reset();
+        //     _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
+        //     Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson());
+
+        //   } else {
+
+        //     if (response.code != 2012) {
+        //       alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+        //     } else {
+        //       alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
+        //       // changeIndex(1);
+        //     }
+
+        //     // alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+        //   }
+
+        //   isLoading(false);
+        // }).catchError((onError) {
+        //   print('Sign In: $onError');
+        //   alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        //   isLoading(false);
+        // });
 
       } else {
         errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid');
@@ -163,6 +196,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   
   Future<bool> willPopCallback() async {
     dismissKeyboard(Get.context);
+    signInSub.cancel();
     if (selectedIndex.call() == 0) {
       Get.back(closeOverlays: true);
       return true;

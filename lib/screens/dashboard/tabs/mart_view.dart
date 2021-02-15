@@ -62,7 +62,7 @@ class MartPage extends StatelessWidget {
                       children: [
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                         _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                        Text(_.message.call()),
+                        Text(_.martErrorMessage.call()),
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
@@ -128,7 +128,7 @@ class MartPage extends StatelessWidget {
                         children: [
                           Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                           _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                          Text(_.message.call()),
+                          Text(_.martErrorMessage.call()),
                           _.hasMartError.call() ? RaisedButton(
                             color: Color(Config.LETSBEE_COLOR),
                             child: Text('Refresh'),
