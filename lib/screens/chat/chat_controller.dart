@@ -4,7 +4,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
-import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+// import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
 class ChatController extends GetxController {
@@ -80,7 +80,7 @@ class ChatController extends GetxController {
   }
 
   goBack() {
-    DashboardController.to.isOnChat(false);
+    // DashboardController.to.isOnChat(false);
     Get.back();
   }
 

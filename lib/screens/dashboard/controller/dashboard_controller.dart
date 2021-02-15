@@ -56,12 +56,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
   var isSearching = false.obs;
-  var isOnChat = false.obs;
+  // var isOnChat = false.obs;
   var isSelectedLocation = false.obs;
-  var message = ''.obs;
+  // var message = ''.obs;
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
-  var addressMessage = 'Loading...'.obs;
   var addresses = GetAllAddressResponse().obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
@@ -72,8 +71,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   var hasRestaurantError = false.obs;
   var hasMartError = false.obs;
-  
 
+  var restaurantErrorMessage = 'Loading restaurants...'.obs;
+  var martErrorMessage = 'Loading marts...'.obs;
+  var addressErrorMessage = 'Loading addresses...'.obs;
+
+  
   static DashboardController get to => Get.find();
 
   GifController changeGifRange({double range, int duration}) {
@@ -248,7 +251,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       activeOrderData(activeOrders.call().data.where((element) => element.id == data.orderId).first);
       Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
     } else {
-      isOnChat(true);
+      // isOnChat(true);
       activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
       : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
     }
@@ -329,6 +332,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
             fetchRestaurantDashboard();
             fetchMartDashboard();
+            fetchActiveOrders();
           }
             break;
         }
@@ -341,9 +345,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
 
-      if(Get.currentRoute != Config.CHAT_ROUTE) {
-        pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
-      }
+      // if(Get.currentRoute != Config.CHAT_ROUTE) {
+      //   pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
+      // }
+
+      pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
     });
   }
 
@@ -365,9 +371,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     hasMartError(false);
     hasRestaurantError(false);
     isLoading(true);
-    message(title);
+    // message(title);
     apiService.refreshToken().then((response) {
-      message(null);
+      // message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
         box.write(Config.USER_TOKEN, response.data.accessToken);
@@ -385,11 +391,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        message(Config.NO_INTERNET_CONNECTION);
+        // message(Config.NO_INTERNET_CONNECTION);
+        restaurantErrorMessage(Config.NO_INTERNET_CONNECTION);
+        martErrorMessage(Config.NO_INTERNET_CONNECTION);
+        addressErrorMessage(Config.NO_INTERNET_CONNECTION);
       } else if (onError.toString().contains('Operation timed out')) {
-        message(Config.TIMED_OUT);
+        // message(Config.TIMED_OUT);
+        restaurantErrorMessage(Config.TIMED_OUT);
+        martErrorMessage(Config.TIMED_OUT);
+        addressErrorMessage(Config.TIMED_OUT);
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
+        martErrorMessage(Config.SOMETHING_WENT_WRONG);
+        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       print('Refresh token: $onError');
     });
@@ -410,19 +424,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
           addresses(response);
         } else {
           addresses.nil();
-          addressMessage('No list of address');
+          addressErrorMessage('No list of address');
         }
 
       } else {
         addresses.nil();
-        addressMessage(Config.SOMETHING_WENT_WRONG);
+        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       
     }).catchError((onError) {
       addresses.nil();
       isLoading(false);
-      addressMessage(Config.SOMETHING_WENT_WRONG);
-      message(Config.SOMETHING_WENT_WRONG);
+      addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+      // message(Config.SOMETHING_WENT_WRONG);
       print('Error fetch all address: $onError');
     });
   }
@@ -443,10 +457,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
         if(searchRestaurants.call().isEmpty) {
           // restaurantDashboard.nil();
-          message('No restaurantsfound');
+          restaurantErrorMessage('No restaurants found');
         }
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       
     }).catchError((onError) {
@@ -455,11 +469,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        message(Config.NO_INTERNET_CONNECTION);
+        restaurantErrorMessage(Config.NO_INTERNET_CONNECTION);
       } else if (onError.toString().contains('Operation timed out')) {
-        message(Config.TIMED_OUT);
+        restaurantErrorMessage(Config.TIMED_OUT);
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       print('Error fetch restaurant: $onError');
     });
@@ -481,12 +495,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         searchMarts.call()..clear()..assignAll(response.data.stores);
         if(searchMarts.call().isEmpty) {
           // martDashboard.nil();
-          message('No marts found');
+          martErrorMessage('No marts found');
         }
       
       } else {
 
-        message(Config.SOMETHING_WENT_WRONG);
+        martErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       
     }).catchError((onError) {
@@ -495,11 +509,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        message(Config.NO_INTERNET_CONNECTION);
+        martErrorMessage(Config.NO_INTERNET_CONNECTION);
       } else if (onError.toString().contains('Operation timed out')) {
-        message(Config.TIMED_OUT);
+        martErrorMessage(Config.TIMED_OUT);
       } else {
-        message(Config.SOMETHING_WENT_WRONG);
+        martErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
       print('Error fetch mart: $onError');
     });
@@ -516,7 +530,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (restaurant.isEmpty) {
           searchRestaurants.call().clear();
-          message('No restaurant found');
+          restaurantErrorMessage('No restaurant found');
         } else {
           searchRestaurants.call().assignAll(restaurant);
         }
@@ -538,7 +552,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (mart.isEmpty) {
           searchMarts.call().clear();
-          message('No mart found');
+          martErrorMessage('No mart found');
         } else {
           searchMarts.call().assignAll(mart);
         }

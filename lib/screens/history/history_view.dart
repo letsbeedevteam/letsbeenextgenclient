@@ -40,9 +40,9 @@ class HistoryPage extends GetView<HistoryController> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CupertinoActivityIndicator(),
-                        Text('Loading', style: TextStyle(fontSize: 18))
+                        Text('Loading history...', style: TextStyle(fontSize: 15))
                       ],
-                    ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 18)),
+                    ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 15)),
                   ) : Container(
                     margin: EdgeInsets.only(top: 10),
                     child: Column(

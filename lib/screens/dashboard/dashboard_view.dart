@@ -221,7 +221,7 @@ class DashboardPage extends GetView<DashboardController> {
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
-                Text(_.addressMessage.call()),
+                Text(_.addressErrorMessage.call()),
                 RaisedButton(
                   color: Color(Config.LETSBEE_COLOR),
                   child: Text('Refresh'),
