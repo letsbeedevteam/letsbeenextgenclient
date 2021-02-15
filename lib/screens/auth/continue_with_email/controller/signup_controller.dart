@@ -196,7 +196,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
   
   Future<bool> willPopCallback() async {
     dismissKeyboard(Get.context);
-    signInSub.cancel();
+    if(signInSub != null) signInSub.cancel();
     if (selectedIndex.call() == 0) {
       Get.back(closeOverlays: true);
       return true;
