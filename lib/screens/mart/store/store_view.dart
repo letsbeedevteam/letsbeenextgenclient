@@ -381,23 +381,30 @@ class StorePage extends GetView<StoreController> {
           );
         },
       ),
-      cancel: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
-        color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-        child: Text('Back', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-        onPressed: () {
-          if (Get.isSnackbarOpen) {
-            Get.back();
-            Future.delayed(Duration(milliseconds: 500));
-            Get.back();
-          } else {
-            Get.back();
-          }
+      cancel: GetX<StoreController>(
+        builder: (_) {
+          return IgnorePointer(
+            ignoring: _.isAddToCartLoading.call(),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+              ),
+              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+              child: Text('Back', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+              onPressed: () {
+                if (Get.isSnackbarOpen) {
+                  Get.back();
+                  Future.delayed(Duration(milliseconds: 500));
+                  Get.back();
+                } else {
+                  Get.back();
+                }
+              },
+            ),
+          );
         },
       ),
-      barrierDismissible: true
+      barrierDismissible: false
     );
   }
 }
