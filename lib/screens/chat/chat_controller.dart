@@ -126,7 +126,7 @@ class ChatController extends GetxController {
       print('receive message: $response');
       final orderChat = ChatData.fromJson(response['data']);
       if (activeOrderData.call() != null) {
-        if (orderChat.id == activeOrderData.call().id) {
+        if (orderChat.orderId == activeOrderData.call().id) {
           chat.call().add(orderChat);
           chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
         }

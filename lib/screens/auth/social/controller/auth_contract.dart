@@ -1,6 +1,7 @@
 
 import 'package:letsbeeclient/_utils/_base/BaseView.dart';
-import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signInResponse.dart';
+// import 'package:letsbeeclient/models/social.dart';
 
 abstract class AuthModelContract {
   void onGoogleSignInRequest(OnSocialSignInRequest listener) {}
@@ -10,7 +11,7 @@ abstract class AuthModelContract {
 }
 
 abstract class AuthViewContract extends BaseView {
-  void onSocialSignInSuccess(String social, SocialData data) {}
+  void onSocialSignInSuccess(String social, SignInData data) {}
 }
 
 abstract class AuthPresenterContract {
@@ -22,7 +23,7 @@ abstract class AuthPresenterContract {
 
 // LISTENER
 abstract class OnSocialSignInRequest {
-  void onSocialSignInRequestSuccess(String social, SocialData data) {}
+  void onSocialSignInRequestSuccess(String social, SignInData data) {}
   void onSocialSignInRequestFailed(String error) {}
 }
 

@@ -28,7 +28,7 @@ class MartPage extends StatelessWidget {
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
-                      hintText: 'Search for food or restaurant here',
+                      hintText: 'Search for mart here',
                       hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
                       filled: true,
@@ -61,7 +61,7 @@ class MartPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        CupertinoActivityIndicator(radius: 20),
+                        _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
                         Text(_.message.call()),
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
@@ -122,10 +122,20 @@ class MartPage extends StatelessWidget {
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     _.searchMarts.call().isNotEmpty ? 
-                    Column(children: _.searchMarts.call().map((e) => _buildMart(e)).toList()) : Container(
-                        height: 250,
-                        alignment: Alignment.topCenter,
-                        child: Text(_.message.call(), style: TextStyle(fontSize: 18)),
+                    Column(children: _.searchMarts.call().map((e) => _buildMart(e)).toList()) : Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                          _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                          Text(_.message.call()),
+                          _.hasMartError.call() ? RaisedButton(
+                            color: Color(Config.LETSBEE_COLOR),
+                            child: Text('Refresh'),
+                            onPressed: () => _.refreshToken('Loading Marts...'),
+                          ) : Container() 
+                        ],
+                      ),
                     )
                   ],  
                 )
@@ -187,7 +197,7 @@ class MartPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           color: Colors.white,
         ),
-        margin: EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class SignUpController extends GetxController with SingleGetTickerProviderMixin {
 
-  // GetStorage _box = Get.find();
+  GetStorage _box = Get.find();
   ApiService _apiService = Get.find();
 
   final signInEmailController = TextEditingController();
@@ -69,6 +69,7 @@ class SignUpController extends GetxController with SingleGetTickerProviderMixin 
             // _box.write(Config.USER_TOKEN, response.data.accessToken);
             // _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             reset();
+            _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson());
 
           } else {

@@ -164,11 +164,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 0) {
       // restaurantDashboard.nil();
-      // fetchRestaurantDashboard();
+      fetchRestaurantDashboard();
       if (foodScrollController.hasClients) foodScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     } else if (tappedIndex == 1) {
       // martDashboard.nil();
-      // fetchMartDashboard();
+      fetchMartDashboard();
       if (martScrollController.hasClients) martScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     }
     restaurantSearchController.clear();
@@ -362,6 +362,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   refreshToken(String title) {
+    hasMartError(false);
+    hasRestaurantError(false);
     isLoading(true);
     message(title);
     apiService.refreshToken().then((response) {
@@ -426,7 +428,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchRestaurantDashboard() {
-    message('Loading...');
+    // message('Loading...');
     isLoading(true);
     hasRestaurantError(false);
     apiService.getRestaurantDashboard().then((response) {
@@ -439,7 +441,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         restaurantDashboard(response);
 
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
-        if(searchRestaurants.call().isEmpty) message('No restaurant found');
+        if(searchRestaurants.call().isEmpty) {
+          // restaurantDashboard.nil();
+          message('No restaurantsfound');
+        }
       } else {
         message(Config.SOMETHING_WENT_WRONG);
       }
@@ -461,7 +466,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchMartDashboard() {
-    message('Loading...');
+    // message('Loading...');
     isLoading(true);
     hasMartError(false);
     apiService.getMartDashboard().then((response) {
@@ -474,7 +479,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         martDashboard(response);
 
         searchMarts.call()..clear()..assignAll(response.data.stores);
-        if(searchMarts.call().isEmpty) message('No marts found');
+        if(searchMarts.call().isEmpty) {
+          // martDashboard.nil();
+          message('No marts found');
+        }
       
       } else {
 

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signInResponse.dart';
+// import 'package:letsbeeclient/models/social.dart';
 
 import 'auth_contract.dart';
 import 'auth_controller.dart';
@@ -37,7 +38,7 @@ class AuthPresenter implements AuthPresenterContract, OnSocialSignInRequest {
   }
 
   @override
-  void onSocialSignInRequestSuccess(String social, SocialData data) {
+  void onSocialSignInRequestSuccess(String social, SignInData data) {
     controller.setLoading(false);
     controller.onSocialSignInSuccess(social, data);
   }

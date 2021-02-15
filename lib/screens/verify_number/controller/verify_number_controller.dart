@@ -103,7 +103,6 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
     _box.write(Config.USER_TOKEN, response.data.accessToken);
     _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
-    _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
     _box.write(Config.IS_LOGGED_IN, true);
     Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
   }
