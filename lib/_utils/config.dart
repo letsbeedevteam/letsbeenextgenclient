@@ -45,6 +45,7 @@ class Config {
   static const USER_CURRENT_CITY = 'user_current_city';
   static const USER_CURRENT_IS_CODE = 'user_current_iso_code';
   static const USER_CURRENT_BARANGAY = 'user_current_barangay';
+  static const PRODUCTS = 'products';
 
 
   static const LETSBEE_STORAGE = 'LetsBeeStorage';

@@ -146,6 +146,7 @@ class Product {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.isRemove,
   });
 
   List<Choice> choices;
@@ -162,6 +163,7 @@ class Product {
   int maxOrder;
   String category;
   String status;
+  bool isRemove;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -180,6 +182,7 @@ class Product {
     maxOrder: json["max_order"],
     category: json["category"],
     status: json["status"],
+    isRemove: false,
     createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),
   );

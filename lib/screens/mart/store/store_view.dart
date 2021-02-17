@@ -145,8 +145,8 @@ class StorePage extends GetView<StoreController> {
                             children: _.store.call().data.categorized.map((categorize) => _buildCategoryItem(categorize)).toList(),
                           ) : Container(),
                           GetX<StoreCartController>(
-                            builder: (activeCart) {
-                              return activeCart.cart.call() == null ? Container() : Container(
+                            builder: (_) {
+                              return _.updatedProducts.call().isEmpty ? Container() : Container(
                                 margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                                 child: SizedBox(
                                   width: Get.width,
@@ -165,8 +165,8 @@ class StorePage extends GetView<StoreController> {
                                           ],
                                         ),
                                         Badge(
-                                    badgeContent: Text(activeCart.cart.call() == null ? '' : activeCart.cart.call().data.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    showBadge: StoreCartController.to.cart.call() != null,
+                                    badgeContent: Text(_.updatedProducts.call().isEmpty ? '' : _.updatedProducts.call().map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                    showBadge: _.updatedProducts.call().isNotEmpty,
                                     padding: EdgeInsets.all(10),
                                   )
                                       ],
@@ -377,7 +377,8 @@ class StorePage extends GetView<StoreController> {
             ),
             color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
             child: _.isAddToCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Add to cart', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-            onPressed: () => _.isAddToCartLoading.call() ? null : _.addTocart(product),
+            // onPressed: () => _.isAddToCartLoading.call() ? null : _.addTocart(product),
+            onPressed: () => _.storeCartToStorage(product),
           );
         },
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
@@ -12,25 +13,44 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
   
   TabController tabController;
   ApiService apiService = Get.find();
+  GetStorage box = Get.find();
+
+  final argument = Get.arguments;
+  final nestedScrollViewController = ScrollController();
+  final list = RxList<Product>().obs;
 
   var quantity = 0.obs;
-  final argument = Get.arguments;
 
   var store = StoreResponse().obs;
 
+  var message = ''.obs;
+  var productName = ''.obs;
+
   var readOnly = false.obs;
   var hasError = false.obs;
-  var message = ''.obs;
   var isAddToCartLoading = false.obs;
 
-  final nestedScrollViewController = ScrollController();
+  static StoreController get to => Get.find();
 
-  var productName = ''.obs;
-  
   @override
   void onInit() {
+    // list.call().clear();
     store.nil();
     Get.put(StoreCartController());
+
+    if (box.hasData(Config.PRODUCTS)) {
+      final products = List<Product>.from(box.read(Config.PRODUCTS).map((x) => Product.fromJson(x)));
+      
+      products.forEach((data) {
+        print('Product ID: ${data.name} == Quantity: ${data.quantity} == Price: ${data.customerPrice}');
+      });
+
+
+
+      list.call().addAll(products);
+      box.write(Config.PRODUCTS, list.toJson());
+      StoreCartController.to.getProducts();
+    } 
 
     super.onInit();
   }
@@ -63,7 +83,7 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
       hasError(false);
       store(response);
       tabController = TabController(length: store.call().data.categorized.map((categorize) => categorize.name).length, vsync: this);
-      StoreCartController.to..storeId(store.call().data.id)..fetchActiveCarts(storeId: store.call().data.id);
+      StoreCartController.to..storeId(store.call().data.id);
       tabController.addListener(() {
         FocusScope.of(Get.context).requestFocus(FocusNode());
         productName('');
@@ -92,14 +112,14 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
     apiService.addToCart(addToCart).then((response) {
       
       if (response.status == 200) {
-        StoreCartController.to
-        ..cart.nil()
-        ..fetchActiveCarts(storeId: product.storeId, callback: ()  {
-          Future.delayed(Duration(seconds: 1)).then((data) {
-            isAddToCartLoading(false);
-            Get.back();
-          });
-        });
+        // StoreCartController.to
+        // ..cart.nil();
+        // ..fetchActiveCarts(storeId: product.storeId, callback: ()  {
+        //   Future.delayed(Duration(seconds: 1)).then((data) {
+        //     isAddToCartLoading(false);
+        //     Get.back();
+        //   });
+        // });
 
       } else {
         if (response.code == 3005) {
@@ -117,5 +137,14 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
       errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
       print('Add to cart error: ${onError.toString()}');
     });
+  }
+
+  void storeCartToStorage(Product product) {
+    for (var i = 0; i < quantity.call(); i++) {
+      list.call().add(product);
+    }
+    box.write(Config.PRODUCTS, list);
+    StoreCartController.to.getProducts();
+    Get.back();
   }
 } 

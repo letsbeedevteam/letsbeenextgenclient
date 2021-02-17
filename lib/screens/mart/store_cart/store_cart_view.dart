@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/active_cart_response.dart';
+// import 'package:letsbeeclient/models/active_cart_response.dart';
+import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/mart/store_cart/store_cart_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
@@ -39,27 +40,23 @@ class StoreCartPage extends GetView<StoreCartController> {
         )
         ),
         body: GetX<StoreCartController>(
-          initState: controller.fetchActiveCarts(storeId: controller.storeId.call()),
           builder: (_) {
-            return RefreshIndicator(
-              onRefresh: () {
-                controller.fetchActiveCarts(storeId: controller.storeId.call());
-                return _.refreshCompleter.future;
-              },
-              child: _.cart.call() == null ? Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
-                      RaisedButton(
-                        color: Color(Config.LETSBEE_COLOR),
-                        child: Text('Refresh'),
-                        onPressed: () => _.fetchActiveCarts(storeId: _.storeId.call()),
-                      )
-                    ],
-                  )
+            return _.updatedProducts.call().isEmpty? Container(height: 250,child: Center(child: _.isLoading.call() ? CupertinoActivityIndicator() : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(child: Text('No list of carts', style: TextStyle(fontSize: 18))),
+                    // RaisedButton(
+                    //   color: Color(Config.LETSBEE_COLOR),
+                    //   child: Text('Refresh'),
+                    //   onPressed: () {
+                    //     _.getProducts();
+                    //     //_.fetchActiveCarts(storeId: _.storeId.call());
+                    //   },
+                    // )
+                  ],
                 )
-              ) : _scrollView(_)
-            );
+              )
+            ) : _scrollView(_);
           },
         ),
       ),
@@ -67,8 +64,9 @@ class StoreCartPage extends GetView<StoreCartController> {
   }
 
   Widget _scrollView(StoreCartController _) {
+    final activeCart = _.updatedProducts.call().where((data) => data.storeId == _.storeId.call());
     return SingleChildScrollView(
-      physics: _.cart.call() == null ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+      physics: activeCart.isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 20),
         child: Column(
@@ -99,7 +97,7 @@ class StoreCartPage extends GetView<StoreCartController> {
             Container(
               margin: EdgeInsets.only(top: 10),
               padding: EdgeInsets.symmetric(horizontal: 15),
-              child: Column(children: _.cart.call().data.map((e) => _buildMenuItem(e, _)).toList())
+              child: Column(children: activeCart.map((e) => _buildMenuItem(e, _)).toList())
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 15),
@@ -142,7 +140,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                          Text('₱ ${_.cart.call().deliveryFee.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
+                          Text('₱ 0.00', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
                         ],
                       ),
                       Container(
@@ -193,7 +191,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                           padding: EdgeInsets.all(10),
                           child: Text(_.isEdit.call() ? 'Done' : 'PROCEED TO PAYMENT', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
-                        onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.cart.call().data.first.storeId)
+                        onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(activeCart.first.storeId)
                       ),
                     ),
                   )
@@ -206,11 +204,11 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  Widget _buildMenuItem(ActiveCartData cart, StoreCartController _) {
+  Widget _buildMenuItem(Product product, StoreCartController _) {
     return IgnorePointer(
       ignoring: !_.isEdit.call(),
       child: GestureDetector(
-        onTap: () => updateCart(cart),
+        onTap: () =>  updateCart(product: product),
         child: Container(
           child: Column(
             children: [
@@ -248,52 +246,12 @@ class StoreCartPage extends GetView<StoreCartController> {
                                       Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
                                       Expanded(
                                         child: Container(
-                                          child: Text('${cart.quantity}x ${cart.productDetails.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                          child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                                         ),
                                       ),
-                                      Text('₱ ${(double.tryParse(cart.productDetails.price) * cart.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
+                                      Text('₱ ${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
                                     ],
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 5, left: 20),
-                                    child: Column(
-                                      children: [
-                                        cart.additionals.isEmpty ? Container() : Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Adds-on:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                            Column(
-                                              children: cart.additionals.map((e) => _buildAddsOn(e, cart.quantity)).toList(),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                        Column(
-                                          children: cart.choices.map((e) => _buildChoice(e, cart.quantity)).toList(),
-                                        ),
-                                      ],
-                                    )
-                                  ),
-                                  cart.note != null ? Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          margin: EdgeInsets.only(top: 10),
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(15),
-                                            border: Border.all()
-                                          ),
-                                          child: Text(cart.note.toString())
-                                        ),
-                                      ],
-                                    ),
-                                  ) : Container()
                                 ],
                               ),
                             )
@@ -303,7 +261,9 @@ class StoreCartPage extends GetView<StoreCartController> {
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 100),
                           child: controller.isEdit.call() ? 
-                          GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${cart.quantity}x ${cart.productDetails.name}', cartId: cart.id)) : Container(key: UniqueKey())
+                          GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () {
+                            deleteDialog(menu: '${product.quantity}x ${product.name}', productId: product.id);
+                          }) : Container(key: UniqueKey())
                         ),
                       ],
                     ),
@@ -321,90 +281,45 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  Widget _buildAddsOn(ActiveCartAdditional additional, int quantity) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Container(
-            child: Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.start),
-            ),
-          ),
-        ),
-        Text('₱ ' + '${(double.tryParse(additional.price) * quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
-      ],
-    );
-  }
+  // Widget _buildAddsOn(ActiveCartAdditional additional, int quantity) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Expanded(
+  //         child: Container(
+  //           child: Padding(
+  //             padding: EdgeInsets.only(left: 20),
+  //             child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.start),
+  //           ),
+  //         ),
+  //       ),
+  //       Text('₱ ' + '${(double.tryParse(additional.price) * quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
+  //     ],
+  //   );
+  // }
 
-  Widget _buildChoice(ActiveCartChoice choice, int quantity) {
-    final price = double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              Expanded(child: Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14)))
-            ],
-          )
-        ),
-        Text(price == '0.00' ? '': '₱ ' + double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
-      ],
-    );
-  }
+  // Widget _buildChoice(ActiveCartChoice choice, int quantity) {
+  //   final price = double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2);
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Expanded(
+  //         child: Row(
+  //           children: [
+  //             Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+  //             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+  //             Expanded(child: Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14)))
+  //           ],
+  //         )
+  //       ),
+  //       Text(price == '0.00' ? '': '₱ ' + double.tryParse('${(double.tryParse(choice.price) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14))
+  //     ],
+  //   );
+  // }
 
-  deleteDialog({String menu, int cartId}) {
-    Get.defaultDialog(
-      content: GetX<StoreCartController>(
-        builder: (_) {
-          return  Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Are you sure want to delete this item?', textAlign: TextAlign.center),
-              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-              Text('($menu)'),
-              _.isLoading.call() ? Text('Loading..') : Container()
-            ],
-          );
-        },
-      ),
-      title: 'Delete Item',
-      barrierDismissible: false,
-      onConfirm: () => controller.deleteCart(cartId: cartId),
-      textCancel: 'Cancel',
-      textConfirm: 'Delete',
-      confirmTextColor: Colors.black,
-      cancelTextColor: Colors.black,
-      cancel: RaisedButton(
-        color: Color(Config.LETSBEE_COLOR),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Cancel'), 
-        onPressed: () {
-          if (!controller.isLoading.call()) Get.back();
-        }
-      ),
-      confirm: RaisedButton(
-        color: Colors.red,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text('Delete'), 
-        onPressed: () {
-          if (!controller.isLoading.call()) controller.deleteCart(cartId: cartId);
-        }
-      ),
-    );
-  }
-
-  paymentBottomsheet(int restaurantId) {
+  paymentBottomsheet(int storeId) {
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
@@ -455,7 +370,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                     ),
                   ],
                 ),
-                onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'cod'),
+                onPressed: () => confirmLocationModal(storeId: storeId, paymentMethod: 'cod'),
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -575,7 +490,7 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  confirmLocationModal({int restaurantID, String paymentMethod}) {
+  confirmLocationModal({int storeId, String paymentMethod}) {
     Get.back();
     Get.dialog(
       AlertDialog(
@@ -704,7 +619,9 @@ class StoreCartPage extends GetView<StoreCartController> {
                         ),
                         color: Color(Config.LETSBEE_COLOR),
                         onPressed: () {
-                          controller..saveConfirmLocation()..paymentMethod(restaurantID, paymentMethod);
+                          controller
+                          ..saveConfirmLocation()
+                          ..paymentMethod(storeId, paymentMethod);
                         },
                         child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       )
@@ -720,8 +637,50 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  updateCart(ActiveCartData data) {
-    controller.quantity(data.quantity);
+  deleteDialog({String menu, int productId}) {
+    Get.defaultDialog(
+      content: GetX<StoreCartController>(
+        builder: (_) {
+          return  Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Are you sure want to delete this item?', textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+              Text('($menu)'),
+              _.isLoading.call() ? Text('Loading..') : Container()
+            ],
+          );
+        },
+      ),
+      title: 'Delete Item',
+      barrierDismissible: false,
+      textCancel: 'Cancel',
+      textConfirm: 'Delete',
+      confirmTextColor: Colors.black,
+      cancelTextColor: Colors.black,
+      cancel: RaisedButton(
+        color: Color(Config.LETSBEE_COLOR),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text('Cancel'), 
+        onPressed: () {
+          if (!controller.isLoading.call()) Get.back();
+        }
+      ),
+      confirm: RaisedButton(
+        color: Colors.red,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text('Delete'), 
+        onPressed: () => controller.deleteCart(productId: productId)
+      ),
+    );
+  }
+
+  updateCart({Product product}) {
+    controller.quantity(product.quantity);
     Get.defaultDialog(
       title: '',
       content: Container(
@@ -735,7 +694,7 @@ class StoreCartPage extends GetView<StoreCartController> {
               padding: EdgeInsets.all(10),
               child: FadeInImage.assetNetwork(
                 placeholder: cupertinoActivityIndicatorSmall, 
-                image: data.productDetails.image, 
+                image: product.image, 
                 fit: BoxFit.fitHeight,
                 height: 150, 
                 placeholderScale: 5, 
@@ -747,7 +706,7 @@ class StoreCartPage extends GetView<StoreCartController> {
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            Text(data.productDetails.name, style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+            Text(product.name, style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             GetX<StoreCartController>(
               builder: (_) {
@@ -784,7 +743,7 @@ class StoreCartPage extends GetView<StoreCartController> {
             ),
             color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
             child: _.isUpdateCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Update cart', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-            onPressed: () => _.isUpdateCartLoading.call() ? null : _.updateCartRequest(data),
+            onPressed: () => _.updateCartRequest(product: product),
           );
         },
       ),
