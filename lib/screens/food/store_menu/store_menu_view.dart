@@ -89,7 +89,7 @@ class StoreMenuPage extends GetView<StoreMenuController> {
                             _.product.call().choices != null ? Column(
                               children: _.product.call().choices.map((e) => _buildRequiredItem(e)).toList()
                             ) : Container(),
-                            _.product.call().additionals != null ? Column(
+                            _.product.call().additionals.isNotEmpty ? Column(
                               children: [
                               Container(
                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),

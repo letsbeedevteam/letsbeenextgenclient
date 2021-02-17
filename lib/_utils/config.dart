@@ -1,9 +1,8 @@
 class Config {
 
   // Base URLs
-  // static const BASE_URL = 'http://192.168.100.14:8000';
-  // static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
-  static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com';
+  // static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com'; // develop
+  static const BASE_URL = 'http://18.166.234.218:8000'; // staging
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
