@@ -107,7 +107,7 @@ class CartController extends GetxController {
 
         if(cart.status == 200) {
           fetchActiveCarts(storeId: storeId.call());
-          successSnackBarTop(title: 'Success', message: cart.message);
+          successSnackBarTop(title: 'Success', message: 'Your item has been deleted');
         } else {
           errorSnackbarTop(title: 'Failed', message: Config.SOMETHING_WENT_WRONG);
         }

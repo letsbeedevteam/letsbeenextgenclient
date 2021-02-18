@@ -75,7 +75,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var hasMartError = false.obs;
 
   var restaurantErrorMessage = 'Loading restaurants...'.obs;
-  var martErrorMessage = 'Loading marts...'.obs;
+  var martErrorMessage = 'Loading shops...'.obs;
   var addressErrorMessage = 'Loading addresses...'.obs;
 
   
@@ -303,7 +303,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been declined by the Restaurant';
+            message = 'Your order in $name has been declined';
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -311,7 +311,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been accepted by the Restaurant';
+            message = 'Your order in $name has been accepted';
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -444,7 +444,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchRestaurantDashboard() {
-    // message('Loading...');
+    restaurantErrorMessage('Loading restaurants...');
     isLoading(true);
     hasRestaurantError(false);
     apiService.getRestaurantDashboard().then((response) {
@@ -487,7 +487,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchMartDashboard() {
-    // message('Loading...');
+    martErrorMessage('Loading shops...');
     isLoading(true);
     hasMartError(false);
     apiService.getMartDashboard().then((response) {
@@ -530,7 +530,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  searchRestaurant(String value) {
+  searchRestaurant({String value = ''}) {
     
     if (restaurantDashboard.call() != null) {
       isSearching(value.trim().isNotEmpty);
@@ -552,7 +552,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
-  searchMart(String value) {
+  searchMart({String value = ''}) {
     
     if (martDashboard.call() != null) {
       isSearching(value.trim().isNotEmpty);

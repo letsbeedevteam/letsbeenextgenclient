@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 35,
+          height: 40,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: GetX<DashboardController>(
@@ -24,12 +24,19 @@ class HomePage extends StatelessWidget {
                   ignoring: _.isLoading.call(),
                   child: TextField(
                     controller: _.restaurantSearchController,
-                    onChanged: _.searchRestaurant,
+                    onChanged: (restaurant) => _.searchRestaurant(value: restaurant),
                     cursorColor: Colors.black,
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
                       hintText: 'Search for food or restaurant here',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _.restaurantSearchController.clear();
+                          _.searchRestaurant();
+                        },
+                        icon: Icon(Icons.clear),
+                      ),
                       hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
                       filled: true,
@@ -75,7 +82,10 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ) : _scrollView(_)
+                    ) : Container(
+                      height: Get.height,
+                      child: _scrollView(_)
+                    )
                   ),
                   _.isSelectedLocation.call() ? Container(
                     margin: EdgeInsets.only(top: 70),

@@ -119,7 +119,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                               style: TextStyle(color: Colors.black, fontSize: 14)
                                             ),
                                             Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                            Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
+                                            Text('Contact Number: ${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                           ],
                                         ),
                                       )

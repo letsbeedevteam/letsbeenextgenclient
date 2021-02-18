@@ -167,7 +167,7 @@ class StoreMenuController extends GetxController {
             }
           });
         });
-        successSnackBarTop(title: 'Updated Cart!', message: '${response.message} Please wait...');
+        successSnackBarTop(title: 'Success', message: 'Your item has been updated! Please wait...');
         isAddToCartLoading(true);
       } else {
         errorSnackbarTop(title: 'Oops!', message: response.message);
@@ -187,15 +187,20 @@ class StoreMenuController extends GetxController {
     apiService.addToCart(addToCart).then((response) {
       
       if (response.status == 200) {
-        CartController.to
-        ..cart.nil()
-        ..fetchActiveCarts(storeId: product.call().storeId, callback: ()  {
-          Future.delayed(Duration(seconds: 1)).then((data) {
-            Get.back();
-            isAddToCartLoading(true);
-          });
-        });
 
+        if (response.code == 3506) {
+            errorSnackbarTop(title: 'Oops!', message: 'The store has been closed');
+        } else {
+          CartController.to
+          ..cart.nil()
+          ..fetchActiveCarts(storeId: product.call().storeId, callback: ()  {
+            Future.delayed(Duration(seconds: 1)).then((data) {
+              Get.back();
+              isAddToCartLoading(true);
+            });
+          });
+        }
+        
       } else {
         if (response.code == 3005) {
           errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending order');

@@ -173,7 +173,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Name: ${_.box.read(Config.USER_NAME)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-                              Text('Contact #: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+                              Text('Contact #: ${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
                             ],
                           ),
                         )

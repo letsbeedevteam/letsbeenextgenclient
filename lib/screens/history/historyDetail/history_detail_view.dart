@@ -216,7 +216,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                                         style: TextStyle(color: Colors.black, fontSize: 14)
                                       ),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                      Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
+                                      Text('Contact Number: ${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                     ],
                                   ),
                                 )
@@ -244,9 +244,9 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
     switch (controller.data.call().status) {
       case 'pending': return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'store-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;
-      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'store-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
         break;
       case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
         break;

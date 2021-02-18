@@ -14,7 +14,7 @@ class MartPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 35,
+          height: 40,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: GetX<DashboardController>(
@@ -23,12 +23,19 @@ class MartPage extends StatelessWidget {
                   ignoring: _.isLoading.call(),
                   child: TextField(
                     controller: _.martSearchController,
-                    onChanged: _.searchMart,
+                    onChanged: (mart) => _.searchMart(value: mart),
                     cursorColor: Colors.black,
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
                       hintText: 'Search for mart here',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _.martSearchController.clear();
+                          _.searchMart();
+                        },
+                        icon: Icon(Icons.clear),
+                      ),
                       hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
                       filled: true,
@@ -52,7 +59,7 @@ class MartPage extends StatelessWidget {
             builder: (_) {
               return RefreshIndicator(
                 onRefresh: () {
-                  _.refreshToken('Loading Marts...');
+                  _.refreshToken('Loading Shops...');
                   return _.refreshCompleter.future;
                 },
                 child: _.martDashboard.call() == null ? Container(
@@ -66,12 +73,15 @@ class MartPage extends StatelessWidget {
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
-                          onPressed: () => _.refreshToken('Loading Marts...'),
+                          onPressed: () => _.refreshToken('Loading Shops...'),
                         ) : Container() 
                       ],
                     ),
                   ),
-                ) : Container(height: Get.height, child: _scrollView()),
+                ) : Container(
+                  height: Get.height,
+                  child: _scrollView()
+                ),
               );
             },
           ),
@@ -95,7 +105,7 @@ class MartPage extends StatelessWidget {
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                      child: Text('Recent Supermarkets', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                      child: Text('Recent Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                     ),
                     Container(
                       child: SingleChildScrollView(
@@ -115,7 +125,7 @@ class MartPage extends StatelessWidget {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                    child: Text('All Supermarkets', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                    child: Text('All Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                   _.searchMarts.call().isNotEmpty ? 
@@ -129,7 +139,7 @@ class MartPage extends StatelessWidget {
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
-                          onPressed: () => _.refreshToken('Loading Marts...'),
+                          onPressed: () => _.refreshToken('Loading Shops...'),
                         ) : Container() 
                       ],
                     ),
