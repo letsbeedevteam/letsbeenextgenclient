@@ -27,7 +27,9 @@ class Config {
   static const ACTIVE_ORDER_ROUTE = '/active_order';
   static const STORE_ROUTE = '/store';
   static const STORE_MENU_ROUTE = '/store_menu';
-  static const STORE_CART = '/store_cart';
+  static const STORE_CART_ROUTE = '/store_cart';
+  static const ADDRESS_ROUTE = '/address';
+  static const USER_DETAILS_ROUTE = '/user_details';
 
   // Storage keys
   static const USER_ID = 'user_id';
@@ -87,4 +89,5 @@ class Config {
   static const WHITE = 0xFFF8F8FA;
   static const SEARCH_TEXT_COLOR = 0xFF999999;
   static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
+  static const YELLOW_TEXT_COLOR = 0xFFD9BB64;
 }

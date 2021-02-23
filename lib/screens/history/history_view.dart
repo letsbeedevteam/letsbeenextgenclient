@@ -13,11 +13,15 @@ class HistoryPage extends GetView<HistoryController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text('Order History'),
-        centerTitle: false,
+        title: Text('Order History', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        bottom: PreferredSize(
+          child: Divider(thickness: 2, color: Colors.grey.shade200),
+          preferredSize: Size.fromHeight(4.0)
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () {
@@ -63,61 +67,99 @@ class HistoryPage extends GetView<HistoryController> {
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 5.0,
-              offset: Offset(3,3)
-            )
-          ]
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        color: Color(Config.WHITE),
+        child: Column(
           children: [
-            Container(
-              margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
-              height: 70.0,
-              width: 70.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: Colors.black, width: 1.5),
-                color: Colors.transparent
-              ),
-              child: ClipOval(
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-              )
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                        Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                        Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                        Container(
+                          margin: EdgeInsets.only(right: 10, bottom: 10),
+                          child: Text('₱${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        ),
+                        _buildStatus(data.status)
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                  height: 80.0,
+                  width: 80.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: Colors.black, width: 1.5),
+                    color: Colors.transparent
+                  ),
+                  child: ClipOval(
+                    child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                  )
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+              ],
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                    Container(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
-                    ),
-                    Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13)),
-                    Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                    Container(
-                      margin: EdgeInsets.only(right: 10, bottom: 10),
-                      alignment: FractionalOffset.bottomRight,
-                      child: Text('₱ ${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    )
-                ],
-              )
-            ),
+            Divider(thickness: 2, color: Colors.grey.shade200)
           ],
         ),
       ),
       onTap: () => Get.toNamed(Config.HISTORY_DETAIL_ROUTE, arguments: data.toJson()),
     );
+  }
+
+  Widget _buildStatus(String status) {
+    switch (status) {
+      case 'store-declined': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.red
+          ),
+          child: Text('Restaurant Declined', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        );
+        break;
+      case 'delivered': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Color(Config.LETSBEE_COLOR)
+          ),
+          child: Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
+        );
+        break;
+      case 'cancelled': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.red
+          ),
+          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        );
+        break;
+      default: return Container(
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.red
+        ),
+        child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+      );
+    }
   }
 }

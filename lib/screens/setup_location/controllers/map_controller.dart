@@ -10,6 +10,7 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
 import 'package:letsbeeclient/models/newAddressRequest.dart';
 import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/screens/address/address_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:location/location.dart' as lct;
@@ -249,9 +250,9 @@ class MapController extends GetxController {
         ..isSelectedLocation(true)
         ..userCurrentNameOfLocation(nameTF.text)
         ..userCurrentAddress(this.userCurrentAddress.call().trim())
-        ..isOpenLocationSheet(false)
-        ..fetchAllAddresses()
         ..fetchRestaurantDashboard();
+
+        AddressController.to.refreshAddress();
         // ..fetchRestaurants();
         Get.back(closeOverlays: true);
         

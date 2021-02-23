@@ -12,7 +12,7 @@ class SignInResponse {
 
   int status;
   SignInData data;
-  int message;
+  dynamic message;
   int code;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(

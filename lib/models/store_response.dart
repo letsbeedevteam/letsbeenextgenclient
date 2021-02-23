@@ -8,6 +8,14 @@ StoreResponse storeResponseFromJson(String str) => StoreResponse.fromJson(json.d
 
 String storeResponseToJson(StoreResponse data) => json.encode(data.toJson());
 
+Product productFromJson(String str) => Product.fromJson(json.decode(str));
+
+String productToJson(Product data) => json.encode(data.toJson());
+
+List<Product> listProductFromJson(String str) => List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
+
+String listProductToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class StoreResponse {
   StoreResponse({
     this.status,
@@ -147,6 +155,8 @@ class Product {
     this.createdAt,
     this.updatedAt,
     this.isRemove,
+    this.userId,
+    this.note
   });
 
   List<Choice> choices;
@@ -164,6 +174,8 @@ class Product {
   String category;
   String status;
   bool isRemove;
+  int userId;
+  String note;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -183,6 +195,8 @@ class Product {
     category: json["category"],
     status: json["status"],
     isRemove: false,
+    userId: json["userId"],
+    note: json["note"],
     createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),
   );
@@ -202,6 +216,8 @@ class Product {
     "max_order": maxOrder,
     "category": category,
     "status": status,
+    "userId":userId,
+    "note":note,
     "createdAt": createdAt.toIso8601String(),
     "updatedAt": updatedAt.toIso8601String(),
   };
@@ -215,14 +231,16 @@ class Additional {
       this.customerPrice,
       this.sellerPrice,
       this.status,
+      this.selectedValue,
     });
 
     int id;
     String name;
     int price;
-    String customerPrice;
+    dynamic customerPrice;
     String sellerPrice;
     bool status;
+    bool selectedValue;
 
     factory Additional.fromJson(Map<String, dynamic> json) => Additional(
       id: json["id"],
@@ -231,6 +249,7 @@ class Additional {
       customerPrice: json["customer_price"],
       sellerPrice: json["seller_price"],
       status: json["status"],
+      selectedValue: json["selectedValue"] == null ? true : json["selectedValue"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -240,6 +259,7 @@ class Additional {
       "customer_price": customerPrice,
       "seller_price": sellerPrice,
       "status": status,
+      "selectedValue":selectedValue
     };
 }
 
@@ -283,6 +303,7 @@ class Option {
     this.customerPrice,
     this.sellerPrice,
     this.status,
+    this.selectedValue,
   });
 
   int id;
@@ -291,6 +312,7 @@ class Option {
   dynamic customerPrice;
   dynamic sellerPrice;
   bool status;
+  String selectedValue;
 
   factory Option.fromJson(Map<String, dynamic> json) => Option(
     id: json["id"],
@@ -299,6 +321,7 @@ class Option {
     customerPrice: json["customer_price"],
     sellerPrice: json["seller_price"],
     status: json["status"],
+    selectedValue: json["selectedValue"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -308,6 +331,7 @@ class Option {
     "customer_price": customerPrice,
     "seller_price": sellerPrice,
     "status": status,
+    "selectedValue":selectedValue
   };
 }
 

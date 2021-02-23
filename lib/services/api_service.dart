@@ -166,7 +166,9 @@ class ApiService extends GetConnect {
     return activeCartResponseFromJson(response.bodyString);
   }
 
-  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod}) async {
+  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
+
+    print(carts);
 
     final response = await put(
       '/orders',
@@ -182,7 +184,8 @@ class ApiService extends GetConnect {
           'city': _box.read(Config.USER_CURRENT_CITY),
           'iso_code': _box.read(Config.USER_CURRENT_IS_CODE),
           'barangay': _box.read(Config.USER_CURRENT_BARANGAY)
-        }
+        },
+        'carts': carts
       },
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',

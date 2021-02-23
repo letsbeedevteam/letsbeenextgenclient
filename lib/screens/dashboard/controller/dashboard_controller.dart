@@ -53,7 +53,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var userCurrentAddress = ''.obs;
   var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
-  var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
   var isSearching = false.obs;
   // var isOnChat = false.obs;
@@ -61,7 +60,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   // var message = ''.obs;
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
-  var addresses = GetAllAddressResponse().obs;
+  // var addresses = GetAllAddressResponse().obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
   var recentRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
@@ -78,7 +77,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var martErrorMessage = 'Loading shops...'.obs;
   var addressErrorMessage = 'Loading addresses...'.obs;
 
-  
+  var isDisableDeliveryPushNotif = false.obs;
+  var isDisablePromotionalPushNotif = false.obs;
+
   static DashboardController get to => Get.find();
 
   GifController changeGifRange({double range, int duration}) {
@@ -92,7 +93,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     restaurantDashboard.nil();
     martDashboard.nil();
     activeOrderData.nil();
-    addresses.nil();
     activeOrders.nil();
 
     userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
@@ -163,10 +163,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     pageController = PageController();
   }
 
-  void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
-
   void tapped(int tappedIndex) {
-    tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
+    // tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 0) {
       // restaurantDashboard.nil();
       fetchRestaurantDashboard();
@@ -199,21 +197,21 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-    showLocationSheet(false);
     fetchRestaurantDashboard();
     fetchMartDashboard();
   }
 
   void clearData() {
-    box.erase();
-    addresses.nil();
     searchRestaurants.nil();
     restaurantDashboard.nil();
     activeOrders.nil();
-    box.erase();
+    // box.erase();
+    box.remove(Config.USER_TOKEN);
+    box.remove(Config.IS_LOGGED_IN);
   }
 
   void signOut() {
+    // box.remove(Config.PRODUCTS);
     socketService.disconnectSocket();
     clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
@@ -384,7 +382,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       Future.delayed(Duration(seconds: 1)).then((value) {
         if (socketService.socket == null) socketSetup(); else socketService.socket..disconnect()..connect();
         fetchActiveOrders();
-        fetchAllAddresses();
         fetchRestaurantDashboard();
         fetchMartDashboard();
       });
@@ -407,39 +404,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         martErrorMessage(Config.SOMETHING_WENT_WRONG);
         addressErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
+      hasMartError(true);
+      hasRestaurantError(true);
       print('Refresh token: $onError');
-    });
-  }
-
-  addAddress() {
-    Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS}).whenComplete(() {
-      showLocationSheet(false);
-    });
-  }
-
-  fetchAllAddresses() {
-    isLoading(true);
-    apiService.getAllAddress().then((response) {
-      isLoading(false);
-      if (response.status == 200) {
-        if (response.data.isNotEmpty) {
-          addresses(response);
-        } else {
-          addresses.nil();
-          addressErrorMessage('No list of address');
-        }
-
-      } else {
-        addresses.nil();
-        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
-      }
-      
-    }).catchError((onError) {
-      addresses.nil();
-      isLoading(false);
-      addressErrorMessage(Config.SOMETHING_WENT_WRONG);
-      // message(Config.SOMETHING_WENT_WRONG);
-      print('Error fetch all address: $onError');
     });
   }
 

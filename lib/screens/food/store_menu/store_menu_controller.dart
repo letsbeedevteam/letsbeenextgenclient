@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/active_cart_response.dart';
@@ -10,10 +11,12 @@ import 'package:letsbeeclient/models/add_to_cart.dart';
 // import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
+// import 'package:letsbeeclient/screens/mart/store_cart/store_cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class StoreMenuController extends GetxController {
   
+  GetStorage box = Get.find();
   ApiService apiService = Get.find();
   Completer<void> refreshCompleter;
 
@@ -36,6 +39,8 @@ class StoreMenuController extends GetxController {
   var tFRequestController = TextEditingController();
 
   var cart = ActiveCartData().obs;
+
+  final list = RxList<Product>().obs;
 
   @override
   void onInit() {
@@ -94,6 +99,16 @@ class StoreMenuController extends GetxController {
     });
   }
 
+  void storeCartToStorage() {
+    product.call().userId = box.read(Config.USER_ID);
+    for (var i = 0; i < countQuantity.call(); i++) {
+      list.call().add(product.call());
+    }
+    box.write(Config.PRODUCTS, listProductToJson(list.call()));
+    CartController.to.getProducts();
+    Get.back();
+  }
+
   addToCart() {
     
     isAddToCartLoading(true);
@@ -125,7 +140,6 @@ class StoreMenuController extends GetxController {
     );
 
     var addToCart = AddToCart(
-      storeId: product.call().storeId,
       productId: product.call().id,
       choices: choiceIds.call(),
       additionals: additionalIds.call().first.id,
@@ -157,15 +171,15 @@ class StoreMenuController extends GetxController {
     
       if (response.status == 200) {
         Future.delayed(Duration(milliseconds: 500)).then((data) {
-          CartController.to..cart.nil()..fetchActiveCarts(storeId: product.call().storeId, callback: () {
-            if(Get.isSnackbarOpen) {
-              Get.back();
-              Future.delayed(Duration(milliseconds: 500));
-              Get.back();
-            } else {
-              Get.back();
-            }
-          });
+          // CartController.to..cart.nil()..fetchActiveCarts(storeId: product.call().storeId, callback: () {
+          //   if(Get.isSnackbarOpen) {
+          //     Get.back();
+          //     Future.delayed(Duration(milliseconds: 500));
+          //     Get.back();
+          //   } else {
+          //     Get.back();
+          //   }
+          // });
         });
         successSnackBarTop(title: 'Success', message: 'Your item has been updated! Please wait...');
         isAddToCartLoading(true);
@@ -191,14 +205,14 @@ class StoreMenuController extends GetxController {
         if (response.code == 3506) {
             errorSnackbarTop(title: 'Oops!', message: 'The store has been closed');
         } else {
-          CartController.to
-          ..cart.nil()
-          ..fetchActiveCarts(storeId: product.call().storeId, callback: ()  {
-            Future.delayed(Duration(seconds: 1)).then((data) {
-              Get.back();
-              isAddToCartLoading(true);
-            });
-          });
+          // CartController.to
+          // ..cart.nil()
+          // ..fetchActiveCarts(storeId: product.call().storeId, callback: ()  {
+          //   Future.delayed(Duration(seconds: 1)).then((data) {
+          //     Get.back();
+          //     isAddToCartLoading(true);
+          //   });
+          // });
         }
         
       } else {

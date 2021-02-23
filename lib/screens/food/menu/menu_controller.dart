@@ -8,7 +8,7 @@ import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/getCart.dart';
 import 'package:letsbeeclient/models/restaurant.dart';
 // import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
-import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
+// import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class MenuController extends GetxController {
@@ -183,7 +183,7 @@ class MenuController extends GetxController {
       
       if (response.status == 200) {
         // successSnackBarTop(title: 'Cart!', message: response.message, status: (status) => status == SnackbarStatus.CLOSED ? Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.value) : null);
-        CartController.to.cart.nil();
+        // CartController.to.cart.nil();
         // Get.offAndToNamed(Config.CART_ROUTE, arguments: restaurantId.call());
 
         // if (argument['type'] == 'quick_order') {
