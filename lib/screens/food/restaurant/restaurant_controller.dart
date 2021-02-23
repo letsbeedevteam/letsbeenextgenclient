@@ -128,6 +128,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   void addToCart() {
     
+    product.call().note = tFRequestController.text;
     product.call().userId = box.read(Config.USER_ID);
     product.call().quantity = quantity.call();
     list.call().add(product.call());

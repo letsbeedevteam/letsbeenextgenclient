@@ -27,7 +27,23 @@ class AddressPage extends GetView<AddressController> {
               const Text('Loading addresses...', style: TextStyle(fontSize: 15, color: Colors.black))
             ],
           ),
-        ) : _content();
+        ) : Column(
+          children: [
+            Flexible(child: _content()),
+            SizedBox(
+              width: Get.width * 0.85,
+              child: RaisedButton(
+                color: const Color(Config.LETSBEE_COLOR),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: const Text('Add New Address', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                onPressed: () => controller.addAddress(),
+              ),
+            ),
+            const Padding(padding: const EdgeInsets.symmetric(vertical: 5))
+          ],
+        );
       }),
     );
   }
@@ -44,27 +60,9 @@ class AddressPage extends GetView<AddressController> {
     return RefreshIndicator(
       onRefresh: () => controller.refreshAddress(),
       child: Obx(() {
-        return Column(
-          children: [
-            Flexible(
-              child: ListView(
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                children: controller.addresses.call().data.take(3).map((address) => _buildLocationList(address)).toList(),
-              ),
-            ),
-            SizedBox(
-              width: Get.width * 0.85,
-              child: RaisedButton(
-                color: const Color(Config.LETSBEE_COLOR),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)
-                ),
-                child: const Text('Add New Address', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                onPressed: () => controller.addAddress(),
-              ),
-            ),
-            const Padding(padding: const EdgeInsets.symmetric(vertical: 5))
-          ],
+        return ListView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          children: controller.addresses.call().data.take(3).map((address) => _buildLocationList(address)).toList(),
         );
       }),
     );
