@@ -1,8 +1,8 @@
 class Config {
 
   // Base URLs
-  static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com'; // develop
-  // static const BASE_URL = 'http://18.166.234.218:8000'; // staging
+  // static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com'; // develop
+  static const BASE_URL = 'http://18.166.234.218:8000'; // staging
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -83,6 +83,7 @@ class Config {
   static const LETS_BEE = 'Let\'s Bee';
   static const ADD_NEW_ADDRESS = 'add_new_address';
   static const SETUP_ADDRESS = 'setup_address';
+  static const NEXT_DAY = 'next_day';
 
   // Colors 
   static const LETSBEE_COLOR = 0xFFFCD000;

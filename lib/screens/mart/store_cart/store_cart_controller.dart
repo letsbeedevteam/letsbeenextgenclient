@@ -119,13 +119,13 @@ class StoreCartController extends GetxController {
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
    
     if (product.quantity < quantity.call()) {
-      prod.where((data) => data.id == product.id);
+      prod.where((data) => data.uniqueId == product.uniqueId);
       for (var i = 0; i < quantity.call() - product.quantity; i++) {
         prod.add(product);
       }
     } else {
       print(product.quantity - quantity.call());
-      prod.where((data) => data.id == product.id).take(product.quantity - quantity.call()).forEach((data) {
+      prod.where((data) => data.uniqueId == product.uniqueId).take(product.quantity - quantity.call()).forEach((data) {
         data.isRemove = true;
       });
      
@@ -136,14 +136,14 @@ class StoreCartController extends GetxController {
     getProducts();
   }
 
-  deleteCart({int productId}) {
+  deleteCart({String uniqueId}) {
     // isLoading(true);
     Get.back();
     successSnackBarTop(title: 'Success!', message: 'Your item has been deleted', seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
-    prod.removeWhere((data) => data.id == productId);
+    prod.removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    StoreController.to.list.call().removeWhere((data) => data.id == productId);
+    StoreController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
     getProducts();
   }
 
@@ -175,6 +175,8 @@ class StoreCartController extends GetxController {
               box.write(Config.PRODUCTS, listProductToJson(prod));
               StoreController.to.list.call().removeWhere((data) => data.storeId == storeId);
               getProducts();
+
+              DashboardController.to.fetchActiveOrders();
 
               Future.delayed(Duration(seconds: 1)).then((value) {
                 // fetchActiveCarts(storeId: storeId);
@@ -257,7 +259,7 @@ class StoreCartController extends GetxController {
       );
     });
 
-    print(addToCart.toJson());
+    // print(addToCart.toJson());
 
     if (newMap.isNotEmpty) {
       updatedProducts.call().assignAll(newMap.values);

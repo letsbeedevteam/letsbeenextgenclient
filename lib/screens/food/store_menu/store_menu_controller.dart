@@ -142,7 +142,7 @@ class StoreMenuController extends GetxController {
     var addToCart = AddToCart(
       productId: product.call().id,
       choices: choiceIds.call(),
-      additionals: additionalIds.call().first.id,
+      // additionals: additionalIds.call().first.id,
       quantity: countQuantity.call(),
       note: tFRequestController.text
     );

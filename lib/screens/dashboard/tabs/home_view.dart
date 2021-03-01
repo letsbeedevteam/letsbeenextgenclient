@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
           child: Container(
@@ -63,7 +64,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   RefreshIndicator(
                     onRefresh: () {
-                      _.refreshToken('Loading Restaurants...');
+                      _.refreshToken();
                       return _.refreshCompleter.future;
                     },
                     child: _.restaurantDashboard.call() == null ? Container(
@@ -77,7 +78,7 @@ class HomePage extends StatelessWidget {
                             _.hasRestaurantError.call() ? RaisedButton(
                               color: Color(Config.LETSBEE_COLOR),
                               child: Text('Refresh'),
-                              onPressed: () => _.refreshToken('Loading Restaurants...'),
+                              onPressed: () => _.refreshToken(),
                             ) : Container() 
                           ],
                         ),
@@ -180,7 +181,7 @@ class HomePage extends StatelessWidget {
                   _.hasMartError.call() ? RaisedButton(
                     color: Color(Config.LETSBEE_COLOR),
                     child: Text('Refresh'),
-                    onPressed: () => _.refreshToken('Loading Restaurants...'),
+                    onPressed: () => _.refreshToken(),
                   ) : Container() 
                 ],
               ),

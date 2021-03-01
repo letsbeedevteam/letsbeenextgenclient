@@ -34,7 +34,6 @@ class DashboardPage extends GetView<DashboardController> {
                         backgroundColor: Color(Config.WHITE),
                         titleSpacing: 0.0,
                         centerTitle: false,
-                        // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
                         title: currentIndex == 2 ? Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.only(top: 20),
@@ -58,14 +57,7 @@ class DashboardPage extends GetView<DashboardController> {
                                       color: Color(Config.LETSBEE_COLOR),
                                       borderRadius: BorderRadius.circular(25)
                                     ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                                        // Icon(Icons.keyboard_arrow_down, size: 20,)
-                                      ],
-                                    ),
+                                    child: Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
                                   )
                                 ],
                               ),
@@ -81,6 +73,7 @@ class DashboardPage extends GetView<DashboardController> {
                           ),
                         ),
                         // actions: [
+                        //   _.pageIndex.call() == 2 ? Container() :
                         //   IconButton(icon: Image.asset(Config.PNG_PATH + 'jar-empty.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => print('Cart'), highlightColor: Colors.transparent, splashColor: Colors.transparent)
                         // ],
                       ),
@@ -90,7 +83,10 @@ class DashboardPage extends GetView<DashboardController> {
                 Flexible(
                   child: Column(
                     children: [
-                      Divider(),
+                      Container(
+                        height: 2,
+                        color: Colors.grey.shade200
+                      ),
                       Expanded(
                         child: PageView(
                           physics: NeverScrollableScrollPhysics(),
@@ -106,7 +102,7 @@ class DashboardPage extends GetView<DashboardController> {
                 )
               ],
             ),
-            floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+            floatingActionButton: _.pageIndex.call() == 2 ? Container() : _.activeOrders.call() == null ? Container() : Badge(
               badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               padding: EdgeInsets.all(10),
               borderSide: BorderSide(color: Colors.black, width: 1.5),
@@ -117,7 +113,13 @@ class DashboardPage extends GetView<DashboardController> {
                 elevation: 0,
                 onPressed: () {
                   _.fetchActiveOrders();
-                  _activeOrderDialog();
+                  if (_.activeOrders.call().data.length == 1) {
+                    controller.activeOrderData(_.activeOrders.call().data.first);
+                    Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+                  } else {
+                    _activeOrderDialog();
+                  }
+                
                 },
                 child: Image.asset(Config.PNG_PATH + 'active_order.png', height: 50, width: 50),
               ),

@@ -19,6 +19,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
+// import 'package:intl/intl.dart';
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
   
@@ -80,6 +81,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isDisableDeliveryPushNotif = false.obs;
   var isDisablePromotionalPushNotif = false.obs;
 
+  // Timer _timer;
+
   static DashboardController get to => Get.find();
 
   GifController changeGifRange({double range, int duration}) {
@@ -102,19 +105,49 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
-    refreshToken('Loading...');
+    refreshToken();
 
     gifController = GifController(vsync: this);
 
     super.onInit();
   }
 
-  socketSetup() {
-    socketService.connectSocket();
+  // void startEvery24Hours() {
+
+  //   final now = DateTime.now();
+  //   final nextCheck = DateTime(now.year, now.month, now.day + 1);
+
+  //   _timer = Timer.periodic(
+  //      Duration(seconds: 1), (Timer timer) {
+  //       if (DateFormat('MM-dd-yyyy').format(DateTime.now()) == box.read(Config.NEXT_DAY)) {
+  //         refreshToken();
+  //       } else {
+  //         if (!box.hasData(Config.NEXT_DAY)) {
+  //           box.write(Config.NEXT_DAY, DateFormat('MM-dd-yyyy').format(nextCheck));
+  //         } else {
+  //           // print(box.read(Config.NEXT_DAY));
+  //         }
+  //       }
+  //     },
+  //   );
+
+  //   fetchActiveOrders();
+  //   fetchRestaurantDashboard();
+  //   fetchMartDashboard();
+  // }
+
+  refreshSocket({String type = 'initialize'}) {
+    if (type == 'initialize') {
+      socketService.connectSocket();
+    } else {
+      socketService.socket..disconnect()..connect();
+    }
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
+      receiveUpdateOrder();
+      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -126,16 +159,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     })
     ..on('disconnect', (_) {
       onGoingMessage('Loading...');
-      activeOrders.nil();
+      // activeOrders.nil();
       print('Disconnected');
     })
     ..on('error', (_) {
       onGoingMessage('Loading...');
       print('Error socket: $_');
     });
-
-    receiveUpdateOrder();
-    receiveChat();
   }
 
   void setupRefreshIndicator() {
@@ -208,6 +238,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     // box.erase();
     box.remove(Config.USER_TOKEN);
     box.remove(Config.IS_LOGGED_IN);
+    box.remove(Config.USER_CURRENT_STREET);
+    box.remove(Config.USER_CURRENT_COUNTRY);
+    box.remove(Config.USER_CURRENT_STATE);
+    box.remove(Config.USER_CURRENT_CITY);
+    box.remove(Config.USER_CURRENT_IS_CODE);
+    box.remove(Config.USER_CURRENT_BARANGAY);
+    box.remove(Config.USER_CURRENT_LATITUDE);
+    box.remove(Config.USER_CURRENT_LONGITUDE);
+    box.remove(Config.USER_CURRENT_ADDRESS);
+    box.remove(Config.USER_CURRENT_NAME_OF_LOCATION);
   }
 
   void signOut() {
@@ -367,7 +407,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  refreshToken(String title) {
+  refreshToken() {
+    restaurantErrorMessage('Loading restaurants...');
+    martErrorMessage('Loading shops...');
     hasMartError(false);
     hasRestaurantError(false);
     isLoading(true);
@@ -376,11 +418,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       // message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
+        // _timer.cancel();
+        // box.remove(Config.NEXT_DAY);
         box.write(Config.USER_TOKEN, response.data.accessToken);
+        // startEvery24Hours();
       } 
 
       Future.delayed(Duration(seconds: 1)).then((value) {
-        if (socketService.socket == null) socketSetup(); else socketService.socket..disconnect()..connect();
+        if (socketService.socket == null) refreshSocket(); else refreshSocket(type: 'refresh');
         fetchActiveOrders();
         fetchRestaurantDashboard();
         fetchMartDashboard();
@@ -430,7 +475,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
         if(searchRestaurants.call().isEmpty) {
-          // restaurantDashboard.nil();
+          restaurantDashboard.nil();
+          hasRestaurantError(true);
           restaurantErrorMessage('No restaurants found');
         }
       } else {
@@ -472,7 +518,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         recentMarts.call()..clear()..assignAll(newMap.values.toList());
         searchMarts.call()..clear()..assignAll(response.data.stores);
         if(searchMarts.call().isEmpty) {
-          // martDashboard.nil();
+          martDashboard.nil();
+          hasMartError(true);
           martErrorMessage('No marts found');
         }
       

@@ -46,7 +46,7 @@ class AuthController extends GetxController implements AuthViewContract {
           if (response.status == 200) {
             
             _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
-            Get.toNamed(Config.USER_DETAILS_ROUTE, arguments: response.data.toJson()).whenComplete(() {
+            Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson()).whenComplete(() {
               emailController.clear();
               passwordController.clear();
               dismissKeyboard(Get.context);

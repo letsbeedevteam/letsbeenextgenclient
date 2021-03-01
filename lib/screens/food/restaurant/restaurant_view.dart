@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
-import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
+// import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/models/restaurant.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
@@ -59,28 +59,30 @@ class RestaurantPage extends GetView<RestaurantController> {
                         sliver: SliverAppBar(
                           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
                           actions: [
-                            GetX<CartController>(
-                              builder: (cart) {
-                                return Container(
+                            Obx(() {
+                              final filtered = controller.list.call().where((data) => !data.isRemove && data.storeId == controller.store.call().data.id && data.userId == controller.box.read(Config.USER_ID));
+                              return GestureDetector(
+                                onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().data.id),
+                                child: Container(
                                   margin: EdgeInsets.only(right: 10),
                                   child: Stack(
                                     alignment: Alignment.bottomRight,
                                     children: [
-                                      IconButton(
-                                        icon: Image.asset(cart.updatedProducts.call().where((data) => !data.isRemove && data.storeId == controller.store.call().data.id).isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30), 
-                                        onPressed: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().data.id)
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
                                       ),
                                       Badge(
-                                        badgeContent: Text(cart.updatedProducts.call().where((data) => !data.isRemove && data.storeId == controller.store.call().data.id).isEmpty ? '' : cart.updatedProducts.call().map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                        showBadge: cart.updatedProducts.call().isNotEmpty,
+                                        badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                        showBadge: filtered.isNotEmpty,
                                         borderSide: BorderSide(color: Colors.black, width: 1.5),
                                         padding: EdgeInsets.all(5),
                                       )
                                     ]
                                   ),
-                                );
-                              }
-                            )
+                                ),
+                              );
+                            })
                           ],
                           expandedHeight: 330.0,
                           floating: true,
@@ -579,6 +581,7 @@ class RestaurantPage extends GetView<RestaurantController> {
   }
 
   _bottomSheet(Product product) {
+    controller.product.nil();
     Get.bottomSheet(
       GetX<RestaurantController>(
         initState: (state) => controller.refreshProduct(product),
@@ -657,7 +660,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                   Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                   Expanded(
                                     child: GestureDetector(
-                                      onTap: () => controller.addToCart(),
+                                      onTap: () => controller.addToCart(controller.product.call()),
                                       child: Container(
                                         padding: EdgeInsets.all(10),
                                         decoration: BoxDecoration(

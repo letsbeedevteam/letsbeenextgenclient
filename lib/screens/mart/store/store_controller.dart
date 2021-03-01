@@ -8,6 +8,7 @@ import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/mart/store_cart/store_cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:uuid/uuid.dart';
 
 class StoreController extends GetxController with SingleGetTickerProviderMixin {
   
@@ -15,6 +16,7 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
   ApiService apiService = Get.find();
   GetStorage box = Get.find();
 
+  final uuid = Uuid();
   final argument = Get.arguments;
   final nestedScrollViewController = ScrollController();
   final list = RxList<Product>().obs;
@@ -95,10 +97,12 @@ class StoreController extends GetxController with SingleGetTickerProviderMixin {
   }
 
   void storeCartToStorage(Product product) {
+    product.uniqueId = uuid.v4();
+    product.userId = box.read(Config.USER_ID);
     for (var i = 0; i < quantity.call(); i++) {
       list.call().add(product);
     }
-    list.call().forEach((data) => data.userId = box.read(Config.USER_ID));
+    // list.call().forEach((data) => data.userId = box.read(Config.USER_ID));
     box.write(Config.PRODUCTS, listProductToJson(list.call()));
     StoreCartController.to.getProducts();
     Get.back();

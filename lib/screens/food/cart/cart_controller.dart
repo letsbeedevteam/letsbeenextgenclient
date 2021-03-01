@@ -11,6 +11,7 @@ import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
+// import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class CartController extends GetxController {
@@ -41,6 +42,9 @@ class CartController extends GetxController {
 
   final addToCart = RxList<AddToCart>().obs;
   final updatedProducts = RxList<Product>().obs;
+  
+  var choicesTotalPrice = 0.00.obs;
+  var additionalTotalPrice = 0.00.obs;
 
   @override
   void onInit() {
@@ -101,14 +105,14 @@ class CartController extends GetxController {
   //   });
   // }
 
-  deleteCart({int productId}) {
+  deleteCart({String uniqueId}) {
     // isLoading(true);
     Get.back();
     successSnackBarTop(title: 'Success!', message: 'Your item has been deleted', seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
-    prod.removeWhere((data) => data.id == productId);
+    prod.removeWhere((data) => data.uniqueId == uniqueId);
+    RestaurantController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    RestaurantController.to.list.call().removeWhere((data) => data.id == productId);
     getProducts();
   }
 
@@ -117,11 +121,12 @@ class CartController extends GetxController {
     if (totalPrice.value < 100) {
       errorSnackbarTop(title: 'Alert', message: 'Please, the minimum transaction was ₱100');
     } else {
-      
       isPaymentLoading(true);
       Get.back();
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod).then((order) {
+      // successSnackBarTop(title: 'Order processing..', message: 'Please wait...');
+
+      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).then((order) {
           
         isPaymentLoading(false);
 
@@ -134,6 +139,14 @@ class CartController extends GetxController {
             if (order.paymentUrl == null) {
               print('NO URL');
               successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
+
+              final prod = listProductFromJson(box.read(Config.PRODUCTS));
+              prod.removeWhere((data) => data.storeId == storeId);
+              box.write(Config.PRODUCTS, listProductToJson(prod));
+              RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
+              getProducts();
+
+              DashboardController.to.fetchActiveOrders();
 
               Future.delayed(Duration(seconds: 1)).then((value) {
                 // fetchActiveCarts(storeId: storeId);
@@ -188,8 +201,45 @@ class CartController extends GetxController {
   }
 
   getProducts() {
-
+    choicesTotalPrice(0.00);
+    additionalTotalPrice(0.00);
     final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove && data.storeId == storeId.call());
-    updatedProducts.call().assignAll(products);
+    addToCart.call().clear();
+    
+    if (products.isNotEmpty) {
+
+      updatedProducts.call().assignAll(products);
+      updatedProducts.call().forEach((product) { 
+
+          for (var j = 0;  j < product.choices.length; j++) {
+
+            final choice =  product.choices[j];
+            choice.options.where((data) => data.name == data.selectedValue).forEach((option) {
+              choicesTotalPrice.value += double.tryParse(option.customerPrice.toString()) * product.quantity;
+            });
+          }
+
+          product.additionals.forEach((additional) {
+            if(!additional.selectedValue) {
+              additionalTotalPrice.value += double.tryParse(additional.customerPrice.toString()) * product.quantity;
+            }
+          });
+          
+          addToCart.call().add(
+            AddToCart(
+              productId: product.id,
+              choices: product.choices.isEmpty ? [] : product.choiceCart.toList(),
+              additionals: product.additionals.where((element) => !element.selectedValue).map((e) => e.id).toList(),
+              quantity: product.quantity,
+              note: product.note
+            )
+          );
+      });
+
+      totalPrice(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+      subTotal(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+    } else {
+      updatedProducts.call().clear();
+    }
   }
 }

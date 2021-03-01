@@ -1,7 +1,10 @@
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/add_to_cart.dart';
 // import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -10,6 +13,8 @@ import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:uuid/uuid.dart';
+// import 'package:collection/collection.dart';
 
 class RestaurantController extends GetxController with SingleGetTickerProviderMixin {
 
@@ -18,14 +23,15 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   ApiService apiService = Get.find();
   GetStorage box = Get.find();
 
+  final uuid = Uuid();
   final argument = Get.arguments;
   final nestedScrollViewController = ScrollController();
   final tFRequestController = TextEditingController();
-  final list = RxList<Product>().obs;
 
   var store = StoreResponse().obs;
   var listOfProcucts = RxList<Product>().obs;
   var product = Product().obs;
+  final list = RxList<Product>().obs;
 
   var hasError = false.obs;
   var readOnly = false.obs;
@@ -38,13 +44,14 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   var totalPriceOfChoice = 0.00.obs;
   var additionals = List<Additional>().obs;
   var options = List<Option>().obs;
+  var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
   var isSelectedProceed = ''.obs;
 
   var hasNoChoices = false.obs;
   // var choiceIds = List<ChoiceCart>().obs;
   // var additionalIds =  List<AdditionalCart>().obs;
-
+  
   static RestaurantController get to => Get.find();
   
   @override
@@ -61,9 +68,10 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   }
 
   void refreshProduct(Product getProduct) {
-    getProduct.choices.forEach((data) => data.options.forEach((option) => option.selectedValue = null));
-    getProduct.additionals.forEach((data) => data.selectedValue = true);
-    product(getProduct);
+    product.value = getProduct;
+    product.value.choices.forEach((data) => data.options.forEach((option) => option.selectedValue = null));
+    product.value.additionals.forEach((data) => data.selectedValue = true);
+    
     additionals.clear();
     options.clear();
     totalPriceOfAdditional(0.00);
@@ -71,18 +79,25 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     quantity(1);
     tFRequestController.clear();
     isSelectedProceed('');
+    choiceCart.call().clear();
   }
 
   void updateChoices(int id, Option option) {
     product.update((val) {
       val.choices.where((element) => element.id == id).forEach((choice) {
         choice.options.forEach((data) { 
-          data.selectedValue = option.name;
           if (data.name == option.name) {
+            data.selectedValue = option.name;
             options.add(data);
           } else {
+            data.selectedValue = null;
             options.remove(data);
-          }
+          } 
+
+          choiceCart.call()[choice.id] = ChoiceCart(
+            id: choice.id,
+            optionId: option.id
+          );
         });
       });
     });
@@ -126,95 +141,90 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }
   }
 
-  void addToCart() {
-    
-    product.call().note = tFRequestController.text;
-    product.call().userId = box.read(Config.USER_ID);
-    product.call().quantity = quantity.call();
-    list.call().add(product.call());
-    box.write(Config.PRODUCTS, listProductToJson(list.call()));
-    
-    // if(listProductFromJson(box.read(Config.PRODUCTS)).isNotEmpty) {
-    //   final products = listProductFromJson(box.read(Config.PRODUCTS));
+  void addToCart(Product product) {
 
-    //   var choiceIds1 = List<ChoiceCart>();
-    //   var choiceIds2 = List<ChoiceCart>();
-    //   var additionalIds1 = List<int>();
-    //   var additionalIds2 = List<int>();
+    var hasNotSelectedChoice = false;
 
-    //   choiceIds1.clear();
-    //   choiceIds2.clear();
-    //   additionalIds1.clear();
-    //   additionalIds2.clear();
-      
-    //   products.where((data) => data.name == product.call().name).first.choices.forEach((choice) {
-    //     choice.options.forEach((element) {
-    //       if (element.name == element.selectedValue) {
-    //         choiceIds1.add(
-    //           ChoiceCart(
-    //             id: choice.id,
-    //             optionId: element.name == element.selectedValue ? element.id : null
-    //           )
-    //         );
-    //       }
-    //     });
-    //   });
+    if (product.choices.isEmpty) {
+      hasNotSelectedChoice = true;
+    } else {
+      product.choices.forEach((choice) {
+        hasNotSelectedChoice = choice.options.where(((option) => option.selectedValue != null)).isNotEmpty;
+      });
+    }
+   
+    if (!hasNotSelectedChoice) {
+      errorSnackbarTop(title: 'Oops!', message: 'Choose your required choice');
+    } else {
 
-    //   product.call().choices.forEach((choice) {
-    //     choice.options.forEach((element) {
-    //       if (element.name == element.selectedValue) {
-    //         choiceIds2.add(
-    //           ChoiceCart(
-    //             id: choice.id,
-    //             optionId: element.name == element.selectedValue ? element.id : null
-    //           )
-    //         );
-    //       }
-    //     });
-    //   });
+      product.uniqueId = uuid.v4();
+      product.note = tFRequestController.text.isEmpty ? null : tFRequestController.text;
+      product.userId = box.read(Config.USER_ID);
+      product.quantity = quantity.call();
+      product.isRemove = false;
+      product.choiceCart = choiceCart.call().values.toList();
+      product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
+  
+      final prod = list.call().where((data) => !data.isRemove && data.storeId == store.call().data.id);
 
-    //   products.where((data) => data.name == product.call().name).first.additionals.where((element) => !element.selectedValue).forEach((data) => additionalIds1.add(data.id)); 
-    //   product.call().additionals.where((element) => !element.selectedValue).forEach((data) => additionalIds2.add(data.id)); 
+      if (prod.isNotEmpty) {
+        
+        try {
 
+          var hasSameChoices = false;
+          var hasSameAdditionals = false;
 
-    //   var convert1 = AddToCart(
-    //     storeId: products.where((data) => data.name == product.call().name).first.storeId,
-    //     productId: products.where((data) => data.name == product.call().name).first.id,
-    //     choices: choiceIds1,
-    //     additionals: additionalIds1,
-    //     quantity: 0,
-    //     note: null
-    //   );
+          final filteredChoice = prod.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
 
-    //   print(convert1.toJson());
-    //   var convert2 = AddToCart(
-    //     storeId: product.call().storeId,
-    //     productId:product.call().id,
-    //     choices: choiceIds2,
-    //     additionals: additionalIds2,
-    //     quantity: 0,
-    //     note: null
-    //   );
-    //   print(convert2.toJson());
+          if (filteredChoice.toList().isEmpty) {
+            list.call().add(product);
+          } else {
 
-    //   if (convert1.toString().contains(convert2.toString())) {
-    //     var addQuantity =  products.where((data) => data.name == product.call().name).first.quantity;
-    //     products.where((data) => data.name == product.call().name).first.quantity = addQuantity + quantity.call();
-    //     box.write(Config.PRODUCTS, listProductToJson(products));
-    //     print('has same options');
-    //   } else {
-    //     products.add(product.call());
-    //     box.write(Config.PRODUCTS, listProductToJson(products));
-    //     print('none');
-    //   }
+            if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart)) {
+              hasSameChoices = true;
+            } else {
+              hasSameChoices = false;
+            }
 
-    // } else {
-    //   list.call().add(product.call());
-    //   box.write(Config.PRODUCTS, listProductToJson(list.call()));
-    // }
+            if (additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
+              hasSameAdditionals = true;
+            } else {
+              hasSameAdditionals = false;
+            }
 
-    CartController.to.getProducts();
-    Get.back();
+            if (hasSameChoices && hasSameAdditionals) {
+              filteredChoice.first.note = tFRequestController.text.isNotEmpty ? product.note : null; 
+              filteredChoice.first.quantity = filteredChoice.first.quantity + product.quantity;
+            } else {
+              list.call().add(product);
+            }
+
+          }
+        } catch (error) {
+          list.call().add(product);
+          print(error);
+        }
+
+      } else {
+        print('Added cart when theres no product if found');
+        list.call().add(product);
+      }
+
+      choiceCart.call().clear();
+      box.write(Config.PRODUCTS, listProductToJson(list.call()));
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
+      list.call().clear();
+      list.call().addAll(products);
+      CartController.to.getProducts();
+
+      if(Get.isSnackbarOpen) {
+         Get.back();
+         Future.delayed(Duration(milliseconds: 300));
+         Get.back();
+      } else {
+         Get.back();
+      }
+    }
   }
 
   searchProduct(String name) {

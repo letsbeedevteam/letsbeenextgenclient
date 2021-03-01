@@ -28,11 +28,12 @@ class CartPage extends GetView<CartController> {
           }),
           title: Text('My Cart', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
-            child: Divider(thickness: 2, color: Colors.grey.shade200),
+            child: Container(height: 2, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(4.0)
           ),
         ),
         body: GetX<CartController>(
+          initState: (state) => controller.getProducts(),
           builder: (_) {
             return _.updatedProducts.call().isEmpty ? Container(
               width: Get.width,
@@ -101,115 +102,132 @@ class CartPage extends GetView<CartController> {
     );
   }
 
-  Widget _scrollView(CartController _) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
+  Widget _header() {
+    return Column(
       children: [
-        SingleChildScrollView(
-          physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-          child: Container(
-            height: Get.height,
-            margin: EdgeInsets.only(top: 10),
-            child: _.updatedProducts.call().isNotEmpty ? 
-              Column(
-                children: [
-                  _buildDeliverTo(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Order Summary:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                        IgnorePointer(
-                          ignoring: _.isLoading.call(),
-                          child: SizedBox(
-                            height: 30,
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              color: Color(Config.LETSBEE_COLOR),
-                              child: _.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              onPressed: controller.setEdit,
-                            )
-                          ),
-                        )
-                      ],
-                    ),
+        _buildDeliverTo(),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Order Summary:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+              Obx(() {
+                return IgnorePointer(
+                  ignoring: controller.isLoading.call(),
+                  child: SizedBox(
+                    height: 30,
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      color: Color(Config.LETSBEE_COLOR),
+                      child: controller.isEdit.call() ? Text('Cancel', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text('Edit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                      onPressed: controller.setEdit,
+                    )
                   ),
+                );
+              })
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _footer() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15),
+      child: Obx(() {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            controller.isEdit.call() ? Divider(thickness: 2, color: Colors.grey.shade200) : Container(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                Text('₱${(controller.subTotal.call() + controller.choicesTotalPrice.call() + controller.additionalTotalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+              ],
+            ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                Text('₱0.00', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 5),
+              child: Divider(thickness: 2, color:  Colors.grey.shade200),
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                  Text('₱${(controller.totalPrice.call() + controller.choicesTotalPrice.call() + controller.additionalTotalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                ],
+              ),
+            ),
+            SizedBox(height: 20)
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _scrollView(CartController _) {
+    return Column(
+      children: [
+        _.updatedProducts.call().isEmpty ? Container(height: Get.height, child: Text('No list of carts', style: TextStyle(fontSize: 18))) :
+        Expanded(
+          flex: 8,
+          child: SingleChildScrollView(
+            physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+            child: Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Column(
+                children: [
+                  _header(),
                   Container(
                     margin: EdgeInsets.only(top: 10),
                     padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(children: _.updatedProducts.call().map((e) => _buildMenuItem(e, _)).toList())
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                Text('₱ ${(_.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                              ],
-                            ),
-                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                Text('₱ 0.00', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 5),
-                              child: Divider(thickness: 2, color:  Colors.grey.shade200),
-                            ),
-                            Container(
-                              alignment: Alignment.bottomCenter,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                  Text('₱ ${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20)
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
+                      children: _.updatedProducts.call().map((e) => _buildMenuItem(e, _)).toList()
+                    )
+                  ),
+                  _footer()
                 ],
-              ) : Container(height: Get.height, child: Text('No list of carts', style: TextStyle(fontSize: 18))
+              ),
             )
-          )
+          ),
         ),
-        _.updatedProducts.call().isNotEmpty ? Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(10),
-          child: IgnorePointer(
-            ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
-            child: Container(
-              width: Get.width,
-              child: RaisedButton(
-                color: Color(Config.LETSBEE_COLOR),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+        Expanded(
+          child: _.updatedProducts.call().isNotEmpty ? Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(10),
+            child: IgnorePointer(
+              ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
+              child: Container(
+                width: Get.width,
+                child: RaisedButton(
+                  color: Color(Config.LETSBEE_COLOR),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(_.isEdit.call() ? 'Done' : _.isPaymentLoading.call() ? 'Order Processing' : 'Place Order', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                  ),
+                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.updatedProducts.call().first.storeId)
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(_.isEdit.call() ? 'Done' : 'Place Order', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                ),
-                onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.updatedProducts.call().first.storeId)
               ),
             ),
-          ),
-        ) : Container()
+          ) : Container(),
+        )
       ],
     );
   }
@@ -228,108 +246,88 @@ class CartPage extends GetView<CartController> {
           print('Update');
         },
         child: Container(
-          child: Column(
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              Expanded(
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 100),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
+                    boxShadow: [
+                      BoxShadow(
+                        color: controller.isEdit.call() ? Colors.grey.shade300 : Color(Config.WHITE),
+                        blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
+                        offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
+                      )
+                    ]
+                  ),
+                  curve: Curves.easeInOut,
+                  child: Container(
+                    padding: _.isEdit.call() ? EdgeInsets.all(5) : EdgeInsets.zero,
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: controller.isEdit.call() ? Colors.grey.shade300 : Color(Config.WHITE),
-                                  blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
-                                  offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
-                                )
-                              ]
-                            ),
-                            curve: Curves.easeInOut,
-                            child: Container(
-                              padding: _.isEdit.call() ? EdgeInsets.all(5) : EdgeInsets.zero,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                        ),
-                                      ),
-                                      Text('₱ ${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 5, left: 20),
-                                    child: Column(
-                                      children: [
-                                        product.additionals.isEmpty ? Container() : Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Adds-on:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                            Column(
-                                              children: product.additionals.where((data) => !data.selectedValue).map((e) => _buildAddsOn(e, product.quantity)).toList(),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                                        Column(
-                                          children: product.choices.map((e) => _buildChoice(e, product.quantity)).toList(),
-                                        ),
-                                      ],
-                                    )
-                                  ),
-                                  product.note != null ? Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Special Request', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 14)),
-                                        Container(
-                                          alignment: Alignment.centerLeft,
-                                          margin: EdgeInsets.only(top: 10),
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(15),
-                                            border: Border.all()
-                                          ),
-                                          child: Text(product.note.toString())
-                                        ),
-                                      ],
-                                    ),
-                                  ) : Container()
-                                ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                               ),
-                            )
+                            ),
+                            Text('₱${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
+                          ],
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 3),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                              Column(
+                                children: product.choices.map((e) => _buildChoice(e, product.quantity)).toList(),
+                              ),
+                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                              product.additionals.where((data) => !data.selectedValue).isEmpty ? Container() : Column(
+                                children: product.additionals.where((data) => !data.selectedValue).map((e) => _buildAddsOn(e, product.quantity)).toList(),
+                              ),
+                            ],
+                          )
+                        ),
+                        product.note != null ? Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Special Instructions', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.black)),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                color: _.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
+                                child: Text(product.note.toString(), style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.grey))
+                              ),
+                            ],
                           ),
-                        ),
-                        _.isEdit.call() ? Padding(padding: EdgeInsets.only(left: 5)) : Container(),
-                        AnimatedSwitcher(
-                          duration: Duration(milliseconds: 100),
-                          child: controller.isEdit.call() ? 
-                          GestureDetector(
-                            key: UniqueKey(), 
-                            child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${product.quantity}x ${product.name}', productId: product.id)) : Container(key: UniqueKey())
-                        ),
+                        ) : Container(),
+                        Divider(thickness: 2, color: Colors.grey.shade200),
                       ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5),
-                      child: Divider(thickness: 2, color: _.isEdit.call() ? Colors.white : Colors.grey.shade200),
-                    ),
-                  ],
+                  )
                 ),
-              )
+              ),
+              _.isEdit.call() ? Padding(padding: EdgeInsets.only(left: 5)) : Container(),
+              Container(
+                child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 100),
+                  child: controller.isEdit.call() ? 
+                  GestureDetector(
+                    key: UniqueKey(), 
+                    child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId)) : Container(key: UniqueKey())
+                ),
+              ),
             ],
           ),
         ),
@@ -337,27 +335,65 @@ class CartPage extends GetView<CartController> {
     );
   }
 
+  // Widget _buildSetQuantity(Product product) {
+  //   controller.product(product);
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(5),
+  //       color: Colors.grey.shade200,
+  //     ),
+  //     padding: EdgeInsets.all(5),
+  //     child: Row(
+  //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       mainAxisSize: MainAxisSize.min,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         Container(
+  //           height: 30,
+  //           width: 30,
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color(Config.LETSBEE_COLOR)
+  //           ),
+  //           child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () {
+  //             controller.product.call().quantity--;
+  //           })
+  //         ),
+  //         Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+  //         Text('${product.quantity}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+  //         Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+  //         Container(
+  //           height: 30,
+  //           width: 30,
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(5),
+  //             color: Color(Config.LETSBEE_COLOR)
+  //           ),
+  //           child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () {
+  //               controller.product.call().quantity++;
+  //           })
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildAddsOn(Additional additional, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Container(
-            child: Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14), textAlign: TextAlign.start),
-            ),
-          ),
+          child: Text(additional.name, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13), textAlign: TextAlign.start),
         ),
-        Text('₱ ' + '${(double.tryParse(additional.customerPrice.toString()) * quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
+        Text('₱' + '${(double.tryParse(additional.customerPrice.toString()) * quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
       ],
     );
   }
 
   Widget _buildChoice(Choice choice, int quantity) {
     return choice.options.isNotEmpty ? Column(
-      children: choice.options.where((data) => data.name == data.selectedValue).map((data) => _buildOptions(data, quantity)).toList()
+      children: choice.options.where((data) => data.name == data.selectedValue).map((data) =>  _buildOptions(data, quantity)).toList()
     ) : Container();
   }
 
@@ -367,20 +403,14 @@ class CartPage extends GetView<CartController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Row(
-            children: [
-              Text('${option.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              // Expanded(child: Text('${option.}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14)))
-            ],
-          )
+          child: Text(option.name, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13), textAlign: TextAlign.start)
         ),
-        Text('₱ ' + double.tryParse('${(double.tryParse(option.customerPrice.toString()) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
+        Text('₱' + double.tryParse('${(double.tryParse(option.customerPrice.toString()) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
       ],
     );
   }
 
-  deleteDialog({String menu, int productId}) {
+  deleteDialog({String menu, String uniqueId}) {
     Get.defaultDialog(
       content: GetX<CartController>(
         builder: (_) {
@@ -417,7 +447,7 @@ class CartPage extends GetView<CartController> {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text('Delete'), 
-        onPressed: () => controller.deleteCart(productId: productId)
+        onPressed: () => controller.deleteCart(uniqueId: uniqueId)
       ),
     );
   }

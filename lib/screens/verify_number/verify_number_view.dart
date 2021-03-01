@@ -27,7 +27,7 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
             Obx(() {
               return Text(
-                'Enter the OTP code sent to your number +63${controller.signInData.call().cellphoneNumber.replaceFirst(RegExp(r'^0+'), "")}', 
+                'Enter the OTP code sent to your number +63${controller.signInData.call().cellphoneNumber == null ? '' : controller.signInData.call().cellphoneNumber.replaceFirst(RegExp(r'^0+'), "")}', 
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,);
             }),

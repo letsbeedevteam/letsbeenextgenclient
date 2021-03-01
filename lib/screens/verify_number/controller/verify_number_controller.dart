@@ -76,6 +76,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     }).catchError((onError) {
       isLoading(false);
       errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      print('Confirmation error: $onError');
     });
   }
 
@@ -86,8 +87,25 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
     _box.write(Config.USER_TOKEN, response.data.accessToken);
     _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
-    _box.write(Config.IS_LOGGED_IN, true);
-    Get.offAllNamed(Config.SETUP_LOCATION_ROUTE);
+    
+    if (response.data.address.isEmpty) {
+      Get.offNamedUntil(Config.MAP_ROUTE, (route) => false, arguments: {'type': Config.SETUP_ADDRESS});
+    } else {
+      final address = response.data.address.first;
+      final userCurrentAddress = '${address.street}, ${address.barangay}, ${address.city}'.trim();
+      _box.write(Config.USER_CURRENT_STREET, address.street);
+      _box.write(Config.USER_CURRENT_COUNTRY, address.country);
+      _box.write(Config.USER_CURRENT_STATE, address.state);
+      _box.write(Config.USER_CURRENT_CITY, address.city);
+      _box.write(Config.USER_CURRENT_IS_CODE, address.isoCode);
+      _box.write(Config.USER_CURRENT_BARANGAY, address.barangay);
+      _box.write(Config.USER_CURRENT_LATITUDE, address.location.lat);
+      _box.write(Config.USER_CURRENT_LONGITUDE,  address.location.lng);
+      _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress);
+      _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, address.name);
+      _box.write(Config.IS_LOGGED_IN, true);
+      Get.offAllNamed(Config.DASHBOARD_ROUTE);
+    }
   }
 
   _verifiedPopUp(CellphoneConfirmationResponse response) {

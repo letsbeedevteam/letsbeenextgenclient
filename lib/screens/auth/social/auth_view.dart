@@ -19,7 +19,7 @@ class AuthPage extends GetView<AuthController> {
           elevation: 0,
           title: Text('Sign In', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
-            child: Divider(thickness: 2, color: Colors.grey.shade200),
+            child: Container(height: 2, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
         ),

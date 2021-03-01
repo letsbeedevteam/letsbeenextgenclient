@@ -62,7 +62,7 @@ class AddressPage extends GetView<AddressController> {
       child: Obx(() {
         return ListView(
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          children: controller.addresses.call().data.take(3).map((address) => _buildLocationList(address)).toList(),
+          children: controller.addresses.call().data.map((address) => _buildLocationList(address)).toList(),
         );
       }),
     );

@@ -168,8 +168,6 @@ class ApiService extends GetConnect {
 
   Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
 
-    print(carts);
-
     final response = await put(
       '/orders',
       {
@@ -326,7 +324,7 @@ class ApiService extends GetConnect {
     );
 
   // 'Get restaurants: ${response.body}'.printWrapped();
-    print('Get store: ${response.body}');
+    // print('Get store: ${response.body}');
 
     return storeResponseFromJson(response.bodyString);
   }

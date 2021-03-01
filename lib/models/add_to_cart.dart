@@ -51,6 +51,11 @@ class ChoiceCart {
   int optionId;
 
 
+  factory ChoiceCart.fromJson(Map<String, dynamic> json) => ChoiceCart(
+    id: json["id"],
+    optionId: json["option_id"]
+  );
+
   Map<String, dynamic> toJson() => {
     "id": id,
     "option_id": optionId,
@@ -63,6 +68,10 @@ class AdditionalCart {
     });
 
     List<int> id;
+
+    factory AdditionalCart.fromJson(Map<String, dynamic> json) => AdditionalCart(
+      id: json["id"] == null ? [] : List<int>.from(json["id"].map((x) => x)),
+    );
 
     Map<String, dynamic> toJson() => {
       "id": id,

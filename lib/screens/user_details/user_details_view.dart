@@ -19,7 +19,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
           leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => controller.goBackToSignIn()),
           centerTitle: true,
           bottom: PreferredSize(
-            child: Divider(thickness: 2, color: Colors.grey.shade200),
+            child: Container(height: 2, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
         ),

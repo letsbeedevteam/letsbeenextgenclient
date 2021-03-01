@@ -19,7 +19,7 @@ class HistoryPage extends GetView<HistoryController> {
         title: Text('Order History', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
         centerTitle: true,
         bottom: PreferredSize(
-          child: Divider(thickness: 2, color: Colors.grey.shade200),
+          child: Container(height: 2, color: Colors.grey.shade200),
           preferredSize: Size.fromHeight(4.0)
         ),
       ),

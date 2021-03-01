@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/screens/setup_location/controllers/setup_location_controller.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'dart:math' as math;
 
 class SetupLocationPage extends GetView<SetupLocationController> {
 
@@ -13,11 +12,7 @@ class SetupLocationPage extends GetView<SetupLocationController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.rotationY(math.pi),
-          child: IconButton(icon: Icon(Icons.logout), onPressed: () => controller.logout())
-        ),
+        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
       ),
       body: Container(
         child: Column(

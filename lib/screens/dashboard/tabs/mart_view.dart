@@ -13,6 +13,7 @@ class MartPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
           child: Container(
@@ -59,7 +60,7 @@ class MartPage extends StatelessWidget {
             builder: (_) {
               return RefreshIndicator(
                 onRefresh: () {
-                  _.refreshToken('Loading Shops...');
+                  _.refreshToken();
                   return _.refreshCompleter.future;
                 },
                 child: _.martDashboard.call() == null ? Container(
@@ -73,7 +74,7 @@ class MartPage extends StatelessWidget {
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
-                          onPressed: () => _.refreshToken('Loading Shops...'),
+                          onPressed: () => _.refreshToken(),
                         ) : Container() 
                       ],
                     ),
@@ -139,7 +140,7 @@ class MartPage extends StatelessWidget {
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
-                          onPressed: () => _.refreshToken('Loading Shops...'),
+                          onPressed: () => _.refreshToken(),
                         ) : Container() 
                       ],
                     ),

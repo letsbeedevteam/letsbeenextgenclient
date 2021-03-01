@@ -24,7 +24,7 @@ class StoreCartPage extends GetView<StoreCartController> {
           centerTitle: true,
           title: Text('My Cart', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
-            child: Divider(thickness: 2, color: Colors.grey.shade200),
+            child: Container(height: 2, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(4.0)
           ),
         ),
@@ -239,7 +239,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(10),
-                  child: Text(_.isEdit.call() ? 'Done' : 'Place Order', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                  child: Text(_.isEdit.call() ? 'Done' : _.isPaymentLoading.call() ? 'Order Processing...' : 'Place Order', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                 ),
                 onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(activeCart.first.storeId)
               ),
@@ -307,7 +307,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                           duration: Duration(milliseconds: 100),
                           child: controller.isEdit.call() ? 
                           GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () {
-                            deleteDialog(menu: '${product.quantity}x ${product.name}', productId: product.id);
+                            deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId);
                           }) : Container(key: UniqueKey())
                         ),
                       ],
@@ -682,7 +682,7 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  deleteDialog({String menu, int productId}) {
+  deleteDialog({String menu, String uniqueId}) {
     Get.defaultDialog(
       content: GetX<StoreCartController>(
         builder: (_) {
@@ -719,7 +719,7 @@ class StoreCartPage extends GetView<StoreCartController> {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Text('Delete'), 
-        onPressed: () => controller.deleteCart(productId: productId)
+        onPressed: () => controller.deleteCart(uniqueId: uniqueId)
       ),
     );
   }

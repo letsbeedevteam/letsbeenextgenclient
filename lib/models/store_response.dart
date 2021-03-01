@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'add_to_cart.dart';
+
 StoreResponse storeResponseFromJson(String str) => StoreResponse.fromJson(json.decode(str));
 
 String storeResponseToJson(StoreResponse data) => json.encode(data.toJson());
@@ -15,6 +17,14 @@ String productToJson(Product data) => json.encode(data.toJson());
 List<Product> listProductFromJson(String str) => List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
 
 String listProductToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+String choicesToJson(List<Choice> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+String choicesToJson2(List<ChoiceCart> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+String additionalsToJson2(List<int> data) => json.encode(List<int>.from(data.map((x) => x)));
+
+String additionalsToJson(List<Additional> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class StoreResponse {
   StoreResponse({
@@ -156,11 +166,16 @@ class Product {
     this.updatedAt,
     this.isRemove,
     this.userId,
-    this.note
+    this.note,
+    this.uniqueId,
+    this.choiceCart,
+    this.additionalCart
   });
 
   List<Choice> choices;
   List<Additional> additionals;
+  List<ChoiceCart> choiceCart;
+  List<int> additionalCart;
   int id;
   int storeId;
   String name;
@@ -178,10 +193,13 @@ class Product {
   String note;
   DateTime createdAt;
   DateTime updatedAt;
+  String uniqueId;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
     choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
     additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
+    choiceCart: json["choiceCart"] == null ? [] : List<ChoiceCart>.from(json["choiceCart"].map((x) => ChoiceCart.fromJson(x))),
+    additionalCart: json["additionalCart"] == null ? [] : json["additionalCart"].cast<int>(),
     id: json["id"],
     storeId: json["store_id"],
     name: json["name"],
@@ -194,16 +212,19 @@ class Product {
     maxOrder: json["max_order"],
     category: json["category"],
     status: json["status"],
-    isRemove: false,
+    isRemove: json["isRemove"] == null ? false : json["isRemove"],
     userId: json["userId"],
     note: json["note"],
     createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),
+    uniqueId: json["uniqueId"]
   );
 
   Map<String, dynamic> toJson() => {
     "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
     "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),
+    "choiceCart": List<dynamic>.from(choiceCart.map((x) => x.toJson())),
+    "additionalCart": List<int>.from(additionalCart.map((x) => x)),
     "id": id,
     "store_id": storeId,
     "name": name,
@@ -218,6 +239,8 @@ class Product {
     "status": status,
     "userId":userId,
     "note":note,
+    "isRemove":isRemove,
+    "uniqueId":uniqueId,
     "createdAt": createdAt.toIso8601String(),
     "updatedAt": updatedAt.toIso8601String(),
   };
@@ -283,7 +306,7 @@ class Choice {
     name: json["name"],
     options: List<Option>.from(json["options"].map((x) => Option.fromJson(x))),
     status: json["status"],
-    choiceDefault: json["default"],
+    choiceDefault: json["choiceDefault"] == null ? null : json["choiceDefault"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -291,7 +314,7 @@ class Choice {
     "name": name,
     "options": List<dynamic>.from(options.map((x) => x.toJson())),
     "status": status,
-    "default": choiceDefault,
+    "choiceDefault": choiceDefault,
   };
 }
 
