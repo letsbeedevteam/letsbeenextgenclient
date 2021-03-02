@@ -1,9 +1,9 @@
-// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/orderHistoryResponse.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_controller.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
 class HistoryDetailPage extends GetView<HistoryDetailController> {
@@ -11,252 +11,194 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: SliverAppBar(
-                leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-                expandedHeight: 280.0,
-                floating: true,
-                pinned: true,
-                backgroundColor: Color(Config.WHITE),
-                elevation: 0,
-                flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.pin,
-                  title: GetX<HistoryDetailController>(
-                    builder: (_) => Text(_.title.call(), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  ),
-                  centerTitle: true,
-                  background: GetX<HistoryDetailController>(
-                    builder: (_) {
-                      return Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                height: 200,
-                                  child: Center(
-                                    child: Container(
-                                      width: Get.width,
-                                      child: _.data.call().store.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().store.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
-                                        : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
-                                    //   child: CarouselSlider(
-                                    //   options: CarouselOptions(
-                                    //     autoPlay: false,
-                                    //     disableCenter: true,                                    
-                                    //   ),
-                                    //   items: _.data.call().restaurant.slider.map((item) => FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: item.url, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))).toList(),
-                                    // ),
-                                  )
-                                ),
-                              ),
-                            ],
-                          ),
-                          Positioned(
-                            top: 160.0,
-                            child: Container(
-                              margin: EdgeInsets.only(left: 20),
-                              height: 70.0,
-                              width: 70.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(width: 2),
-                                color: Colors.white
-                              ),
-                              child: ClipOval(
-                                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-                              )
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                  )
-                ),
-              )
-            ),
-          ];
-        },
-        body: Builder(builder: (context) {
-          return CustomScrollView(
-            slivers: <Widget>[
-              SliverOverlapInjector(
-                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              ),
-              SliverToBoxAdapter(
-                child: GetX<HistoryDetailController>(
-                  builder: (_) {
-                    return Container(
-                      padding: EdgeInsets.all(15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Items:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                          Column(
-                            children: _.data.call().products.map((e) => _buildMenu(e)).toList(),
-                          ),
-                          _.data.call().fee.discountCode == null ? Container() :
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Promo Code Used:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(_.data.call().fee.discountCode.toString(), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                child: Divider(thickness: 5, color: Colors.grey.shade200),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.data.call().fee.subTotal}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.data.call().fee.delivery}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Promo Code Discount:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text('₱ ${_.data.call().fee.discountPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Container(
-                                  alignment: Alignment.bottomCenter,
-                                  height: 50,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('TOTAL:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                      Text('₱ ${_.data.call().fee.customerTotalPrice}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Divider(thickness: 5, color: Colors.grey.shade200),
-                          ),
-                          Row(
+      appBar: AppBar(
+        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text('Order Details', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        bottom: PreferredSize(
+         child: Container(height: 2, color: Colors.grey.shade200),
+          preferredSize: Size.fromHeight(4.0)
+        ),
+      ),
+      body: GetX<HistoryDetailController>(
+        builder: (_) {
+          return Container(
+            margin: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                        Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Mode of Payment:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              Text('${_.data.call().payment.method.capitalizeFirst}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))
-                            ],
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Divider(thickness: 5, color: Colors.grey.shade200),
-                          ),
-                          Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Status:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                _buildStatus()
-                              ],
-                            ),
-                          ),
-                          _.data.call().reason == null ? Container() : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                child: Divider(thickness: 5, color: Colors.grey.shade200),
-                              ),
-                              Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Reason:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Text(_.data.call().reason, style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
+                              children: [
+                                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                Container(
+                                  padding: EdgeInsets.only(right: 10),
+                                  child: Text(_.title.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17), textAlign: TextAlign.start,),
                                 ),
-                              ),
+                                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                                Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(_.data.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+                                Text(_.data.call().products.length == 1 ? '${_.data.call().products.first.quantity}x ${_.data.call().products.first.name}' : '${_.data.call().products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                                Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                                Container(
+                                  margin: EdgeInsets.only(right: 10, bottom: 10),
+                                  child: Text('₱${_.data.call().fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                ),
+                                _buildStatus(_.data.call().status)
                             ],
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Divider(thickness: 5, color: Colors.grey.shade200),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          height: 80.0,
+                          width: 80.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(color: Colors.black, width: 1.5),
+                            color: Colors.transparent
                           ),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Delivery Details:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Address: ${_.data.call().address.street} ${_.data.call().address.barangay} ${_.data.call().address.city} ${_.data.call().address.state}', 
-                                        style: TextStyle(color: Colors.black, fontSize: 14)
-                                      ),
-                                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                      Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Divider(thickness: 5, color: Colors.grey.shade200),
-                          ),
+                          child: ClipOval(
+                            child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: _.data.call().store.logoUrl, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                          )
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                      ],
+                    ),
+                    Divider(thickness: 2, color: Colors.grey.shade200)
+                  ],
+                ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(_.data.call().status == 'delivered' ? 'Delivered to:' : 'Deliver to:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      Row(
+                        children: [
+                          Image.asset(Config.PNG_PATH + 'address.png', height: 18, width: 18),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                          Expanded(child: Text('${_.data.call().address.street} ${_.data.call().address.barangay} ${_.data.call().address.city} ${_.data.call().address.state}', style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis)),
                         ],
                       ),
-                    );
-                  },
-                )
-              ),
-            ],
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  child: Divider(thickness: 2, color: Colors.grey.shade200),
+                ),
+                Text('Order Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                Column(
+                  children: _.data.call().products.map((e) => _buildMenu(e)).toList(),
+                ),
+                _.data.call().reason == null ? Container() : Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Special Instructions', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                      Text(_.data.call().reason, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal, fontSize: 13)),
+                      Container(
+                        margin: EdgeInsets.only(top: 5),
+                        child: Divider(thickness: 2, color: Colors.grey.shade200),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                          Text('₱${_.data.call().fee.subTotal}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                          Text('₱${_.data.call().fee.delivery}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5),
+                        child: Divider(thickness: 2, color: Colors.grey.shade200),
+                      ),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                            Text('₱${_.data.call().fee.customerTotalPrice}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           );
-        }),
+        }
       )
     );
   }
 
-  Widget _buildStatus() {
-    switch (controller.data.call().status) {
-      case 'pending': return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+  Widget _buildStatus(String status) {
+    switch (status) {
+      case 'store-declined': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.red
+          ),
+          child: Text('Restaurant Declined', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        );
         break;
-      case 'restaurant-accepted': return Text('Restaurant Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'delivered': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Color(Config.LETSBEE_COLOR)
+          ),
+          child: Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
+        );
         break;
-      case 'restaurant-declined': return Text('Your order has been declined by the Restaurant', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
+      case 'cancelled': return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.red
+          ),
+          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        );
         break;
-      case 'rider-accepted': return Text('Rider Accepted', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
-        break;
-      case 'rider-picked-up': return Text('Rider picked up', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
-        break;
-      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 15));
-        break;
-      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 15));
-        break;
-      default: return Text('Pending', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 15));
+      default: return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.red
+          ),
+          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        );
     }
   }
 
@@ -268,13 +210,12 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
               Expanded(
                 child: Container(
-                  child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                  child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                 ),
               ),
-              Text('₱ ${(double.parse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+              Text('₱${(double.tryParse(menu.customerPrice) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
             ],
           ),
           Container(
@@ -300,7 +241,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
           ),
           Container(
             margin: EdgeInsets.only(top: 5),
-            child: Divider(thickness: 5, color: Colors.grey.shade200),
+            child: Divider(thickness: 2, color: Colors.grey.shade200),
           ),
         ],
       ),

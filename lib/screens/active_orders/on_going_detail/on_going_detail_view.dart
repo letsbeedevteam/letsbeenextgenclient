@@ -119,7 +119,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                               style: TextStyle(color: Colors.black, fontSize: 14)
                                             ),
                                             Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                                            Text('Contact Number: +63${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
+                                            Text('Contact Number: ${_.box.read(Config.USER_MOBILE_NUMBER)}', style: TextStyle(color: Colors.black, fontSize: 14))
                                           ],
                                         ),
                                       )
@@ -259,7 +259,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                 child: Text('${menu.quantity}x ${menu.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
               ),
             ),
-            Text('₱ ${(double.tryParse(menu.price) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
+            Text('₱ ${(double.tryParse(menu.customerPrice) * menu.quantity).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18))
           ],
         ),
         Container(

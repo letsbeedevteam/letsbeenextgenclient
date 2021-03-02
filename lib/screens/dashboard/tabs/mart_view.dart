@@ -13,8 +13,9 @@ class MartPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
-          height: 35,
+          height: 40,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: GetX<DashboardController>(
@@ -23,12 +24,19 @@ class MartPage extends StatelessWidget {
                   ignoring: _.isLoading.call(),
                   child: TextField(
                     controller: _.martSearchController,
-                    onChanged: _.searchMart,
+                    onChanged: (mart) => _.searchMart(value: mart),
                     cursorColor: Colors.black,
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
                       hintText: 'Search for mart here',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _.martSearchController.clear();
+                          _.searchMart();
+                        },
+                        icon: Icon(Icons.clear),
+                      ),
                       hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
                       filled: true,
@@ -52,7 +60,7 @@ class MartPage extends StatelessWidget {
             builder: (_) {
               return RefreshIndicator(
                 onRefresh: () {
-                  _.refreshToken('Loading Marts...');
+                  _.refreshToken();
                   return _.refreshCompleter.future;
                 },
                 child: _.martDashboard.call() == null ? Container(
@@ -66,12 +74,15 @@ class MartPage extends StatelessWidget {
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
                           child: Text('Refresh'),
-                          onPressed: () => _.refreshToken('Loading Marts...'),
+                          onPressed: () => _.refreshToken(),
                         ) : Container() 
                       ],
                     ),
                   ),
-                ) : _scrollView(),
+                ) : Container(
+                  height: Get.height,
+                  child: _scrollView()
+                ),
               );
             },
           ),
@@ -86,60 +97,57 @@ class MartPage extends StatelessWidget {
         return SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           controller: _.martScrollController,
-          child: Container(
-            height: Get.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _.recentMarts.call().isEmpty ? Container() : Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                        child: Text('Recent Supermarkets', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
-                      ),
-                      Container(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _.recentMarts.call().map((recentStore) => _buildRecentMart(recentStore)).toList(),
-                          ),
-                        ),
-                      )
-                    ],  
-                  ),
-                ),
-                Column(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _.recentMarts.call().isEmpty ? Container() : Container(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                      child: Text('All Supermarkets', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                      child: Text('Recent Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                     ),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    _.searchMarts.call().isNotEmpty ? 
-                    Column(children: _.searchMarts.call().map((e) => _buildMart(e)).toList()) : Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                          _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                          Text(_.martErrorMessage.call()),
-                          _.hasMartError.call() ? RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR),
-                            child: Text('Refresh'),
-                            onPressed: () => _.refreshToken('Loading Marts...'),
-                          ) : Container() 
-                        ],
+                    Container(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: _.recentMarts.call().map((recentStore) => _buildRecentMart(recentStore)).toList(),
+                        ),
                       ),
                     )
                   ],  
-                )
-              ],
-            ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+                    child: Text('All Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                  _.searchMarts.call().isNotEmpty ? 
+                  Column(children: _.searchMarts.call().map((e) => _buildMart(e)).toList()) : Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                        _.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                        Text(_.martErrorMessage.call()),
+                        _.hasMartError.call() ? RaisedButton(
+                          color: Color(Config.LETSBEE_COLOR),
+                          child: Text('Refresh'),
+                          onPressed: () => _.refreshToken(),
+                        ) : Container() 
+                      ],
+                    ),
+                  )
+                ],  
+              )
+            ],
           ),
         );
       },
@@ -163,7 +171,7 @@ class MartPage extends StatelessWidget {
               child: Container(
                 margin: EdgeInsets.only(bottom: 5),
                 alignment: Alignment.center,
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: mart.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: mart.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35)))) ,
               ),
             ),
             Padding(

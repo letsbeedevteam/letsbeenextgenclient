@@ -30,7 +30,7 @@ class RiderLocationController extends GetxController {
   var currentPosition = LatLng(0, 0).obs;
   var riderPosition = LatLng(0, 0).obs;
   var isMapLoading = true.obs;
-  var message = 'Loading google map...'.obs;
+  var message = 'Loading map...'.obs;
 
   // var hasPolyline = false.obs;
   var mapStyle = ''.obs;
@@ -44,7 +44,6 @@ class RiderLocationController extends GetxController {
     setupIcon();
     activeOrderData(arguments);
     currentPosition(LatLng(activeOrderData.call().address.location.lat, activeOrderData.call().address.location.lng));
-    receiveRiderLocation();
     super.onInit();
   }
 
@@ -61,6 +60,7 @@ class RiderLocationController extends GetxController {
   }
 
   void receiveRiderLocation() async {
+    message('Tracking rider...');
     _socketService.socket.on('rider-location', (response) {
       print('Rider location: $response');
       isMapLoading(false);
@@ -121,6 +121,7 @@ class RiderLocationController extends GetxController {
     if (currentPosition.call() != null) {
       Future.delayed(Duration(seconds: 2)).then((value) {
         setupMarker();   
+        receiveRiderLocation();
       });
     }
   }

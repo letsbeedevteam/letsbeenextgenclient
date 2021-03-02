@@ -6,7 +6,6 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
@@ -35,8 +34,11 @@ class DashboardPage extends GetView<DashboardController> {
                         backgroundColor: Color(Config.WHITE),
                         titleSpacing: 0.0,
                         centerTitle: false,
-                        // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
-                        title: Padding(
+                        title: currentIndex == 2 ? Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text('My Account', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+                        ) : Padding(
                           padding: EdgeInsets.only(left: 15, right: 15),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,25 +49,15 @@ class DashboardPage extends GetView<DashboardController> {
                               Row(
                                 children: [
                                   Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                                  GestureDetector(
-                                    onTap: () => _.showLocationSheet(true),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                      height: 20,
-                                      alignment: Alignment.centerLeft,
-                                      decoration: BoxDecoration(
-                                        color: Color(Config.LETSBEE_COLOR),
-                                        borderRadius: BorderRadius.circular(25)
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                                          Icon(Icons.keyboard_arrow_down, size: 20,)
-                                        ],
-                                      ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    height: 20,
+                                    alignment: Alignment.centerLeft,
+                                    decoration: BoxDecoration(
+                                      color: Color(Config.LETSBEE_COLOR),
+                                      borderRadius: BorderRadius.circular(25)
                                     ),
+                                    child: Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
                                   )
                                 ],
                               ),
@@ -77,19 +69,14 @@ class DashboardPage extends GetView<DashboardController> {
                                   Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
                                 ],
                               ),
-                              // Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                             ],
                           ),
                         ),
                         // actions: [
-                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                        //   _.pageIndex.call() == 2 ? Container() :
+                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'jar-empty.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => print('Cart'), highlightColor: Colors.transparent, splashColor: Colors.transparent)
                         // ],
                       ),
-                    ),
-                    Container(
-                      child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
-                      width: Get.width, 
-                      color: Color(Config.WHITE)
                     ),
                   ],
                 ),
@@ -97,8 +84,8 @@ class DashboardPage extends GetView<DashboardController> {
                   child: Column(
                     children: [
                       Container(
-                        margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(bottom: 10),
-                        child: _.isHideAppBar.call() ? Container() : Divider(),
+                        height: 2,
+                        color: Colors.grey.shade200
                       ),
                       Expanded(
                         child: PageView(
@@ -106,7 +93,6 @@ class DashboardPage extends GetView<DashboardController> {
                           controller: _.pageController,
                           onPageChanged: (index) {
                             _.pageIndex(index);
-                            _.showLocationSheet(false);
                           },
                           children: _.widgets,
                         ),
@@ -116,22 +102,26 @@ class DashboardPage extends GetView<DashboardController> {
                 )
               ],
             ),
-            floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+            floatingActionButton: _.pageIndex.call() == 2 ? Container() : _.activeOrders.call() == null ? Container() : Badge(
               badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               padding: EdgeInsets.all(10),
+              borderSide: BorderSide(color: Colors.black, width: 1.5),
               showBadge: _.activeOrders.call() != null,
               child: FloatingActionButton(
                 splashColor: Colors.transparent,
-                backgroundColor: Color(Config.LETSBEE_COLOR),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(30)
-                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
                 onPressed: () {
                   _.fetchActiveOrders();
-                  _activeOrderDialog();
+                  if (_.activeOrders.call().data.length == 1) {
+                    controller.activeOrderData(_.activeOrders.call().data.first);
+                    Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+                  } else {
+                    _activeOrderDialog();
+                  }
+                
                 },
-                child: Icon(Icons.restaurant_sharp),
+                child: Image.asset(Config.PNG_PATH + 'active_order.png', height: 50, width: 50),
               ),
             ),
             bottomNavigationBar: Theme(
@@ -188,94 +178,6 @@ class DashboardPage extends GetView<DashboardController> {
         )
       ),
       label: '',
-    );
-  }
-
-  Widget _topSheet(DashboardController _) {
-    return SafeArea(
-      minimum: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(icon: Icon(Icons.close), onPressed: () => _.showLocationSheet(false)),
-                    Text('Choose your location', style: TextStyle(fontSize: 15))
-                  ],
-                ),
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: _.addAddress),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Container(height: 1, width: Get.width, color: Colors.grey.shade200),
-          _.addresses.call() == null ? Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(_.addressErrorMessage.call()),
-                RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR),
-                  child: Text('Refresh'),
-                  onPressed: () => _.refreshToken('Loading...'),
-                )
-              ],
-            ),
-          ) :
-          Container(
-            height: 150,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: GetX<DashboardController>(
-              builder: (_) {
-                return Scrollbar(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _.addresses.call().data.map((e) => _buildLocationList(e)).toList(),
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      )
-    );
-  }
-
-  Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}';
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: Get.width,
-              child: Text(data.name, style: TextStyle(color: Color(Config.LETSBEE_COLOR), fontWeight: FontWeight.bold)),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child:  Text(address)),
-                // GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
-              ],
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          ],
-        ),
-      ),
-      onTap: () {
-        DashboardController.to.updateCurrentLocation(data);
-      },
     );
   }
 

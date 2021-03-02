@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-// import 'package:geocoder/geocoder.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,6 +9,7 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
 import 'package:letsbeeclient/models/newAddressRequest.dart';
 import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/screens/address/address_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:location/location.dart' as lct;
@@ -30,6 +30,7 @@ class MapController extends GetxController {
   var isLoading = false.obs;
   var isAddAddressLoading = false.obs;
   var hasLocation = false.obs;
+  var isKeyboardVisible = false.obs;
 
   var currentPosition = LatLng(0, 0).obs;
   var userCurrentAddress = 'Getting your address...'.obs;
@@ -51,14 +52,33 @@ class MapController extends GetxController {
   final barangayNode = FocusNode();
   final cityNode = FocusNode();
 
+  var buttonTitle = 'Next'.obs;
+
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
 
   @override 
   void onInit() {
+    if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+      currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
+      buttonTitle('Save');
+      isMapLoading(false);
+
+    } else {
+      buttonTitle('Next');
+      isMapLoading(true);
+      currentLocation();
+    }
     setup();
-    currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
+
     super.onInit();
+  }
+
+  void currentLocation() async {
+    lct.Location().getLocation().then((data) {
+      currentPosition(LatLng(data.latitude, data.longitude));
+      isMapLoading(false);
+    });
   }
 
   void goToDashboardPage() {
@@ -67,16 +87,11 @@ class MapController extends GetxController {
       if (nameTF.text.isBlank) {
         errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
       } else {
-        if (!isAddAddressLoading.call()) addAddress();
+        addAddress();
       }
     } else {
       userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
-      _box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-      _box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
-      _box.write(Config.USER_CURRENT_CITY, cityTFController.text);
-      _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-      _box.write(Config.IS_SETUP_LOCATION, true);
-      Get.offAllNamed(Config.DASHBOARD_ROUTE);
+      addAddress();
     }
   }
 
@@ -92,6 +107,7 @@ class MapController extends GetxController {
     isBounced(true);
     final currentLocation = await lct.Location().getLocation();
     final c = await _mapController.future;
+    currentPosition(LatLng(currentLocation.latitude, currentLocation.longitude));
     c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
     isBounced(false);
   }
@@ -100,9 +116,6 @@ class MapController extends GetxController {
     _mapController.complete(controller);
     final c = await _mapController.future;
     c.setMapStyle(mapStyle.call());
-    if (currentPosition.call() != null) {
-      Future.delayed(Duration(seconds: 2)).then((value) => isMapLoading(false));
-    }
   }
 
   void onCameraMovePosition(CameraPosition position) {
@@ -125,44 +138,21 @@ class MapController extends GetxController {
 
       print(response.asMap());
 
-      // final address = '${response.first.subLocality}, ${response.first.locality}, ${response.first.adminArea}';
-
-      // streetTFController.text = response.first.addressLine;
-      // barangayTFController.text = response.first.subThoroughfare == null ? '${response.first.thoroughfare}' : '${response.first.subThoroughfare} ${response.first.thoroughfare}';
-      // barangayTFController.text = response.first.addressLine;
-      // cityTFController.text = '${response.first.locality == null ? response.first.subLocality : response.first.locality} ${response.first.subAdminArea == null ? response.first.adminArea : response.first.subAdminArea}';
       streetTFController.text = response.first.street;
       barangayTFController.text = response.first.subLocality;
       cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
 
+      print(response.first.name);
+
       userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
 
-      if (argument['type'] == Config.ADD_NEW_ADDRESS) {
-        
-        this.country(response.first.name);
-        this.state(response.first.administrativeArea);
-        // this.city(response.first.locality);
-        this.city(cityTFController.text);
-        // this.barangay(response.first.subLocality);
-        this.barangay(barangayTFController.text);
-        // this.street(response.first.featureName);
-        this.street(streetTFController.text);
-        this.isoCode(response.first.isoCountryCode);
-
-      } else {
-      
-        // _box.write(Config.USER_CURRENT_STREET, response.first.featureName);
-        _box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-        _box.write(Config.USER_CURRENT_COUNTRY, response.first.name);
-        _box.write(Config.USER_CURRENT_STATE, response.first.administrativeArea);
-        // _box.write(Config.USER_CURRENT_CITY, response.first.locality);
-        _box.write(Config.USER_CURRENT_CITY, cityTFController.text);
-        _box.write(Config.USER_CURRENT_IS_CODE, response.first.isoCountryCode);
-        // _box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
-        _box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
-        _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
-      }
+      this.country(response.first.name);
+      this.state(response.first.administrativeArea);
+      this.city(cityTFController.text);
+      this.barangay(barangayTFController.text);
+      this.street(streetTFController.text);
+      this.isoCode(response.first.isoCountryCode);
+      this.nameTF.text = 'Home';
       
     }).catchError((onError) {
       // isLoading(false);
@@ -207,7 +197,7 @@ class MapController extends GetxController {
   }
 
   Future<bool> willPopCallback() async {
-    Get.back(closeOverlays: true);
+    argument['type'] == Config.ADD_NEW_ADDRESS ? Get.back(closeOverlays: true) : Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
     return true;
   }
 
@@ -245,15 +235,22 @@ class MapController extends GetxController {
         _box.write(Config.USER_CURRENT_LONGITUDE,  response.data.location.lng);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
         _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, nameTF.text);
-        DashboardController.to
-        ..isSelectedLocation(true)
-        ..userCurrentNameOfLocation(nameTF.text)
-        ..userCurrentAddress(this.userCurrentAddress.call().trim())
-        ..isOpenLocationSheet(false)
-        ..fetchAllAddresses()
-        ..fetchRestaurantDashboard();
-        // ..fetchRestaurants();
-        Get.back(closeOverlays: true);
+        
+        if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+
+          DashboardController.to
+          ..isSelectedLocation(true)
+          ..userCurrentNameOfLocation(nameTF.text)
+          ..userCurrentAddress(this.userCurrentAddress.call().trim())
+          ..fetchActiveOrders()
+          ..fetchRestaurantDashboard();
+          AddressController.to.refreshAddress();
+          Get.back(closeOverlays: true);
+        } else {
+          _box.write(Config.IS_LOGGED_IN, true);
+          Get.offAllNamed(Config.DASHBOARD_ROUTE);
+        }
+
         
       } else {
         errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);

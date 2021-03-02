@@ -228,6 +228,7 @@ class OrderHistoryMenu {
         "product_id": productId,
         "name": name,
         "price": price,
+        "customer_price": customerPrice,
         "quantity": quantity,
         "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
         "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),

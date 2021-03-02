@@ -40,6 +40,7 @@ class AddressData {
         this.barangay,
         this.street,
         this.isoCode,
+        this.createdAt
     });
 
     Location location;
@@ -52,6 +53,7 @@ class AddressData {
     String barangay;
     String street;
     String isoCode;
+    String createdAt;
 
     factory AddressData.fromJson(Map<String, dynamic> json) => AddressData(
         location: Location.fromJson(json["location"]),
@@ -64,6 +66,7 @@ class AddressData {
         barangay: json["barangay"],
         street: json["street"],
         isoCode: json["iso_code"],
+        createdAt: json["createdAt"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -77,6 +80,7 @@ class AddressData {
         "barangay": barangay,
         "street": street,
         "iso_code": isoCode,
+        "createdAt": createdAt
     };
 }
 

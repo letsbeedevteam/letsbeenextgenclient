@@ -19,6 +19,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
+// import 'package:intl/intl.dart';
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
   
@@ -53,7 +54,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var userCurrentAddress = ''.obs;
   var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
-  var isOpenLocationSheet = false.obs;
   var isLoading = false.obs;
   var isSearching = false.obs;
   // var isOnChat = false.obs;
@@ -61,7 +61,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   // var message = ''.obs;
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
-  var addresses = GetAllAddressResponse().obs;
+  // var addresses = GetAllAddressResponse().obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
   var recentRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
@@ -75,10 +75,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var hasMartError = false.obs;
 
   var restaurantErrorMessage = 'Loading restaurants...'.obs;
-  var martErrorMessage = 'Loading marts...'.obs;
+  var martErrorMessage = 'Loading shops...'.obs;
   var addressErrorMessage = 'Loading addresses...'.obs;
 
-  
+  var isDisableDeliveryPushNotif = false.obs;
+  var isDisablePromotionalPushNotif = false.obs;
+
+  // Timer _timer;
+
   static DashboardController get to => Get.find();
 
   GifController changeGifRange({double range, int duration}) {
@@ -92,7 +96,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     restaurantDashboard.nil();
     martDashboard.nil();
     activeOrderData.nil();
-    addresses.nil();
     activeOrders.nil();
 
     userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
@@ -102,19 +105,49 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupRefreshIndicator();
     setupAnimation();
     setupTabs();
-    refreshToken('Loading...');
+    refreshToken();
 
     gifController = GifController(vsync: this);
 
     super.onInit();
   }
 
-  socketSetup() {
-    socketService.connectSocket();
+  // void startEvery24Hours() {
+
+  //   final now = DateTime.now();
+  //   final nextCheck = DateTime(now.year, now.month, now.day + 1);
+
+  //   _timer = Timer.periodic(
+  //      Duration(seconds: 1), (Timer timer) {
+  //       if (DateFormat('MM-dd-yyyy').format(DateTime.now()) == box.read(Config.NEXT_DAY)) {
+  //         refreshToken();
+  //       } else {
+  //         if (!box.hasData(Config.NEXT_DAY)) {
+  //           box.write(Config.NEXT_DAY, DateFormat('MM-dd-yyyy').format(nextCheck));
+  //         } else {
+  //           // print(box.read(Config.NEXT_DAY));
+  //         }
+  //       }
+  //     },
+  //   );
+
+  //   fetchActiveOrders();
+  //   fetchRestaurantDashboard();
+  //   fetchMartDashboard();
+  // }
+
+  refreshSocket({String type = 'initialize'}) {
+    if (type == 'initialize') {
+      socketService.connectSocket();
+    } else {
+      socketService.socket..disconnect()..connect();
+    }
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
+      receiveUpdateOrder();
+      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -126,16 +159,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     })
     ..on('disconnect', (_) {
       onGoingMessage('Loading...');
-      activeOrders.nil();
+      // activeOrders.nil();
       print('Disconnected');
     })
     ..on('error', (_) {
       onGoingMessage('Loading...');
       print('Error socket: $_');
     });
-
-    receiveUpdateOrder();
-    receiveChat();
   }
 
   void setupRefreshIndicator() {
@@ -163,10 +193,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     pageController = PageController();
   }
 
-  void showLocationSheet(bool isOpenLocationSheet) => this.isOpenLocationSheet(isOpenLocationSheet);
-
   void tapped(int tappedIndex) {
-    tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
+    // tappedIndex == 0 || tappedIndex == 1 ? isHideAppBar(false) : isHideAppBar(true); 
     if (tappedIndex == 0) {
       // restaurantDashboard.nil();
       fetchRestaurantDashboard();
@@ -199,21 +227,31 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     userCurrentAddress(address);
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-    showLocationSheet(false);
     fetchRestaurantDashboard();
     fetchMartDashboard();
   }
 
   void clearData() {
-    box.erase();
-    addresses.nil();
     searchRestaurants.nil();
     restaurantDashboard.nil();
     activeOrders.nil();
-    box.erase();
+    // box.erase();
+    box.remove(Config.USER_TOKEN);
+    box.remove(Config.IS_LOGGED_IN);
+    box.remove(Config.USER_CURRENT_STREET);
+    box.remove(Config.USER_CURRENT_COUNTRY);
+    box.remove(Config.USER_CURRENT_STATE);
+    box.remove(Config.USER_CURRENT_CITY);
+    box.remove(Config.USER_CURRENT_IS_CODE);
+    box.remove(Config.USER_CURRENT_BARANGAY);
+    box.remove(Config.USER_CURRENT_LATITUDE);
+    box.remove(Config.USER_CURRENT_LONGITUDE);
+    box.remove(Config.USER_CURRENT_ADDRESS);
+    box.remove(Config.USER_CURRENT_NAME_OF_LOCATION);
   }
 
   void signOut() {
+    // box.remove(Config.PRODUCTS);
     socketService.disconnectSocket();
     clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
@@ -303,7 +341,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been declined by the Restaurant';
+            message = 'Your order in $name has been declined';
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -311,7 +349,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been accepted by the Restaurant';
+            message = 'Your order in $name has been accepted';
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -369,7 +407,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  refreshToken(String title) {
+  refreshToken() {
+    restaurantErrorMessage('Loading restaurants...');
+    martErrorMessage('Loading shops...');
     hasMartError(false);
     hasRestaurantError(false);
     isLoading(true);
@@ -378,13 +418,15 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       // message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
+        // _timer.cancel();
+        // box.remove(Config.NEXT_DAY);
         box.write(Config.USER_TOKEN, response.data.accessToken);
+        // startEvery24Hours();
       } 
 
       Future.delayed(Duration(seconds: 1)).then((value) {
-        if (socketService.socket == null) socketSetup(); else socketService.socket..disconnect()..connect();
+        if (socketService.socket == null) refreshSocket(); else refreshSocket(type: 'refresh');
         fetchActiveOrders();
-        fetchAllAddresses();
         fetchRestaurantDashboard();
         fetchMartDashboard();
       });
@@ -407,44 +449,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         martErrorMessage(Config.SOMETHING_WENT_WRONG);
         addressErrorMessage(Config.SOMETHING_WENT_WRONG);
       }
+      hasMartError(true);
+      hasRestaurantError(true);
       print('Refresh token: $onError');
     });
   }
 
-  addAddress() {
-    Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS}).whenComplete(() {
-      showLocationSheet(false);
-    });
-  }
-
-  fetchAllAddresses() {
-    isLoading(true);
-    apiService.getAllAddress().then((response) {
-      isLoading(false);
-      if (response.status == 200) {
-        if (response.data.isNotEmpty) {
-          addresses(response);
-        } else {
-          addresses.nil();
-          addressErrorMessage('No list of address');
-        }
-
-      } else {
-        addresses.nil();
-        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
-      }
-      
-    }).catchError((onError) {
-      addresses.nil();
-      isLoading(false);
-      addressErrorMessage(Config.SOMETHING_WENT_WRONG);
-      // message(Config.SOMETHING_WENT_WRONG);
-      print('Error fetch all address: $onError');
-    });
-  }
-
   fetchRestaurantDashboard() {
-    // message('Loading...');
+    restaurantErrorMessage('Loading restaurants...');
     isLoading(true);
     hasRestaurantError(false);
     apiService.getRestaurantDashboard().then((response) {
@@ -463,7 +475,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
         if(searchRestaurants.call().isEmpty) {
-          // restaurantDashboard.nil();
+          restaurantDashboard.nil();
+          hasRestaurantError(true);
           restaurantErrorMessage('No restaurants found');
         }
       } else {
@@ -487,7 +500,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchMartDashboard() {
-    // message('Loading...');
+    martErrorMessage('Loading shops...');
     isLoading(true);
     hasMartError(false);
     apiService.getMartDashboard().then((response) {
@@ -505,7 +518,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         recentMarts.call()..clear()..assignAll(newMap.values.toList());
         searchMarts.call()..clear()..assignAll(response.data.stores);
         if(searchMarts.call().isEmpty) {
-          // martDashboard.nil();
+          martDashboard.nil();
+          hasMartError(true);
           martErrorMessage('No marts found');
         }
       
@@ -530,7 +544,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  searchRestaurant(String value) {
+  searchRestaurant({String value = ''}) {
     
     if (restaurantDashboard.call() != null) {
       isSearching(value.trim().isNotEmpty);
@@ -552,7 +566,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
-  searchMart(String value) {
+  searchMart({String value = ''}) {
     
     if (martDashboard.call() != null) {
       isSearching(value.trim().isNotEmpty);

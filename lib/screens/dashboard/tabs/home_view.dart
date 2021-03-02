@@ -14,8 +14,9 @@ class HomePage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
-          height: 35,
+          height: 40,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
             child: GetX<DashboardController>(
@@ -24,12 +25,19 @@ class HomePage extends StatelessWidget {
                   ignoring: _.isLoading.call(),
                   child: TextField(
                     controller: _.restaurantSearchController,
-                    onChanged: _.searchRestaurant,
+                    onChanged: (restaurant) => _.searchRestaurant(value: restaurant),
                     cursorColor: Colors.black,
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
                       hintText: 'Search for food or restaurant here',
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _.restaurantSearchController.clear();
+                          _.searchRestaurant();
+                        },
+                        icon: Icon(Icons.clear),
+                      ),
                       hintStyle: TextStyle(fontSize: 14),
                       fillColor: Colors.white,
                       filled: true,
@@ -56,7 +64,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   RefreshIndicator(
                     onRefresh: () {
-                      _.refreshToken('Loading Restaurants...');
+                      _.refreshToken();
                       return _.refreshCompleter.future;
                     },
                     child: _.restaurantDashboard.call() == null ? Container(
@@ -70,12 +78,15 @@ class HomePage extends StatelessWidget {
                             _.hasRestaurantError.call() ? RaisedButton(
                               color: Color(Config.LETSBEE_COLOR),
                               child: Text('Refresh'),
-                              onPressed: () => _.refreshToken('Loading Restaurants...'),
+                              onPressed: () => _.refreshToken(),
                             ) : Container() 
                           ],
                         ),
                       ),
-                    ) : _scrollView(_)
+                    ) : Container(
+                      height: Get.height,
+                      child: _scrollView(_)
+                    )
                   ),
                   _.isSelectedLocation.call() ? Container(
                     margin: EdgeInsets.only(top: 70),
@@ -170,7 +181,7 @@ class HomePage extends StatelessWidget {
                   _.hasMartError.call() ? RaisedButton(
                     color: Color(Config.LETSBEE_COLOR),
                     child: Text('Refresh'),
-                    onPressed: () => _.refreshToken('Loading Restaurants...'),
+                    onPressed: () => _.refreshToken(),
                   ) : Container() 
                 ],
               ),
@@ -216,7 +227,7 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   margin: EdgeInsets.only(bottom: 5),
                   alignment: Alignment.center,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) ,
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35)))) ,
                 ),
               ),
               Padding(
