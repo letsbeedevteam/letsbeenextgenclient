@@ -28,8 +28,6 @@ class AuthController extends GetxController implements AuthViewContract {
   var isShowPassword = false.obs;
   var isRememberMe = false.obs;
 
-  var socialColor = Colors.black.obs;
-
   void signIn() {
 
     isLoading(true);
@@ -77,24 +75,20 @@ class AuthController extends GetxController implements AuthViewContract {
   
   void googleSignIn() {
     isGoogleLoading(true);
-    socialColor(Colors.red);
     _presenter.googleSignIn();
   }
 
   void facebookSignIn() {
     isFacebookLoading(true);
-    socialColor(Colors.blue);
     _presenter.facebookSignIn();
   }
 
   void kakaoSignIn() {
     isKakaoLoading(true);
-    socialColor(Colors.brown);
     _presenter.kakaoSignIn();
   }
 
   void appleSignIn() {
-    socialColor(Colors.black);
     _presenter.appleSignIn();
   }
 

@@ -73,17 +73,17 @@ class SetupLocationController extends GetxController {
       barangayTFController.text = response.first.subLocality;
       cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
 
-      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
+      userCurrentAddress('${streetTFController.text} ${barangayTFController.text} ${cityTFController.text}'.trim());
 
       // box.write(Config.USER_CURRENT_STREET, response.first.featureName);
-        box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-        box.write(Config.USER_CURRENT_COUNTRY, response.first.name);
-        box.write(Config.USER_CURRENT_STATE, response.first.administrativeArea);
+        // box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+        // box.write(Config.USER_CURRENT_COUNTRY, response.first.name);
+        // box.write(Config.USER_CURRENT_STATE, response.first.administrativeArea);
         // box.write(Config.USER_CURRENT_CITY, response.first.locality);
-        box.write(Config.USER_CURRENT_CITY, cityTFController.text);
-        box.write(Config.USER_CURRENT_IS_CODE, response.first.isoCountryCode);
+        // box.write(Config.USER_CURRENT_CITY, cityTFController.text);
+        // box.write(Config.USER_CURRENT_IS_CODE, response.first.isoCountryCode);
         // box.write(Config.USER_CURRENT_BARANGAY, response.first.subLocality);
-        box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+        // box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
         box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
         box.write(Config.USER_CURRENT_NAME_OF_LOCATION, 'Home');
 
@@ -97,9 +97,9 @@ class SetupLocationController extends GetxController {
 
   void goToDashboardPage() {
     userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
-    box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-    box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
-    box.write(Config.USER_CURRENT_CITY, cityTFController.text);
+    // box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+    // box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+    // box.write(Config.USER_CURRENT_CITY, cityTFController.text);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
     box.write(Config.IS_SETUP_LOCATION, true);
     Get.offAllNamed(Config.DASHBOARD_ROUTE);

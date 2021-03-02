@@ -212,46 +212,38 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void updateCurrentLocation(AddressData data) {
-    box.write(Config.USER_CURRENT_STREET, data.street);
-    box.write(Config.USER_CURRENT_COUNTRY, data.country);
-    box.write(Config.USER_CURRENT_STATE, data.state);
-    box.write(Config.USER_CURRENT_CITY, data.city);
-    box.write(Config.USER_CURRENT_IS_CODE, data.street);
-    box.write(Config.USER_CURRENT_BARANGAY, data.barangay);
+    box.write(Config.USER_ID, data.userId);
+    box.write(Config.USER_ADDRESS_ID, data.id);
+    box.write(Config.USER_CURRENT_ADDRESS, data.address);
+    box.write(Config.NOTE_TO_RIDER, data.note);
+    box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
     box.write(Config.USER_CURRENT_LATITUDE, data.location.lat);
     box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
-    box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
 
-    final address = '${data.street}, ${data.barangay}, ${data.city}';
     isSelectedLocation(true);
-    userCurrentAddress(address);
+    userCurrentAddress(data.address);
     userCurrentNameOfLocation(data.name);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
     fetchRestaurantDashboard();
     fetchMartDashboard();
+    fetchActiveOrders();
   }
 
   void clearData() {
     searchRestaurants.nil();
     restaurantDashboard.nil();
     activeOrders.nil();
-    // box.erase();
     box.remove(Config.USER_TOKEN);
-    box.remove(Config.IS_LOGGED_IN);
-    box.remove(Config.USER_CURRENT_STREET);
-    box.remove(Config.USER_CURRENT_COUNTRY);
-    box.remove(Config.USER_CURRENT_STATE);
-    box.remove(Config.USER_CURRENT_CITY);
-    box.remove(Config.USER_CURRENT_IS_CODE);
-    box.remove(Config.USER_CURRENT_BARANGAY);
+    box.remove(Config.USER_ADDRESS_ID);
+    box.remove(Config.USER_ID);
     box.remove(Config.USER_CURRENT_LATITUDE);
     box.remove(Config.USER_CURRENT_LONGITUDE);
     box.remove(Config.USER_CURRENT_ADDRESS);
     box.remove(Config.USER_CURRENT_NAME_OF_LOCATION);
+    box.remove(Config.IS_LOGGED_IN);
   }
 
   void signOut() {
-    // box.remove(Config.PRODUCTS);
     socketService.disconnectSocket();
     clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
@@ -317,6 +309,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
           }
         } else {
+          activeOrders.nil();
           onGoingMessage(Config.SOMETHING_WENT_WRONG);
         }
       });

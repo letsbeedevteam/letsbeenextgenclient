@@ -33,6 +33,7 @@ class Config {
 
   // Storage keys
   static const USER_ID = 'user_id';
+  static const USER_ADDRESS_ID = 'user_address_id';
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
@@ -41,12 +42,7 @@ class Config {
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
-  static const USER_CURRENT_STREET = 'user_current_street';
-  static const USER_CURRENT_COUNTRY = 'user_current_country';
-  static const USER_CURRENT_STATE = 'user_current_state';
-  static const USER_CURRENT_CITY = 'user_current_city';
-  static const USER_CURRENT_IS_CODE = 'user_current_iso_code';
-  static const USER_CURRENT_BARANGAY = 'user_current_barangay';
+  static const NOTE_TO_RIDER = 'note_to_rider';
   static const PRODUCTS = 'products';
 
 

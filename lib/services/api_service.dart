@@ -20,6 +20,7 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
+import 'package:letsbeeclient/models/signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 
@@ -48,15 +49,12 @@ class ApiService extends GetConnect {
     return signInResponseFromJson(response.bodyString);
   }
 
-  Future<SignUpResponse> customerSignUp({String name, String email, String password}) async {
+  Future<SignUpResponse> customerSignUp({SignUpRequest signUpRequest}) async {
 
+    print(signUpRequest.toJson());
     final response = await post(
       '/auth/customer/signup',
-      {
-        'name': name,
-        'email': email,
-        'password': password
-      }
+      signUpRequest.toJson()
     );
 
     print('Customer Sign Up: ${response.body}');
@@ -173,16 +171,7 @@ class ApiService extends GetConnect {
       {
         'store_id': storeId,
         'payment_method': paymentMethod,
-        'location': {
-          'lat': _box.read(Config.USER_CURRENT_LATITUDE),
-          'lng': _box.read(Config.USER_CURRENT_LONGITUDE),
-          'street': _box.read(Config.USER_CURRENT_STREET),
-          'country': _box.read(Config.USER_CURRENT_COUNTRY),
-          'state': _box.read(Config.USER_CURRENT_STATE),
-          'city': _box.read(Config.USER_CURRENT_CITY),
-          'iso_code': _box.read(Config.USER_CURRENT_IS_CODE),
-          'barangay': _box.read(Config.USER_CURRENT_BARANGAY)
-        },
+        'address_id': _box.read(Config.USER_ADDRESS_ID),
         'carts': carts
       },
       headers: {
@@ -269,7 +258,7 @@ class ApiService extends GetConnect {
     return numberResponseFromJson(response.bodyString);
   }
 
-  Future<CellphoneConfirmationResponse> cellphoneConfirmaation({String code, String token}) async {
+  Future<CellphoneConfirmationResponse> cellphoneConfirmation({String code, String token}) async {
 
     final response = await post(
       '/auth/customer/cellphone-confirmation',

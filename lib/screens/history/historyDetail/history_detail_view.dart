@@ -83,13 +83,13 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_.data.call().status == 'delivered' ? 'Delivered to:' : 'Deliver to:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                      Text(_.data.call().status == 'delivered' ? 'Delivered at:' : 'Deliver at:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                       Row(
                         children: [
                           Image.asset(Config.PNG_PATH + 'address.png', height: 18, width: 18),
                           Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                          Expanded(child: Text('${_.data.call().address.street} ${_.data.call().address.barangay} ${_.data.call().address.city} ${_.data.call().address.state}', style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis)),
+                          Expanded(child: Text(_.data.call().address.completeAddress, style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis)),
                         ],
                       ),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
@@ -219,19 +219,13 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             ],
           ),
           Container(
-            margin: EdgeInsets.only(top: 5, left: 20),
+            margin: EdgeInsets.only(top: 5),
             child: Column(
               children: [
                 menu.additionals.isEmpty ? Container() :
                 Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Adds-on:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                  Column(
                     children: menu.additionals.map((e) => _buildAddsOn(e, menu.quantity)).toList(),
-                  )
-                ],
-              ),
+                ),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Column(
                   children: menu.choices.map((e) => _buildChoice(e, menu.quantity)).toList(),
@@ -254,14 +248,9 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Container(
-            child: Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: Text(additional.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14), textAlign: TextAlign.start),
-            ),
-          ),
+          child: Text(additional.name, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13), textAlign: TextAlign.start),
         ),
-        Text('₱ ' + double.parse('${(double.tryParse(additional.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱' + double.parse('${(double.tryParse(additional.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
       ],
     );
   }
@@ -274,13 +263,13 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
         Expanded(
           child: Row(
             children: [
-              Text('${choice.name}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+              Text('${choice.name}:', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13)),
               Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              Text('${choice.pick}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+              Text('${choice.pick}', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13))
             ],
           )
         ),
-        Text('₱ ' + double.parse('${(double.tryParse(choice.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13))
+        Text('₱' + double.parse('${(double.tryParse(choice.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
       ],
     );
   }

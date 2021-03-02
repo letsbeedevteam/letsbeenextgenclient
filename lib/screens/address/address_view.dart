@@ -69,7 +69,6 @@ class AddressPage extends GetView<AddressController> {
   }
 
   Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}';
     return GestureDetector(
       child: Container(
         padding: const EdgeInsets.all(15),
@@ -91,11 +90,11 @@ class AddressPage extends GetView<AddressController> {
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Text(address, style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500))
+              child: Text(data.address, style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w500))
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: const Text('Note to rider: None', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.normal))
+              child: Text('Note to rider: ${data.note}', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.normal))
             ),
             Divider(thickness: 2, color: Colors.grey.shade200)
           ],

@@ -13,35 +13,22 @@ class ChatPage extends GetView<ChatController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: GetX<ChatController>(
-          builder: (_) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Bee Driver: ${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                _.activeOrderData.call().rider.motorcycleDetails == null ? Container() :
-                Text(
-                  '${_.activeOrderData.call().rider.motorcycleDetails.plateNumber} - ${_.activeOrderData.call().rider.motorcycleDetails.brand} ${_.activeOrderData.call().rider.motorcycleDetails.color} - ${_.activeOrderData.call().rider.motorcycleDetails.model} ', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12)),
-              ],
-            );
-          },
+        title: Text('Message Rider', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        centerTitle: true,
+        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => controller.goBack()),
+        bottom: PreferredSize(
+          child: Container(height: 2, color: Colors.grey.shade200),
+          preferredSize: Size.fromHeight(4.0)
         ),
-        centerTitle: false,
-        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => controller.goBack())
       ),
       body: Container(
         height: Get.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            GetX<ChatController>(
-              builder: (_) => Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: Text(_.title.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-              ),
-            ),
-            Container(color: Colors.grey,width: Get.width, height: 1),
+            _buildRiderDetails(),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Container(height: 2, color: Colors.grey.shade200),
             GetX<ChatController>(
               builder: (_) {
                 return AnimatedContainer(
@@ -140,6 +127,45 @@ class ChatPage extends GetView<ChatController> {
     );
   }
 
+  Widget _buildRiderDetails() {
+    return Obx(() {
+      return controller.activeOrderData.call().rider != null ? Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text('Your Rider:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                    Text(controller.activeOrderData.call().rider.user.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                Row(
+                  children: [
+                    Text('${controller.activeOrderData.call().rider.motorcycleDetails.brand} -', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                    Text('${controller.activeOrderData.call().rider.motorcycleDetails.model} -', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                    Text('${controller.activeOrderData.call().rider.motorcycleDetails.plateNumber} -', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                    Text('${controller.activeOrderData.call().rider.motorcycleDetails.color}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                Text(controller.activeOrderData.call().rider.user.number, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+              ],
+            ),
+          ],
+        ),
+      ) : Container();
+    });
+  }
+
   Widget _buildChatItem(ChatData data) {
     return GetX<ChatController>(
       builder: (_) {
@@ -149,24 +175,14 @@ class ChatPage extends GetView<ChatController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${_.activeOrderData.call().rider.user.name}:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               Container(
                 padding: EdgeInsets.all(10),
                 constraints: BoxConstraints(
                   maxWidth: Get.width * 0.7,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.yellow.shade200,
-                  border: Border.all(color: Colors.grey),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 2.0,
-                      offset: Offset(3.0, 3.0)
-                    )
-                  ]
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomRight: Radius.circular(15)),
+                  color: Color(Config.LETSBEE_COLOR),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +195,9 @@ class ChatPage extends GetView<ChatController> {
                     )
                   ],
                 ),
-              )
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+              Text('${_.activeOrderData.call().rider.user.name}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
             ],
           ),
         ) : 
@@ -189,24 +207,14 @@ class ChatPage extends GetView<ChatController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('Me:', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               Container(
                 padding: EdgeInsets.all(10),
                 constraints: BoxConstraints(
                   maxWidth: Get.width * 0.7,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomLeft: Radius.circular(15)),
                   color: Colors.white,
-                  border: Border.all(color: Colors.grey),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 2.0,
-                      offset: Offset(3.0, 3.0)
-                    )
-                  ]
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +236,9 @@ class ChatPage extends GetView<ChatController> {
                     )
                   ],
                 ),
-              )
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+              Text('Let\'s Bee Customer', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
             ],
           ),
         );

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/screens/auth/signUp/controller/signup_controller.dart';
 import 'package:letsbeeclient/screens/user_details/user_details_controller.dart';
 
 class UserDetailsPage extends GetView<UserDetailsController> {
@@ -16,7 +17,10 @@ class UserDetailsPage extends GetView<UserDetailsController> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           title: Text('User Details', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => controller.goBackToSignIn()),
+          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
+            SignUpController.to.clear();
+            Get.back();
+          }),
           centerTitle: true,
           bottom: PreferredSize(
             child: Container(height: 2, color: Colors.grey.shade200),

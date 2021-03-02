@@ -64,7 +64,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     currentDigit('${first.text}${second.text}${third.text}${fourth.text}${fifth.text}${sixth.text}');
 
      isLoading(true);
-    _apiService.cellphoneConfirmaation(token: signInData.call().token, code: currentDigit.call()).then((response) {
+    _apiService.cellphoneConfirmation(token: signInData.call().token, code: currentDigit.call()).then((response) {
       if (response.status == 200) {
         _verifiedPopUp(response);
       } else {
@@ -86,23 +86,17 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     _box.write(Config.USER_EMAIL, response.data.email);
     _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
     _box.write(Config.USER_TOKEN, response.data.accessToken);
-    _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
     
     if (response.data.address.isEmpty) {
       Get.offNamedUntil(Config.MAP_ROUTE, (route) => false, arguments: {'type': Config.SETUP_ADDRESS});
     } else {
-      final address = response.data.address.first;
-      final userCurrentAddress = '${address.street}, ${address.barangay}, ${address.city}'.trim();
-      _box.write(Config.USER_CURRENT_STREET, address.street);
-      _box.write(Config.USER_CURRENT_COUNTRY, address.country);
-      _box.write(Config.USER_CURRENT_STATE, address.state);
-      _box.write(Config.USER_CURRENT_CITY, address.city);
-      _box.write(Config.USER_CURRENT_IS_CODE, address.isoCode);
-      _box.write(Config.USER_CURRENT_BARANGAY, address.barangay);
-      _box.write(Config.USER_CURRENT_LATITUDE, address.location.lat);
-      _box.write(Config.USER_CURRENT_LONGITUDE,  address.location.lng);
-      _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress);
-      _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, address.name);
+      final data = response.data.address.first;
+      _box.write(Config.NOTE_TO_RIDER, data.note);
+      _box.write(Config.USER_ADDRESS_ID, data.id);
+      _box.write(Config.USER_CURRENT_LATITUDE, data.location.lat);
+      _box.write(Config.USER_CURRENT_LONGITUDE,  data.location.lng);
+      _box.write(Config.USER_CURRENT_ADDRESS, data.address);
+      _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, data.name);
       _box.write(Config.IS_LOGGED_IN, true);
       Get.offAllNamed(Config.DASHBOARD_ROUTE);
     }
