@@ -60,7 +60,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                 Text('Items:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                                 Column(
-                                  children: _.activeOrderData.call().menus.map((e) => _buildMenu(e, _)).toList(),
+                                  children: _.activeOrderData.call().products.map((e) => _buildMenu(e, _)).toList(),
                                 ),
                                 Container(
                                   child: Column(
@@ -115,7 +115,7 @@ class OnGoingDetailPage extends GetView<DashboardController> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Address: ${_.activeOrderData.call().address.street} ${_.activeOrderData.call().address.barangay} ${_.activeOrderData.call().address.city} ${_.activeOrderData.call().address.state}', 
+                                              'Address: ${_.activeOrderData.call().address.completeAddress}', 
                                               style: TextStyle(color: Colors.black, fontSize: 14)
                                             ),
                                             Padding(padding: EdgeInsets.symmetric(vertical: 2)),

@@ -30,7 +30,7 @@ class ActiveOrder {
 
 class ActiveOrderData {
     ActiveOrderData({
-        this.menus,
+        this.products,
         this.activeStore,
         this.rider,
         this.user,
@@ -48,7 +48,7 @@ class ActiveOrderData {
         this.updatedAt,
     });
 
-    List<ActiveOrderMenu> menus;
+    List<ActiveOrderMenu> products;
     ActiveStore activeStore;
     Rider rider;
     User user;
@@ -66,7 +66,7 @@ class ActiveOrderData {
     DateTime updatedAt;
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
-        menus: json["products"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["products"].map((x) => ActiveOrderMenu.fromJson(x))),
+        products: json["products"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["products"].map((x) => ActiveOrderMenu.fromJson(x))),
         activeStore: ActiveStore.fromJson(json["store"]),
         rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
         user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
@@ -85,7 +85,7 @@ class ActiveOrderData {
     );
 
     Map<String, dynamic> toJson() => {
-        "menus": List<dynamic>.from(menus.map((x) => x.toJson())),
+        "menus": List<dynamic>.from(products.map((x) => x.toJson())),
         "fee": fee.toJson(),
         "timeframe": timeframe.toJson(),
         "address": address.toJson(),
@@ -133,40 +133,24 @@ class Timeframe {
 class Address {
     Address({
         this.location,
-        this.street,
-        this.country,
-        this.isoCode,
-        this.state,
-        this.city,
-        this.barangay,
+        this.completeAddress,
+        this.note,
     });
 
     AddressLocation location;
-    String street;
-    String country;
-    String isoCode;
-    String state;
-    String city;
-    String barangay;
+    String completeAddress;
+    String note;
 
     factory Address.fromJson(Map<String, dynamic> json) => Address(
         location: AddressLocation.fromJson(json["location"]),
-        street: json["street"],
-        country: json["country"],
-        isoCode: json["iso_code"],
-        state: json["state"],
-        city: json["city"],
-        barangay: json["barangay"],
+        completeAddress: json["complete_address"],
+        note: json["note"]
     );
 
     Map<String, dynamic> toJson() => {
         "location": location.toJson(),
-        "street": street,
-        "country": country,
-        "iso_code": isoCode,
-        "state": state,
-        "city": city,
-        "barangay": barangay,
+        "complete_address": completeAddress,
+        "note": note
     };
 }
 
@@ -178,7 +162,6 @@ class AddressLocation {
 
   double lat;
   double lng;
-
 
   factory AddressLocation.fromJson(Map<String, dynamic> json) => AddressLocation(
     lat: json["lat"].toDouble(),
@@ -280,7 +263,7 @@ class ActiveOrderMenu {
         quantity: json["quantity"],
         choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
-        note: json["note"] == null ? 'N/A' : json["note"],
+        note: json["note"] == null ? null : json["note"],
     );
 
     Map<String, dynamic> toJson() => {

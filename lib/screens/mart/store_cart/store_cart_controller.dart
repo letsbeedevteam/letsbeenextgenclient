@@ -215,20 +215,20 @@ class StoreCartController extends GetxController {
     }
   }
 
-  getCurrentLocationText() {
-    streetTFController.text = box.read(Config.USER_CURRENT_STREET);
-    cityTFController.text = box.read(Config.USER_CURRENT_CITY);
-    barangayTFController.text = box.read(Config.USER_CURRENT_BARANGAY);
-  }
+  // getCurrentLocationText() {
+  //   streetTFController.text = box.read(Config.USER_CURRENT_STREET);
+  //   cityTFController.text = box.read(Config.USER_CURRENT_CITY);
+  //   barangayTFController.text = box.read(Config.USER_CURRENT_BARANGAY);
+  // }
 
-  saveConfirmLocation() {
-    final address = '${streetTFController.text}, ${cityTFController.text}, ${barangayTFController.text}';
-    box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-    box.write(Config.USER_CURRENT_CITY, cityTFController.text);
-    box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
-    box.write(Config.USER_CURRENT_ADDRESS, address);
-    DashboardController.to.userCurrentAddress(address);
-  }
+  // saveConfirmLocation() {
+  //   final address = '${streetTFController.text}, ${cityTFController.text}, ${barangayTFController.text}';
+  //   box.write(Config.USER_CURRENT_STREET, streetTFController.text);
+  //   box.write(Config.USER_CURRENT_CITY, cityTFController.text);
+  //   box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
+  //   box.write(Config.USER_CURRENT_ADDRESS, address);
+  //   DashboardController.to.userCurrentAddress(address);
+  // }
 
   getProducts() {
 

@@ -22,7 +22,7 @@ import 'package:letsbeeclient/binds/webview_bind.dart';
 import 'package:letsbeeclient/screens/active_orders/active_on_going/active_on_going_view.dart';
 import 'package:letsbeeclient/screens/active_orders/on_going_detail/on_going_detail_view.dart';
 import 'package:letsbeeclient/screens/address/address_view.dart';
-import 'package:letsbeeclient/screens/auth/continue_with_email/tab_signup_view.dart';
+import 'package:letsbeeclient/screens/auth/signUp/signup_view.dart';
 import 'package:letsbeeclient/screens/auth/social/auth_view.dart';
 import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';

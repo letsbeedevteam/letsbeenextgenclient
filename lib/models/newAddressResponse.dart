@@ -34,29 +34,21 @@ class NewAddressResponse {
 
 class Data {
     Data({
-        this.location,
-        this.id,
-        this.userId,
-        this.name,
-        this.country,
-        this.state,
-        this.city,
-        this.barangay,
-        this.street,
-        this.isoCode,
-        this.createdAt,
+      this.location,
+      this.id,
+      this.userId,
+      this.name,
+      this.address,
+      this.note,
+      this.createdAt,
     });
 
     Location location;
     int id;
     int userId;
     String name;
-    String country;
-    String state;
-    String city;
-    String barangay;
-    String street;
-    String isoCode;
+    String address;
+    String note;
     DateTime createdAt;
 
     factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -64,12 +56,8 @@ class Data {
         id: json["id"],
         userId: json["user_id"],
         name: json["name"],
-        country: json["country"],
-        state: json["state"],
-        city: json["city"],
-        barangay: json["barangay"],
-        street: json["street"],
-        isoCode: json["iso_code"],
+        address: json["address"],
+        note: json["note"],
         createdAt: DateTime.parse(json["createdAt"]),
     );
 
@@ -78,12 +66,8 @@ class Data {
         "id": id,
         "user_id": userId,
         "name": name,
-        "country": country,
-        "state": state,
-        "city": city,
-        "barangay": barangay,
-        "street": street,
-        "iso_code": isoCode,
+        "address": address,
+        "note": note,
         "createdAt": createdAt.toIso8601String(),
     };
 }

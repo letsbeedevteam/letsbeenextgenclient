@@ -34,23 +34,15 @@ class MapController extends GetxController {
 
   var currentPosition = LatLng(0, 0).obs;
   var userCurrentAddress = 'Getting your address...'.obs;
-  var country = ''.obs;
-  var state = ''.obs;
-  var city = ''.obs;
-  var barangay = ''.obs;
-  var street = ''.obs;
-  var isoCode = ''.obs;
   var mapStyle = ''.obs;
 
-  final nameTF = TextEditingController();
-  final streetTFController = TextEditingController();
-  final barangayTFController = TextEditingController();
-  final cityTFController = TextEditingController();
+  final addressLabel = TextEditingController();
+  final addressDetails = TextEditingController();
+  final noteToRider = TextEditingController();
 
-  final nameNode = FocusNode();
-  final streetNode = FocusNode();
-  final barangayNode = FocusNode();
-  final cityNode = FocusNode();
+  final addressLabelNode = FocusNode();
+  final noteToRiderNode = FocusNode();
+  final addressDetailsNode = FocusNode();
 
   var buttonTitle = 'Next'.obs;
 
@@ -83,14 +75,10 @@ class MapController extends GetxController {
 
   void goToDashboardPage() {
 
-    if(argument['type'] == Config.ADD_NEW_ADDRESS) {
-      if (nameTF.text.isBlank) {
-        errorSnackbarTop(title: 'Oops!', message: 'Please input the required field');
-      } else {
-        addAddress();
-      }
+    if (noteToRider.text.isBlank || addressLabel.text.isBlank || addressDetails.text.isBlank) {
+      errorSnackbarTop(title: 'Oops!', message: 'Please input the required field(s)');
     } else {
-      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
+      userCurrentAddress(addressDetails.text.trim());
       addAddress();
     }
   }
@@ -138,21 +126,14 @@ class MapController extends GetxController {
 
       print(response.asMap());
 
-      streetTFController.text = response.first.street;
-      barangayTFController.text = response.first.subLocality;
-      cityTFController.text = '${response.first.locality} ${response.first.administrativeArea}';
+      final street = response.first.street;
+      final barangay = response.first.subLocality;
+      final city = '${response.first.locality} ${response.first.administrativeArea}';
 
       print(response.first.name);
 
-      userCurrentAddress('${streetTFController.text}, ${barangayTFController.text}, ${cityTFController.text}'.trim());
-
-      this.country(response.first.name);
-      this.state(response.first.administrativeArea);
-      this.city(cityTFController.text);
-      this.barangay(barangayTFController.text);
-      this.street(streetTFController.text);
-      this.isoCode(response.first.isoCountryCode);
-      this.nameTF.text = 'Home';
+      userCurrentAddress('$street $barangay, $city'.trim());
+      addressDetails.text = userCurrentAddress.call();
       
     }).catchError((onError) {
       // isLoading(false);
@@ -204,43 +185,34 @@ class MapController extends GetxController {
   void addAddress() {
     dismissKeyboard(Get.context);
 
-    print(streetTFController.text);
     isAddAddressLoading(true);
     final request = NewAddressRequest(
-      name: this.nameTF.text,
+      name: this.addressLabel.text,
       location: AddressLocation(
         lat: this.currentPosition.call().latitude,
         lng: this.currentPosition.call().longitude
       ),
-      country: this.country.call(),
-      state: this.state.call(),
-      city: cityTFController.text,
-      barangay: barangayTFController.text,
-      street: streetTFController.text,
-      isoCode: this.isoCode.call()
+      address: this.addressDetails.text,
+      note: this.noteToRider.text
     );
 
     newAddressSub = _apiService.addNewAddress(request).asStream().listen((response) {
       isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
-        userCurrentAddress('${response.data.street}, ${response.data.barangay}, ${response.data.city}'.trim());
-        _box.write(Config.USER_CURRENT_STREET, response.data.street);
-        _box.write(Config.USER_CURRENT_COUNTRY, response.data.country);
-        _box.write(Config.USER_CURRENT_STATE, response.data.state);
-        _box.write(Config.USER_CURRENT_CITY, response.data.city);
-        _box.write(Config.USER_CURRENT_IS_CODE, response.data.isoCode);
-        _box.write(Config.USER_CURRENT_BARANGAY, response.data.barangay);
+        userCurrentAddress(response.data.address.trim());
+        _box.write(Config.USER_ADDRESS_ID, response.data.id);
         _box.write(Config.USER_CURRENT_LATITUDE, response.data.location.lat);
         _box.write(Config.USER_CURRENT_LONGITUDE,  response.data.location.lng);
         _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, nameTF.text);
+        _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, response.data.name);
+        _box.write(Config.NOTE_TO_RIDER, response.data.note);
         
         if (argument['type'] == Config.ADD_NEW_ADDRESS) {
 
           DashboardController.to
           ..isSelectedLocation(true)
-          ..userCurrentNameOfLocation(nameTF.text)
+          ..userCurrentNameOfLocation(response.data.name)
           ..userCurrentAddress(this.userCurrentAddress.call().trim())
           ..fetchActiveOrders()
           ..fetchRestaurantDashboard();

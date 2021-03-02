@@ -189,39 +189,43 @@ class DashboardPage extends GetView<DashboardController> {
         Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
       },
       child: Container(
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          // border: Border.all(width: 0.5),
-          borderRadius: BorderRadius.circular(5),
-          color: Color(Config.LETSBEE_COLOR)
-        ),
-        child: Row(
+        color: Color(Config.WHITE),
+        child: Column(
           children: [
-           Container(
-             height: 55.0,
-             width: 55.0,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.white
+            Row(
+              children: [           
+                Expanded(
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      data.activeStore.locationName.isBlank ? 
+                      Text("${data.activeStore.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)) : 
+                      Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      _buildStatus(status: data.status),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      Text('₱${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))
+                    ],
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                Container(
+                 height: 70.0,
+                 width: 70.0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
+                ),
+               ),
+              ],
             ),
-            child: ClipOval(
-               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-            ),
-           ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-            Expanded(
-              child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  data.activeStore.locationName.isBlank ? 
-                  Text("${data.activeStore.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
-                  Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  _buildStatus(status: data.status),
-                ],
-              ),
-            )
+            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+            Divider(thickness: 2, color: Colors.grey.shade200)
           ],
         ),
       ),
@@ -230,50 +234,63 @@ class DashboardPage extends GetView<DashboardController> {
 
   Widget _buildStatus({String status}) {
     switch (status) {
-      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
     }
   }
 
   _activeOrderDialog() {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
-        backgroundColor: Color(Config.WHITE),
-        insetPadding: EdgeInsets.all(20),
-        child: GetX<DashboardController>(
-          builder: (_) {
-            return Container(
-              height: _.activeOrders.call() == null ? 100 : 380,
-              child: _.activeOrders.call() == null ? Container(
-                child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
+    Get.bottomSheet(
+      Obx(() {
+        return Container(
+          margin: EdgeInsets.only(top: 20),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Text('Your Orders', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+              centerTitle: true,
+              bottom: PreferredSize(
+                child: Container(height: 2, color: Colors.grey.shade200),
+                preferredSize: Size.fromHeight(4.0)
+              ),
+              actions: [
+                IconButton(icon: RotatedBox(
+                  quarterTurns: 3,
+                  child: Icon(Icons.chevron_left),
+                ), onPressed: () => Get.back())
+              ],
+            ),
+            body: Container(
+              child: controller.activeOrders.call() == null ? Container(
+                child: Center(child: Text(controller.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
               ) : Scrollbar(
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
+                    children: controller.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
                   ),
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      }),
+      backgroundColor: Color(Config.WHITE),
+      isScrollControlled: true
     );
   }
 }

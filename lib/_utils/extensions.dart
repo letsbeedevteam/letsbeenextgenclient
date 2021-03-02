@@ -50,7 +50,13 @@ void paymentSnackBarTop({String title , String message, SnackbarStatusCallback s
   Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.payment, color: Color(Config.LETSBEE_COLOR)), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status);
 }
 
-void dismissKeyboard(BuildContext context) => FocusScope.of(context).requestFocus(FocusNode());
+void dismissKeyboard(BuildContext context) {
+  final currentFocus = FocusScope.of(context);
+  currentFocus.requestFocus(FocusNode());
+  if (!currentFocus.hasPrimaryFocus) {
+    currentFocus.focusedChild.unfocus();
+  }
+}
 
 void copyText(String value) => Clipboard.setData(ClipboardData(text: value));
 

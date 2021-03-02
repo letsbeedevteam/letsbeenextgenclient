@@ -55,33 +55,27 @@ class CellphoneConfirmationData {
 class AddressData {
   AddressData({
     this.location,
+    this.id,
+    this.userId,
     this.name,
-    this.country,
-    this.state,
-    this.city,
-    this.barangay,
-    this.street,
-    this.isoCode
+    this.address,
+    this.note,
   });
 
   LocationData location;
+  int id;
+  int userId;
   String name;
-  String country;
-  String state;
-  String city;
-  String barangay;
-  String street;
-  String isoCode;
+  String address;
+  String note;
 
   factory AddressData.fromJson(Map<String, dynamic> json) => AddressData(
     location: LocationData.fromJson(json['location']),
+    id: json['id'],
+    userId: json['userId'],
     name: json['name'],
-    country: json['country'],
-    state: json['state'],
-    city: json['city'],
-    barangay: json['barangay'],
-    street: json['street'],
-    isoCode: json['isoCode'],
+    address: json["address"],
+    note: json["note"],
   );
 }
 

@@ -44,7 +44,6 @@ class AuthService extends GetConnect {
   Future<FacebookAccessToken> facebookSignIn() async {
     _facebookLogin.loginBehavior = FacebookLoginBehavior.webOnly;
     final result = await _facebookLogin.logIn(['email']);
-
     return result.accessToken != null ? result.accessToken : null;
   }
 

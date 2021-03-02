@@ -415,7 +415,7 @@ class StoreCartPage extends GetView<StoreCartController> {
                     ),
                   ],
                 ),
-                onPressed: () => confirmLocationModal(storeId: storeId, paymentMethod: 'cod'),
+                onPressed: () => controller.paymentMethod(storeId, 'cod'),
               ),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -535,152 +535,150 @@ class StoreCartPage extends GetView<StoreCartController> {
     );
   }
 
-  confirmLocationModal({int storeId, String paymentMethod}) {
-    Get.back();
-    Get.dialog(
-      AlertDialog(
-        content: GetX<StoreCartController>(
-          initState: (state) => controller.getCurrentLocationText(),
-          builder: (_) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(child: Text('Confirm your location', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
-                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                Text('Lot No., Block No., Bldg Name, Floor No. / Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
-                SizedBox(
-                  height: 30,
-                  child: TextFormField(
-                    controller: controller.streetTFController,
-                    focusNode: controller.streetNode,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15),
-                    textInputAction: TextInputAction.next,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    obscureText: false,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey.shade200,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
-                    ),
-                    onEditingComplete: () {
-                      controller.barangayTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.barangayTFController.text.length));
-                      controller.barangayNode.requestFocus();
-                    },
-                  ),
-                ),
-                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                Text('Barangay / Purok', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
-                SizedBox(
-                  height: 30,
-                  child: TextFormField(
-                    controller: controller.barangayTFController,
-                    focusNode: controller.barangayNode,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15),
-                    textInputAction: TextInputAction.next,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    obscureText: false,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey.shade200,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
-                    ),
-                    onEditingComplete: () {
-                      controller.cityTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.cityTFController.text.length));
-                      controller.cityNode.requestFocus();
-                    },
-                  ),
-                ),
-                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                Text('Municipality / City', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
-                SizedBox(
-                  height: 30,
-                  child: TextFormField(
-                    controller: controller.cityTFController,
-                    focusNode: controller.cityNode,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 15),
-                    textInputAction: TextInputAction.next,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    obscureText: false,
-                    cursorColor: Colors.black,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey.shade200,
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15)
-                    )
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        color: Color(Config.LETSBEE_COLOR),
-                        onPressed: () {
-                          if (Get.isSnackbarOpen) {
-                            Get.back();
-                            Future.delayed(Duration(milliseconds: 500));
-                            Get.back();
-                          } else {
-                            Get.back();
-                          }
-                        },
-                        child: Text('CANCEL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                      RaisedButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        color: Color(Config.LETSBEE_COLOR),
-                        onPressed: () {
-                          controller
-                          ..saveConfirmLocation()
-                          ..paymentMethod(storeId, paymentMethod);
-                        },
-                        child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            );
-          },
-        ),
-      ),
-      barrierDismissible: true
-    );
-  }
+  // confirmLocationModal({int storeId, String paymentMethod}) {
+  //   Get.back();
+  //   Get.dialog(
+  //     AlertDialog(
+  //       content: GetX<StoreCartController>(
+  //         initState: (state) => controller.getCurrentLocationText(),
+  //         builder: (_) {
+  //           return Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Center(child: Text('Confirm your location', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold))),
+  //               Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+  //               Text('Lot No., Block No., Bldg Name, Floor No. / Street', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+  //               SizedBox(
+  //                 height: 30,
+  //                 child: TextFormField(
+  //                   controller: controller.streetTFController,
+  //                   focusNode: controller.streetNode,
+  //                   textAlign: TextAlign.start,
+  //                   style: TextStyle(fontSize: 15),
+  //                   textInputAction: TextInputAction.next,
+  //                   enableSuggestions: false,
+  //                   autocorrect: false,
+  //                   obscureText: false,
+  //                   cursorColor: Colors.black,
+  //                   decoration: InputDecoration(
+  //                     fillColor: Colors.grey.shade200,
+  //                     filled: true,
+  //                     enabledBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     contentPadding: EdgeInsets.symmetric(horizontal: 15)
+  //                   ),
+  //                   onEditingComplete: () {
+  //                     controller.barangayTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.barangayTFController.text.length));
+  //                     controller.barangayNode.requestFocus();
+  //                   },
+  //                 ),
+  //               ),
+  //               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+  //               Text('Barangay / Purok', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+  //               SizedBox(
+  //                 height: 30,
+  //                 child: TextFormField(
+  //                   controller: controller.barangayTFController,
+  //                   focusNode: controller.barangayNode,
+  //                   textAlign: TextAlign.start,
+  //                   style: TextStyle(fontSize: 15),
+  //                   textInputAction: TextInputAction.next,
+  //                   enableSuggestions: false,
+  //                   autocorrect: false,
+  //                   obscureText: false,
+  //                   cursorColor: Colors.black,
+  //                   decoration: InputDecoration(
+  //                     fillColor: Colors.grey.shade200,
+  //                     filled: true,
+  //                     enabledBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     contentPadding: EdgeInsets.symmetric(horizontal: 15)
+  //                   ),
+  //                   onEditingComplete: () {
+  //                     controller.cityTFController.selection = TextSelection.fromPosition(TextPosition(offset: controller.cityTFController.text.length));
+  //                     controller.cityNode.requestFocus();
+  //                   },
+  //                 ),
+  //               ),
+  //               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+  //               Text('Municipality / City', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400)),
+  //               SizedBox(
+  //                 height: 30,
+  //                 child: TextFormField(
+  //                   controller: controller.cityTFController,
+  //                   focusNode: controller.cityNode,
+  //                   textAlign: TextAlign.start,
+  //                   style: TextStyle(fontSize: 15),
+  //                   textInputAction: TextInputAction.next,
+  //                   enableSuggestions: false,
+  //                   autocorrect: false,
+  //                   obscureText: false,
+  //                   cursorColor: Colors.black,
+  //                   decoration: InputDecoration(
+  //                     fillColor: Colors.grey.shade200,
+  //                     filled: true,
+  //                     enabledBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     focusedBorder: OutlineInputBorder(
+  //                       borderRadius: BorderRadius.circular(5),
+  //                     ),
+  //                     contentPadding: EdgeInsets.symmetric(horizontal: 15)
+  //                   )
+  //                 ),
+  //               ),
+  //               Container(
+  //                 margin: EdgeInsets.only(top: 10),
+  //                 child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                   children: [
+  //                     RaisedButton(
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(10)
+  //                       ),
+  //                       color: Color(Config.LETSBEE_COLOR),
+  //                       onPressed: () {
+  //                         if (Get.isSnackbarOpen) {
+  //                           Get.back();
+  //                           Future.delayed(Duration(milliseconds: 500));
+  //                           Get.back();
+  //                         } else {
+  //                           Get.back();
+  //                         }
+  //                       },
+  //                       child: Text('CANCEL', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+  //                     ),
+  //                     Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+  //                     RaisedButton(
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(10)
+  //                       ),
+  //                       color: Color(Config.LETSBEE_COLOR),
+  //                       onPressed: () {
+  //                         controller.paymentMethod(storeId, paymentMethod);
+  //                       },
+  //                       child: _.isPaymentLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('PROCEED', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+  //                     )
+  //                   ],
+  //                 ),
+  //               )
+  //             ],
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //     barrierDismissible: true
+  //   );
+  // }
 
   deleteDialog({String menu, String uniqueId}) {
     Get.defaultDialog(

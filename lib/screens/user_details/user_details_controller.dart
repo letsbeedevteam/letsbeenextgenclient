@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signup_request.dart';
+import 'package:letsbeeclient/screens/auth/signUp/controller/signup_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class UserDetailsController extends GetxController {
@@ -16,14 +18,11 @@ class UserDetailsController extends GetxController {
   final numberFN = FocusNode();
 
   var isLoading = false.obs;
-  var signInData = SignInData().obs;
 
   @override
   void onInit() {
-    signInData(SignInData.fromJson(Get.arguments));
-
-    nameController.text = 'None';
-    numberController.text = signInData.call().cellphoneNumber;
+    print(SignUpController.to.signUpEmail.call());
+    print(SignUpController.to.signUpPassword.call());
     super.onInit();
   }
 
@@ -32,31 +31,29 @@ class UserDetailsController extends GetxController {
   void sendCode() {
     isLoading(true);
 
-    if (signInData.call().cellphoneNumber != null) {
-      Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: signInData.call().toJson());
-    } else {
+    final request = SignUpRequest(
+      name: nameController.text,
+      email: SignUpController.to.signUpEmail.call(),
+      password: SignUpController.to.signUpPassword.call(),
+      confirmPassword: SignUpController.to.signUpPassword.call(),
+      cellphoneNumber: '0${numberController.text}'
+    );
 
-      _apiService.updateCellphoneNumber(token: signInData.call().token, number: '+63${numberController.text}').then((response) {
-        if (response.status == 200) {
-          Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson());
-        } else {
-
-          if (response.code == 2018) {
-            errorSnackBarBottom(title: 'Oops!', message: 'Cellphone number is already in use');
-          } else if (response.code == 2012) {
-            errorSnackBarBottom(title: 'Oops!', message: 'User not found');
-          } else {
-            errorSnackBarBottom(title: 'Oops!', message: 'Invalid contact number');
-          }
-        }
-
-        isLoading(false);
-
-      }).catchError((onError) {
-        isLoading(false);
-        print(onError);
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
-      });
-    }
+    _apiService.customerSignUp(signUpRequest: request).then((response) {
+      if (response.status == 200) {
+        final data = SignInData(
+          token: response.data.token,
+          cellphoneNumber: '0${numberController.text}'
+        );
+        Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
+        dismissKeyboard(Get.context);
+      } else {
+        alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      }
+      isLoading(false);
+    }).catchError((onError) {
+      alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      isLoading(false);
+    });
   }
 }

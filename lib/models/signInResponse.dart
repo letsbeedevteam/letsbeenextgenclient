@@ -26,7 +26,6 @@ class SignInResponse {
 class SignInData {
   SignInData({
     this.token,
-    this.sentConfirmation,
     this.cellphoneNumber
   });
 
@@ -36,13 +35,11 @@ class SignInData {
 
   factory SignInData.fromJson(Map<String, dynamic> json) => SignInData(
     token: json['token'],
-    sentConfirmation: json['sent_confirmation'],
     cellphoneNumber: json['cellphone_number']
   );
 
   Map<String, dynamic> toJson() => {
     'token': token,
-    'sent_confirmation': sentConfirmation,
     'cellphone_number': cellphoneNumber
   };
 }
