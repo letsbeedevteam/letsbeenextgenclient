@@ -34,7 +34,7 @@ class SignInData {
 
   factory SignInData.fromJson(Map<String, dynamic> json) => SignInData(
     token: json['token'],
-    cellphoneNumber: json['cellphone_number']
+    cellphoneNumber: json['cellphone_number'] == '0' ? null : json['cellphone_number']
   );
 
   Map<String, dynamic> toJson() => {
