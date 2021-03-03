@@ -21,6 +21,7 @@ import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
+import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 
@@ -49,15 +50,28 @@ class ApiService extends GetConnect {
     return signInResponseFromJson(response.bodyString);
   }
 
-  Future<SignUpResponse> customerSignUp({SignUpRequest signUpRequest}) async {
+  Future<SignUpResponse> customerSignUp({SignUpRequest signUp}) async {
 
-    print(signUpRequest.toJson());
+    print(signUp.toJson());
     final response = await post(
       '/auth/customer/signup',
-      signUpRequest.toJson()
+      signUp.toJson()
     );
 
     print('Customer Sign Up: ${response.body}');
+
+    return signUpResponseFromJson(response.bodyString);
+  }
+
+  Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
+
+    print(socialSignUp.toJson());
+    final response = await post(
+      '/auth/customer/social/login-update',
+      socialSignUp.toJson()
+    );
+
+    print('Customer Social Sign Up: ${response.body}');
 
     return signUpResponseFromJson(response.bodyString);
   }
@@ -165,7 +179,6 @@ class ApiService extends GetConnect {
   }
 
   Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
-
     final response = await put(
       '/orders',
       {

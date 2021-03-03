@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
@@ -12,7 +13,8 @@ import 'package:letsbeeclient/screens/auth/social/controller/auth_presenter.dart
 class SignUpController extends GetxController implements AuthViewContract {
 
   AuthPresenter _presenter;
-
+  final GetStorage _box = Get.find();
+  
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -88,6 +90,7 @@ class SignUpController extends GetxController implements AuthViewContract {
             isShowConfirmPassword(false);
             isShowPassword(false);
             dismissKeyboard(Get.context);
+            if (signUpEmail.call().isNotEmpty || signUpPassword.call().isNotEmpty) clear();
           });
 
         } else {
@@ -134,12 +137,17 @@ class SignUpController extends GetxController implements AuthViewContract {
   @override
   void onSocialSignInSuccess(String social, SignInData data) {
     print(data.toJson());
-    //  _box.write(Config.SOCIAL_LOGIN_TYPE, social);
-    //   Get.toNamed(Config.USER_DETAILS_ROUTE, arguments: data.toJson()).whenComplete(() {
-    //   isGoogleLoading(false);
-    //   isFacebookLoading(false);
-    //   isKakaoLoading(false);
-    // });
+    _box.write(Config.SOCIAL_LOGIN_TYPE, social);
+    if (data.cellphoneNumber == null) {
+      Get.toNamed(Config.USER_DETAILS_ROUTE, arguments: data.toJson());
+    } else {
+      Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
+    }
+
+    isGoogleLoading(false);
+    isFacebookLoading(false);
+    isKakaoLoading(false);
+    dismissKeyboard(Get.context);
   }
 
   @override

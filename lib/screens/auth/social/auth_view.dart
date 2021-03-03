@@ -51,7 +51,7 @@ class AuthPage extends GetView<AuthController> {
         children: [
           Image.asset(Config.PNG_PATH + 'letsbee-logo.png', width: 150),
           Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-          const Text('Please enter your username and password to sign in. Enjoy your food!', style: TextStyle(fontSize: 15))
+          const Text('Please enter your username and password to sign in. Enjoy your food!', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR)))
         ],
       ),
     );

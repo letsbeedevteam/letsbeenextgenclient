@@ -260,12 +260,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void _facebookSignOut() async {
-    _facebookLogin.logOut();
+    await _facebookLogin.logOut();
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 
   void _googleSignOut() async {
-    _googleSignIn.disconnect();
+    await _googleSignIn.disconnect();
     Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
   }
 

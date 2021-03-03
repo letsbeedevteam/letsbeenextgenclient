@@ -88,6 +88,7 @@ class SignUpPage extends GetView<SignUpController>  {
               )
             ]
           ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
           IgnorePointer(
             ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
             child: SizedBox(
@@ -103,7 +104,8 @@ class SignUpPage extends GetView<SignUpController>  {
                 );
               }),
             ),
-          )
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         ],
       ),
     );
@@ -116,33 +118,29 @@ class SignUpPage extends GetView<SignUpController>  {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(Config.PNG_PATH + 'letsbee-logo.png', width: 150),
-          Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-          const Text('Please enter your username and password to sign in. Enjoy your food!', style: TextStyle(fontSize: 15))
+          const Padding(padding: const EdgeInsets.symmetric(vertical: 8)),
+          const Text('Please enter your user details to sign up.', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
+          RichText(
+            text: TextSpan(
+              children: [
+                  TextSpan(text: 'Already have an account? ', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
+                  TextSpan(
+                    text: 'Sign In', 
+                    style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR)),
+                    recognizer: TapGestureRecognizer()..onTap = () => Get.back()
+                  ),
+              ]
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _footer() {
-    return Column(
-      children: [
-        Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Don\'t have an account?', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-            GestureDetector(
-              onTap: () => Get.toNamed(Config.SIGNUP_ROUTE),
-              child: Text('Sign Up', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR))),
-            )
-          ],
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        const Text('OR', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        _socialLoginButtons(),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: _socialLoginButtons(),
     );
   }
 
