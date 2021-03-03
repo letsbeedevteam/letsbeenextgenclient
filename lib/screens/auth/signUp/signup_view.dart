@@ -28,7 +28,7 @@ class SignUpPage extends GetView<SignUpController>  {
           body: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _headerTitles(),
                 _fields(),
@@ -114,6 +114,7 @@ class SignUpPage extends GetView<SignUpController>  {
   Widget _headerTitles() {
     return Container(
       margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+      alignment: Alignment.centerLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
