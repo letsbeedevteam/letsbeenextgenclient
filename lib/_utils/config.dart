@@ -49,7 +49,7 @@ class Config {
   static const LETSBEE_STORAGE = 'LetsBeeStorage';
   static const SOCIAL_LOGIN_TYPE = 'social_login_type';
 
-  static const IS_SETUP_LOCATION = 'is_setup_location';
+  // static const IS_SETUP_LOCATION = 'is_setup_location';
   // static const IS_VERIFY_NUMBER = 'is_verify_number';
   static const IS_LOGGED_IN = 'is_logged_in';
 

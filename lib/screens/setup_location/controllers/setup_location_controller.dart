@@ -101,7 +101,7 @@ class SetupLocationController extends GetxController {
     // box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
     // box.write(Config.USER_CURRENT_CITY, cityTFController.text);
     box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
-    box.write(Config.IS_SETUP_LOCATION, true);
+    // box.write(Config.IS_SETUP_LOCATION, true);
     Get.offAllNamed(Config.DASHBOARD_ROUTE);
   }
 }
