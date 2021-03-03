@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -23,7 +24,10 @@ class AddressController extends GetxController {
   
   Future<Null> refreshAddress() async => fetchAllAddresses();
 
-  updateSelectedAddress({AddressData data}) => DashboardController.to.updateCurrentLocation(data);
+  updateSelectedAddress({AddressData data}) {
+    successSnackBarTop(title: 'Your selected location is:', message: data.address, seconds: 1);
+    DashboardController.to.updateCurrentLocation(data);
+  }
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
 

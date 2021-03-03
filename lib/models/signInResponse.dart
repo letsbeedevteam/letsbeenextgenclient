@@ -30,7 +30,6 @@ class SignInData {
   });
 
   String token;
-  bool sentConfirmation;
   String cellphoneNumber;
 
   factory SignInData.fromJson(Map<String, dynamic> json) => SignInData(

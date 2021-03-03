@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';

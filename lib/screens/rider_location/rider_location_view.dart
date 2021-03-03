@@ -32,7 +32,7 @@ class RiderLocationPage extends GetView<RiderLocationController> {
               return GoogleMap(
                 mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
-                  zoom: 18,
+                  zoom: 15,
                   target: controller.currentPosition.call()
                 ),
                 myLocationButtonEnabled: false,

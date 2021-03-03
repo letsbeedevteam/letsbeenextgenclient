@@ -26,7 +26,7 @@ class AuthService extends GetConnect {
       {'token': token},
     );
 
-    print('Login response: ${response.body}');
+    print('Social Login response: ${response.body}');
 
     return signInResponseFromJson(response.bodyString);
   }

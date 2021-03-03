@@ -87,4 +87,5 @@ class Config {
   static const SEARCH_TEXT_COLOR = 0xFF999999;
   static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
   static const YELLOW_TEXT_COLOR = 0xFFD9BB64;
+  static const GREY_TEXT_COLOR = 0xFF666666;
 }
