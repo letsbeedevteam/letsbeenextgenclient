@@ -146,8 +146,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     ..on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
-      receiveUpdateOrder();
-      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -166,6 +164,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       onGoingMessage('Loading...');
       print('Error socket: $_');
     });
+
+    receiveUpdateOrder();
+    receiveChat();
   }
 
   void setupRefreshIndicator() {

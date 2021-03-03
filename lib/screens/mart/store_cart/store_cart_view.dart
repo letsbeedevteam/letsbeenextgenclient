@@ -62,20 +62,27 @@ class StoreCartPage extends GetView<StoreCartController> {
               Row(
                 children: [
                   Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 20,
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: Color(Config.LETSBEE_COLOR),
-                      borderRadius: BorderRadius.circular(25)
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                      ],
+                  GestureDetector(
+                    onTap: () => Get.toNamed(Config.ADDRESS_ROUTE),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      height: 20,
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        color: Color(Config.LETSBEE_COLOR),
+                        borderRadius: BorderRadius.circular(25)
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
+                          RotatedBox(
+                            quarterTurns: 3,
+                            child: Icon(Icons.chevron_left),
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],
