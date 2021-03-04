@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 class Config {
 
   // Base URLs
@@ -44,6 +46,7 @@ class Config {
   static const USER_CURRENT_ADDRESS = 'user_current_address';
   static const NOTE_TO_RIDER = 'note_to_rider';
   static const PRODUCTS = 'products';
+  static const LANGUAGE = 'language';
 
 
   static const LETSBEE_STORAGE = 'LetsBeeStorage';
@@ -55,15 +58,37 @@ class Config {
 
   // Paths
   static const JSONS_PATH = 'assets/jsons/';
+  static const TRANSLATION_PATH = 'assets/translations';
   static const SVG_PATH = 'assets/svg/';
   static const PNG_PATH = 'assets/png/';
   static const GIF_PATH = 'assets/gifs/';
 
   // Error message
-  static const NO_INTERNET_CONNECTION = 'No internet connection';
-  static const SOMETHING_WENT_WRONG = 'Something went wrong. Please try again';
-  static const TIMED_OUT = 'Operation timed out. Please try again';
-  static const TOKEN_EXPIRED = 'Token Expired!';
+
+  // ignore: non_constant_identifier_names
+  static final NO_INTERNET_CONNECTION = 'noInternetConnection'.tr();
+  // ignore: non_constant_identifier_names
+  static final SOMETHING_WENT_WRONG = 'somethingWentWrong'.tr();
+  // ignore: non_constant_identifier_names
+  static final TIMED_OUT = 'timedOut'.tr();
+  // ignore: non_constant_identifier_names
+  static final TOKEN_EXPIRED = 'tokenExpired'.tr();
+  // ignore: non_constant_identifier_names
+  static final OOPS = 'oops'.tr();
+  // ignore: non_constant_identifier_names
+  static final INPUT_FIELDS = 'inputFields'.tr();
+  // ignore: non_constant_identifier_names
+  static final SIGN_IN_FAILED = 'signInFailed'.tr();
+  // ignore: non_constant_identifier_names
+  static final ACCOUNT_NOT_EXIST = 'accountNotExist'.tr();
+  // ignore: non_constant_identifier_names
+  static final EMAIL_INVALID = 'emailInvalid'.tr();
+  // ignore: non_constant_identifier_names
+  static final INCORRECT_REPEAT_PASSWORD = 'incorrectRepeatPassword'.tr();
+  // ignore: non_constant_identifier_names
+  static final REGISTERED_SUCCESS = 'registeredSuccess'.tr();
+  // ignore: non_constant_identifier_names
+  static final YAY = 'yay'.tr();
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

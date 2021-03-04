@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:get/get.dart';
@@ -12,11 +13,21 @@ import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/routes.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
+import 'generated/codegen_loader.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
-  runApp(MyApp());
+
+  runApp(
+    EasyLocalization(
+      path: Config.TRANSLATION_PATH,
+      supportedLocales: [Locale('ko', 'KR'), Locale('en', 'US')],
+      fallbackLocale: Locale('en', 'US'),
+      assetLoader: CodegenLoader(),
+      child: MyApp(),
+    )
+  );
 }
 
 Future initServices() async {
@@ -41,6 +52,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       title: Config.LETS_BEE,
       theme: ThemeData(
         appBarTheme: AppBarTheme(

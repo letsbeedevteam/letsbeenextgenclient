@@ -65,11 +65,11 @@ class UserDetailsController extends GetxController {
         Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
         dismissKeyboard(Get.context);
       } else {
-        alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        alertSnackBarTop(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
       }
       isLoading(false);
     }).catchError((onError) {
-      alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      alertSnackBarTop(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
       isLoading(false);
     });
   }
@@ -93,11 +93,11 @@ class UserDetailsController extends GetxController {
         Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
         dismissKeyboard(Get.context);
       } else {
-        alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        alertSnackBarTop(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
       }
       isLoading(false);
     }).catchError((onError) {
-      alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      alertSnackBarTop(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
       isLoading(false);
     });
   }

@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'controller/signup_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SignUpPage extends GetView<SignUpController>  {
 
@@ -19,7 +19,7 @@ class SignUpPage extends GetView<SignUpController>  {
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.willPopCallback),
-            title: Text('User Credentials', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+            title: Text(tr('userCredentials'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
             bottom: PreferredSize(
               child: Container(height: 2, color: Colors.grey.shade200),
               preferredSize: Size.fromHeight(4.0)
@@ -76,9 +76,9 @@ class SignUpPage extends GetView<SignUpController>  {
                 child: RichText(
                   text: TextSpan(
                     children: [
-                       TextSpan(text: 'I have read and agree to the ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                       TextSpan(text: tr('agree'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
                        TextSpan(
-                         text: 'terms and conditions', 
+                         text: tr('termsConditions'), 
                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Color(Config.YELLOW_TEXT_COLOR)),
                          recognizer: TapGestureRecognizer()..onTap = () => print('Terms and conditions')
                         ),
@@ -100,7 +100,7 @@ class SignUpPage extends GetView<SignUpController>  {
                     borderRadius: BorderRadius.circular(20) 
                   ),
                   color: Color(Config.LETSBEE_COLOR),
-                  child: Text(controller.isLoading.call() ? 'Signing Up...' : 'Sign Up', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                  child: Text(tr(controller.isLoading.call() ? 'signingUp' : 'signUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
                 );
               }),
             ),
@@ -120,13 +120,13 @@ class SignUpPage extends GetView<SignUpController>  {
         children: [
           Image.asset(Config.PNG_PATH + 'letsbee-logo.png', width: 150),
           const Padding(padding: const EdgeInsets.symmetric(vertical: 8)),
-          const Text('Please enter your user details to sign up.', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
+          Text(tr('signUpTitleHeader'), style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
           RichText(
             text: TextSpan(
               children: [
-                  TextSpan(text: 'Already have an account? ', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
+                  TextSpan(text: tr('alreadyHaveAnAccount'), style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR))),
                   TextSpan(
-                    text: 'Sign In', 
+                    text: tr('signIn'), 
                     style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR)),
                     recognizer: TapGestureRecognizer()..onTap = () => Get.back()
                   ),
@@ -153,7 +153,7 @@ class SignUpPage extends GetView<SignUpController>  {
             return customSignInButton(
               color: Color(0xFF3B5998),
               icon: Icon(FontAwesomeIcons.facebookSquare, color: Colors.white),
-              label: controller.isFacebookLoading.call() ? 'Signing Up...' : 'Sign Up with Facebook',
+              label: controller.isFacebookLoading.call() ? 'signingUp' : 'signUpWithFacebook',
               labelColor: Colors.white,
               onTap: () => controller.facebookSignIn(),
             );
@@ -162,7 +162,7 @@ class SignUpPage extends GetView<SignUpController>  {
             return customSignInButton(
               color: Color(0xFFEA4335),
               icon: Icon(FontAwesomeIcons.google, color: Colors.white),
-              label: controller.isGoogleLoading.call() ? 'Signing Up...' : 'Sign Up with Google',
+              label: controller.isGoogleLoading.call() ? 'signingUp' : 'signUpWithGoogle',
               labelColor: Colors.white,
               onTap: () => controller.googleSignIn(),
             );
@@ -171,7 +171,7 @@ class SignUpPage extends GetView<SignUpController>  {
             return customSignInButton(
               color: Color(0xFFFFE812),
               svg: SvgPicture.asset(Config.SVG_PATH + 'kakao_talk.svg'),
-              label: controller.isKakaoLoading.call() ? 'Signing Up...' : 'Sign Up with Kakao',
+              label: controller.isKakaoLoading.call() ? 'signingUp' : 'signUpWithKakao',
               labelColor: Colors.black,
               onTap: () => controller.kakaoSignIn(),
             );
@@ -187,7 +187,7 @@ class SignUpPage extends GetView<SignUpController>  {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Email', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('email'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Obx(() {
           return SizedBox(
@@ -240,7 +240,7 @@ class SignUpPage extends GetView<SignUpController>  {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Password', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('password'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
@@ -296,7 +296,7 @@ class SignUpPage extends GetView<SignUpController>  {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Repeat Password', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('repeatPassword'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
@@ -360,10 +360,9 @@ class SignUpPage extends GetView<SignUpController>  {
             children: [
               icon == null ? svg : icon,
               Expanded(
-                child: AutoSizeText(
-                  label,
+                child: Text(
+                  tr(label),
                   textAlign: TextAlign.center,
-                  presetFontSizes: [15, 15, 10],
                   maxLines: 2,
                   style: TextStyle(
                     color: labelColor,

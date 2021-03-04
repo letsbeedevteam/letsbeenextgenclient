@@ -17,22 +17,21 @@ dependencies:
   # Icons
   cupertino_icons: ^1.0.0
   font_awesome_flutter: ^8.11.0
+
+  # Localization
+  easy_localization: ^2.3.3
   
   # Badge
   badges: ^1.1.6
 
   # Lottie animation
-  lottie: ^0.7.0+1
   loading_gifs: ^0.2.3
 
   # Dependency Injection
-  get: ^3.25.4
-
-  # Slider
-  carousel_slider: ^2.3.1
+  get: ^3.25.6
 
   # Shared preference
-  get_storage: ^1.3.2
+  get_storage: ^1.4.0
 
   # Http request
   http: ^0.12.2
@@ -44,22 +43,21 @@ dependencies:
   flutter_gifimage: ^1.0.1
   
   # Permission
-  permission_handler: ^5.0.1+1
+  permission_handler: ^5.1.0+2
 
   # Keyboard visibility
-  flutter_keyboard_visibility: ^4.0.3
+  flutter_keyboard_visibility: ^4.0.6
 
   # Locations
-  google_maps_flutter: ^1.1.1
+  google_maps_flutter: ^1.2.0
 
   # geocoder: ^0.2.1
   geocoding: ^1.0.5
   location: ^3.0.2
   flutter_google_places: ^0.2.6
-  flutter_polyline_points: ^0.2.4
 
   # Notification builder
-  flutter_local_notifications: ^4.0.1
+  flutter_local_notifications: ^4.0.1+1
 
   # Socket IO
   socket_io_client: ^0.9.12
@@ -100,3 +98,4 @@ flutter:
     - assets/svg/
     - assets/png/
     - assets/gifs/
+    - assets/translations/

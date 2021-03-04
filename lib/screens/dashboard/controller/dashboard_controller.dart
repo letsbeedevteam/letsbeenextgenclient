@@ -111,41 +111,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
     super.onInit();
   }
+  
+  refreshSocket() {
+    socketService.connectSocket();
 
-  // void startEvery24Hours() {
-
-  //   final now = DateTime.now();
-  //   final nextCheck = DateTime(now.year, now.month, now.day + 1);
-
-  //   _timer = Timer.periodic(
-  //      Duration(seconds: 1), (Timer timer) {
-  //       if (DateFormat('MM-dd-yyyy').format(DateTime.now()) == box.read(Config.NEXT_DAY)) {
-  //         refreshToken();
-  //       } else {
-  //         if (!box.hasData(Config.NEXT_DAY)) {
-  //           box.write(Config.NEXT_DAY, DateFormat('MM-dd-yyyy').format(nextCheck));
-  //         } else {
-  //           // print(box.read(Config.NEXT_DAY));
-  //         }
-  //       }
-  //     },
-  //   );
-
-  //   fetchActiveOrders();
-  //   fetchRestaurantDashboard();
-  //   fetchMartDashboard();
-  // }
-
-  refreshSocket({String type = 'initialize'}) {
-    if (type == 'initialize') {
-      socketService.connectSocket();
-    } else {
-      socketService.socket..disconnect()..connect();
-    }
     socketService.socket
     ..on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
+      receiveUpdateOrder();
+      receiveChat();
     })
     ..on('connecting', (_) {
       print('Connecting');
@@ -164,9 +139,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       onGoingMessage('Loading...');
       print('Error socket: $_');
     });
-
-    receiveUpdateOrder();
-    receiveChat();
   }
 
   void setupRefreshIndicator() {
@@ -415,12 +387,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         // _timer.cancel();
         // box.remove(Config.NEXT_DAY);
         box.write(Config.USER_TOKEN, response.data.accessToken);
+        socketService.connectSocket();
         // startEvery24Hours();
       } 
 
       Future.delayed(Duration(seconds: 1)).then((value) {
-        if (socketService.socket == null) refreshSocket(); else refreshSocket(type: 'refresh');
-        fetchActiveOrders();
+        refreshSocket();
         fetchRestaurantDashboard();
         fetchMartDashboard();
       });

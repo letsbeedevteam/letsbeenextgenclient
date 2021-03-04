@@ -46,7 +46,7 @@ class RestaurantPage extends GetView<RestaurantController> {
           ) : GestureDetector(
             onTap: () => dismissKeyboard(Get.context),
             child: Scaffold(
-              resizeToAvoidBottomPadding: false,
+              resizeToAvoidBottomInset: false,
               body: NestedScrollView(
                 controller: controller.nestedScrollViewController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {

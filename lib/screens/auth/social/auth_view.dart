@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AuthPage extends GetView<AuthController> {
   @override
@@ -17,11 +17,17 @@ class AuthPage extends GetView<AuthController> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text('Sign In', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          title: Text(tr('signIn'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
             child: Container(height: 2, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.translate),
+              onPressed: () => _translationBottomsheet()
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -51,7 +57,7 @@ class AuthPage extends GetView<AuthController> {
         children: [
           Image.asset(Config.PNG_PATH + 'letsbee-logo.png', width: 150),
           Padding(padding: EdgeInsets.symmetric(vertical: 8)),
-          const Text('Please enter your username and password to sign in. Enjoy your food!', style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR)))
+          Text(tr('signIntitleHeader'), style: TextStyle(fontSize: 15, color: Color(Config.GREY_TEXT_COLOR)))
         ],
       ),
     );
@@ -64,16 +70,16 @@ class AuthPage extends GetView<AuthController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Don\'t have an account?', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            Text(tr('signInFooter'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
             GestureDetector(
               onTap: () => Get.toNamed(Config.SIGNUP_ROUTE),
-              child: Text('Sign Up', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR))),
+              child: Text(tr('signUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR))),
             )
           ],
         ),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        const Text('OR', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+        Text(tr('or'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         _socialLoginButtons(),
       ],
@@ -103,12 +109,12 @@ class AuthPage extends GetView<AuthController> {
                       activeColor: Colors.white,
                     );
                   }),
-                  const Text('Remember Me', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black)),
+                  Text(tr('rememberMe'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black)),
                 ]
               ),
               GestureDetector(
                 onTap: () => print('Forgot Password'),
-                child: const Text('Forgot Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR)))
+                child: Text(tr('forgotPassword'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR)))
               ),
             ],
           ),
@@ -123,7 +129,7 @@ class AuthPage extends GetView<AuthController> {
                     borderRadius: BorderRadius.circular(20) 
                   ),
                   color: Color(Config.LETSBEE_COLOR),
-                  child: Text(controller.isLoading.call() ? 'Signing In...' : 'Sign In', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                  child: Text(tr(controller.isLoading.call() ? 'signingIn': 'signIn'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
                 );
               }),
             ),
@@ -137,7 +143,7 @@ class AuthPage extends GetView<AuthController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Email', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('email'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Obx(() {
           return SizedBox(
@@ -190,7 +196,7 @@ class AuthPage extends GetView<AuthController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Password', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('password'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
@@ -246,7 +252,7 @@ class AuthPage extends GetView<AuthController> {
             return customSignInButton(
               color: Color(0xFF3B5998),
               icon: Icon(FontAwesomeIcons.facebookSquare, color: Colors.white),
-              label: controller.isFacebookLoading.call() ? 'Signing In...' : 'Sign In with Facebook',
+              label: controller.isFacebookLoading.call() ? 'signingIn' : 'signInWithFacebook',
               labelColor: Colors.white,
               onTap: () => controller.facebookSignIn(),
             );
@@ -255,7 +261,7 @@ class AuthPage extends GetView<AuthController> {
             return customSignInButton(
               color: Color(0xFFEA4335),
               icon: Icon(FontAwesomeIcons.google, color: Colors.white),
-              label: controller.isGoogleLoading.call() ? 'Signing In...' : 'Sign In with Google',
+              label: controller.isGoogleLoading.call() ? 'signingIn' : 'signInWithGoogle',
               labelColor: Colors.white,
               onTap: () => controller.googleSignIn(),
             );
@@ -264,7 +270,7 @@ class AuthPage extends GetView<AuthController> {
             return customSignInButton(
               color: Color(0xFFFFE812),
               svg: SvgPicture.asset(Config.SVG_PATH + 'kakao_talk.svg'),
-              label: controller.isKakaoLoading.call() ? 'Signing In...' : 'Sign In with Kakao',
+              label: controller.isKakaoLoading.call() ? 'signingIn' : 'signInWithKakao',
               labelColor: Colors.black,
               onTap: () => controller.kakaoSignIn(),
             );
@@ -310,10 +316,9 @@ class AuthPage extends GetView<AuthController> {
             children: [
               icon == null ? svg : icon,
               Expanded(
-                child: AutoSizeText(
-                  label,
+                child: Text(
+                  tr(label),
                   textAlign: TextAlign.center,
-                  presetFontSizes: [15, 15, 10],
                   maxLines: 2,
                   style: TextStyle(
                     color: labelColor,
@@ -327,6 +332,36 @@ class AuthPage extends GetView<AuthController> {
         ),
         onPressed: onTap,
       ),
+    );
+  }
+
+  _translationBottomsheet() {
+    Get.bottomSheet(
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          color: Color(Config.WHITE),
+        ),
+        child: Obx(() {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile(
+                title: Text('English', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                value: 'EN',
+                groupValue: controller.language.call(),
+                onChanged: controller.changeLanguage,
+              ),
+              RadioListTile(
+                title: Text('Korea', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                value: 'KR',
+                groupValue: controller.language.call(),
+                onChanged: controller.changeLanguage,
+              )
+            ],
+          );
+        }),
+      )
     );
   }
 }

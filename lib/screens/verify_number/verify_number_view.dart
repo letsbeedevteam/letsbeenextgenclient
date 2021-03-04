@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/verify_number/controller/verify_number_controller.dart';
-// import 'dart:math' as math;
+import 'package:easy_localization/easy_localization.dart';
 
 class VerifyNumberPage extends GetView<VerifyNumberController> {
   @override
@@ -15,7 +15,7 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
-          title: Text('Verification', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          title: Text(tr('verification'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           centerTitle: true,
         ),
         body: Column(
@@ -23,11 +23,11 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            Text('Enter the code', style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
+            Text(tr('enterCode'), style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold)),
             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
             Obx(() {
               return Text(
-                'Enter the OTP code sent to your number +63${controller.signInData.call().cellphoneNumber == null ? '' : controller.signInData.call().cellphoneNumber.replaceFirst(RegExp(r'^0+'), "")}', 
+                '${tr('enterOtp')} +63${controller.signInData.call().cellphoneNumber == null ? '' : controller.signInData.call().cellphoneNumber.replaceFirst(RegExp(r'^0+'), "")}', 
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,);
             }),
@@ -45,11 +45,11 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
   Widget _footer() {
     return Column(
       children: [
-        Text('Didn\'t received any code?', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+        Text(tr('didntSendCode'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 8)),
         GestureDetector(
           onTap: () => print('Renew code'),
-          child: Text('Resend a new code', style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
+          child: Text(tr('resendCode'), style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
         ),
       ],
     );

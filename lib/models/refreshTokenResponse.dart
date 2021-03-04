@@ -21,15 +21,12 @@ class RefreshTokenData{
 
   RefreshTokenData({
     this.accessToken,
-    this.refreshToken
   });
 
   String accessToken;
-  String refreshToken;
 
   factory RefreshTokenData.fromJson(Map<String, dynamic> json) => RefreshTokenData(
       accessToken: json["access_token"] == null ? "" : json["access_token"],
-      refreshToken: json["refresh_token"] == null ? "" : json["refresh_token"],
   );
 }
 
