@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/chatResponse.dart';
 import 'package:letsbeeclient/screens/chat/chat_controller.dart';
 import 'package:intl/intl.dart';
@@ -9,119 +11,122 @@ class ChatPage extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text('Message Rider', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-        centerTitle: true,
-        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => controller.goBack()),
-        bottom: PreferredSize(
-          child: Container(height: 2, color: Colors.grey.shade200),
-          preferredSize: Size.fromHeight(4.0)
+    return GestureDetector(
+      onTap: () => dismissKeyboard(Get.context),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(tr('messageRider'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          centerTitle: true,
+          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => controller.goBack()),
+          bottom: PreferredSize(
+            child: Container(height: 1, color: Colors.grey.shade200),
+            preferredSize: Size.fromHeight(4.0)
+          ),
         ),
-      ),
-      body: Container(
-        height: Get.height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildRiderDetails(),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            Container(height: 2, color: Colors.grey.shade200),
-            GetX<ChatController>(
-              builder: (_) {
-                return AnimatedContainer(
-                  width: double.infinity,
-                  color: _.color.call(),
-                  duration: Duration(milliseconds: 500),
-                  height: _.isConnected.call() ? 0 : 25,
-                  child: Center(
-                    child: Text(_.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  )
-                );
-              },
-            ),
-            Expanded(
-              child: GetX<ChatController>(
+        body: Container(
+          height: Get.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _buildRiderDetails(),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Container(height: 1, color: Colors.grey.shade200),
+              GetX<ChatController>(
                 builder: (_) {
-                  return _.isLoading.call() ? Center(child: Text(_.message.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))) : 
-                  _.chat.call().isEmpty ? Column(
-                      children: [
-                        Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
-                        RaisedButton(
-                          color: Color(Config.LETSBEE_COLOR),
-                          child: Text('Refresh'),
-                          onPressed: () => _.fetchOrderChats(),
-                        )
-                      ],
-                    ) : SingleChildScrollView(
-                    reverse: true,
-                    controller: _.scrollController,
-                    child: Column(
-                      children: [
-                        _.chat.call() == null || _.chat.call().isEmpty ? Container() : Column(
-                          children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
-                        ),
-                        // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => print('Go back on top'))
-                      ],
+                  return AnimatedContainer(
+                    width: double.infinity,
+                    color: _.color.call(),
+                    duration: Duration(milliseconds: 500),
+                    height: _.isConnected.call() ? 0 : 25,
+                    child: Center(
+                      child: Text(_.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     )
                   );
                 },
               ),
-            ),
-            GetX<ChatController>(
-              builder: (_) {
-                return IgnorePointer(
-                  ignoring: _.isLoading.call(),
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: Colors.grey)
+              Expanded(
+                child: GetX<ChatController>(
+                  builder: (_) {
+                    return _.isLoading.call() ? Center(child: Text(_.message.call(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))) : 
+                    _.chat.call().isEmpty ? Column(
+                        children: [
+                          Center(child: Text(_.message.call(), style: TextStyle(fontSize: 18))),
+                          RaisedButton(
+                            color: Color(Config.LETSBEE_COLOR),
+                            child: Text(tr('refresh')),
+                            onPressed: () => _.fetchOrderChats(),
+                          )
+                        ],
+                      ) : SingleChildScrollView(
+                      reverse: true,
+                      controller: _.scrollController,
+                      child: Column(
+                        children: [
+                          _.chat.call() == null || _.chat.call().isEmpty ? Container() : Column(
+                            children: _.chat.call().map((e) => _buildChatItem(e)).toList(),
+                          ),
+                          // IconButton(icon: Icon(Icons.arrow_circle_up_outlined), onPressed: () => print('Go back on top'))
+                        ],
                       )
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(15)
-                            ),
-                            child: IgnorePointer(
-                              ignoring: _.isSending.call(),
-                              child: TextFormField(
-                                controller: controller.replyTF,
-                                decoration: InputDecoration(
-                                  hintText: 'Enter your message',
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(12.0)
+                    );
+                  },
+                ),
+              ),
+              GetX<ChatController>(
+                builder: (_) {
+                  return IgnorePointer(
+                    ignoring: _.isLoading.call(),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey)
+                        )
+                      ),
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(15)
+                              ),
+                              child: IgnorePointer(
+                                ignoring: _.isSending.call(),
+                                child: TextFormField(
+                                  controller: controller.replyTF,
+                                  decoration: InputDecoration(
+                                    hintText: tr('enterMessage'),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(12.0)
+                                  ),
+                                  autocorrect: false,
+                                  cursorColor: Colors.black,
+                                  maxLines: 5,
+                                  minLines: 1,
+                                  keyboardType: TextInputType.multiline,
+                                  textInputAction: TextInputAction.done,
                                 ),
-                                autocorrect: false,
-                                cursorColor: Colors.black,
-                                maxLines: 5,
-                                minLines: 1,
-                                keyboardType: TextInputType.multiline,
-                                textInputAction: TextInputAction.done,
                               ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 20, right: 10),
-                          child: IconButton(icon: Icon(Icons.send, size: 30), onPressed: () => controller.sendMessageToRider()),
-                        )
-                      ],
-                    )
-                  ),
-                );
-              },
-            )
-          ],
+                          Container(
+                            margin: EdgeInsets.only(left: 20, right: 10),
+                            child: IconButton(icon: Icon(Icons.send, size: 30), onPressed: () => controller.sendMessageToRider()),
+                          )
+                        ],
+                      )
+                    ),
+                  );
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -139,7 +144,7 @@ class ChatPage extends GetView<ChatController> {
               children: [
                 Row(
                   children: [
-                    Text('Your Rider:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                    Text('${tr('yourRider')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
                     Text(controller.activeOrderData.call().rider.user.name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
                   ],
@@ -230,7 +235,7 @@ class ChatPage extends GetView<ChatController> {
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: Text(data.isSent ? 'Sent' : 'Sending...', style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
+                          child: Text(data.isSent ? tr('sent') : tr('sending'), style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic)),
                         ),
                       ],
                     )
@@ -238,7 +243,7 @@ class ChatPage extends GetView<ChatController> {
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-              Text('Let\'s Bee Customer', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+              Text(tr('customer'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
             ],
           ),
         );

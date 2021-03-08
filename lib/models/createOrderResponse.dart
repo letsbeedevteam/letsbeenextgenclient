@@ -13,19 +13,22 @@ class CreateOrderResponse {
       this.status,
       this.data,
       this.paymentUrl,
-      this.code
+      this.code,
+      this.message
     });
 
     int status;
     String paymentUrl;
     RestaurantData data;
+    dynamic message;
     int code;
 
     factory CreateOrderResponse.fromJson(Map<String, dynamic> json) => CreateOrderResponse(
         status: json["status"],
         data: json["data"] == null ? RestaurantData(id: 0) : RestaurantData.fromJson(json["data"]),
         paymentUrl: json["payment_url"] == null || json["payment_url"] == '' ? null : json["payment_url"],
-        code: json["code"]
+        code: json["code"],
+        message: json["message"],
     );
 
     Map<String, dynamic> toJson() => {

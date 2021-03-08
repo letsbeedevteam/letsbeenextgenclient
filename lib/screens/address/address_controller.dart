@@ -46,13 +46,13 @@ class AddressController extends GetxController {
 
       } else {
         addresses.nil();
-        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+        addressErrorMessage(Config.somethingWentWrong);
       }
       
     }).catchError((onError) {
       addresses.nil();
       isLoading(false);
-      addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+      addressErrorMessage(Config.somethingWentWrong);
       // message(Config.SOMETHING_WENT_WRONG);
       print('Error fetch all address: $onError');
     });

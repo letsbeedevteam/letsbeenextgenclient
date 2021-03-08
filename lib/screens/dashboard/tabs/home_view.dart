@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
-                      hintText: 'Search for food or restaurant here',
+                      hintText: tr('searchFood'),
                       suffixIcon: IconButton(
                         onPressed: () {
                           _.restaurantSearchController.clear();
@@ -77,7 +78,7 @@ class HomePage extends StatelessWidget {
                             Text(_.restaurantErrorMessage.call()),
                             _.hasRestaurantError.call() ? RaisedButton(
                               color: Color(Config.LETSBEE_COLOR),
-                              child: Text('Refresh'),
+                              child: Text(tr('refresh')),
                               onPressed: () => _.refreshToken(),
                             ) : Container() 
                           ],
@@ -106,7 +107,7 @@ class HomePage extends StatelessWidget {
                           child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
                         ),
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                        Text('Loading your location...', style: TextStyle(fontWeight: FontWeight.bold))
+                        Text(tr('loadingLocation'), style: TextStyle(fontWeight: FontWeight.bold))
                       ],
                     ),
                   ) : Container()
@@ -151,7 +152,7 @@ class HomePage extends StatelessWidget {
                   Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                   Padding(
                     padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                    child: Text('Recent Restaurants', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
+                    child: Text(tr('recentRestaurants'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
                   ),
                   Container(
                     child: SingleChildScrollView(
@@ -167,7 +168,7 @@ class HomePage extends StatelessWidget {
             ) : Container(),
             Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
-              child: Text('All Restaurants', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
+              child: Text(tr('allRestaurants'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             _.searchRestaurants.call().isNotEmpty ? 
@@ -180,7 +181,7 @@ class HomePage extends StatelessWidget {
                   Text(_.restaurantErrorMessage.call()),
                   _.hasMartError.call() ? RaisedButton(
                     color: Color(Config.LETSBEE_COLOR),
-                    child: Text('Refresh'),
+                    child: Text(tr('refresh')),
                     onPressed: () => _.refreshToken(),
                   ) : Container() 
                 ],

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -37,26 +38,32 @@ class AccountSettingsPage extends GetView<DashboardController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: const Text('Account Management', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(tr('Account Management'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
-        Container(
-          padding: const EdgeInsets.only(left: 15 ,right: 15, top: 15),
-          width: Get.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(controller.box.read(Config.USER_NAME), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  const Text('Manage your account information', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
-                ],
-              ),
-              Icon(Icons.chevron_right)
-            ],
+        GestureDetector(
+          onTap: () => Get.toNamed(Config.ACCOUNT_INFO_ROUTE),
+          child: Container(
+            padding: const EdgeInsets.only(left: 15 ,right: 15, top: 15),
+            decoration: BoxDecoration(
+              color: Color(Config.WHITE)
+            ),
+            width: Get.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(controller.box.read(Config.USER_NAME), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                    Text(tr('manageInfo'), style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
+                  ],
+                ),
+                const Icon(Icons.chevron_right)
+              ],
+            ),
           ),
         ),
         GestureDetector(
@@ -72,9 +79,9 @@ class AccountSettingsPage extends GetView<DashboardController> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Addresses', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                    Text(tr('addresses'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                    const Text('Add, manage or remove delivery address', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
+                    Text(tr('addressDesc'), style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
                   ],
                 ),
                 const Icon(Icons.chevron_right)
@@ -95,9 +102,9 @@ class AccountSettingsPage extends GetView<DashboardController> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Order History', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                    Text(tr('orderHistory'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                    const Text('Check your previous orders', style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
+                    Text(tr('previousOrders'), style: TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.normal))
                   ],
                 ),
                 const Icon(Icons.chevron_right)
@@ -105,15 +112,21 @@ class AccountSettingsPage extends GetView<DashboardController> {
             ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20, bottom: 10),
-          width: Get.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Change Password', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-              const Icon(Icons.chevron_right)
-            ],
+        GestureDetector(
+          onTap: () => Get.toNamed(Config.CHANGE_PASS_ROUTE),
+          child: Container(
+            padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20, bottom: 10),
+            decoration: BoxDecoration(
+              color: Color(Config.WHITE)
+            ),
+            width: Get.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(tr('changePass'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                const Icon(Icons.chevron_right)
+              ],
+            ),
           ),
         ),
       ]
@@ -126,7 +139,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 15 ,right: 15),
-          child: const Text('Notifications', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(tr('notifications'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         Container(
           padding: const EdgeInsets.only(left: 15 ,right: 15, top: 10),
@@ -134,7 +147,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Delivery Push Notifications', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+              Text(tr('deliveryPushNotif'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
               Obx(() {
                 return Switch(
                   value: controller.isDisableDeliveryPushNotif.call(),
@@ -154,7 +167,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Promotional Push Notifications', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+              Text(tr('promotionalPushNotif'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
               Obx(() {
                 return Switch(
                   value: controller.isDisablePromotionalPushNotif.call(),
@@ -178,29 +191,29 @@ class AccountSettingsPage extends GetView<DashboardController> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 15 ,right: 15),
-          child: const Text('Others', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(tr('others'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         Container(
           width: Get.width,
           padding: const EdgeInsets.only(left: 15 ,right: 15, top: 15),
-          child: const Text('Become a partner restaurant', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          child: Text(tr('becomePartner'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         ),
         Container(
           width: Get.width,
           padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
-          child: const Text('Become a a rider', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          child: Text(tr('becomeRider'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         ),
         Container(
           width: Get.width,
           padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
-          child: const Text('Terms and conditions', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          child: Text(tr('termsConditions'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         ),
         GestureDetector(
           onTap: () => _logoutModal(),
           child: Container(
             width: Get.width,
             padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
-            child: const Text('Sign out', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+            child: Text(tr('signOut'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           ),
         ),
       ],

@@ -16,7 +16,7 @@ class ChatController extends GetxController {
   
   var activeOrderData = ActiveOrderData().obs;
   var chat = RxList<ChatData>().obs;
-  var connectMessage = 'Connecting'.obs;
+  var connectMessage = Config.connecting.obs;
   var message = ''.obs;
   var title = ''.obs;
   var isLoading = false.obs;
@@ -39,7 +39,7 @@ class ChatController extends GetxController {
       Future.delayed(Duration(seconds: 2)).then((value) => isConnected(true));
       print('Connected');
       color(Colors.green);
-      connectMessage('Connected');
+      connectMessage(Config.connected);
       fetchOrderChats(orderId: activeOrderData.call().id);
 
       chat.call().where((data) => !data.isSent).forEach((element) {
@@ -50,20 +50,20 @@ class ChatController extends GetxController {
       isConnected(false);
       print('Connecting');
       color(Colors.orange);
-      connectMessage('Connecting');
+      connectMessage(Config.connecting);
     })
     ..on('reconnecting', (_) {
       isConnected(false);
       isSending(false);
       print('Reconnecting');
       color(Colors.orange);
-      connectMessage('Reconnecting');
+      connectMessage(Config.reconnecting);
     })
     ..on('disconnect', (_) {
       isConnected(false);
       isSending(false);
       color(Colors.red);
-      connectMessage('Disconnected');
+      connectMessage(Config.disconnected);
       print('Disconnected');
     })
     ..on('error', (_) {
@@ -71,7 +71,7 @@ class ChatController extends GetxController {
       isSending(false);
       color(Colors.red);
       print('Error socket: $_');
-      connectMessage('Your message can\'t be sent. Please try again');
+      connectMessage(Config.notSent);
     });
 
     fetchOrderChats(orderId: activeOrderData.call().id);
@@ -86,7 +86,7 @@ class ChatController extends GetxController {
 
   sendMessageToRider() {
     if (replyTF.text.trim() == null || replyTF.text.trim() == '') {
-      alertSnackBarTop(title: 'Oops!', message: 'Your message is empty');
+      alertSnackBarTop(title: Config.oops, message: Config.messageEmpty);
     } else {
 
       String sendMessage = replyTF.text;
@@ -116,7 +116,7 @@ class ChatController extends GetxController {
         replyTF.clear();
         scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
       } else {
-        errorSnackbarTop(title: 'Oops!', message: 'Your message cannot be sent. Please try again');
+        errorSnackbarTop(title: Config.oops, message: Config.notSent);
       }
     });
   }
@@ -135,7 +135,7 @@ class ChatController extends GetxController {
   }
 
   fetchOrderChats({int orderId}) {
-    message('Loading conversation...');
+    message(Config.loadingConversation);
     isLoading(true);
 
     _socketService.socket.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
@@ -147,11 +147,11 @@ class ChatController extends GetxController {
 
         chat.call().addAll(chatResponse.data);
         chat.call().sort((a, b) => a.id.compareTo(b.id));
-        if(chat.call().isEmpty) message('No Messages');
+        if(chat.call().isEmpty) message(Config.noMessages);
 
       } else {
         chat.call().clear();
-        message(Config.SOMETHING_WENT_WRONG);
+        message(Config.somethingWentWrong);
       }
     });
   }

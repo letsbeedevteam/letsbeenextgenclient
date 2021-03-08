@@ -1,6 +1,7 @@
 // import 'package:badges/badges.dart';
 // import 'package:carousel_slider/carousel_slider.dart';
 import 'package:badges/badges.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,7 +37,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                     Text(_.message.call()),
                     _.hasError.call() ? RaisedButton(
                       color: Color(Config.LETSBEE_COLOR),
-                      child: Text('Refresh'),
+                      child: Text(tr('refresh')),
                       onPressed: () => _.fetchStore(),
                     ) : Container()
                   ],
@@ -85,7 +86,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                             })
                           ],
                           expandedHeight: 330.0,
-                          floating: true,
+                          floating: false,
                           pinned: true,
                           backgroundColor: Color(Config.WHITE),
                           elevation: 0,
@@ -142,7 +143,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                       Text('${_.store.call().data.name} - ${_.store.call().data.location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
                                       : Text(_.store.call().data.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                      Text('No address', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
+                                      Text('${_.store.call().data.address.barangay} ${_.store.call().data.address.city} ${_.store.call().data.address.state} ${_.store.call().data.address.country}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                                       Row(
                                         children: [
@@ -205,58 +206,12 @@ class RestaurantPage extends GetView<RestaurantController> {
       );
     }
 
-    Widget _buildCategoryItem(Categorized categorize) {
+  Widget _buildCategoryItem(Categorized categorize) {
     return Container(
-      child: Column(
-        children: [
-          Padding(padding: EdgeInsets.only(top: 10)),
-          GetX<RestaurantController>(
-            builder: (_) {
-              return Container(
-                height: 35,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: TextFormField(
-                  cursorColor: Colors.black,
-                  readOnly: _.readOnly.call(),
-                  onTap: () {
-                    if(controller.nestedScrollViewController.hasClients) controller.nestedScrollViewController.jumpTo(controller.nestedScrollViewController.position.maxScrollExtent);
-                    _.readOnly(false);
-                  },
-                  onChanged: controller.searchProduct,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 10),
-                    hintText: 'Search...',
-                    fillColor: Colors.grey.shade200,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      borderSide: BorderSide.none
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                ),
-              );
-            }, 
-          ),
-          Expanded(
-            child: GetX<RestaurantController>(
-              builder: (_) {
-                final products = categorize.products.where((data) => data.name.toLowerCase().contains(_.productName.call().toLowerCase()));
-                return products.isNotEmpty ? ListView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: products.map((product) => _buildItem(product)).toList()
-                ) : Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: Text('Your search not found...', style: TextStyle(fontSize: 18))
-                );
-              },  
-            ),
-          ),
-        ],
-      ),
+      child: ListView(
+        physics: NeverScrollableScrollPhysics(),
+        children: categorize.products.map((product) => _buildItem(product)).toList()
+      )
     );
   }
 
@@ -339,7 +294,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                     color: Color(Config.LETSBEE_COLOR),
                     borderRadius: BorderRadius.circular(20)
                   ),
-                  child: Text('Required', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: Text(tr('required'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -468,21 +423,22 @@ class RestaurantPage extends GetView<RestaurantController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Adds-On', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                    Text(tr('addsOn'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade400,
                         borderRadius: BorderRadius.circular(20)
                       ),
-                      child: Text('Optional', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text(tr('optional'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
               ),
+              product.additionals.length == 1 ? Container() :
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Select up to ${product.additionals.length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
+                child: Text('${tr('selectUpTo')} ${product.additionals.length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -498,14 +454,14 @@ class RestaurantPage extends GetView<RestaurantController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Special Instructions', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                      Text(tr('specialInstructions'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                       Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade400,
                           borderRadius: BorderRadius.circular(20)
                         ),
-                        child: Text('Optional', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text(tr('optional'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -515,7 +471,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                   child: TextFormField(
                     controller: controller.tFRequestController,
                     decoration: InputDecoration(
-                      hintText: 'E.g. Remove onions please.',
+                      hintText: tr('exampleInstruction'),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
@@ -544,10 +500,11 @@ class RestaurantPage extends GetView<RestaurantController> {
             ) ,
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('How do you like to proceed if this is not available?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18))
+                  child: Text(tr('proceedIfNotAvail'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
@@ -556,13 +513,13 @@ class RestaurantPage extends GetView<RestaurantController> {
                       return Column(
                         children: [
                           RadioListTile(
-                            title: Text('Remove this time', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                            title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                             value: 'Remove this time',
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) =>  _.isSelectedProceed(value)
                           ),
                           RadioListTile(
-                            title: Text('Cancel the entire order', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                            title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                             value: 'Cancel the entire order',
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) => _.isSelectedProceed(value)
@@ -670,8 +627,8 @@ class RestaurantPage extends GetView<RestaurantController> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('Add to Cart', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().price)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Text(tr('addToCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                                           ],
                                         )
                                       ),

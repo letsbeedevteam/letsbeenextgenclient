@@ -6,8 +6,10 @@ import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
+import 'package:letsbeeclient/models/customer_edit_response.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
+import 'package:letsbeeclient/models/edit_profile_request.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 // import 'package:letsbeeclient/models/getCart.dart';
@@ -23,7 +25,7 @@ import 'package:letsbeeclient/models/signUpResponse.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
 import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
-// import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetConnect {
 
@@ -74,6 +76,21 @@ class ApiService extends GetConnect {
     print('Customer Social Sign Up: ${response.body}');
 
     return signUpResponseFromJson(response.bodyString);
+  }
+
+  Future<CustomerEditResponse> customerEditProfile({EditProfileRequest request}) async {
+
+    final response = await post(
+      '/auth/customer/edit',
+      request.toJson(),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+     print('Customer Edit Profile: ${response.body}');
+  
+    return customerEditResponseFromJson(response.bodyString);
   }
 
   Future<RefreshTokenResponse> refreshToken() async {
@@ -325,7 +342,7 @@ class ApiService extends GetConnect {
       }
     );
 
-  // 'Get restaurants: ${response.body}'.printWrapped();
+  'Get restaurants: ${response.body}'.printWrapped();
     // print('Get store: ${response.body}');
 
     return storeResponseFromJson(response.bodyString);

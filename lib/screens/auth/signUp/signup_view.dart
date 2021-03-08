@@ -21,7 +21,7 @@ class SignUpPage extends GetView<SignUpController>  {
             leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.willPopCallback),
             title: Text(tr('userCredentials'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
             bottom: PreferredSize(
-              child: Container(height: 2, color: Colors.grey.shade200),
+              child: Container(height: 1, color: Colors.grey.shade200),
               preferredSize: Size.fromHeight(4.0)
             ),
           ),
@@ -201,7 +201,7 @@ class SignUpPage extends GetView<SignUpController>  {
                 controller.passwordFN.requestFocus();
               },
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               keyboardType: TextInputType.emailAddress, 
               textInputAction: TextInputAction.next,
               enableSuggestions: false,
@@ -227,7 +227,7 @@ class SignUpPage extends GetView<SignUpController>  {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             ),
           );
@@ -254,7 +254,7 @@ class SignUpPage extends GetView<SignUpController>  {
                 controller.confirmPasswordFN.requestFocus();
               },
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               textInputAction: TextInputAction.done,
               enableSuggestions: false,
               autocorrect: false,
@@ -283,7 +283,7 @@ class SignUpPage extends GetView<SignUpController>  {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             );
           }),
@@ -306,7 +306,7 @@ class SignUpPage extends GetView<SignUpController>  {
               controller: controller.confirmPasswordController,
               focusNode: controller.confirmPasswordFN,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               textInputAction: TextInputAction.done,
               enableSuggestions: false,
               autocorrect: false,
@@ -335,7 +335,7 @@ class SignUpPage extends GetView<SignUpController>  {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             );
           }),

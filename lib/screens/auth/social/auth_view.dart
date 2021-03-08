@@ -19,7 +19,7 @@ class AuthPage extends GetView<AuthController> {
           elevation: 0,
           title: Text(tr('signIn'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
-            child: Container(height: 2, color: Colors.grey.shade200),
+            child: Container(height: 1, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
           actions: [
@@ -157,7 +157,7 @@ class AuthPage extends GetView<AuthController> {
                 controller.passwordFN.requestFocus();
               },
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               keyboardType: TextInputType.emailAddress, 
               textInputAction: TextInputAction.next,
               enableSuggestions: false,
@@ -183,7 +183,7 @@ class AuthPage extends GetView<AuthController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             ),
           );
@@ -206,7 +206,7 @@ class AuthPage extends GetView<AuthController> {
               controller: controller.passwordController,
               focusNode: controller.passwordFN,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               textInputAction: TextInputAction.done,
               enableSuggestions: false,
               autocorrect: false,
@@ -235,7 +235,7 @@ class AuthPage extends GetView<AuthController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             );
           }),

@@ -62,7 +62,7 @@ class AuthController extends GetxController implements AuthViewContract {
     
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
 
-      errorSnackbarTop(title: Config.OOPS, message: Config.INPUT_FIELDS);
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
       isLoading(false);
     } else {
       if(GetUtils.isEmail(emailController.text)) {
@@ -80,21 +80,21 @@ class AuthController extends GetxController implements AuthViewContract {
           } else {
 
             if (response.code != 2012) {
-              alertSnackBarTop(title: Config.OOPS, message: Config.SIGN_IN_FAILED);
+              alertSnackBarTop(title: Config.oops, message: Config.signInFailed);
             } else {
-              alertSnackBarTop(title: Config.OOPS, message: Config.ACCOUNT_NOT_EXIST);
+              alertSnackBarTop(title: Config.oops, message: Config.accountNotExist);
             }
           }
           isLoading(false);
 
         }).catchError((onError) {
           print('Sign In: $onError');
-          alertSnackBarTop(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
+          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
           isLoading(false);
         });
 
       } else {
-        errorSnackbarTop(title: Config.OOPS, message: Config.EMAIL_INVALID);
+        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
         isLoading(false);
       }
     }
@@ -142,7 +142,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
+    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);

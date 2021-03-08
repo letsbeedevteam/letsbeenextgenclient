@@ -1,4 +1,5 @@
 // import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -154,11 +155,11 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }
    
     if (!hasNotSelectedChoice) {
-      errorSnackbarTop(title: 'Oops!', message: 'Choose your required choice');
+      errorSnackbarTop(title: Config.oops, message: Config.requiredChoice);
     } else {
 
       product.uniqueId = uuid.v4();
-      product.note = tFRequestController.text.isEmpty ? null : tFRequestController.text;
+      product.note = tFRequestController.text.trim().isEmpty ? null : tFRequestController.text;
       product.userId = box.read(Config.USER_ID);
       product.quantity = quantity.call();
       product.isRemove = false;
@@ -171,32 +172,17 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
         
         try {
 
-          var hasSameChoices = false;
-          var hasSameAdditionals = false;
-
           final filteredChoice = prod.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
 
           if (filteredChoice.toList().isEmpty) {
             list.call().add(product);
           } else {
 
-            if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart)) {
-              hasSameChoices = true;
-            } else {
-              hasSameChoices = false;
-            }
-
-            if (additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
-              hasSameAdditionals = true;
-            } else {
-              hasSameAdditionals = false;
-            }
-
-            if (hasSameChoices && hasSameAdditionals) {
+            if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart) && additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
               filteredChoice.first.note = tFRequestController.text.isNotEmpty ? product.note : null; 
               filteredChoice.first.quantity = filteredChoice.first.quantity + product.quantity;
             } else {
-              list.call().add(product);
+               list.call().add(product);
             }
 
           }
@@ -233,7 +219,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   }
 
   fetchStore() {
-    message('Loading Restaurant...');
+    message(tr('loadingRestaurant'));
     hasError(false);
     apiService.fetchStoreById(id: argument['id']).then((response) {
       hasError(false);
@@ -258,7 +244,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }).catchError((onError) {
       hasError(true);
       store.nil();
-      message(Config.SOMETHING_WENT_WRONG);
+      message(Config.somethingWentWrong);
       print('Error fetch restaurant by ID ${argument['id']}: $onError');
     });
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -39,6 +40,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   
   final restaurantSearchController = TextEditingController();
   final martSearchController = TextEditingController();
+  final reasonController = TextEditingController();
 
   final foodScrollController = ScrollController();
   final martScrollController = ScrollController();
@@ -62,6 +64,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
   // var addresses = GetAllAddressResponse().obs;
+  var reason = ''.obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
   var recentRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
@@ -74,9 +77,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var hasRestaurantError = false.obs;
   var hasMartError = false.obs;
 
-  var restaurantErrorMessage = 'Loading restaurants...'.obs;
-  var martErrorMessage = 'Loading shops...'.obs;
-  var addressErrorMessage = 'Loading addresses...'.obs;
+  var restaurantErrorMessage = tr('loadingRestaurants').obs;
+  var martErrorMessage = tr('loadingShops').obs;
 
   var isDisableDeliveryPushNotif = false.obs;
   var isDisablePromotionalPushNotif = false.obs;
@@ -97,6 +99,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     martDashboard.nil();
     activeOrderData.nil();
     activeOrders.nil();
+    reason.nil();
 
     userCurrentNameOfLocation(box.read(Config.USER_CURRENT_NAME_OF_LOCATION));
     userCurrentAddress(box.read(Config.USER_CURRENT_ADDRESS));
@@ -124,19 +127,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     })
     ..on('connecting', (_) {
       print('Connecting');
-      onGoingMessage('Loading...');
+      onGoingMessage(tr('loading'));
     })
     ..on('reconnecting', (_) {
       print('Reconnecting');
-      onGoingMessage('Loading...');
+      onGoingMessage(tr('loading'));
     })
     ..on('disconnect', (_) {
-      onGoingMessage('Loading...');
+      onGoingMessage(tr('loading'));
       // activeOrders.nil();
       print('Disconnected');
     })
     ..on('error', (_) {
-      onGoingMessage('Loading...');
+      onGoingMessage(tr('loading'));
       print('Error socket: $_');
     });
   }
@@ -257,24 +260,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
     } else {
       // isOnChat(true);
-      activeOrderData.call().rider != null ? Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call()) 
-      : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s approval');
+      Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
     }
   }
 
-  goToRiderLocationPage() {
-    activeOrderData.call().status == 'rider-picked-up' ? Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call()) 
-    : alertSnackBarTop(title: 'Oops!', message: 'Please wait for the rider\'s pick up');
-  }
+  goToRiderLocationPage() => Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
 
   fetchActiveOrders() {
-    onGoingMessage('Loading...');
+    onGoingMessage(tr('loading'));
     if (socketService.socket != null) {
       socketService.socket.emitWithAck('active-orders', '', ack: (response) {
         'Active orders: $response'.printWrapped();
         activeOrders(ActiveOrder.fromJson(response));
         if (activeOrders.call().status == 200) {
-          onGoingMessage('No Active Order');
+          onGoingMessage(tr('noActiveOrder'));
           if (activeOrders.call().data.isEmpty) {
             activeOrders.nil();
           } else {
@@ -283,7 +282,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
           }
         } else {
           activeOrders.nil();
-          onGoingMessage(Config.SOMETHING_WENT_WRONG);
+          onGoingMessage(Config.somethingWentWrong);
         }
       });
     }
@@ -307,7 +306,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been declined';
+            message = tr('orderDeclined').replaceAll('{}', name);
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -315,17 +314,17 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been accepted';
+            message = tr('orderAccepted').replaceAll('{}', name);
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'rider-accepted': {
-            message = 'Let\'s Bee Rider is on the way to pick up your food';
+            message = tr('riderAccept');
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
           case 'rider-picked-up': {
-            message = 'Let\'s Bee Rider is on the way to your location';
+            message = tr('riderPickUp');
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
           }
             break;
@@ -333,7 +332,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final order = ActiveOrderData.fromJson(response['data']);
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
-            message = 'Your order in $name has been delivered';
+            message = tr('orderDelivered').replaceAll('{}', name);
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
 
             fetchRestaurantDashboard();
@@ -350,32 +349,69 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket.on('order-chat', (response) {
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
-
-      // if(Get.currentRoute != Config.CHAT_ROUTE) {
-      //   pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
-      // }
-
-      pushNotificationService.showNotification(title: 'You have a new message from Let\'s Bee Rider', body: test.message, payload: chatDataToJson(test));
+      pushNotificationService.showNotification(title: '${tr('newMessageFromRider')}', body: test.message, payload: chatDataToJson(test));
     });
   }
 
   cancelOrderById() {
-    socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
-      if (response['status'] == 200) {
-        fetchActiveOrders();
-        Get.back(result: 'cancel-dialog');
-        cancelMessage('Your order has been cancelled. Please see the order history.');
-        activeOrderData.nil();
-        Get.back(closeOverlays: true);
+
+    if (reason.call() != null) {
+
+      if (reason.call() == "Others") {
+
+        if (reasonController.text.trim().isEmpty) {
+          errorSnackbarTop(title: Config.oops, message: tr('specifyYourReason'));
+        } else {
+          cancel();
+        }
+
       } else {
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        cancel();
+      }
+
+    } else {
+      errorSnackbarTop(title: Config.oops, message: tr('selectReason'));
+    }
+  }
+
+  cancel() {
+    socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
+      print(response);
+      if (response['status'] == 200) {
+        reasonController.clear();
+        reason.nil();
+        fetchActiveOrders();
+        Get.back(closeOverlays: true);
+        Get.defaultDialog(
+          content: Container(
+            padding: EdgeInsets.symmetric(horizontal: 5),
+            child: Text(tr('orderCancelled'), style:  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500), textAlign: TextAlign.center,),
+          ),
+          cancel: RaisedButton(
+            onPressed: () => Get.back(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20) 
+            ),
+            color: Color(Config.LETSBEE_COLOR),
+            child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+          )
+        );
+        reason.nil();
+        activeOrderData.nil();
+      } else {
+
+        if (response['code'] == 3009) {
+          errorSnackbarTop(title: Config.oops, message: tr('orderHasBeenDeclined'));
+        } else {
+          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        }
       }
     });
   }
 
   refreshToken() {
-    restaurantErrorMessage('Loading restaurants...');
-    martErrorMessage('Loading shops...');
+    restaurantErrorMessage(tr('loadingRestaurants'));
+    martErrorMessage(tr('loadingShops'));
     hasMartError(false);
     hasRestaurantError(false);
     isLoading(true);
@@ -402,18 +438,15 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
         // message(Config.NO_INTERNET_CONNECTION);
-        restaurantErrorMessage(Config.NO_INTERNET_CONNECTION);
-        martErrorMessage(Config.NO_INTERNET_CONNECTION);
-        addressErrorMessage(Config.NO_INTERNET_CONNECTION);
+        restaurantErrorMessage(Config.noInternetConnection);
+        martErrorMessage(Config.noInternetConnection);
       } else if (onError.toString().contains('Operation timed out')) {
         // message(Config.TIMED_OUT);
-        restaurantErrorMessage(Config.TIMED_OUT);
-        martErrorMessage(Config.TIMED_OUT);
-        addressErrorMessage(Config.TIMED_OUT);
+        restaurantErrorMessage(Config.timedOut);
+        martErrorMessage(Config.timedOut);
       } else {
-        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
-        martErrorMessage(Config.SOMETHING_WENT_WRONG);
-        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.somethingWentWrong);
+        martErrorMessage(Config.somethingWentWrong);
       }
       hasMartError(true);
       hasRestaurantError(true);
@@ -422,7 +455,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   fetchRestaurantDashboard() {
-    restaurantErrorMessage('Loading restaurants...');
+    restaurantErrorMessage(tr('loadingRestaurants'));
     isLoading(true);
     hasRestaurantError(false);
     apiService.getRestaurantDashboard().then((response) {
@@ -443,10 +476,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if(searchRestaurants.call().isEmpty) {
           restaurantDashboard.nil();
           hasRestaurantError(true);
-          restaurantErrorMessage('No restaurants found');
+          restaurantErrorMessage(tr('noRestaurants'));
         }
       } else {
-        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.somethingWentWrong);
       }
       
     }).catchError((onError) {
@@ -455,18 +488,18 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        restaurantErrorMessage(Config.NO_INTERNET_CONNECTION);
+        restaurantErrorMessage(Config.noInternetConnection);
       } else if (onError.toString().contains('Operation timed out')) {
-        restaurantErrorMessage(Config.TIMED_OUT);
+        restaurantErrorMessage(Config.timedOut);
       } else {
-        restaurantErrorMessage(Config.SOMETHING_WENT_WRONG);
+        restaurantErrorMessage(Config.somethingWentWrong);
       }
       print('Error fetch restaurant: $onError');
     });
   }
 
   fetchMartDashboard() {
-    martErrorMessage('Loading shops...');
+    martErrorMessage(tr('loadingShops'));
     isLoading(true);
     hasMartError(false);
     apiService.getMartDashboard().then((response) {
@@ -486,12 +519,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if(searchMarts.call().isEmpty) {
           martDashboard.nil();
           hasMartError(true);
-          martErrorMessage('No marts found');
+          martErrorMessage(tr('noShops'));
         }
       
       } else {
 
-        martErrorMessage(Config.SOMETHING_WENT_WRONG);
+        martErrorMessage(Config.somethingWentWrong);
       }
       
     }).catchError((onError) {
@@ -500,11 +533,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        martErrorMessage(Config.NO_INTERNET_CONNECTION);
+        martErrorMessage(Config.noInternetConnection);
       } else if (onError.toString().contains('Operation timed out')) {
-        martErrorMessage(Config.TIMED_OUT);
+        martErrorMessage(Config.timedOut);
       } else {
-        martErrorMessage(Config.SOMETHING_WENT_WRONG);
+        martErrorMessage(Config.somethingWentWrong);
       }
       print('Error fetch mart: $onError');
     });
@@ -521,7 +554,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (restaurant.isEmpty) {
           searchRestaurants.call().clear();
-          restaurantErrorMessage('No restaurant found');
+          restaurantErrorMessage(tr('noRestaurants'));
         } else {
           searchRestaurants.call().assignAll(restaurant);
         }
@@ -543,7 +576,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
         if (mart.isEmpty) {
           searchMarts.call().clear();
-          martErrorMessage('No mart found');
+          martErrorMessage(tr('noShops'));
         } else {
           searchMarts.call().assignAll(mart);
         }

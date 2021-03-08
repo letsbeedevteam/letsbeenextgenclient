@@ -22,7 +22,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
           }),
           centerTitle: true,
           bottom: PreferredSize(
-            child: Container(height: 2, color: Colors.grey.shade200),
+            child: Container(height: 1, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
         ),
@@ -73,7 +73,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                 controller.numberFN.requestFocus();
               },
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               textInputAction: TextInputAction.next,
               enableSuggestions: false,
               autocorrect: false,
@@ -97,7 +97,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             );
           }),
@@ -120,7 +120,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
               controller: controller.numberController,
               focusNode: controller.numberFN,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               maxLength: 10,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
@@ -156,7 +156,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             ),
           );

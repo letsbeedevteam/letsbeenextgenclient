@@ -35,12 +35,12 @@ class WebController extends GetxController {
           Future.delayed(Duration(seconds: 1));
           Get.back();
         } else {
-          errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
+          errorSnackbarTop(title: 'Oops', message: Config.somethingWentWrong);
         }
 
       }).catchError((onError) {
         isLoading(false);
-        errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
+        errorSnackbarTop(title: 'Oops', message: Config.somethingWentWrong);
         print('Error delete order: $onError');
       });
     });

@@ -53,7 +53,7 @@ dependencies:
 
   # geocoder: ^0.2.1
   geocoding: ^1.0.5
-  location: ^3.0.2
+  location: ^3.2.4
   flutter_google_places: ^0.2.6
 
   # Notification builder

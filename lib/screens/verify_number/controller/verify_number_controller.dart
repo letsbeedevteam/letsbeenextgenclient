@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -68,14 +69,14 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
       if (response.status == 200) {
         _verifiedPopUp(response);
       } else {
-        errorSnackBarBottom(title: 'Oops!', message: 'Invalid code');
+        errorSnackBarBottom(title: Config.oops, message: Config.invalidCode);
       }
 
       isLoading(false);
 
     }).catchError((onError) {
       isLoading(false);
-      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
       print('Confirmation error: $onError');
     });
   }
@@ -113,7 +114,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
             children: [
               Image.asset(Config.PNG_PATH + 'verified.png'),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-              const Text('Your contact number has been verified successfully!', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
+              Text(tr('contactVerifiedSuccess'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               RaisedButton(
                 onPressed: () => _goToSetupLocation(response),
@@ -121,7 +122,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
                   borderRadius: BorderRadius.circular(20) 
                 ),
                 color: Color(Config.LETSBEE_COLOR),
-                child: Text('Dismiss', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
               )
             ]
           )

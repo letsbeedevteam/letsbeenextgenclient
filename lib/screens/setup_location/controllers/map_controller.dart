@@ -44,7 +44,7 @@ class MapController extends GetxController {
   final noteToRiderNode = FocusNode();
   final addressDetailsNode = FocusNode();
 
-  var buttonTitle = 'Next'.obs;
+  var buttonTitle = 'next'.obs;
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
@@ -53,11 +53,11 @@ class MapController extends GetxController {
   void onInit() {
     if (argument['type'] == Config.ADD_NEW_ADDRESS) {
       currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
-      buttonTitle('Save');
+      buttonTitle('save');
       isMapLoading(false);
 
     } else {
-      buttonTitle('Next');
+      buttonTitle('next');
       isMapLoading(true);
       currentLocation();
     }
@@ -75,11 +75,20 @@ class MapController extends GetxController {
 
   void goToDashboardPage() {
 
-    if (noteToRider.text.isBlank || addressLabel.text.isBlank || addressDetails.text.isBlank) {
-      errorSnackbarTop(title: 'Oops!', message: 'Please input the required field(s)');
+    if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+      if (addressLabel.isBlank || addressDetails.text.isBlank) {
+        errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        addAddress();
+      }
     } else {
-      userCurrentAddress(addressDetails.text.trim());
-      addAddress();
+      if (addressDetails.text.isBlank) {
+        errorSnackbarTop(title: Config.oops, message: Config.inputAddressDetail);
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        addAddress();
+      }
     }
   }
 
@@ -155,7 +164,7 @@ class MapController extends GetxController {
       language: 'en',
       overlayBorderRadius: BorderRadius.all(Radius.circular(10)),
       logo: Container(height: 30),
-      hint: 'Search your location',
+      hint: Config.searchLocation,
       components: [Component(Component.country, 'ph')],
     );
     
@@ -187,7 +196,7 @@ class MapController extends GetxController {
 
     isAddAddressLoading(true);
     final request = NewAddressRequest(
-      name: this.addressLabel.text,
+      name: this.addressLabel.text.isBlank ? 'Home' : this.addressLabel.text,
       location: AddressLocation(
         lat: this.currentPosition.call().latitude,
         lng: this.currentPosition.call().longitude
@@ -225,7 +234,7 @@ class MapController extends GetxController {
 
         
       } else {
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
         print('Failed to add new address');
       }
 
@@ -233,7 +242,7 @@ class MapController extends GetxController {
     
     newAddressSub.onError((handleError) {
       isAddAddressLoading(false);
-      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
       print('Error add new address: $handleError');
     });
   }

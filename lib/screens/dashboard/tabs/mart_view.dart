@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,7 @@ class MartPage extends StatelessWidget {
                     style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(left: 10),
-                      hintText: 'Search for mart here',
+                      hintText: tr('searchGrocery'),
                       suffixIcon: IconButton(
                         onPressed: () {
                           _.martSearchController.clear();
@@ -73,7 +74,7 @@ class MartPage extends StatelessWidget {
                         Text(_.martErrorMessage.call()),
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
-                          child: Text('Refresh'),
+                          child: Text(tr('refresh')),
                           onPressed: () => _.refreshToken(),
                         ) : Container() 
                       ],
@@ -106,7 +107,7 @@ class MartPage extends StatelessWidget {
                   children: [
                     Container(
                       margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                      child: Text('Recent Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                      child: Text(tr('recentShops'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                     ),
                     Container(
                       child: SingleChildScrollView(
@@ -126,7 +127,7 @@ class MartPage extends StatelessWidget {
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-                    child: Text('All Shops', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
+                    child: Text(tr('allShops'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start)
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                   _.searchMarts.call().isNotEmpty ? 
@@ -139,7 +140,7 @@ class MartPage extends StatelessWidget {
                         Text(_.martErrorMessage.call()),
                         _.hasMartError.call() ? RaisedButton(
                           color: Color(Config.LETSBEE_COLOR),
-                          child: Text('Refresh'),
+                          child: Text(tr('refresh')),
                           onPressed: () => _.refreshToken(),
                         ) : Container() 
                       ],
@@ -157,7 +158,7 @@ class MartPage extends StatelessWidget {
   Widget _buildRecentMart(MartStores mart) {
     final name = mart.location.name == null || mart.location.name == '' ? '${mart.name}' : '${mart.name} - ${mart.location.name}';
     return GestureDetector(
-      onTap: () =>  Get.toNamed(Config.STORE_ROUTE, arguments: {'id': mart.id}),
+      onTap: () =>  Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id}),
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
         padding: EdgeInsets.all(10),
@@ -196,7 +197,7 @@ class MartPage extends StatelessWidget {
   Widget _buildMart(MartStores mart) {
     final name = mart.location.name == null || mart.location.name == '' ? '${mart.name}' : '${mart.name} - ${mart.location.name}';
     return GestureDetector(
-      onTap: () => Get.toNamed(Config.STORE_ROUTE, arguments: {'id': mart.id}),
+      onTap: () => Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id}),
       child: Container(
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(

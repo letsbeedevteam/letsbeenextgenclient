@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -15,10 +16,10 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
         leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text('Order Details', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+        title: Text(tr('orderDetails'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
         centerTitle: true,
         bottom: PreferredSize(
-         child: Container(height: 2, color: Colors.grey.shade200),
+         child: Container(height: 1, color: Colors.grey.shade200),
           preferredSize: Size.fromHeight(4.0)
         ),
       ),
@@ -77,14 +78,14 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                           Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
                         ],
                       ),
-                      Divider(thickness: 2, color: Colors.grey.shade200)
+                      Divider(thickness: 1, color: Colors.grey.shade200)
                     ],
                   ),
                   Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_.data.call().status == 'delivered' ? 'Delivered at:' : 'Deliver at:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text(_.data.call().status == 'delivered' ? '${tr('deliveredAt')}:' : '${tr('deliverAt')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                         Row(
                           children: [
@@ -99,9 +100,9 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 5),
-                    child: Divider(thickness: 2, color: Colors.grey.shade200),
+                    child: Divider(thickness: 1, color: Colors.grey.shade200),
                   ),
-                  Text('Order Summary:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  Text('${tr('orderSummary')}:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                   Column(
                     children: _.data.call().products.map((e) => _buildMenu(e)).toList(),
@@ -111,11 +112,11 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Special Instructions', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                        Text(tr('specialInstructions'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                         Text(_.data.call().reason, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal, fontSize: 13)),
                         Container(
                           margin: EdgeInsets.only(top: 5),
-                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                          child: Divider(thickness: 1, color: Colors.grey.shade200),
                         ),
                       ],
                     ),
@@ -126,7 +127,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Sub Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                            Text('${tr('subTotal')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                             Text('₱${_.data.call().fee.subTotal}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
                           ],
                         ),
@@ -134,20 +135,20 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Delivery Fee:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                            Text('${tr('deliveryFee')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                             Text('₱${_.data.call().fee.delivery}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
                           ],
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 5),
-                          child: Divider(thickness: 2, color: Colors.grey.shade200),
+                          child: Divider(thickness: 1, color: Colors.grey.shade200),
                         ),
                         Container(
                           alignment: Alignment.bottomCenter,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                              Text('${tr('total')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                               Text('₱${_.data.call().fee.customerTotalPrice}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
                             ],
                           ),
@@ -173,7 +174,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             borderRadius: BorderRadius.circular(5),
             color: Colors.red
           ),
-          child: Text('Restaurant Declined', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('restaurantDeclined'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       case 'delivered': return Container(
@@ -182,7 +183,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             borderRadius: BorderRadius.circular(5),
             color: Color(Config.LETSBEE_COLOR)
           ),
-          child: Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('delivered'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       case 'cancelled': return Container(
@@ -191,7 +192,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             borderRadius: BorderRadius.circular(5),
             color: Colors.red
           ),
-          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('cancelled'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       default: return Container(
@@ -200,7 +201,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
             borderRadius: BorderRadius.circular(5),
             color: Colors.red
           ),
-          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('cancelled'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
         );
     }
   }
@@ -238,7 +239,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
           ),
           Container(
             margin: EdgeInsets.only(top: 5),
-            child: Divider(thickness: 2, color: Colors.grey.shade200),
+            child: Divider(thickness: 1, color: Colors.grey.shade200),
           ),
         ],
       ),
@@ -264,13 +265,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Row(
-            children: [
-              Text('${choice.name}:', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13)),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-              Text('${choice.pick}', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13))
-            ],
-          )
+          child: Text('${choice.pick}', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 13))
         ),
         Text('₱' + double.parse('${(double.tryParse(choice.customerPrice) * quantity).toStringAsFixed(2)}').toStringAsFixed(2), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
       ],

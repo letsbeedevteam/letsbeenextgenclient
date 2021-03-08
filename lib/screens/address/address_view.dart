@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,7 @@ class AddressPage extends GetView<AddressController> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
-        title: const Text('Addresses', style: TextStyle(fontSize: 15, color: Colors.black)),
+        title: Text(tr('addresses'), style: TextStyle(fontSize: 15, color: Colors.black)),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -24,7 +25,7 @@ class AddressPage extends GetView<AddressController> {
           child: Column(
             children: [
               const CupertinoActivityIndicator(),
-              const Text('Loading addresses...', style: TextStyle(fontSize: 15, color: Colors.black))
+              Text(tr('loadingAddresses'), style: TextStyle(fontSize: 15, color: Colors.black))
             ],
           ),
         ) : Column(
@@ -37,7 +38,7 @@ class AddressPage extends GetView<AddressController> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)
                 ),
-                child: const Text('Add New Address', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                child: Text(tr('addNewAddress'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                 onPressed: () => controller.addAddress(),
               ),
             ),
@@ -52,7 +53,7 @@ class AddressPage extends GetView<AddressController> {
     return controller.addresses.call() == null ? Container(
       margin: const EdgeInsets.only(top: 15),
       alignment: Alignment.topCenter,
-      child: const Text('No list of address', style: TextStyle(fontSize: 15, color: Colors.black)),
+      child: Text(tr('emptyAddresses'), style: TextStyle(fontSize: 15, color: Colors.black)),
     ) : _scrollView();
   }
 
@@ -94,9 +95,9 @@ class AddressPage extends GetView<AddressController> {
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text('Note to rider: ${data.note}', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.normal))
+              child: Text('${tr('noteToRider')}: ${data.note}', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.normal))
             ),
-            Divider(thickness: 2, color: Colors.grey.shade200)
+            Divider(thickness: 1, color: Colors.grey.shade200)
           ],
         ),
       ),

@@ -75,7 +75,7 @@ class SignUpController extends GetxController implements AuthViewContract {
   void signUp() {
 
     if (emailController.text.isEmpty || passwordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
-      errorSnackbarTop(title: Config.OOPS, message: Config.INPUT_FIELDS);
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
 
     } else {
       
@@ -95,14 +95,14 @@ class SignUpController extends GetxController implements AuthViewContract {
 
         } else {
           isLoading(false);
-          errorSnackbarTop(title: Config.OOPS, message: Config.INCORRECT_REPEAT_PASSWORD);
+          errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
 
           confirmPasswordController.selection = TextSelection.fromPosition(TextPosition(offset: confirmPasswordController.text.length));
           confirmPasswordFN.requestFocus();
         }
 
       } else {
-        errorSnackbarTop(title: Config.OOPS, message: Config.EMAIL_INVALID);
+        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
         isLoading(false);
       }
     }
@@ -110,7 +110,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   void goToVerifyNumber() {
      dismissKeyboard(Get.context);
-     successSnackBarTop(title: Config.YAY, message: Config.REGISTERED_SUCCESS);
+     successSnackBarTop(title: Config.yay, message: Config.registeredSuccess);
   }
 
   void clear() {
@@ -127,7 +127,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: Config.OOPS, message: Config.SOMETHING_WENT_WRONG);
+    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);

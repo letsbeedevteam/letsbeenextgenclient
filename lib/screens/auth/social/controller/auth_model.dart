@@ -16,7 +16,7 @@ class AuthModel implements AuthModelContract {
       _request(Config.GOOGLE, auth.idToken, listener);
     }).catchError((onError) {
       if(onError.toString().contains(Config.NETWORK_ERROR)) {
-        listener.onSocialSignInRequestFailed(Config.NO_INTERNET_CONNECTION);
+        listener.onSocialSignInRequestFailed(Config.noInternetConnection);
       } else {
         listener.onSocialSignInRequestFailed(onError.toString());
       }
@@ -46,7 +46,7 @@ class AuthModel implements AuthModelContract {
       if (onError.toString().contains('User canceled login.') || onError.toString().contains('REDIRECT_URL_MISMATCH')) {
         listener.onSocialSignInRequestFailed('User cancelled');
       } else if (onError.toString().contains('net::ERR_INTERNET_DISCONNECTED')) {
-        listener.onSocialSignInRequestFailed(Config.NO_INTERNET_CONNECTION);
+        listener.onSocialSignInRequestFailed(Config.noInternetConnection);
       }
       print('onKakaoSignInRequestFailed: $onError');
     });
@@ -71,15 +71,15 @@ class AuthModel implements AuthModelContract {
       if (response.status == 200) {
         listener.onSocialSignInRequestSuccess(social, response.data);
       } else {
-        listener.onSocialSignInRequestFailed(Config.SOMETHING_WENT_WRONG);
+        listener.onSocialSignInRequestFailed(Config.somethingWentWrong);
       }
     }).catchError((onError) {
       if (onError.toString().contains('Connection timed out')) {
         listener.onSocialSignInRequestFailed('Connection timed out');
       } else if (onError.toString().contains('Operation timed out')) {
-        listener.onSocialSignInRequestFailed(Config.TIMED_OUT);
+        listener.onSocialSignInRequestFailed(Config.timedOut);
       } else {
-        listener.onSocialSignInRequestFailed(Config.SOMETHING_WENT_WRONG);
+        listener.onSocialSignInRequestFailed(Config.somethingWentWrong);
       }
       print('$social request onError: $onError');
     });

@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -37,7 +38,7 @@ class DashboardPage extends GetView<DashboardController> {
                         title: currentIndex == 2 ? Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.only(top: 20),
-                          child: Text('My Account', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+                          child: Text(tr('myAccount'), style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
                         ) : Padding(
                           padding: EdgeInsets.only(left: 15, right: 15),
                           child: Column(
@@ -48,16 +49,16 @@ class DashboardPage extends GetView<DashboardController> {
                               Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                               Row(
                                 children: [
-                                  Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                                  Text('${tr('deliverTo')}: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 10),
-                                    height: 20,
+                                    height: 25,
                                     alignment: Alignment.centerLeft,
                                     decoration: BoxDecoration(
                                       color: Color(Config.LETSBEE_COLOR),
                                       borderRadius: BorderRadius.circular(25)
                                     ),
-                                    child: Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
+                                    child: Text(_.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
                                   )
                                 ],
                               ),
@@ -84,7 +85,8 @@ class DashboardPage extends GetView<DashboardController> {
                   child: Column(
                     children: [
                       Container(
-                        height: 2,
+                        height: 1,
+                        margin: EdgeInsets.only(top: 2),
                         color: Colors.grey.shade200
                       ),
                       Expanded(
@@ -136,13 +138,13 @@ class DashboardPage extends GetView<DashboardController> {
                 iconSize: 25,
                 onTap: (value) =>  _.tapped(value),
                 items: [
-                  customNavigationBarItem('Food', image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
+                  customNavigationBarItem(tr('food'), image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
                   // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
-                  customNavigationBarItem('Groceries', image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
+                  customNavigationBarItem(tr('groceries'), image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
                   // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
                   // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
                   // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
-                  customNavigationBarItem('Account', image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+                  customNavigationBarItem(tr('account'), image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
                 ],
               ),
             )
@@ -205,9 +207,9 @@ class DashboardPage extends GetView<DashboardController> {
                       Text("${data.activeStore.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)) : 
                       Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                      _buildStatus(status: data.status),
+                      _buildStatus(status: data.status, type: data.activeStore.type),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                      Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
+                      Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x ${tr('items')}', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
                       Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                       Text('₱${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))
                     ],
@@ -225,30 +227,30 @@ class DashboardPage extends GetView<DashboardController> {
               ],
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-            Divider(thickness: 2, color: Colors.grey.shade200)
+            Divider(thickness: 1, color: Colors.grey.shade200)
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatus({String status}) {
+  Widget _buildStatus({String status, String type}) {
     switch (status) {
-      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'pending': return Text(tr('waitingRestaurant'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'store-accepted': return Text(type == 'mart' ? tr('waitingRider') : tr('preparingFood'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'store-declined': return Text(tr('restaurantDeclined'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'rider-accepted': return Text(type == 'mart' ? tr('preparingGrocery') : tr('preparingFood'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'rider-picked-up': return Text(tr('riderPickUp'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'delivered': return Text(tr('riderDelivered'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      case 'cancelled': return Text(tr('cancelled'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
+      default: return Text(tr('waitingRider'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
     }
   }
 
@@ -262,10 +264,10 @@ class DashboardPage extends GetView<DashboardController> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               automaticallyImplyLeading: false,
-              title: Text('Your Orders', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+              title: Text(tr('yourOrders'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
               centerTitle: true,
               bottom: PreferredSize(
-                child: Container(height: 2, color: Colors.grey.shade200),
+                child: Container(height: 1, color: Colors.grey.shade200),
                 preferredSize: Size.fromHeight(4.0)
               ),
               actions: [

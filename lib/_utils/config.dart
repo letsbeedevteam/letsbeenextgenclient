@@ -12,26 +12,23 @@ class Config {
   static const SPLASH_ROUTE = '/splash';
   static const AUTH_ROUTE = '/auth';
   static const SIGNUP_ROUTE = '/signup';
-  static const SETUP_LOCATION_ROUTE = '/setup_location';
   static const MAP_ROUTE = '/map';
   static const VERIFY_NUMBER_ROUTE = '/verify_number';
   static const DASHBOARD_ROUTE = '/dashboard';
   static const CART_ROUTE = '/cart';
   static const RESTAURANT_ROUTE = '/restaurant';
-  static const MENU_ROUTE = '/menu';
-  static const REVIEW_DETAIL_ROUTE = '/review_detail';
   static const WEBVIEW_ROUTE = '/webview';
   static const CHAT_ROUTE = '/chat';
   static const RIDER_LOCATION_ROUTE = '/rider_location';
   static const HISTORY_ROUTE = '/history';
   static const HISTORY_DETAIL_ROUTE = '/history_detail';
-  static const ACTIVE_ORDER_DETAIL_ROUTE = '/active_order_detail';
   static const ACTIVE_ORDER_ROUTE = '/active_order';
-  static const STORE_ROUTE = '/store';
-  static const STORE_MENU_ROUTE = '/store_menu';
-  static const STORE_CART_ROUTE = '/store_cart';
+  static const MART_ROUTE = '/mart';
+  static const MART_CART_ROUTE = '/mart_cart';
   static const ADDRESS_ROUTE = '/address';
   static const USER_DETAILS_ROUTE = '/user_details';
+  static const ACCOUNT_INFO_ROUTE = '/account_info';
+  static const CHANGE_PASS_ROUTE = '/change_pass';
 
   // Storage keys
   static const USER_ID = 'user_id';
@@ -64,31 +61,42 @@ class Config {
   static const GIF_PATH = 'assets/gifs/';
 
   // Error message
-
-  // ignore: non_constant_identifier_names
-  static final NO_INTERNET_CONNECTION = 'noInternetConnection'.tr();
-  // ignore: non_constant_identifier_names
-  static final SOMETHING_WENT_WRONG = 'somethingWentWrong'.tr();
-  // ignore: non_constant_identifier_names
-  static final TIMED_OUT = 'timedOut'.tr();
-  // ignore: non_constant_identifier_names
-  static final TOKEN_EXPIRED = 'tokenExpired'.tr();
-  // ignore: non_constant_identifier_names
-  static final OOPS = 'oops'.tr();
-  // ignore: non_constant_identifier_names
-  static final INPUT_FIELDS = 'inputFields'.tr();
-  // ignore: non_constant_identifier_names
-  static final SIGN_IN_FAILED = 'signInFailed'.tr();
-  // ignore: non_constant_identifier_names
-  static final ACCOUNT_NOT_EXIST = 'accountNotExist'.tr();
-  // ignore: non_constant_identifier_names
-  static final EMAIL_INVALID = 'emailInvalid'.tr();
-  // ignore: non_constant_identifier_names
-  static final INCORRECT_REPEAT_PASSWORD = 'incorrectRepeatPassword'.tr();
-  // ignore: non_constant_identifier_names
-  static final REGISTERED_SUCCESS = 'registeredSuccess'.tr();
-  // ignore: non_constant_identifier_names
-  static final YAY = 'yay'.tr();
+  static final noInternetConnection = tr('noInternetConnection');
+  static final somethingWentWrong = tr('somethingWentWrong');
+  static final timedOut = tr('timedOut');
+  static final tokenExpired = tr('tokenExpired');
+  static final oops = tr('oops');
+  static final inputFields = tr('inputFields');
+  static final signInFailed = tr('signInFailed');
+  static final accountNotExist = tr('accountNotExist');
+  static final emailInvalid = tr('emailInvalid');
+  static final incorrectRepeatPassword = tr('incorrectRepeatPassword');
+  static final registeredSuccess = tr('registeredSuccess');
+  static final yay = tr('yay');
+  static final invalidCode = tr('invalidCode');
+  static final inputAddressDetail = tr('inputAddressDetail');
+  static final home = tr('home');
+  static final searchLocation = tr('searchLocation');
+  static final requiredChoice = tr('requiredChoice');
+  static final deletedItem = tr('deletedItem');
+  static final minimumTransaction = tr('minimumTransaction');
+  static final storeClosed = tr('storeClosed');
+  static final successOrder = tr('successOrder');
+  static final updatedItem = tr('updatedItem');
+  static final accountInfoUpdated = tr('accountInfoUpdated');
+  static final emptyOrderHistory = tr('emptyOrderHistory');
+  static final connected = tr('connected');
+  static final disconnected = tr('disconnected');
+  static final connecting = tr('connecting');
+  static final reconnecting = tr('reconnecting');
+  static final notSent = tr('notSent');
+  static final messageEmpty = tr('messageEmpty');
+  static final noMessages = tr('noMessages');
+  static final loadingConversation = tr('loadingConversation');
+  static final loadingMap = tr('loadingMap');
+  static final trackingRider = tr('trackingRider');
+  static final yourRider = tr('yourRider');
+  static final you = tr('you');
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';
@@ -109,6 +117,7 @@ class Config {
   // Colors 
   static const LETSBEE_COLOR = 0xFFFCD000;
   static const WHITE = 0xFFF8F8FA;
+  static const RED = 0xFFDE5842;
   static const SEARCH_TEXT_COLOR = 0xFF999999;
   static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
   static const YELLOW_TEXT_COLOR = 0xFFD9BB64;

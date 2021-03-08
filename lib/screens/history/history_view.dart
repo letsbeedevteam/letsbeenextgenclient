@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,10 +17,10 @@ class HistoryPage extends GetView<HistoryController> {
         leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text('Order History', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+        title: Text(tr('orderHistory'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
         centerTitle: true,
         bottom: PreferredSize(
-          child: Container(height: 2, color: Colors.grey.shade200),
+          child: Container(height: 1, color: Colors.grey.shade200),
           preferredSize: Size.fromHeight(4.0)
         ),
       ),
@@ -44,7 +45,7 @@ class HistoryPage extends GetView<HistoryController> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CupertinoActivityIndicator(),
-                        Text('Loading history...', style: TextStyle(fontSize: 15))
+                        Text('${tr('loadingHistory')}', style: TextStyle(fontSize: 15))
                       ],
                     ) : Text(_.historyMessage.call(), style: TextStyle(fontSize: 15)),
                   ) : Container(
@@ -89,7 +90,7 @@ class HistoryPage extends GetView<HistoryController> {
                         ),
                         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                         Text(DateFormat('MMMM dd, yyyy - hh:mm a').format(data.createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                        Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+                        Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x ${tr('items')}', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
                          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                         Container(
                           margin: EdgeInsets.only(right: 10, bottom: 10),
@@ -115,7 +116,7 @@ class HistoryPage extends GetView<HistoryController> {
                 Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
               ],
             ),
-            Divider(thickness: 2, color: Colors.grey.shade200)
+            Divider(thickness: 1, color: Colors.grey.shade200)
           ],
         ),
       ),
@@ -131,7 +132,7 @@ class HistoryPage extends GetView<HistoryController> {
             borderRadius: BorderRadius.circular(5),
             color: Colors.red
           ),
-          child: Text('Restaurant Declined', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('restaurantDeclined'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       case 'delivered': return Container(
@@ -140,7 +141,7 @@ class HistoryPage extends GetView<HistoryController> {
             borderRadius: BorderRadius.circular(5),
             color: Color(Config.LETSBEE_COLOR)
           ),
-          child: Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('delivered'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       case 'cancelled': return Container(
@@ -149,7 +150,7 @@ class HistoryPage extends GetView<HistoryController> {
             borderRadius: BorderRadius.circular(5),
             color: Colors.red
           ),
-          child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+          child: Text(tr('cancelled'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
         );
         break;
       default: return Container(
@@ -158,7 +159,7 @@ class HistoryPage extends GetView<HistoryController> {
           borderRadius: BorderRadius.circular(5),
           color: Colors.red
         ),
-        child: Text('Cancelled', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
+        child: Text(tr('cancelled'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 13))
       );
     }
   }
