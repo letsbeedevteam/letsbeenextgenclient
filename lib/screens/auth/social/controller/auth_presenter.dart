@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-// import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 
 import 'auth_contract.dart';
 // import 'auth_controller.dart';

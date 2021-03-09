@@ -1,12 +1,13 @@
+import 'package:code_field/code_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
+import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class VerifyNumberController extends GetxController with SingleGetTickerProviderMixin {
@@ -21,27 +22,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
   var signInData = SignInData().obs;
 
-  RxString firstDigit = ''.obs;
-  RxString secondDigit = ''.obs;
-  RxString thirdDigit = ''.obs;
-  RxString fourthDigit = ''.obs;
-  RxString fifthDigit = ''.obs;
-  RxString sixthDigit = ''.obs;
-  RxString currentDigit = ''.obs;
-
-  var first = TextEditingController();
-  var second = TextEditingController();
-  var third = TextEditingController();
-  var fourth = TextEditingController();
-  var fifth = TextEditingController();
-  var sixth = TextEditingController();
-
-  var firstFN = FocusNode();
-  var secondFN = FocusNode();
-  var thirdFN = FocusNode();
-  var fourthFN = FocusNode();
-  var fifthFN = FocusNode();
-  var sixthFN = FocusNode();
+  final codeControl = InputCodeControl(inputRegex: r'(^\-?\d*\.?\d*)');
 
   @override
   void onInit() {
@@ -50,6 +31,10 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
     keyboardVisibilityController.onChange.listen((bool visible) {
       isKeyboardVisible(visible);
+    });
+
+    codeControl.addListener(() {
+      if (codeControl.activeIndex == 6) confirmCode();
     });
 
     super.onInit();
@@ -62,10 +47,8 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
   void confirmCode() {
 
-    currentDigit('${first.text}${second.text}${third.text}${fourth.text}${fifth.text}${sixth.text}');
-
-     isLoading(true);
-    _apiService.cellphoneConfirmation(token: signInData.call().token, code: currentDigit.call()).then((response) {
+    isLoading(true);
+    _apiService.cellphoneConfirmation(token: signInData.call().token, code: codeControl.value).then((response) {
       if (response.status == 200) {
         _verifiedPopUp(response);
       } else {
@@ -131,6 +114,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
           borderRadius: BorderRadius.circular(25)
         )
       ),
+      barrierDismissible: false
     );
   }
 }

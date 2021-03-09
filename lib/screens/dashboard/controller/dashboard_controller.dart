@@ -8,9 +8,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/chatResponse.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
+import 'package:letsbeeclient/models/chat_response.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
@@ -118,27 +118,26 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   refreshSocket() {
     socketService.connectSocket();
 
-    socketService.socket
-    ..on('connect', (_) {
+    socketService.socket?.on('connect', (_) {
       print('Connected');
       fetchActiveOrders();
       receiveUpdateOrder();
       receiveChat();
-    })
-    ..on('connecting', (_) {
+    });
+    socketService.socket?.on('connecting', (_) {
       print('Connecting');
       onGoingMessage(tr('loading'));
-    })
-    ..on('reconnecting', (_) {
+    });
+    socketService.socket?.on('reconnecting', (_) {
       print('Reconnecting');
       onGoingMessage(tr('loading'));
-    })
-    ..on('disconnect', (_) {
+    });
+    socketService.socket?.on('disconnect', (_) {
       onGoingMessage(tr('loading'));
       // activeOrders.nil();
       print('Disconnected');
-    })
-    ..on('error', (_) {
+    });
+    socketService.socket?.on('error', (_) {
       onGoingMessage(tr('loading'));
       print('Error socket: $_');
     });
@@ -268,28 +267,26 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   fetchActiveOrders() {
     onGoingMessage(tr('loading'));
-    if (socketService.socket != null) {
-      socketService.socket.emitWithAck('active-orders', '', ack: (response) {
-        'Active orders: $response'.printWrapped();
-        activeOrders(ActiveOrder.fromJson(response));
-        if (activeOrders.call().status == 200) {
-          onGoingMessage(tr('noActiveOrder'));
-          if (activeOrders.call().data.isEmpty) {
-            activeOrders.nil();
-          } else {
-            activeOrders(ActiveOrder.fromJson(response));
-            activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
-          }
-        } else {
+    socketService.socket?.emitWithAck('active-orders', '', ack: (response) {
+      'Active orders: $response'.printWrapped();
+      activeOrders(ActiveOrder.fromJson(response));
+      if (activeOrders.call().status == 200) {
+        onGoingMessage(tr('noActiveOrder'));
+        if (activeOrders.call().data.isEmpty) {
           activeOrders.nil();
-          onGoingMessage(Config.somethingWentWrong);
+        } else {
+          activeOrders(ActiveOrder.fromJson(response));
+          activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
         }
-      });
-    }
+      } else {
+        activeOrders.nil();
+        onGoingMessage(Config.somethingWentWrong);
+      }
+    });
   }
 
   receiveUpdateOrder() {
-    socketService.socket.on('order', (response) {
+    socketService.socket?.on('order', (response) {
       'Receive update: $response'.printWrapped();
       fetchActiveOrders();
       String message;
@@ -346,7 +343,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   receiveChat() {
-    socketService.socket.on('order-chat', (response) {
+    socketService.socket?.on('order-chat', (response) {
       print('receive message: $response');
       final test = ChatData.fromJson(response['data']);
       pushNotificationService.showNotification(title: '${tr('newMessageFromRider')}', body: test.message, payload: chatDataToJson(test));
@@ -375,7 +372,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   cancel() {
-    socketService.socket.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
+    socketService.socket?.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
       print(response);
       if (response['status'] == 200) {
         reasonController.clear();
@@ -467,11 +464,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       if (response.status == 200) {
         restaurantDashboard(response);
 
-        final Map<int, RestaurantStores> newMap = Map();
-        response.data.recentStores.forEach((item) {
-          newMap[item.id] = item;
-        });
-        recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
+        // final Map<int, RestaurantStores> newMap = Map();
+        // response.data.recentStores.forEach((item) {
+        //   newMap[item.id] = item;
+        // });
+        // recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
         searchRestaurants.call()..clear()..assignAll(response.data.stores);
         if(searchRestaurants.call().isEmpty) {
           restaurantDashboard.nil();
@@ -510,11 +507,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (response.status == 200) {
         martDashboard(response);
-        final Map<int, MartStores> newMap = Map();
-        response.data.recentStores.forEach((item) {
-          newMap[item.id] = item;
-        });
-        recentMarts.call()..clear()..assignAll(newMap.values.toList());
+        // final Map<int, MartStores> newMap = Map();
+        // response.data.recentStores.forEach((item) {
+        //   newMap[item.id] = item;
+        // });
+        // recentMarts.call()..clear()..assignAll(newMap.values.toList());
         searchMarts.call()..clear()..assignAll(response.data.stores);
         if(searchMarts.call().isEmpty) {
           martDashboard.nil();

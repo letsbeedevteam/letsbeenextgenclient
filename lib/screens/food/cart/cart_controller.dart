@@ -183,7 +183,7 @@ class CartController extends GetxController {
           addToCart.call().add(
             AddToCart(
               productId: product.id,
-              choices: product.variants.isEmpty ? [] : product.choiceCart.toList(),
+              variants: product.variants.isEmpty ? [] : product.choiceCart.toList(),
               additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
               quantity: product.quantity,
               note: product.note

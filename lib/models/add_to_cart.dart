@@ -12,21 +12,21 @@ List<AddToCart> listCartsFromJson(String str) => List<AddToCart>.from(json.decod
 class AddToCart {
     AddToCart({
         this.productId,
-        this.choices,
+        this.variants,
         this.additionals,
         this.quantity,
         this.note,
     });
 
     int productId;
-    List<ChoiceCart> choices;
+    List<ChoiceCart> variants;
     List<int> additionals;
     int quantity;
     String note;
 
     factory AddToCart.fromJson(Map<String, dynamic> json) => AddToCart(
       productId: json["product_id"],
-      choices: json["choices"],
+      variants: json["variants"],
       additionals: json["additionals"],
       quantity: json["quantity"],
       note: json["note"]
@@ -34,8 +34,8 @@ class AddToCart {
 
     Map<String, dynamic> toJson() => {
       "product_id": productId,
-      "choices": choices == null ? List<dynamic>() : List<dynamic>.from(choices.map((x) => x.toJson())),
-      "additionals": choices == null ? List<dynamic>() : List<dynamic>.from(additionals.map((x) => x)),
+      "variants": variants == null ? List<dynamic>() : List<dynamic>.from(variants.map((x) => x.toJson())),
+      "additionals": additionals == null ? List<dynamic>() : List<dynamic>.from(additionals.map((x) => x)),
       "quantity": quantity,
       "note": note,
     };

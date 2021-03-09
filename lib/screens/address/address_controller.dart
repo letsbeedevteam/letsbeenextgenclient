@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -30,6 +30,8 @@ class AddressController extends GetxController {
   }
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
+
+  editAddress(AddressData data) => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.EDIT_NEW_ADDRESS, 'data': data.toJson()});
 
   fetchAllAddresses() {
     isLoading(true);

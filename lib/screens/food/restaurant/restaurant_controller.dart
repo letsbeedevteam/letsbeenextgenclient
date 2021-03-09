@@ -1,4 +1,3 @@
-// import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,16 +6,11 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
-// import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
-// import 'package:letsbeeclient/models/restaurant.dart';
-// import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
-// import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:uuid/uuid.dart';
-// import 'package:collection/collection.dart';
 
 class RestaurantController extends GetxController with SingleGetTickerProviderMixin {
 

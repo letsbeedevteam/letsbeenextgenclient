@@ -2,29 +2,28 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/active_cart_response.dart';
-import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
-import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
+import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
 import 'package:letsbeeclient/models/change_pass_request.dart';
 import 'package:letsbeeclient/models/change_pass_response.dart';
-import 'package:letsbeeclient/models/createOrderResponse.dart';
+import 'package:letsbeeclient/models/create_order_response.dart';
 import 'package:letsbeeclient/models/customer_edit_response.dart';
-import 'package:letsbeeclient/models/deleteCartResponse.dart';
-import 'package:letsbeeclient/models/deleteOrderResponse.dart';
+import 'package:letsbeeclient/models/delete_order_response.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
+import 'package:letsbeeclient/models/fogot_pass_response.dart';
 import 'package:letsbeeclient/models/forgot_password_request.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
-// import 'package:letsbeeclient/models/getCart.dart';
-import 'package:letsbeeclient/models/newAddressRequest.dart';
-import 'package:letsbeeclient/models/newAddressResponse.dart';
-import 'package:letsbeeclient/models/numberResponse.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
-import 'package:letsbeeclient/models/refreshTokenResponse.dart';
-import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/models/new_address_request.dart';
+import 'package:letsbeeclient/models/new_address_response.dart';
+import 'package:letsbeeclient/models/number_response.dart';
+import 'package:letsbeeclient/models/order_history_response.dart';
+import 'package:letsbeeclient/models/refresh_token_response.dart';
+import 'package:letsbeeclient/models/request_forgot_pass_response.dart';
+import 'package:letsbeeclient/models/restaurant_response.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-import 'package:letsbeeclient/models/signUpResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
+import 'package:letsbeeclient/models/signup_response.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
 import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
@@ -84,7 +83,7 @@ class ApiService extends GetConnect {
     return changePasswordResponseFromJson(response.bodyString);
   }
 
-  Future<dynamic> customerRequestForgotPassword({String contactNumber}) async {
+  Future<RequestForgotPassResponse> customerRequestForgotPassword({String contactNumber}) async {
 
     final response = await post(
       '/auth/customer/request-forgot-password',
@@ -93,10 +92,10 @@ class ApiService extends GetConnect {
 
     print('Request Forgot Password: ${response.body}');
 
-    // return changePasswordResponseFromJson(response.bodyString);
+    return requestForgotPassFromJson(response.bodyString);
   }
 
-  Future<dynamic> customerForgotPassword({ForgotPasswordRequest request}) async {
+  Future<ForgotPassResponse> customerForgotPassword({ForgotPasswordRequest request}) async {
     
     print(request.toJson());
     final response = await post(
@@ -106,7 +105,7 @@ class ApiService extends GetConnect {
 
     print('Forgot Password: ${response.body}');
 
-    // return changePasswordResponseFromJson(response.bodyString);
+    return forgotPassFromJson(response.bodyString);
   }
 
   Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
@@ -180,50 +179,6 @@ class ApiService extends GetConnect {
     var json = response.body;
     return Product.fromJson(json['data']);
   } 
-
-  Future<AddToCartResponse> addToCart(AddToCart addToCart) async {
-
-    final response = await put(
-      '/carts',
-      addToCart.toJson(),
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Add carts: ${response.body}');
-    
-    return addToCartResponseFromJson(response.bodyString);
-  }
-
-  Future<AddToCartResponse> updateCart(AddToCart addToCart, int cartId) async {
-    
-    final response = await post(
-      '/carts/$cartId',
-      addToCart.toJson(),
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Update carts: ${response.body}');
-    
-    return addToCartResponseFromJson(response.bodyString);
-  }
-
-  Future<DeleteCartResponse> deleteCart(int cartId) async {
-
-    final response = await delete(
-      '/carts/$cartId',
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Delete carts: ${response.body}');
-    
-    return deleteCartResponseFromJson(response.bodyString);
-  }
 
   Future<ActiveCartResponse> getActiveCarts({int storeId}) async {
 

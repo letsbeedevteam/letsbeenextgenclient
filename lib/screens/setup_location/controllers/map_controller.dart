@@ -7,8 +7,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
-import 'package:letsbeeclient/models/newAddressRequest.dart';
-import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
+import 'package:letsbeeclient/models/new_address_request.dart';
+import 'package:letsbeeclient/models/new_address_response.dart';
 import 'package:letsbeeclient/screens/address/address_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -19,10 +20,12 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class MapController extends GetxController {
 
+  GoogleMapController _mapController;
+
+
   final GetStorage _box = Get.find();
   final SecretLoader _secretLoader = Get.find();
   final ApiService _apiService = Get.find();
-  final Completer<GoogleMapController> _mapController = Completer();
   final argument = Get.arguments;
   
   var isMapLoading = true.obs;
@@ -45,6 +48,7 @@ class MapController extends GetxController {
   final addressDetailsNode = FocusNode();
 
   var buttonTitle = 'next'.obs;
+  var addressData = AddressData().obs;
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
@@ -52,7 +56,19 @@ class MapController extends GetxController {
   @override 
   void onInit() {
     if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+
       currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
+      buttonTitle('save');
+      isMapLoading(false);
+
+    } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
+      addressData(AddressData.fromJson(argument['data']));
+      currentPosition(LatLng(addressData.call().location.lat, addressData.call().location.lng));
+
+      addressLabel.text = addressData.call().name;
+      addressDetails.text = addressData.call().address;
+      noteToRider.text = addressData.call().note;
+
       buttonTitle('save');
       isMapLoading(false);
 
@@ -103,16 +119,14 @@ class MapController extends GetxController {
   void gpsLocation() async {
     isBounced(true);
     final currentLocation = await lct.Location().getLocation();
-    final c = await _mapController.future;
     currentPosition(LatLng(currentLocation.latitude, currentLocation.longitude));
-    c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
+    _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
     isBounced(false);
   }
 
   void onMapCreated(GoogleMapController controller) async {
-    _mapController.complete(controller);
-    final c = await _mapController.future;
-    c.setMapStyle(mapStyle.call());
+    _mapController = controller;
+    _mapController.setMapStyle(mapStyle.call());
   }
 
   void onCameraMovePosition(CameraPosition position) {
@@ -177,8 +191,7 @@ class MapController extends GetxController {
       final detail = await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
-      final c = await _mapController.future;
-      c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 18)));
+      _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 18)));
     }
   }
 
@@ -187,7 +200,7 @@ class MapController extends GetxController {
   }
 
   Future<bool> willPopCallback() async {
-    argument['type'] == Config.ADD_NEW_ADDRESS ? Get.back(closeOverlays: true) : Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    argument['type'] == Config.ADD_NEW_ADDRESS || argument['type'] == Config.EDIT_NEW_ADDRESS ? Get.back(closeOverlays: true) : Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
     return true;
   }
 
@@ -227,6 +240,7 @@ class MapController extends GetxController {
           ..fetchRestaurantDashboard();
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
+          
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
           Get.offAllNamed(Config.DASHBOARD_ROUTE);

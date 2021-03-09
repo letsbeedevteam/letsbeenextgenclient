@@ -4,7 +4,7 @@ import 'package:flutter_gifimage/flutter_gifimage.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/activeOrderResponse.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
 class ActiveOnGoingPage extends GetView<DashboardController> {

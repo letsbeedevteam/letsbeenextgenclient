@@ -212,7 +212,8 @@ class CodegenLoader extends AssetLoader{
     "signedUp": "You have successfully signed up!",
     "sendCode": "Send code",
     "enterYourNumber": "Enter your contact number",
-    "invalidNumber": "Your conect number is invalid"
+    "invalidNumber": "Your conect number is invalid",
+    "changePasswordSuccess": "You have successfully changed your password"
   };
   static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/chatResponse.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
+import 'package:letsbeeclient/models/chat_response.dart';
 // import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 
@@ -33,9 +33,8 @@ class ChatController extends GetxController {
     } else {
       this.title("${activeOrderData.call().activeStore.name} (${activeOrderData.call().activeStore.locationName})");
     }
-
-    _socketService.socket
-    ..on('connect', (_) {
+    
+    _socketService.socket?.on('connect', (_) {
       Future.delayed(Duration(seconds: 2)).then((value) => isConnected(true));
       print('Connected');
       color(Colors.green);
@@ -45,28 +44,28 @@ class ChatController extends GetxController {
       chat.call().where((data) => !data.isSent).forEach((element) {
         messageRiderRequest(element.message);
       });
-    })
-    ..on('connecting', (_) {
+    });
+    _socketService.socket?.on('connecting', (_) {
       isConnected(false);
       print('Connecting');
       color(Colors.orange);
       connectMessage(Config.connecting);
-    })
-    ..on('reconnecting', (_) {
+    });
+    _socketService.socket?.on('reconnecting', (_) {
       isConnected(false);
       isSending(false);
       print('Reconnecting');
       color(Colors.orange);
       connectMessage(Config.reconnecting);
-    })
-    ..on('disconnect', (_) {
+    });
+    _socketService.socket?.on('disconnect', (_) {
       isConnected(false);
       isSending(false);
       color(Colors.red);
       connectMessage(Config.disconnected);
       print('Disconnected');
-    })
-    ..on('error', (_) {
+    });
+    _socketService.socket?.on('error', (_) {
       isConnected(false);
       isSending(false);
       color(Colors.red);
@@ -106,7 +105,7 @@ class ChatController extends GetxController {
   }
 
   messageRiderRequest(String message) {
-    _socketService.socket.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
+    _socketService.socket?.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
       print('sent $response');
       if (response['status'] == 200) {
         final test = ChatData.fromJson(response['data']);
@@ -122,7 +121,7 @@ class ChatController extends GetxController {
   }
 
   updadateReceiveChat() {
-    _socketService.socket.on('order-chat', (response) {
+    _socketService.socket?.on('order-chat', (response) {
       print('receive message: $response');
       final orderChat = ChatData.fromJson(response['data']);
       if (activeOrderData.call() != null) {
@@ -138,7 +137,7 @@ class ChatController extends GetxController {
     message(Config.loadingConversation);
     isLoading(true);
 
-    _socketService.socket.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
+    _socketService.socket?.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
       'fetch: $response'.printWrapped();
       isLoading(false);
       if (response['status'] == 200) {

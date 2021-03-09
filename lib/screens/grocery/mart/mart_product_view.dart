@@ -153,7 +153,7 @@ class MartProductPage extends GetView<MartController> {
                                             children: [
                                               Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
                                               Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                              Text('10.8KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                              Text('${_.store.call().distance.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -166,7 +166,7 @@ class MartProductPage extends GetView<MartController> {
                                           ),
                                           child: Row(
                                             children: [
-                                              Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                              Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
                                               Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
                                               Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                             ],

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
+import 'package:letsbeeclient/models/order_history_response.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_gifs/loading_gifs.dart';

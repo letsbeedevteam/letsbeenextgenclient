@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
+import 'package:letsbeeclient/models/order_history_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class HistoryController extends GetxController {

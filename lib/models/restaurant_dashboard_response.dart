@@ -28,20 +28,20 @@ class RestaurantDashboardResponse {
 class RestaurantData {
   RestaurantData({
     this.stores,
-    this.recentStores
+    // this.recentStores
   });
 
   List<RestaurantStores> stores;
-  List<RestaurantStores> recentStores;
+  // List<RestaurantStores> recentStores;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => RestaurantData(
     stores: json["stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["stores"].map((x) => RestaurantStores.fromJson(x))),
-    recentStores: json["recent_stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["recent_stores"].map((store) => RestaurantStores.fromJson(store))),
+    // recentStores: json["recent_stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["recent_stores"].map((store) => RestaurantStores.fromJson(store))),
   );
 
   Map<String, dynamic> toJson() => {
       "stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
-      "recent_stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
+      // "recent_stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
   };
 }
 
@@ -140,7 +140,7 @@ class RestaurantAddress {
 
   factory RestaurantAddress.fromJson(Map<String, dynamic> json) => RestaurantAddress(
     country: json["country"],
-    state: json["lng"],
+    state: json["state"],
     city: json["city"],
     barangay: json["barangay"]
   );

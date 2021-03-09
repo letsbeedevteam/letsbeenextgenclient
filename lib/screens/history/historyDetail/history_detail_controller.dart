@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
+import 'package:letsbeeclient/models/order_history_response.dart';
 
 class HistoryDetailController extends GetxController {
 

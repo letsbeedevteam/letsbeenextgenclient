@@ -1,9 +1,11 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/change_pass_request.dart';
+import 'package:letsbeeclient/models/forgot_password_request.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class ChangePasswordController extends GetxController {
@@ -26,24 +28,55 @@ class ChangePasswordController extends GetxController {
   var isShowRepeatPass = false.obs;
 
   var isForgotPas = false.obs;
-
+  
   @override
   void onInit() {
-    if (argument != null) {
-      if (argument == Config.FORGOT_PASS_ROUTE) isForgotPas(true);
-    }
+    argument != null ? isForgotPas(true) : isForgotPas(false);
     super.onInit();
   }
 
   void forgotPassword() {
-     isLoading(true);
-     dismissKeyboard(Get.context);
+    isLoading(true);
+    dismissKeyboard(Get.context);
 
-      if ( newPassController.text.isBlank || repeatPassController.text.isBlank) {
+    if ( newPassController.text.isBlank || repeatPassController.text.isBlank) {
+      alertSnackBarTop(title: Config.oops, message: Config.inputFields);
+      isLoading(false);
+    } else {
+
+      if (newPassController.text == repeatPassController.text) {
+        
+      final request = ForgotPasswordRequest(
+        token: argument['token'],
+        code: argument['code'],
+        newPassword: newPassController.text
+      );
+
+      _apiService.customerForgotPassword(request: request).then((response) {
+      
+        if (response.status == 200) {
+          _sucessPopUp();
+        } else {
+          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        }
+
+        isLoading(false);
+        
+      }).catchError((onError) {
+        isLoading(false);
+        print('Forgot pass error: $onError');
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      });
 
       } else {
-
+      
+        errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
+        repeatPassController.selection = TextSelection.fromPosition(TextPosition(offset: repeatPassController.text.length));
+        repeatPassFn.requestFocus();
+        isLoading(false);
       }
+
+    }
   }
 
   void changePassword() {
@@ -89,5 +122,37 @@ class ChangePasswordController extends GetxController {
         isLoading(false);
       }
     }
+  }
+
+  _sucessPopUp() {
+    Get.dialog(
+      AlertDialog(
+        content: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(Config.PNG_PATH + 'verified.png'),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Text(tr('changePasswordSuccess'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              RaisedButton(
+                onPressed: () => Get.offAllNamed(Config.AUTH_ROUTE),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20) 
+                ),
+                color: Color(Config.LETSBEE_COLOR),
+                child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+              )
+            ]
+          )
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25)
+        )
+      ),
+      barrierDismissible: false
+    );
   }
 }

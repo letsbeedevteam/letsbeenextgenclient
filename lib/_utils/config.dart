@@ -114,6 +114,7 @@ class Config {
   static const YOU = 'You';
   static const LETS_BEE = 'Let\'s Bee';
   static const ADD_NEW_ADDRESS = 'add_new_address';
+  static const EDIT_NEW_ADDRESS = 'edit_new_address';
   static const SETUP_ADDRESS = 'setup_address';
   static const NEXT_DAY = 'next_day';
   static const RESTAURANT = 'restaurant';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/chatResponse.dart';
+import 'package:letsbeeclient/models/chat_response.dart';
 import 'package:letsbeeclient/screens/chat/chat_controller.dart';
 import 'package:intl/intl.dart';
 

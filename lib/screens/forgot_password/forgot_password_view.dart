@@ -29,16 +29,32 @@ class ForgotPasswordPage extends GetView<ForgotPasswordController> {
           ),
         ),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _numberTextField(),
             Obx(() {
               return controller.isSentCode.call() ? _codeTextField() : Container();
             }),
-            _sendCodeButton()
+            _sendCodeButton(),
+            Obx(() => controller.isShowResendCode.call() ? _footer() : Container())
           ],
         ),
       ),
+    );
+  }
+
+  Widget _footer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+        Text(tr('didntSendCode'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+        GestureDetector(
+          onTap: () => print('Renew code'),
+          child: Text(tr('resendCode'), style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
+        ),
+      ],
     );
   }
 

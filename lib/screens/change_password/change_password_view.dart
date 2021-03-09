@@ -30,17 +30,38 @@ class ChangePasswordPage extends GetView<ChangePasswordController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _oldPasswordTextField(),
+                Obx(() => controller.isForgotPas.call() ? Container() : _oldPasswordTextField()),
                 Padding(padding: EdgeInsets.symmetric(vertical: 15)),
                 _newPasswordTextField(),
                 Padding(padding: EdgeInsets.symmetric(vertical: 15)),
                 _repeatPasswordTextField(),
                 Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-                _saveButton()
+                Obx(() => controller.isForgotPas.call() ? _changePasswordButton() : _saveButton()),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _changePasswordButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: Center(
+        child: Obx(() {
+          return SizedBox(
+            width: Get.width * 0.85,
+            child: RaisedButton(
+              color: Color(Config.LETSBEE_COLOR),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20)
+              ),
+              child: Text(controller.isLoading.call() ? tr('loading') : tr('changePass'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+              onPressed: () => controller.isLoading.call() ? null : controller.forgotPassword(),
+            )
+          );
+        }),
       ),
     );
   }

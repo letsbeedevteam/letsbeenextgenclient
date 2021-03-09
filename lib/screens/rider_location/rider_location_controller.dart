@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/activeOrderResponse.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -48,7 +48,7 @@ class RiderLocationController extends GetxController {
 
   void receiveRiderLocation() async {
     message(Config.trackingRider);
-    _socketService.socket.on('rider-location', (response) async {
+    _socketService.socket?.on('rider-location', (response) async {
       print('Rider location: $response');
       if (response['data']['location'] != null) {
         if (activeOrderData.call() != null) {

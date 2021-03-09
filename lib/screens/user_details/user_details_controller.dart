@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
 import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/screens/auth/signUp/controller/signup_controller.dart';
@@ -142,7 +142,10 @@ class UserDetailsController extends GetxController {
               Text(tr('signedUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               RaisedButton(
-                onPressed: () => Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson()),
+                onPressed: () {
+                  if (Get.isDialogOpen) Get.back(closeOverlays: true);
+                  Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
+                },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20) 
                 ),
@@ -156,6 +159,7 @@ class UserDetailsController extends GetxController {
           borderRadius: BorderRadius.circular(25)
         )
       ),
+      barrierDismissible: false
     );
   }
 }

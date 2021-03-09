@@ -199,7 +199,7 @@ class MartCartController extends GetxController {
       addToCart.call().add(
         AddToCart(
           productId: item.id,
-          choices: null,
+          variants: null,
           additionals: null,
           quantity: item.quantity,
           note: null

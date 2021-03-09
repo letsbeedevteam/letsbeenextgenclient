@@ -256,7 +256,7 @@ class MapPage extends GetView<MapController> {
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 15),
                 keyboardType: TextInputType.emailAddress, 
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.done,
                 enableSuggestions: false,
                 autocorrect: false,
                 obscureText: false,

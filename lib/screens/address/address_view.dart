@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/screens/address/address_controller.dart';
 
 class AddressPage extends GetView<AddressController> {
@@ -85,8 +85,8 @@ class AddressPage extends GetView<AddressController> {
                 Text(data.name, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
                 GestureDetector(
                   child: const Icon(Icons.edit),
-                  onTap: () => print('Edit'),
-                )
+                  onTap: () => controller.editAddress(data),
+                ),
               ],
             ),
             Container(

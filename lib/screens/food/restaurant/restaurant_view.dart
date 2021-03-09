@@ -9,7 +9,6 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
-// import 'package:letsbeeclient/models/restaurant.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
@@ -157,7 +156,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                               children: [
                                                 Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
                                                 Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                                Text('10.8KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                Text('${_.store.call().distance.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -170,7 +169,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                             ),
                                             child: Row(
                                               children: [
-                                                Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                                Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
                                                 Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
                                                 Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                               ],

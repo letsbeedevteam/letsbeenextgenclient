@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/customWidgets.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
@@ -144,28 +145,28 @@ class HomePage extends StatelessWidget {
             //     ]
             //   ),
             // ),
-            _.recentRestaurants.call().isNotEmpty ? Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                    child: Text(tr('recentRestaurants'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
-                  ),
-                  Container(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: _.recentRestaurants.call().map((data) => _buildRecentRestaurantItem(data)).toList(),
-                      )
-                    ),
-                  ),
-                ],
-              ),
-            ) : Container(),
+            // _.recentRestaurants.call().isNotEmpty ? Container(
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            //       Padding(
+            //         padding: EdgeInsets.only(left: 20, right: 20, bottom: 5),
+            //         child: Text(tr('recentRestaurants'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
+            //       ),
+            //       Container(
+            //         child: SingleChildScrollView(
+            //           scrollDirection: Axis.horizontal,
+            //           child: Row(
+            //             mainAxisSize: MainAxisSize.min,
+            //             children: _.recentRestaurants.call().map((data) => _buildRecentRestaurantItem(data)).toList(),
+            //           )
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ) : Container(),
             Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 5),
               child: Text(tr('allRestaurants'), style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
@@ -212,81 +213,124 @@ class HomePage extends StatelessWidget {
   //   );
   // }
 
-  Widget _buildRecentRestaurantItem(RestaurantStores restaurant) {
-    final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
-    return GestureDetector(
-        child: Container(
-          margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
-          padding: EdgeInsets.all(10),
-          width: 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 5),
-                  alignment: Alignment.center,
-                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35)))) ,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
-              ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: 10),
-              //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-              // ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 5))
-            ],
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.white
-          ),
-        ),
-      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
-    );
-  }
+  // Widget _buildRecentRestaurantItem(RestaurantStores restaurant) {
+  //   final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
+  //   return GestureDetector(
+  //       child: Container(
+  //         margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
+  //         padding: EdgeInsets.all(10),
+  //         width: 200,
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             ClipRRect(
+  //               borderRadius: BorderRadius.all(Radius.circular(5)),
+  //               child: Container(
+  //                 margin: EdgeInsets.only(bottom: 5),
+  //                 alignment: Alignment.center,
+  //                 child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant.photoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35)))) ,
+  //               ),
+  //             ),
+  //             Padding(
+  //               padding: EdgeInsets.symmetric(horizontal: 10),
+  //               child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
+  //             ),
+  //             // Padding(
+  //             //   padding: EdgeInsets.symmetric(horizontal: 10),
+  //             //   child: Text('(1.5 km away)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+  //             // ),
+  //             Padding(padding: EdgeInsets.symmetric(vertical: 5))
+  //           ],
+  //         ),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(5),
+  //           color: Colors.white
+  //         ),
+  //       ),
+  //     onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
+  //   );
+  // }
 
   Widget _buildRestaurantItem(RestaurantStores restaurant) {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
       onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
       child: Container(
-        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        alignment: Alignment.topCenter,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.white
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.white,
         ),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        padding: EdgeInsets.all(10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Container(
-                height: 170,
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   child: SizedBox(
                     width: Get.width,
+                    height: 180,
                     child: restaurant.photoUrl != null ? FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))) 
                     : Container(child: Center(child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60)))),
                   ),
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+            Container(
+              padding: EdgeInsets.only(top: 10, left: 5, right: 5),
+              child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
             ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5))
+            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OneRating(),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(Config.WHITE)
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                            Text('${restaurant.distance.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(Config.WHITE)
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                            Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
