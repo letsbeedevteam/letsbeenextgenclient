@@ -27,7 +27,7 @@ void errorSnackBarBottom({String title ,String message}) {
 
 void alertSnackBarTop({String title ,String message}) {
   if (Get.isSnackbarOpen) Get.back();
-  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.warning, color: Colors.orange), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0));
+  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.warning, color: Colors.orange), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), duration: Duration(seconds: 2));
 }
 
 void errorSnackbarTop({String title ,String message}) {
@@ -35,14 +35,14 @@ void errorSnackbarTop({String title ,String message}) {
   Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0));
 }
 
-void successSnackBarTop({String title , String message, SnackbarStatusCallback status}) {
+void successSnackBarTop({String title , String message, int seconds, SnackbarStatusCallback status}) {
   if (Get.isSnackbarOpen) Get.back();
-  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.check_box, color: Colors.green), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status);
+  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.check_box, color: Colors.green), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status, duration: Duration(seconds: seconds == null ? 3 : seconds));
 }
 
-void deleteSnackBarTop({String title , String message, SnackbarStatusCallback status}) {
+void deleteSnackBarTop({String title , String message, int seconds, SnackbarStatusCallback status}) {
   if (Get.isSnackbarOpen) Get.back();
-  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.delete, color: Colors.red), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status, duration: Duration(seconds: 10));
+  Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.delete, color: Colors.red), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status, duration: Duration(seconds: seconds == null ? 10 : seconds));
 }
 
 void paymentSnackBarTop({String title , String message, SnackbarStatusCallback status}) {
@@ -50,7 +50,13 @@ void paymentSnackBarTop({String title , String message, SnackbarStatusCallback s
   Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.payment, color: Color(Config.LETSBEE_COLOR)), margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), snackbarStatus: status);
 }
 
-void dismissKeyboard(BuildContext context) => FocusScope.of(context).requestFocus(FocusNode());
+void dismissKeyboard(BuildContext context) {
+  final currentFocus = FocusScope.of(context);
+  currentFocus.requestFocus(FocusNode());
+  if (!currentFocus.hasPrimaryFocus) {
+    currentFocus.focusedChild.unfocus();
+  }
+}
 
 void copyText(String value) => Clipboard.setData(ClipboardData(text: value));
 

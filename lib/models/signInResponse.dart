@@ -12,7 +12,7 @@ class SignInResponse {
 
   int status;
   SignInData data;
-  int message;
+  dynamic message;
   int code;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(
@@ -26,23 +26,19 @@ class SignInResponse {
 class SignInData {
   SignInData({
     this.token,
-    this.sentConfirmation,
     this.cellphoneNumber
   });
 
   String token;
-  bool sentConfirmation;
   String cellphoneNumber;
 
   factory SignInData.fromJson(Map<String, dynamic> json) => SignInData(
     token: json['token'],
-    sentConfirmation: json['sent_confirmation'],
-    cellphoneNumber: json['cellphone_number']
+    cellphoneNumber: json['cellphone_number'] == '0' ? null : json['cellphone_number']
   );
 
   Map<String, dynamic> toJson() => {
     'token': token,
-    'sent_confirmation': sentConfirmation,
     'cellphone_number': cellphoneNumber
   };
 }

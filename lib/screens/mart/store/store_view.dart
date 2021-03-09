@@ -27,7 +27,7 @@ class StorePage extends GetView<StoreController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CupertinoActivityIndicator(),
+                  _.hasError.call() ? Container() : CupertinoActivityIndicator(),
                   Text(_.message.call()),
                   _.hasError.call() ? RaisedButton(
                     color: Color(Config.LETSBEE_COLOR),
@@ -41,149 +41,160 @@ class StorePage extends GetView<StoreController> {
         ) : GestureDetector(
           onTap: () => dismissKeyboard(Get.context),
           child: Scaffold(
-            body: GetBuilder<StoreController>(
-              builder: (_) {
-                return NestedScrollView(
-                  controller: _.nestedScrollViewController,
-                  headerSliverBuilder: (context, innerBoxIsScrolled) {
-                    return [
-                      SliverOverlapAbsorber(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                        sliver: SliverSafeArea(
-                          top: false,
-                          bottom: false,
-                          sliver: SliverAppBar(
-                            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-                            expandedHeight: 300.0,
-                            floating: true,
-                            pinned: true,
-                            backgroundColor: Color(Config.WHITE),
-                            elevation: 0,
-                            bottom: TabBar(
-                              controller: _.tabController,
-                              isScrollable: true,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelColor: Colors.black,
-                              unselectedLabelColor: Colors.grey,
-                              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
-                              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
-                              indicatorWeight: 5,
-                              tabs: _.store.call().data.categorized.map((data) {
-                                return  Tab(
-                                  child: Container(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(data.name.capitalizeFirst),
-                                    ),
-                                  )
-                                );
-                              }).toList(),
-                            ),
-                            flexibleSpace: FlexibleSpaceBar(
-                              collapseMode: CollapseMode.pin,
-                              background: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: [
-                                  Column(
+            body: NestedScrollView(
+              controller: _.nestedScrollViewController,
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    sliver: SliverSafeArea(
+                      top: false,
+                      bottom: false,
+                      sliver: SliverAppBar(
+                        leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
+                        actions: [
+                          GetX<StoreCartController>(
+                            builder: (cart) {
+                              final filtered = cart.updatedProducts.call().where((data) => !data.isRemove && data.storeId == controller.store.call().data.id && data.userId == controller.box.read(Config.USER_ID));
+                              return GestureDetector(
+                                onTap: () => Get.toNamed(Config.STORE_CART_ROUTE, arguments: controller.store.call().data.id),
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: Stack(
+                                    alignment: Alignment.bottomRight,
                                     children: [
                                       Container(
-                                        height: 200,
-                                        child: Center(
-                                          child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().data.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                                        margin: EdgeInsets.all(10),
+                                        child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
                                       ),
-                                    ),
-                                    Flexible(
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        margin: EdgeInsets.only(bottom: 30),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                              Container(height: 10),
-                                              Text(_.store.call().data.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                              Text(_.store.call().data.location.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal))
-                                            ],
-                                          ),
-                                        ),
+                                      Badge(
+                                        badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                        showBadge: filtered.isNotEmpty,
+                                        borderSide: BorderSide(color: Colors.black, width: 1.5),
+                                        padding: EdgeInsets.all(5),
                                       )
-                                    ],
-                                  ),
-                                  // Positioned(
-                                  //   top: 160.0,
-                                  //   child: Container(
-                                  //     margin: EdgeInsets.only(left: 20),
-                                  //     height: 70.0,
-                                  //     width: 70.0,
-                                  //     decoration: BoxDecoration(
-                                  //       borderRadius: BorderRadius.circular(50),
-                                  //       border: Border.all(width: 2),
-                                  //       color: Colors.white
-                                  //     ),
-                                  //     child: ClipOval(
-                                  //       child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().data.logoUrl, fit: BoxFit.fitWidth, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-                                  //     ),
-                                  //   ),
-                                  // )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ];
-                  },
-                  body: GetX<StoreController>(
-                    builder: (_) {
-                      return Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          _.store.call() != null ? TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
-                            controller: _.tabController,
-                            children: _.store.call().data.categorized.map((categorize) => _buildCategoryItem(categorize)).toList(),
-                          ) : Container(),
-                          GetX<StoreCartController>(
-                            builder: (activeCart) {
-                              return activeCart.cart.call() == null ? Container() : Container(
-                                margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                child: SizedBox(
-                                  width: Get.width,
-                                  child: RaisedButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)
-                                    ),
-                                    color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-                                    child: Stack(
-                                      alignment: Alignment.centerRight,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text('VIEW YOUR CART', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-                                          ],
-                                        ),
-                                        Badge(
-                                    badgeContent: Text(activeCart.cart.call() == null ? '' : activeCart.cart.call().data.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    showBadge: StoreCartController.to.cart.call() != null,
-                                    padding: EdgeInsets.all(10),
-                                  )
-                                      ],
-                                    ),
-                                    onPressed: () => Get.toNamed(Config.STORE_CART, arguments: controller.store.call().data.id),
+                                    ]
                                   ),
                                 ),
                               );
-                            },
+                            }
                           )
                         ],
-                      );
-                    },
-                  ),
-                );
+                        expandedHeight: 330.0,
+                        floating: true,
+                        pinned: true,
+                        backgroundColor: Color(Config.WHITE),
+                        elevation: 0,
+                        bottom: TabBar(
+                          controller: _.tabController,
+                          isScrollable: true,
+                          labelColor: Colors.black,
+                          indicatorSize: TabBarIndicatorSize.label,
+                          indicatorColor: Colors.transparent,
+                          unselectedLabelColor: Colors.grey,
+                          unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+                          onTap: (data) => _.selectedName(_.store.call().data.categorized[data].name),
+                          tabs: _.store.call().data.categorized.map((data) {
+                            return Obx(() => Tab(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(data.name.capitalizeFirst, style: const TextStyle(fontSize: 15)),
+                                  const Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
+                                  _.selectedName.call() == data.name ? Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(topLeft: const Radius.circular(8), topRight: const Radius.circular(8)),
+                                      color: _.selectedName.call() == data.name ? Colors.black : Colors.transparent,
+                                    ),
+                                    height: 4,
+                                    child: Text(data.name, style: const TextStyle(fontSize: 15)),
+                                  ) : Container()
+                                ],
+                              )
+                            ));
+                          }).toList(), 
+                        ),
+                        flexibleSpace: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.pin,
+                          background: Column(
+                            children: [
+                              Container(
+                                  height: 200,
+                                  child: Center(
+                                    child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().data.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(height: 10),
+                                    _.store.call().data.location.name != '' ?
+                                    Text('${_.store.call().data.name} - ${_.store.call().data.location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
+                                    : Text(_.store.call().data.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                    Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                                    Text('No address', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
+                                    Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                            color: Colors.white
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                              Text('10.8KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                                        Container(
+                                          padding: EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                            color: Colors.white
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                              Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Divider(thickness: 0.3)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ];
               },
-            ),
+              body: GetX<StoreController>(
+                builder: (_) {
+                  return _.store.call() != null ? TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: _.tabController,
+                    children: _.store.call().data.categorized.map((categorize) => _buildCategoryItem(categorize)).toList(),
+                  ) : Container();
+                },
+              ),
+            )
           ),
         );
       },
@@ -377,7 +388,8 @@ class StorePage extends GetView<StoreController> {
             ),
             color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
             child: _.isAddToCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text('Add to cart', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-            onPressed: () => _.isAddToCartLoading.call() ? null : _.addTocart(product),
+            // onPressed: () => _.isAddToCartLoading.call() ? null : _.addTocart(product),
+            onPressed: () => _.storeCartToStorage(product),
           );
         },
       ),

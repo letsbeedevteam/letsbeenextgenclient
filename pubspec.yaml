@@ -70,8 +70,11 @@ dependencies:
   # Webview
   webview_flutter: ^1.0.7
 
+  # UUID
+  uuid: ^2.2.2
+
   # Social logins
-  kakao_flutter_sdk: ^0.5.2
+  kakao_flutter_sdk: ^0.5.4
   google_sign_in: ^4.5.9
   flutter_facebook_login: ^3.0.0
   sign_in_with_apple: ^2.5.4

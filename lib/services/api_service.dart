@@ -20,6 +20,8 @@ import 'package:letsbeeclient/models/restaurant.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/signInResponse.dart';
 import 'package:letsbeeclient/models/signUpResponse.dart';
+import 'package:letsbeeclient/models/signup_request.dart';
+import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 
@@ -48,18 +50,28 @@ class ApiService extends GetConnect {
     return signInResponseFromJson(response.bodyString);
   }
 
-  Future<SignUpResponse> customerSignUp({String name, String email, String password}) async {
+  Future<SignUpResponse> customerSignUp({SignUpRequest signUp}) async {
 
+    print(signUp.toJson());
     final response = await post(
       '/auth/customer/signup',
-      {
-        'name': name,
-        'email': email,
-        'password': password
-      }
+      signUp.toJson()
     );
 
     print('Customer Sign Up: ${response.body}');
+
+    return signUpResponseFromJson(response.bodyString);
+  }
+
+  Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
+
+    print(socialSignUp.toJson());
+    final response = await post(
+      '/auth/customer/social/login-update',
+      socialSignUp.toJson()
+    );
+
+    print('Customer Social Sign Up: ${response.body}');
 
     return signUpResponseFromJson(response.bodyString);
   }
@@ -166,23 +178,14 @@ class ApiService extends GetConnect {
     return activeCartResponseFromJson(response.bodyString);
   }
 
-  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod}) async {
-
+  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
     final response = await put(
       '/orders',
       {
         'store_id': storeId,
         'payment_method': paymentMethod,
-        'location': {
-          'lat': _box.read(Config.USER_CURRENT_LATITUDE),
-          'lng': _box.read(Config.USER_CURRENT_LONGITUDE),
-          'street': _box.read(Config.USER_CURRENT_STREET),
-          'country': _box.read(Config.USER_CURRENT_COUNTRY),
-          'state': _box.read(Config.USER_CURRENT_STATE),
-          'city': _box.read(Config.USER_CURRENT_CITY),
-          'iso_code': _box.read(Config.USER_CURRENT_IS_CODE),
-          'barangay': _box.read(Config.USER_CURRENT_BARANGAY)
-        }
+        'address_id': _box.read(Config.USER_ADDRESS_ID),
+        'carts': carts
       },
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
@@ -268,7 +271,7 @@ class ApiService extends GetConnect {
     return numberResponseFromJson(response.bodyString);
   }
 
-  Future<CellphoneConfirmationResponse> cellphoneConfirmaation({String code, String token}) async {
+  Future<CellphoneConfirmationResponse> cellphoneConfirmation({String code, String token}) async {
 
     final response = await post(
       '/auth/customer/cellphone-confirmation',
@@ -323,7 +326,7 @@ class ApiService extends GetConnect {
     );
 
   // 'Get restaurants: ${response.body}'.printWrapped();
-    print('Get store: ${response.body}');
+    // print('Get store: ${response.body}');
 
     return storeResponseFromJson(response.bodyString);
   }

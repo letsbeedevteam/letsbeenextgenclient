@@ -99,40 +99,24 @@ class OrderHistoryData {
 class Address {
     Address({
         this.location,
-        this.street,
-        this.country,
-        this.isoCode,
-        this.state,
-        this.city,
-        this.barangay,
+        this.completeAddress,
+        this.note,
     });
 
     Location location;
-    String street;
-    String country;
-    String isoCode;
-    String state;
-    String city;
-    String barangay;
+    String completeAddress;
+    String note;
 
     factory Address.fromJson(Map<String, dynamic> json) => Address(
         location: Location.fromJson(json["location"]),
-        street: json["street"],
-        country: json["country"],
-        isoCode: json["iso_code"],
-        state: json["state"],
-        city: json["city"],
-        barangay: json["barangay"],
+        completeAddress: json["complete_address"],
+        note: json["note"]
     );
 
     Map<String, dynamic> toJson() => {
         "location": location.toJson(),
-        "street": street,
-        "country": country,
-        "iso_code": isoCode,
-        "state": state,
-        "city": city,
-        "barangay": barangay,
+        "complete_address": completeAddress,
+        "note": note
     };
 }
 
@@ -228,6 +212,7 @@ class OrderHistoryMenu {
         "product_id": productId,
         "name": name,
         "price": price,
+        "customer_price": customerPrice,
         "quantity": quantity,
         "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
         "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),

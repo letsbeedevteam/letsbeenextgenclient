@@ -13,13 +13,7 @@ class SplashController extends GetxController {
 
         if(_box.read(Config.IS_LOGGED_IN)) {
 
-          if (_box.hasData(Config.IS_SETUP_LOCATION)) {
-
-            Get.offNamedUntil(_box.read(Config.IS_SETUP_LOCATION) ? Config.DASHBOARD_ROUTE : Config.SETUP_LOCATION_ROUTE, (route) => false); 
-            
-          } else {
-            Get.offNamedUntil(Config.SETUP_LOCATION_ROUTE, (route) => false);
-          }
+          Get.offNamedUntil(Config.DASHBOARD_ROUTE, (route) => false); 
 
         } else {
           Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);

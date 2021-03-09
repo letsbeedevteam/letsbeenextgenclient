@@ -6,7 +6,6 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/activeOrderResponse.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
@@ -35,8 +34,11 @@ class DashboardPage extends GetView<DashboardController> {
                         backgroundColor: Color(Config.WHITE),
                         titleSpacing: 0.0,
                         centerTitle: false,
-                        // leading: IconButton(icon: Icon(Icons.gps_fixed, size: 25), onPressed: () => _.showLocationSheet(true), highlightColor: Colors.transparent, splashColor: Colors.transparent),
-                        title: Padding(
+                        title: currentIndex == 2 ? Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text('My Account', style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+                        ) : Padding(
                           padding: EdgeInsets.only(left: 15, right: 15),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,25 +49,15 @@ class DashboardPage extends GetView<DashboardController> {
                               Row(
                                 children: [
                                   Text('Deliver to: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                                  GestureDetector(
-                                    onTap: () => _.showLocationSheet(true),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                      height: 20,
-                                      alignment: Alignment.centerLeft,
-                                      decoration: BoxDecoration(
-                                        color: Color(Config.LETSBEE_COLOR),
-                                        borderRadius: BorderRadius.circular(25)
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                                          Icon(Icons.keyboard_arrow_down, size: 20,)
-                                        ],
-                                      ),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    height: 20,
+                                    alignment: Alignment.centerLeft,
+                                    decoration: BoxDecoration(
+                                      color: Color(Config.LETSBEE_COLOR),
+                                      borderRadius: BorderRadius.circular(25)
                                     ),
+                                    child: Text(_.userCurrentNameOfLocation.call() == null ? 'Home' : _.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
                                   )
                                 ],
                               ),
@@ -77,19 +69,14 @@ class DashboardPage extends GetView<DashboardController> {
                                   Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
                                 ],
                               ),
-                              // Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                             ],
                           ),
                         ),
                         // actions: [
-                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'account.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => Get.toNamed(Config.CART_ROUTE), highlightColor: Colors.transparent, splashColor: Colors.transparent)
+                        //   _.pageIndex.call() == 2 ? Container() :
+                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'jar-empty.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => print('Cart'), highlightColor: Colors.transparent, splashColor: Colors.transparent)
                         // ],
                       ),
-                    ),
-                    Container(
-                      child:  _.isOpenLocationSheet.call() ? _topSheet(_) : Container(),
-                      width: Get.width, 
-                      color: Color(Config.WHITE)
                     ),
                   ],
                 ),
@@ -97,8 +84,8 @@ class DashboardPage extends GetView<DashboardController> {
                   child: Column(
                     children: [
                       Container(
-                        margin: _.isHideAppBar.call() ? EdgeInsets.zero : EdgeInsets.only(bottom: 10),
-                        child: _.isHideAppBar.call() ? Container() : Divider(),
+                        height: 2,
+                        color: Colors.grey.shade200
                       ),
                       Expanded(
                         child: PageView(
@@ -106,7 +93,6 @@ class DashboardPage extends GetView<DashboardController> {
                           controller: _.pageController,
                           onPageChanged: (index) {
                             _.pageIndex(index);
-                            _.showLocationSheet(false);
                           },
                           children: _.widgets,
                         ),
@@ -116,22 +102,26 @@ class DashboardPage extends GetView<DashboardController> {
                 )
               ],
             ),
-            floatingActionButton: _.activeOrders.call() == null ? Container() : Badge(
+            floatingActionButton: _.pageIndex.call() == 2 ? Container() : _.activeOrders.call() == null ? Container() : Badge(
               badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               padding: EdgeInsets.all(10),
+              borderSide: BorderSide(color: Colors.black, width: 1.5),
               showBadge: _.activeOrders.call() != null,
               child: FloatingActionButton(
                 splashColor: Colors.transparent,
-                backgroundColor: Color(Config.LETSBEE_COLOR),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(30)
-                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0,
                 onPressed: () {
                   _.fetchActiveOrders();
-                  _activeOrderDialog();
+                  if (_.activeOrders.call().data.length == 1) {
+                    controller.activeOrderData(_.activeOrders.call().data.first);
+                    Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+                  } else {
+                    _activeOrderDialog();
+                  }
+                
                 },
-                child: Icon(Icons.restaurant_sharp),
+                child: Image.asset(Config.PNG_PATH + 'active_order.png', height: 50, width: 50),
               ),
             ),
             bottomNavigationBar: Theme(
@@ -191,94 +181,6 @@ class DashboardPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _topSheet(DashboardController _) {
-    return SafeArea(
-      minimum: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(icon: Icon(Icons.close), onPressed: () => _.showLocationSheet(false)),
-                    Text('Choose your location', style: TextStyle(fontSize: 15))
-                  ],
-                ),
-              ),
-              Container(
-                child: Row(
-                  children: [
-                    IconButton(icon: Icon(Icons.add_circle_outline), onPressed: _.addAddress),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Container(height: 1, width: Get.width, color: Colors.grey.shade200),
-          _.addresses.call() == null ? Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Text(_.addressErrorMessage.call()),
-                RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR),
-                  child: Text('Refresh'),
-                  onPressed: () => _.refreshToken('Loading...'),
-                )
-              ],
-            ),
-          ) :
-          Container(
-            height: 150,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: GetX<DashboardController>(
-              builder: (_) {
-                return Scrollbar(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _.addresses.call().data.map((e) => _buildLocationList(e)).toList(),
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      )
-    );
-  }
-
-  Widget _buildLocationList(AddressData data) {
-    final address = '${data.street}, ${data.barangay}, ${data.city}';
-    return GestureDetector(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: Get.width,
-              child: Text(data.name, style: TextStyle(color: Color(Config.LETSBEE_COLOR), fontWeight: FontWeight.bold)),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child:  Text(address)),
-                // GestureDetector(child: Icon(Icons.close), onTap: () => print('Remove location'))
-              ],
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          ],
-        ),
-      ),
-      onTap: () {
-        DashboardController.to.updateCurrentLocation(data);
-      },
-    );
-  }
-
   Widget _buildActiveOrderList(ActiveOrderData data) {
     return GestureDetector(
       onTap: () {
@@ -287,39 +189,43 @@ class DashboardPage extends GetView<DashboardController> {
         Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
       },
       child: Container(
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          // border: Border.all(width: 0.5),
-          borderRadius: BorderRadius.circular(5),
-          color: Color(Config.LETSBEE_COLOR)
-        ),
-        child: Row(
+        color: Color(Config.WHITE),
+        child: Column(
           children: [
-           Container(
-             height: 55.0,
-             width: 55.0,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.white
+            Row(
+              children: [           
+                Expanded(
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      data.activeStore.locationName.isBlank ? 
+                      Text("${data.activeStore.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)) : 
+                      Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      _buildStatus(status: data.status),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      Text(data.products.length == 1 ? '${data.products.first.quantity}x ${data.products.first.name}' : '${data.products.length}x Items', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                      Text('₱${data.fee.customerTotalPrice}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))
+                    ],
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                Container(
+                 height: 70.0,
+                 width: 70.0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35))),
+                ),
+               ),
+              ],
             ),
-            child: ClipOval(
-               child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, image: data.activeStore.logoUrl.toString(), fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-            ),
-           ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
-            Expanded(
-              child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  data.activeStore.locationName.isBlank ? 
-                  Text("${data.activeStore.name}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)) : 
-                  Text("${data.activeStore.name} (${data.activeStore.locationName})", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                  Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  _buildStatus(status: data.status),
-                ],
-              ),
-            )
+            Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+            Divider(thickness: 2, color: Colors.grey.shade200)
           ],
         ),
       ),
@@ -328,50 +234,63 @@ class DashboardPage extends GetView<DashboardController> {
 
   Widget _buildStatus({String status}) {
     switch (status) {
-      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'pending': return Text('Waiting for restaurant...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-accepted': return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'store-declined': return Text('Restaurant Declined', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-accepted': return Text('Your rider is driving to pick your order...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'rider-picked-up': return Text('Driver is on the way to your location...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'delivered': return Text('Delivered', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      case 'cancelled': return Text('Cancelled', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
         break;
-      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12));
+      default: return Text('Waiting for rider...', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12));
     }
   }
 
   _activeOrderDialog() {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-        ),
-        backgroundColor: Color(Config.WHITE),
-        insetPadding: EdgeInsets.all(20),
-        child: GetX<DashboardController>(
-          builder: (_) {
-            return Container(
-              height: _.activeOrders.call() == null ? 100 : 380,
-              child: _.activeOrders.call() == null ? Container(
-                child: Center(child: Text(_.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
+    Get.bottomSheet(
+      Obx(() {
+        return Container(
+          margin: EdgeInsets.only(top: 20),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Text('Your Orders', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+              centerTitle: true,
+              bottom: PreferredSize(
+                child: Container(height: 2, color: Colors.grey.shade200),
+                preferredSize: Size.fromHeight(4.0)
+              ),
+              actions: [
+                IconButton(icon: RotatedBox(
+                  quarterTurns: 3,
+                  child: Icon(Icons.chevron_left),
+                ), onPressed: () => Get.back())
+              ],
+            ),
+            body: Container(
+              child: controller.activeOrders.call() == null ? Container(
+                child: Center(child: Text(controller.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
               ) : Scrollbar(
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: _.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
+                    children: controller.activeOrders.call().data.map((e) => _buildActiveOrderList(e)).toList()
                   ),
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      }),
+      backgroundColor: Color(Config.WHITE),
+      isScrollControlled: true
     );
   }
 }

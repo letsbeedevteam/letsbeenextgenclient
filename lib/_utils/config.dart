@@ -1,9 +1,8 @@
 class Config {
 
   // Base URLs
-  // static const BASE_URL = 'http://192.168.100.14:8000';
-  // static const BASE_URL = 'https://serene-caverns-10194.herokuapp.com'; 
-  static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com';
+  // static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com'; // develop
+  static const BASE_URL = 'http://18.166.234.218:8000'; // staging
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -28,10 +27,13 @@ class Config {
   static const ACTIVE_ORDER_ROUTE = '/active_order';
   static const STORE_ROUTE = '/store';
   static const STORE_MENU_ROUTE = '/store_menu';
-  static const STORE_CART = '/store_cart';
+  static const STORE_CART_ROUTE = '/store_cart';
+  static const ADDRESS_ROUTE = '/address';
+  static const USER_DETAILS_ROUTE = '/user_details';
 
   // Storage keys
   static const USER_ID = 'user_id';
+  static const USER_ADDRESS_ID = 'user_address_id';
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
   static const USER_TOKEN = 'user_token';
@@ -40,18 +42,14 @@ class Config {
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
-  static const USER_CURRENT_STREET = 'user_current_street';
-  static const USER_CURRENT_COUNTRY = 'user_current_country';
-  static const USER_CURRENT_STATE = 'user_current_state';
-  static const USER_CURRENT_CITY = 'user_current_city';
-  static const USER_CURRENT_IS_CODE = 'user_current_iso_code';
-  static const USER_CURRENT_BARANGAY = 'user_current_barangay';
+  static const NOTE_TO_RIDER = 'note_to_rider';
+  static const PRODUCTS = 'products';
 
 
   static const LETSBEE_STORAGE = 'LetsBeeStorage';
   static const SOCIAL_LOGIN_TYPE = 'social_login_type';
 
-  static const IS_SETUP_LOCATION = 'is_setup_location';
+  // static const IS_SETUP_LOCATION = 'is_setup_location';
   // static const IS_VERIFY_NUMBER = 'is_verify_number';
   static const IS_LOGGED_IN = 'is_logged_in';
 
@@ -81,10 +79,13 @@ class Config {
   static const LETS_BEE = 'Let\'s Bee';
   static const ADD_NEW_ADDRESS = 'add_new_address';
   static const SETUP_ADDRESS = 'setup_address';
+  static const NEXT_DAY = 'next_day';
 
   // Colors 
   static const LETSBEE_COLOR = 0xFFFCD000;
   static const WHITE = 0xFFF8F8FA;
   static const SEARCH_TEXT_COLOR = 0xFF999999;
   static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;
+  static const YELLOW_TEXT_COLOR = 0xFFD9BB64;
+  static const GREY_TEXT_COLOR = 0xFF666666;
 }

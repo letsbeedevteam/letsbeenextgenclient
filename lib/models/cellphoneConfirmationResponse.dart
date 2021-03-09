@@ -8,7 +8,7 @@ class CellphoneConfirmationResponse {
     this.status,
     this.data,
     this.message,
-    this.code
+    this.code,
   });
 
   int status;
@@ -20,7 +20,7 @@ class CellphoneConfirmationResponse {
     status: json['status'],
     message: json['message'] == null ? null : json['message'],
     code: json['code'] == null ? null : json['code'],
-    data: json['data'] == null ? null : CellphoneConfirmationData.fromJson(json['data'])
+    data: json['data'] == null ? null : CellphoneConfirmationData.fromJson(json['data']),
   );
 }
 
@@ -30,7 +30,8 @@ class CellphoneConfirmationData {
     this.name,
     this.email,
     this.cellphoneNumber,
-    this.accessToken
+    this.accessToken,
+    this.address
   });
 
   int id;
@@ -38,12 +39,57 @@ class CellphoneConfirmationData {
   String email;
   String cellphoneNumber;
   String accessToken;
+  List<AddressData> address;
 
   factory CellphoneConfirmationData.fromJson(Map<String, dynamic> json) => CellphoneConfirmationData(
     id: json['id'],
     name: json['name'],
     email: json['email'],
     cellphoneNumber: json['cellphone_number'],
-    accessToken: json['access_token']
+    accessToken: json['access_token'],
+    address: List<AddressData>.from(json["address"].map((x) => AddressData.fromJson(x))),
+
+  );
+}
+
+class AddressData {
+  AddressData({
+    this.location,
+    this.id,
+    this.userId,
+    this.name,
+    this.address,
+    this.note,
+  });
+
+  LocationData location;
+  int id;
+  int userId;
+  String name;
+  String address;
+  String note;
+
+  factory AddressData.fromJson(Map<String, dynamic> json) => AddressData(
+    location: LocationData.fromJson(json['location']),
+    id: json['id'],
+    userId: json['userId'],
+    name: json['name'],
+    address: json["address"],
+    note: json["note"],
+  );
+}
+
+class LocationData {
+  LocationData({
+    this.lat,
+    this.lng
+  });
+
+  double lat;
+  double lng;
+
+  factory LocationData.fromJson(Map<String, dynamic> json) => LocationData(
+    lat: json['lat'],
+    lng: json['lng']
   );
 }

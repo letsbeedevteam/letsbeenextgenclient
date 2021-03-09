@@ -26,7 +26,7 @@ class AuthService extends GetConnect {
       {'token': token},
     );
 
-    print('Login response: ${response.body}');
+    print('Social Login response: ${response.body}');
 
     return signInResponseFromJson(response.bodyString);
   }
@@ -44,7 +44,6 @@ class AuthService extends GetConnect {
   Future<FacebookAccessToken> facebookSignIn() async {
     _facebookLogin.loginBehavior = FacebookLoginBehavior.webOnly;
     final result = await _facebookLogin.logIn(['email']);
-
     return result.accessToken != null ? result.accessToken : null;
   }
 
