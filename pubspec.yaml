@@ -41,6 +41,9 @@ dependencies:
 
   # Gif
   flutter_gifimage: ^1.0.1
+
+  # Code Field
+  code_field: ^1.22.0
   
   # Permission
   permission_handler: ^5.1.0+2

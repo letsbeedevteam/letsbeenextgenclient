@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
+import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 // import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -29,7 +30,8 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   final nestedScrollViewController = ScrollController();
   final tFRequestController = TextEditingController();
 
-  var store = StoreResponse().obs;
+  var store = RestaurantStores().obs;
+  var storeResponse = StoreResponse().obs;
   var listOfProcucts = RxList<Product>().obs;
   var product = Product().obs;
   final list = RxList<Product>().obs;
@@ -58,7 +60,11 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   @override
   void onInit() {
     Get.put(CartController());
+    storeResponse.nil();
     store.nil();
+
+    store(RestaurantStores.fromJson(argument['restaurant']));
+
     super.onInit();
   }
 
@@ -70,7 +76,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   void refreshProduct(Product getProduct) {
     product.value = getProduct;
-    product.value.choices.forEach((data) => data.options.forEach((option) => option.selectedValue = null));
+    product.value.variants.forEach((data) => data.options.forEach((option) => option.selectedValue = null));
     product.value.additionals.forEach((data) => data.selectedValue = true);
     
     additionals.clear();
@@ -85,7 +91,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   void updateChoices(int id, Option option) {
     product.update((val) {
-      val.choices.where((element) => element.id == id).forEach((choice) {
+      val.variants.where((element) => element.id == id).forEach((choice) {
         choice.options.forEach((data) { 
           if (data.name == option.name) {
             data.selectedValue = option.name;
@@ -144,12 +150,14 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   void addToCart(Product product) {
 
+    print(product.toJson());
+
     var hasNotSelectedChoice = false;
 
-    if (product.choices.isEmpty) {
+    if (product.variants.isEmpty) {
       hasNotSelectedChoice = true;
     } else {
-      product.choices.forEach((choice) {
+      product.variants.forEach((choice) {
         hasNotSelectedChoice = choice.options.where(((option) => option.selectedValue != null)).isNotEmpty;
       });
     }
@@ -157,16 +165,18 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     if (!hasNotSelectedChoice) {
       errorSnackbarTop(title: Config.oops, message: Config.requiredChoice);
     } else {
-
+      
       product.uniqueId = uuid.v4();
       product.note = tFRequestController.text.trim().isEmpty ? null : tFRequestController.text;
       product.userId = box.read(Config.USER_ID);
+      product.storeId = store.call().id;
       product.quantity = quantity.call();
       product.isRemove = false;
       product.choiceCart = choiceCart.call().values.toList();
       product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
+      product.type = Config.RESTAURANT;
   
-      final prod = list.call().where((data) => !data.isRemove && data.storeId == store.call().data.id);
+      final prod = list.call().where((data) => !data.isRemove && data.storeId == store.call().id);
 
       if (prod.isNotEmpty) {
         
@@ -222,11 +232,11 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     message(tr('loadingRestaurant'));
     hasError(false);
     apiService.fetchStoreById(id: argument['id']).then((response) {
-      hasError(false);
-      store(response);
-      selectedName(store.call().data.categorized.first.name);
-      tabController = TabController(length: store.call().data.categorized.map((categorize) => categorize.name).length, vsync: this);
-      CartController.to..storeId(store.call().data.id);
+     
+      storeResponse(response);
+      selectedName(storeResponse.call().data.first.name);
+      tabController = TabController(length: storeResponse.call().data.map((data) => data.name).length, vsync: this);
+      CartController.to..storeId(store.call().id);
       tabController.addListener(() {
         FocusScope.of(Get.context).requestFocus(FocusNode());
         productName('');
@@ -241,9 +251,11 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
         CartController.to.getProducts();
       } 
 
+      hasError(false);
+
     }).catchError((onError) {
       hasError(true);
-      store.nil();
+      storeResponse.nil();
       message(Config.somethingWentWrong);
       print('Error fetch restaurant by ID ${argument['id']}: $onError');
     });

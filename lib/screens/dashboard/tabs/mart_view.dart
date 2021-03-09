@@ -158,7 +158,7 @@ class MartPage extends StatelessWidget {
   Widget _buildRecentMart(MartStores mart) {
     final name = mart.location.name == null || mart.location.name == '' ? '${mart.name}' : '${mart.name} - ${mart.location.name}';
     return GestureDetector(
-      onTap: () =>  Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id}),
+      onTap: () =>  Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id, 'mart': mart.toJson()}),
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 5),
         padding: EdgeInsets.all(10),
@@ -197,7 +197,7 @@ class MartPage extends StatelessWidget {
   Widget _buildMart(MartStores mart) {
     final name = mart.location.name == null || mart.location.name == '' ? '${mart.name}' : '${mart.name} - ${mart.location.name}';
     return GestureDetector(
-      onTap: () => Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id}),
+      onTap: () => Get.toNamed(Config.MART_ROUTE, arguments: {'id': mart.id, 'mart': mart.toJson()}),
       child: Container(
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(

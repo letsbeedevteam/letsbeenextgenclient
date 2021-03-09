@@ -206,7 +206,13 @@ class CodegenLoader extends AssetLoader{
     "specifyYourReason": "Please specify your reason for cancelling",
     "selectReason": "Please select your reason for cancelling",
     "noRestaurants": "No restaurants found",
-    "noShops": "No shops found"
+
+    // NEW
+    "noShops": "No shops found",
+    "signedUp": "You have successfully signed up!",
+    "sendCode": "Send code",
+    "enterYourNumber": "Enter your contact number",
+    "invalidNumber": "Your conect number is invalid"
   };
   static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

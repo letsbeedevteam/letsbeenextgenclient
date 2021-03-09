@@ -247,14 +247,14 @@ class HomePage extends StatelessWidget {
             color: Colors.white
           ),
         ),
-      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id}),
+      onTap: () =>  Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
     );
   }
 
   Widget _buildRestaurantItem(RestaurantStores restaurant) {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
-      onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id}),
+      onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
       child: Container(
         margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         decoration: BoxDecoration(

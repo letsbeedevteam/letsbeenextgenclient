@@ -152,7 +152,7 @@ class ChangePasswordPage extends GetView<ChangePasswordController> {
                   child: Image.asset(Config.PNG_PATH + 'password.png', width: 10,),
                 ),
                 suffixIcon: IconButton(
-                  onPressed: () => controller.isShowNewPass(!controller.isShowOldPass.call()),
+                  onPressed: () => controller.isShowNewPass(!controller.isShowNewPass.call()),
                   icon: controller.isShowNewPass.call() ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
                 ),
                 fillColor: !controller.isLoading.call() ? Colors.white : Colors.grey.shade200,
@@ -204,7 +204,7 @@ class ChangePasswordPage extends GetView<ChangePasswordController> {
                   child: Image.asset(Config.PNG_PATH + 'password.png', width: 10,),
                 ),
                 suffixIcon: IconButton(
-                  onPressed: () => controller.isShowRepeatPass(!controller.isShowOldPass.call()),
+                  onPressed: () => controller.isShowRepeatPass(!controller.isShowRepeatPass.call()),
                   icon: controller.isShowRepeatPass.call() ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
                 ),
                 fillColor: !controller.isLoading.call() ? Colors.white : Colors.grey.shade200,

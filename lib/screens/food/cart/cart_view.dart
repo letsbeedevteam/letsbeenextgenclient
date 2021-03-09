@@ -289,7 +289,7 @@ class CartPage extends GetView<CartController> {
                             children: [
                               Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                               Column(
-                                children: product.choices.map((e) => _buildChoice(e, product.quantity)).toList(),
+                                children: product.variants.map((e) => _buildChoice(e, product.quantity)).toList(),
                               ),
                               Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                               product.additionals.where((data) => !data.selectedValue).isEmpty ? Container() : Column(
@@ -349,7 +349,7 @@ class CartPage extends GetView<CartController> {
     );
   }
 
-  Widget _buildChoice(Choice choice, int quantity) {
+  Widget _buildChoice(Variants choice, int quantity) {
     return choice.options.isNotEmpty ? Column(
       children: choice.options.where((data) => data.name == data.selectedValue).map((data) =>  _buildOptions(data, quantity)).toList()
     ) : Container();
@@ -579,7 +579,7 @@ class CartPage extends GetView<CartController> {
     );
   }
 
-  Widget _buildRequiredItem(Choice choice) {
+  Widget _buildRequiredItem(Variants choice) {
     return Container(
       child: Column(
         children: [
@@ -588,7 +588,7 @@ class CartPage extends GetView<CartController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${choice.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                Text('${choice.type}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -711,9 +711,9 @@ class CartPage extends GetView<CartController> {
               ),
             ),
             Divider(),
-            product.choices.isNotEmpty ? Column(
+            product.variants.isNotEmpty ? Column(
               mainAxisSize: MainAxisSize.min,
-              children: product.choices.map((e) => _buildRequiredItem(e)).toList()
+              children: product.variants.map((e) => _buildRequiredItem(e)).toList()
             ) : Container(),
             product.additionals.isNotEmpty ? Column(
               mainAxisSize: MainAxisSize.min,
@@ -929,7 +929,7 @@ class CartPage extends GetView<CartController> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(tr('updateCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().price)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                                           ],
                                         )
                                       ),

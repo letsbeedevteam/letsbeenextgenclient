@@ -7,6 +7,7 @@ import 'package:letsbeeclient/binds/cart_bind.dart';
 import 'package:letsbeeclient/binds/change_pass_bind.dart';
 import 'package:letsbeeclient/binds/chat_bind.dart';
 import 'package:letsbeeclient/binds/dashboard_bind.dart';
+import 'package:letsbeeclient/binds/forgot_pass_bind.dart';
 import 'package:letsbeeclient/binds/history_bind.dart';
 import 'package:letsbeeclient/binds/history_detail_bind.dart';
 import 'package:letsbeeclient/binds/map_bind.dart';
@@ -29,6 +30,7 @@ import 'package:letsbeeclient/screens/chat/chat_view.dart';
 import 'package:letsbeeclient/screens/dashboard/dashboard_view.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_view.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_view.dart';
+import 'package:letsbeeclient/screens/forgot_password/forgot_password_view.dart';
 import 'package:letsbeeclient/screens/grocery/mart/mart_product_view.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_view.dart';
 import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
@@ -61,4 +63,5 @@ routes() => [
   GetPage(name: Config.USER_DETAILS_ROUTE, page: () => UserDetailsPage(), binding: UserDetailsBind()),
   GetPage(name: Config.ACCOUNT_INFO_ROUTE, page: () => AccountInfoPage(), binding: AccountInfoBind()),
   GetPage(name: Config.CHANGE_PASS_ROUTE, page: () => ChangePasswordPage(), binding: ChangePassBind()),
+  GetPage(name: Config.FORGOT_PASS_ROUTE, page: () => ForgotPasswordPage(), binding: ForgotPassBind()),
 ];

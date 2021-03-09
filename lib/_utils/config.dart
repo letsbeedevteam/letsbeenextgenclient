@@ -29,6 +29,7 @@ class Config {
   static const USER_DETAILS_ROUTE = '/user_details';
   static const ACCOUNT_INFO_ROUTE = '/account_info';
   static const CHANGE_PASS_ROUTE = '/change_pass';
+  static const FORGOT_PASS_ROUTE = '/forgot_pass';
 
   // Storage keys
   static const USER_ID = 'user_id';
@@ -97,6 +98,8 @@ class Config {
   static final trackingRider = tr('trackingRider');
   static final yourRider = tr('yourRider');
   static final you = tr('you');
+  static final enterYourNumber = tr('enterYourNumber');
+  static final invalidNumber = tr('invalidNumber');
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';
@@ -113,6 +116,8 @@ class Config {
   static const ADD_NEW_ADDRESS = 'add_new_address';
   static const SETUP_ADDRESS = 'setup_address';
   static const NEXT_DAY = 'next_day';
+  static const RESTAURANT = 'restaurant';
+  static const MART = 'mart';
 
   // Colors 
   static const LETSBEE_COLOR = 0xFFFCD000;

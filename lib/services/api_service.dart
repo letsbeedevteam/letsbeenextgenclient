@@ -5,11 +5,14 @@ import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
+import 'package:letsbeeclient/models/change_pass_request.dart';
+import 'package:letsbeeclient/models/change_pass_response.dart';
 import 'package:letsbeeclient/models/createOrderResponse.dart';
 import 'package:letsbeeclient/models/customer_edit_response.dart';
 import 'package:letsbeeclient/models/deleteCartResponse.dart';
 import 'package:letsbeeclient/models/deleteOrderResponse.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
+import 'package:letsbeeclient/models/forgot_password_request.dart';
 import 'package:letsbeeclient/models/getAddressResponse.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 // import 'package:letsbeeclient/models/getCart.dart';
@@ -63,6 +66,47 @@ class ApiService extends GetConnect {
     print('Customer Sign Up: ${response.body}');
 
     return signUpResponseFromJson(response.bodyString);
+  }
+
+  Future<ChangePasswordResponse> customerChangePassword({ChangePasswordRequest request}) async {
+
+    print(request.toJson());
+    final response = await post(
+      '/auth/customer/change-password',
+      request.toJson(),
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Customer Change Password: ${response.body}');
+
+    return changePasswordResponseFromJson(response.bodyString);
+  }
+
+  Future<dynamic> customerRequestForgotPassword({String contactNumber}) async {
+
+    final response = await post(
+      '/auth/customer/request-forgot-password',
+      {'cellphone_number': contactNumber}
+    );
+
+    print('Request Forgot Password: ${response.body}');
+
+    // return changePasswordResponseFromJson(response.bodyString);
+  }
+
+  Future<dynamic> customerForgotPassword({ForgotPasswordRequest request}) async {
+    
+    print(request.toJson());
+    final response = await post(
+      '/auth/customer/forgot-password',
+      request.toJson()
+    );
+
+    print('Forgot Password: ${response.body}');
+
+    // return changePasswordResponseFromJson(response.bodyString);
   }
 
   Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
@@ -336,13 +380,13 @@ class ApiService extends GetConnect {
   Future<StoreResponse> fetchStoreById({int id}) async {
 
     final response = await get(
-      '/stores/$id',
+      '/stores/$id/products',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-  'Get restaurants: ${response.body}'.printWrapped();
+  'Get stores: ${response.body}'.printWrapped();
     // print('Get store: ${response.body}');
 
     return storeResponseFromJson(response.bodyString);

@@ -40,7 +40,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(tr('Account Management'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          child: Text(tr('accountManagement'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
         GestureDetector(
           onTap: () => Get.toNamed(Config.ACCOUNT_INFO_ROUTE),

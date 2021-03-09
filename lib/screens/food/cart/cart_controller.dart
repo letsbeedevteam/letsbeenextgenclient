@@ -166,9 +166,9 @@ class CartController extends GetxController {
       updatedProducts.call().assignAll(products);
       updatedProducts.call().forEach((product) { 
 
-          for (var j = 0;  j < product.choices.length; j++) {
+          for (var j = 0;  j < product.variants.length; j++) {
 
-            final choice =  product.choices[j];
+            final choice =  product.variants[j];
             choice.options.where((data) => data.name == data.selectedValue).forEach((option) {
               choicesTotalPrice.value += double.tryParse(option.customerPrice.toString()) * product.quantity;
             });
@@ -183,7 +183,7 @@ class CartController extends GetxController {
           addToCart.call().add(
             AddToCart(
               productId: product.id,
-              choices: product.choices.isEmpty ? [] : product.choiceCart.toList(),
+              choices: product.variants.isEmpty ? [] : product.choiceCart.toList(),
               additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
               quantity: product.quantity,
               note: product.note
@@ -200,7 +200,7 @@ class CartController extends GetxController {
 
   void updateChoices(int id, Option option) {
     product.update((val) {
-      val.choices.where((element) => element.id == id).forEach((choice) {
+      val.variants.where((element) => element.id == id).forEach((choice) {
         choice.options.forEach((data) { 
           if (data.name == option.name) {
             data.selectedValue = option.name;
@@ -297,8 +297,8 @@ class CartController extends GetxController {
     choiceCart.call().clear();
     isSelectedProceed('');
 
-    if (product.call().choices.isNotEmpty) {
-      product.call().choices.forEach((choice) {
+    if (product.call().variants.isNotEmpty) {
+      product.call().variants.forEach((choice) {
         choice.options.forEach((data) { 
           if (data.name == data.selectedValue) {
             options.add(data);

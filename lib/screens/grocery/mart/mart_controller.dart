@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 // import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
@@ -24,7 +25,8 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
   var quantity = 0.obs;
 
-  var store = StoreResponse().obs;
+  var store = MartStores().obs;
+  var storeResponse = StoreResponse().obs;
 
   var message = ''.obs;
   var productName = ''.obs;
@@ -40,8 +42,10 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   @override
   void onInit() {
     // list.call().clear();
+    storeResponse.nil();
     store.nil();
     Get.put(MartCartController());
+    store(MartStores.fromJson(argument['mart']));
     super.onInit();
   }
 
@@ -71,10 +75,10 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     hasError(false);
     apiService.fetchStoreById(id: argument['id']).then((response) {
       hasError(false);
-      store(response);
-      selectedName(store.call().data.categorized.first.name);
-      tabController = TabController(length: store.call().data.categorized.map((categorize) => categorize.name).length, vsync: this);
-      MartCartController.to..storeId(store.call().data.id);
+      storeResponse(response);
+      selectedName(storeResponse.call().data.first.name);
+      tabController = TabController(length: storeResponse.call().data.map((categorize) => categorize.name).length, vsync: this);
+      MartCartController.to..storeId(store.call().id);
       tabController.addListener(() {
         FocusScope.of(Get.context).requestFocus(FocusNode());
         productName('');
@@ -91,7 +95,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
     }).catchError((onError) {
       hasError(true);
-      store.nil();
+      storeResponse.nil();
       message(Config.somethingWentWrong);
       print('Error fetch mart by ID ${argument['id']}: $onError');
     });
@@ -100,6 +104,9 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   void storeCartToStorage(Product product) {
     product.uniqueId = uuid.v4();
     product.userId = box.read(Config.USER_ID);
+    product.storeId = store.call().id;
+    product.type = Config.MART;
+
     for (var i = 0; i < quantity.call(); i++) {
       list.call().add(product);
     }

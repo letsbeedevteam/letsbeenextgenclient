@@ -113,7 +113,7 @@ class AuthPage extends GetView<AuthController> {
                 ]
               ),
               GestureDetector(
-                onTap: () => print('Forgot Password'),
+                onTap: () => Get.toNamed(Config.FORGOT_PASS_ROUTE),
                 child: Text(tr('forgotPassword'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR)))
               ),
             ],

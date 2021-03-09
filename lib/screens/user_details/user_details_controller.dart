@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -50,55 +51,111 @@ class UserDetailsController extends GetxController {
   }
 
   void socialSignUp() {
-    final request = SocialSignUpRequest(
-      token: data.call().token,
-      name: nameController.text,
-      cellphoneNumber: '0${numberController.text}'
-    );
 
-    _apiService.customerSocialSignUp(socialSignUp: request).then((response) {
-      if (response.status == 200) {
-        final data = SignInData(
-          token: response.data.token,
-          cellphoneNumber: '0${numberController.text}'
-        );
-        Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
-        dismissKeyboard(Get.context);
+    if (nameController.text.isNotEmpty || numberController.text.isNotEmpty) {
+
+      if (numberController.text.length == 10) {
+
+      final request = SocialSignUpRequest(
+        token: data.call().token,
+        name: nameController.text,
+        cellphoneNumber: '0${numberController.text}'
+      );
+
+      _apiService.customerSocialSignUp(socialSignUp: request).then((response) {
+          if (response.status == 200) {
+            final data = SignInData(
+              token: response.data.token,
+              cellphoneNumber: '0${numberController.text}'
+            );
+            _signedUpPopUp(data);
+            dismissKeyboard(Get.context);
+          } else {
+            alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          }
+          isLoading(false);
+        }).catchError((onError) {
+          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          isLoading(false);
+        });
+
       } else {
-        alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
       }
-      isLoading(false);
-    }).catchError((onError) {
-      alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
-      isLoading(false);
-    });
+
+    } else {
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+    }
   }
 
   void signUp() {
 
-    final request = SignUpRequest(
-      name: nameController.text,
-      email: SignUpController.to.signUpEmail.call(),
-      password: SignUpController.to.signUpPassword.call(),
-      confirmPassword: SignUpController.to.signUpPassword.call(),
-      cellphoneNumber: '0${numberController.text}'
-    );
+    if (nameController.text.isNotEmpty || numberController.text.isNotEmpty) {
 
-    _apiService.customerSignUp(signUp: request).then((response) {
-      if (response.status == 200) {
-        final data = SignInData(
-          token: response.data.token,
+      if (numberController.text.length == 10) {
+        final request = SignUpRequest(
+          name: nameController.text,
+          email: SignUpController.to.signUpEmail.call(),
+          password: SignUpController.to.signUpPassword.call(),
+          confirmPassword: SignUpController.to.signUpPassword.call(),
           cellphoneNumber: '0${numberController.text}'
         );
-        Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson());
-        dismissKeyboard(Get.context);
+
+        _apiService.customerSignUp(signUp: request).then((response) {
+          if (response.status == 200) {
+            final data = SignInData(
+              token: response.data.token,
+              cellphoneNumber: '0${numberController.text}'
+            );
+            _signedUpPopUp(data);
+            dismissKeyboard(Get.context);
+          } else {
+            alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          }
+          isLoading(false);
+        }).catchError((onError) {
+          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          isLoading(false);
+        });
+
       } else {
-        alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
       }
-      isLoading(false);
-    }).catchError((onError) {
-      alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
-      isLoading(false);
-    });
+    
+
+    } else {
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+    }
+  }
+
+  _signedUpPopUp(SignInData data) {
+    Get.dialog(
+      AlertDialog(
+        content: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(Config.PNG_PATH + 'verified.png'),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Text(tr('signedUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              RaisedButton(
+                onPressed: () => Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: data.toJson()),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20) 
+                ),
+                color: Color(Config.LETSBEE_COLOR),
+                child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+              )
+            ]
+          )
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25)
+        )
+      ),
+    );
   }
 }
