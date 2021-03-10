@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
 import 'package:letsbeeclient/models/change_pass_request.dart';
@@ -9,6 +9,8 @@ import 'package:letsbeeclient/models/change_pass_response.dart';
 import 'package:letsbeeclient/models/create_order_response.dart';
 import 'package:letsbeeclient/models/customer_edit_response.dart';
 import 'package:letsbeeclient/models/delete_order_response.dart';
+import 'package:letsbeeclient/models/edit_address_request.dart';
+import 'package:letsbeeclient/models/edit_address_response.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
 import 'package:letsbeeclient/models/fogot_pass_response.dart';
 import 'package:letsbeeclient/models/forgot_password_request.dart';
@@ -179,21 +181,7 @@ class ApiService extends GetConnect {
     var json = response.body;
     return Product.fromJson(json['data']);
   } 
-
-  Future<ActiveCartResponse> getActiveCarts({int storeId}) async {
-
-    final response = await get(
-      '/carts?store_id=$storeId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Get carts: ${response.body}');
-
-    return activeCartResponseFromJson(response.bodyString);
-  }
-
+  
   Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
     final response = await put(
       '/orders',
@@ -272,6 +260,21 @@ class ApiService extends GetConnect {
     return newAddressResponseFromJson(response.bodyString);
   }
 
+  Future<EditAddressResponse> editAddress(EditAddressRequest request) async {
+
+    final response = await post(
+      '/addresses',
+      request.toJson(),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+    print('Edit addresses: ${response.body}');
+
+    return editAddressResponseFromJson(response.bodyString);
+  }
+
   Future<NumberResponse> updateCellphoneNumber({String number, String token}) async {
 
     final response = await post(
@@ -302,10 +305,10 @@ class ApiService extends GetConnect {
     return cellphoneConfirmationResponseFromJson(response.bodyString);
   }
 
-  Future<RestaurantDashboardResponse> getRestaurantDashboard() async {
+  Future<RestaurantDashboardResponse> getRestaurantDashboard({@required int page}) async {
 
     final response = await get(
-      '/stores/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      '/stores/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}?page=$page',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
@@ -317,10 +320,10 @@ class ApiService extends GetConnect {
     return restaurantDashboardFromJson(response.bodyString);
   }
 
-  Future<MartDashboardResponse> getMartDashboard() async {
+  Future<MartDashboardResponse> getMartDashboard({@required int page}) async {
 
     final response = await get(
-      '/stores/marts/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      '/stores/marts/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}?page=$page',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }

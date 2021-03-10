@@ -271,7 +271,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
     });
   }
 
-  Widget _buildMenu(ActiveOrderMenu product) {
+  Widget _buildMenu(ActiveOrderProduct product) {
     return Container(
       child: Column(
         children: [
@@ -297,12 +297,12 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Column(
-                  children: product.choices.map((e) => _buildChoice(e, product.quantity)).toList(),
+                  children: product.variants.map((e) => _buildChoice(e, product.quantity)).toList(),
                 ),
               ],
             )
           ),
-          product.note != null ? Container(
+          product.note.isNotEmpty ? Container(
             margin: EdgeInsets.only(top: 5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,7 +341,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildChoice(Choice choice, int quantity) {
+  Widget _buildChoice(Variants choice, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -359,11 +359,13 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'pending': return Column(
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
-              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-              height: 180,
+            child: SizedBox(
+              child: GifImage(
+                controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
+                image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
+              ),
             ),
           ),
           Padding(
@@ -377,15 +379,14 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child:  _.activeOrderData.call().activeStore.type == 'mart' ? GifImage(
               controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
               image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-              height: 180,
             ) : GifImage(
              controller: DashboardController.to.changeGifRange(range: 28, duration: 1000),
               image: AssetImage(Config.GIF_PATH + 'preparing.gif'),
-              height: 180,
             )
           ),
           Text(_.activeOrderData.call().activeStore.type == 'mart' ? tr('waitingRider') : tr('preparingFood'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
@@ -410,11 +411,11 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child: GifImage(
               controller: DashboardController.to.changeGifRange(range: 28, duration: 2000),
               image: _.activeOrderData.call().activeStore.type == 'mart' ? AssetImage(Config.GIF_PATH + 'mart.gif') : AssetImage(Config.GIF_PATH + 'preparing.gif') ,
-              height: 180,
             )
           ),
           Padding(
@@ -428,11 +429,11 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child: GifImage(
               controller: DashboardController.to.changeGifRange(range: 88, duration: 5000),
               image: AssetImage(Config.GIF_PATH + 'motor.gif'),
-              height: 180,
             )
           ),
           Text(tr('riderPickUp'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
@@ -442,15 +443,14 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'delivered': return Column(
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child: _.activeOrderData.call().activeStore.type == 'mart' ? GifImage(
               controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
               image: AssetImage(Config.GIF_PATH + 'mart_delivered.gif'),
-              height: 180,
             ) : GifImage(
               controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
               image: AssetImage(Config.GIF_PATH + 'delivered.gif'),
-              height: 180,
             )
           ),
           Padding(
@@ -463,11 +463,11 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       default: return Column(
         children: [
           Container(
+            height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child: GifImage(
               controller: DashboardController.to.changeGifRange(range: 88, duration: 1500),
               image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-              height: 150,
             )
           ),
           Text(tr('waitingRider'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold)),

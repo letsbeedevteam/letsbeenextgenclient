@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -32,10 +33,18 @@ void main() async {
 
 Future initServices() async {
   print('Starting services...');
-  await Get.putAsync<SecretLoader>(() async => SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json'));
-  await Get.putAsync(() async {
-    final secretLoad = await Get.find<SecretLoader>().loadKey();
-    KakaoContext.clientId = secretLoad.nativeAppKey;
+  await fetchGif(AssetImage(Config.GIF_PATH + 'delivered.gif'));
+  await fetchGif(AssetImage(Config.GIF_PATH + 'mart_delivered.gif'));
+  await fetchGif(AssetImage(Config.GIF_PATH + 'mart.gif'));
+  await fetchGif(AssetImage(Config.GIF_PATH + 'motor.gif'));
+  await fetchGif(AssetImage(Config.GIF_PATH + 'preparing.gif'));
+  await fetchGif(AssetImage(Config.GIF_PATH + 'waiting.gif'));
+  
+  await Get.putAsync<SecretLoader>(() async {
+    final secretLoad = SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json');
+    final load = await secretLoad.loadKey();
+    KakaoContext.clientId = load.nativeAppKey;
+    return secretLoad;
   });
   await Get.putAsync<GoogleSignIn>(() async => GoogleSignIn());
   await Get.putAsync<FacebookLogin>(() async => FacebookLogin());

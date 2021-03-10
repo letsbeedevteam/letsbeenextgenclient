@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-// import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 // import 'package:letsbeeclient/models/getCart.dart';
@@ -190,10 +189,9 @@ class CartPage extends GetView<CartController> {
 
   Widget _scrollView(CartController _) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _.updatedProducts.call().isEmpty ? Container(height: Get.height, child: Text('No list of carts', style: TextStyle(fontSize: 18))) :
         Expanded(
-          flex: 8,
           child: SingleChildScrollView(
             physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
             child: Container(
@@ -214,28 +212,26 @@ class CartPage extends GetView<CartController> {
             )
           ),
         ),
-        Expanded(
-          child: _.updatedProducts.call().isNotEmpty ? Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(10),
-            child: IgnorePointer(
-              ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
-              child: Container(
-                width: Get.width,
-                child: RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(_.isEdit.call() ? tr('done') : _.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                  ),
-                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.updatedProducts.call().first.storeId)
+        Container(
+          color: Colors.white,
+          padding: EdgeInsets.all(10),
+          child: IgnorePointer(
+            ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
+            child: Container(
+              width: Get.width,
+              child: RaisedButton(
+                color: Color(Config.LETSBEE_COLOR),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
                 ),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(_.isEdit.call() ? tr('done') : _.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                ),
+                onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(_.updatedProducts.call().first.storeId)
               ),
             ),
-          ) : Container(),
+          ),
         )
       ],
     );
@@ -807,21 +803,27 @@ class CartPage extends GetView<CartController> {
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                  child: GetX<CartController>(
+                  child: GetBuilder<CartController>(
                     builder: (_) {
                       return Column(
                         children: [
                           RadioListTile(
                             title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Remove this time',
-                            groupValue: _.isSelectedProceed.call(),
-                            onChanged: (value) =>  _.isSelectedProceed(value)
+                            value: true,
+                            groupValue: product.removable,
+                            onChanged: (value) {
+                              product.removable = value;
+                              _.update();
+                            }
                           ),
                           RadioListTile(
                             title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Cancel the entire order',
-                            groupValue: _.isSelectedProceed.call(),
-                            onChanged: (value) => _.isSelectedProceed(value)
+                            value: false,
+                            groupValue: product.removable,
+                            onChanged: (value) {
+                              product.removable = value;
+                              _.update();
+                            }
                           )
                         ],
                       );

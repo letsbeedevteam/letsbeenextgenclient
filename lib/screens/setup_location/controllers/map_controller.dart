@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
+import 'package:letsbeeclient/models/edit_address_request.dart';
+import 'package:letsbeeclient/models/edit_address_response.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/new_address_request.dart';
 import 'package:letsbeeclient/models/new_address_response.dart';
@@ -52,6 +54,7 @@ class MapController extends GetxController {
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
+  StreamSubscription<EditAddressResponse> editAddressSub;
 
   @override 
   void onInit() {
@@ -98,6 +101,16 @@ class MapController extends GetxController {
         userCurrentAddress(addressDetails.text.trim());
         addAddress();
       }
+
+    } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
+
+      if (addressLabel.isBlank || addressDetails.text.isBlank) {
+        errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        editAddress();
+      }
+
     } else {
       if (addressDetails.text.isBlank) {
         errorSnackbarTop(title: Config.oops, message: Config.inputAddressDetail);
@@ -237,9 +250,10 @@ class MapController extends GetxController {
           ..userCurrentNameOfLocation(response.data.name)
           ..userCurrentAddress(this.userCurrentAddress.call().trim())
           ..fetchActiveOrders()
-          ..fetchRestaurantDashboard();
+          ..fetchRestaurantDashboard(page: 0);
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
+          successSnackBarTop(message: response.message);
           
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
@@ -258,6 +272,43 @@ class MapController extends GetxController {
       isAddAddressLoading(false);
       errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
       print('Error add new address: $handleError');
+    });
+  }
+
+  void editAddress() {
+    dismissKeyboard(Get.context);
+
+    isAddAddressLoading(true);
+    final request = EditAddressRequest(
+      addressId: addressData.call().id,
+      name: this.addressLabel.text,
+      location: EditAddressLocation(
+        lat: this.currentPosition.call().latitude,
+        lng: this.currentPosition.call().longitude
+      ),
+      address: this.addressDetails.text,
+      note: this.noteToRider.text
+    );
+
+    editAddressSub = _apiService.editAddress(request).asStream().listen((response) {
+      isAddAddressLoading(false);
+      if(response.status == 200) {
+        print('Success');
+        AddressController.to.refreshAddress();
+        Get.back(closeOverlays: true);
+        successSnackBarTop(message: response.message);
+
+      } else {
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        print('Failed to add new address');
+      }
+
+    });
+    
+    editAddressSub.onError((handleError) {
+      isAddAddressLoading(false);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      print('Error edit new address: $handleError');
     });
   }
 }

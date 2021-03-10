@@ -43,7 +43,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   var options = List<Option>().obs;
   var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
-  var isSelectedProceed = ''.obs;
+  var isSelectedProceed = false.obs;
 
   var hasNoChoices = false.obs;
   // var choiceIds = List<ChoiceCart>().obs;
@@ -54,6 +54,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   @override
   void onInit() {
     Get.put(CartController());
+    isSelectedProceed.nil();
     storeResponse.nil();
     store.nil();
 
@@ -64,7 +65,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   @override
   void onClose() {
-    DashboardController.to.fetchRestaurantDashboard();
+    DashboardController.to.fetchRestaurantDashboard(page: 0);
     super.onClose();
   }
 
@@ -79,7 +80,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     totalPriceOfChoice(0.00);
     quantity(1);
     tFRequestController.clear();
-    isSelectedProceed('');
+    isSelectedProceed.nil();
     choiceCart.call().clear();
   }
 
@@ -169,6 +170,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
       product.choiceCart = choiceCart.call().values.toList();
       product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
       product.type = Config.RESTAURANT;
+      product.removable = isSelectedProceed.call();
   
       final prod = list.call().where((data) => !data.isRemove && data.storeId == store.call().id);
 

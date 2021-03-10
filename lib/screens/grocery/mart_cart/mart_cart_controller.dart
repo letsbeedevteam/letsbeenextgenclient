@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-// import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -30,13 +29,8 @@ class MartCartController extends GetxController {
   // var cart = ActiveCartResponse().obs;
   var quantity = 0.obs;
   
-  final streetTFController = TextEditingController();
-  final barangayTFController = TextEditingController();
-  final cityTFController = TextEditingController();
-
-  final streetNode = FocusNode();
-  final barangayNode = FocusNode();
-  final cityNode = FocusNode();
+  final noteToRider = TextEditingController();
+  final noteToRiderNode = FocusNode();
 
   final addToCart = RxList<AddToCart>().obs;
   final updatedProducts = RxList<Product>().obs;
@@ -76,9 +70,15 @@ class MartCartController extends GetxController {
   updateCartRequest({Product product}) {
     Get.back();
     successSnackBarTop(message: Config.updatedItem, seconds: 1);
-  
+      
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
-   
+
+    if(product.quantity == quantity.call()) {
+      prod.where((data) => data.uniqueId == product.uniqueId).forEach((data) {
+        data.removable = product.removable;
+      });
+    }
+
     if (product.quantity < quantity.call()) {
       prod.where((data) => data.uniqueId == product.uniqueId);
       for (var i = 0; i < quantity.call() - product.quantity; i++) {
@@ -87,12 +87,14 @@ class MartCartController extends GetxController {
     } else {
       print(product.quantity - quantity.call());
       prod.where((data) => data.uniqueId == product.uniqueId).take(product.quantity - quantity.call()).forEach((data) {
+        data.removable = product.removable;
         data.isRemove = true;
       });
      
       prod.removeWhere((data) => data.isRemove);
     }
-   
+    
+    MartController.to.list.call()..clear()..addAll(prod);
     box.write(Config.PRODUCTS, listProductToJson(prod));
     getProducts();
   }
@@ -194,7 +196,7 @@ class MartCartController extends GetxController {
     newMap.values.forEach((item) {
       item.quantity = quantity[item.name];
 
-      print('Product ID: ${item.name} == Quantity: ${item.quantity} == Price: ${item.customerPrice} == User ID: ${item.userId}');
+      print('Product ID: ${item.name} == Quantity: ${item.quantity} == Price: ${item.customerPrice} == User ID: ${item.userId} == removable: ${item.removable}');
 
       addToCart.call().add(
         AddToCart(
@@ -202,7 +204,8 @@ class MartCartController extends GetxController {
           variants: null,
           additionals: null,
           quantity: item.quantity,
-          note: null
+          note: null,
+          removable: item.removable
         )
       );
     });

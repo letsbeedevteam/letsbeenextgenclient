@@ -87,7 +87,8 @@ class Product {
     this.uniqueId,
     this.storeId,
     this.isRemove,
-    this.userId
+    this.userId,
+    this.removable
   });
 
   int id;
@@ -110,13 +111,13 @@ class Product {
   int storeId;
   bool isRemove;
   int userId;
-
+  bool removable;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
     id: json["id"],
     name: json["name"],
-    description: json["description"],
-    image: json["image"],
+    description: json["description"] == null || json["description"] == '' ? 'No Description' : json["description"],
+    image: json["image"] == null ? '' : json["image"],
     customerPrice: json["customer_price"],
     quantity: json["quantity"],
     maxOrder: json["max_order"],
@@ -131,7 +132,8 @@ class Product {
     uniqueId: json["uniqueId"],
     storeId: json["storeId"],
     isRemove: json["isRemove"] == null ? false : json["isRemove"],
-    userId: json["userId"]
+    userId: json["userId"],
+    removable: json["removable"] == null ? false : json["removable"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -153,7 +155,8 @@ class Product {
     "uniqueId": uniqueId,
     "storeId": storeId,
     "isRemove": isRemove,
-    "userId": userId
+    "userId": userId,
+    "removable": removable
   };
 }
 

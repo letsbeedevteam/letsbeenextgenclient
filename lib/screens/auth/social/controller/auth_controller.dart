@@ -84,6 +84,9 @@ class AuthController extends GetxController implements AuthViewContract {
             } else {
               alertSnackBarTop(title: Config.oops, message: Config.accountNotExist);
             }
+
+            passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
+            passwordFN.requestFocus();
           }
           isLoading(false);
 
@@ -91,11 +94,15 @@ class AuthController extends GetxController implements AuthViewContract {
           print('Sign In: $onError');
           alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
           isLoading(false);
+          passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
+          passwordFN.requestFocus();
         });
 
       } else {
         errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
         isLoading(false);
+        emailController.selection = TextSelection.fromPosition(TextPosition(offset: emailController.text.length));
+        emailFN.requestFocus();
       }
     }
   }

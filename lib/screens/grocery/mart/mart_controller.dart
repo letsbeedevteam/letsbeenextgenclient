@@ -36,12 +36,13 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   var isAddToCartLoading = false.obs;
 
   var selectedName = ''.obs;
+  var isSelectedProceed = false.obs;
 
   static MartController get to => Get.find();
 
   @override
   void onInit() {
-    // list.call().clear();
+    isSelectedProceed.nil();
     storeResponse.nil();
     store.nil();
     Get.put(MartCartController());
@@ -51,7 +52,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
   @override
   void onClose() {
-    DashboardController.to.fetchMartDashboard();
+    DashboardController.to.fetchMartDashboard(page: 0);
     super.onClose();
   }
 
@@ -102,15 +103,16 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   }
 
   void storeCartToStorage(Product product) {
+    
     product.uniqueId = uuid.v4();
     product.userId = box.read(Config.USER_ID);
     product.storeId = store.call().id;
     product.type = Config.MART;
+    product.removable = isSelectedProceed.call();
 
     for (var i = 0; i < quantity.call(); i++) {
       list.call().add(product);
     }
-    // list.call().forEach((data) => data.userId = box.read(Config.USER_ID));
     box.write(Config.PRODUCTS, listProductToJson(list.call()));
     MartCartController.to.getProducts();
     Get.back();

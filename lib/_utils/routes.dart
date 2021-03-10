@@ -33,7 +33,7 @@ import 'package:letsbeeclient/screens/food/restaurant/restaurant_view.dart';
 import 'package:letsbeeclient/screens/forgot_password/forgot_password_view.dart';
 import 'package:letsbeeclient/screens/grocery/mart/mart_product_view.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_view.dart';
-import 'package:letsbeeclient/screens/history/historyDetail/history_detail_view.dart';
+import 'package:letsbeeclient/screens/history/history_detail/history_detail_view.dart';
 import 'package:letsbeeclient/screens/history/history_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/map_view.dart';

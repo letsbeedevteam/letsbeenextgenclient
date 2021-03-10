@@ -156,7 +156,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                               children: [
                                                 Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
                                                 Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                                Text('${_.store.call().distance.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                Text('${_.store.call().distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -294,11 +294,20 @@ class RestaurantPage extends GetView<RestaurantController> {
                   height: 120, 
                   width: 140, 
                   placeholderScale: 5, 
-                  imageErrorBuilder: (context, error, stackTrace) => Container(
-                    width: 140,
-                    height: 120,
-                    child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
-                  )
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return error.toString().contains(product?.image) ? Container(
+                      width: 140,
+                      height: 120,
+                      child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                    ) : FadeInImage.assetNetwork(
+                      placeholder: cupertinoActivityIndicatorSmall, 
+                      image: product.image, 
+                      fit: BoxFit.fitWidth, 
+                      height: 120, 
+                      width: 140, 
+                      placeholderScale: 5
+                    ); 
+                  }
                 ),
               ],
             ),
@@ -549,13 +558,13 @@ class RestaurantPage extends GetView<RestaurantController> {
                         children: [
                           RadioListTile(
                             title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Remove this time',
+                            value: true,
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) =>  _.isSelectedProceed(value)
                           ),
                           RadioListTile(
                             title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Cancel the entire order',
+                            value: false,
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) => _.isSelectedProceed(value)
                           )

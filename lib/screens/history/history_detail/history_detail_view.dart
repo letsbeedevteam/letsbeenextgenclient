@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/order_history_response.dart';
-import 'package:letsbeeclient/screens/history/historyDetail/history_detail_controller.dart';
+import 'package:letsbeeclient/screens/history/history_detail/history_detail_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
@@ -112,7 +112,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(tr('specialInstructions'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                        Text(tr('reason'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
                         Text(_.data.call().reason, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.normal, fontSize: 13)),
                         Container(
                           margin: EdgeInsets.only(top: 5),
@@ -232,7 +232,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                 ),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Column(
-                  children: menu.choices.map((e) => _buildChoice(e, menu.quantity)).toList(),
+                  children: menu.variants.map((e) => _buildChoice(e, menu.quantity)).toList(),
                 ),
               ],
             )
@@ -259,7 +259,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
     );
   }
 
-  Widget _buildChoice(Choice choice, int quantity) {
+  Widget _buildChoice(Variants choice, int quantity) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,

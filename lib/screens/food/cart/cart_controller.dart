@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-// import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -54,7 +53,6 @@ class CartController extends GetxController {
   var options = List<Option>().obs;
   var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
-  var isSelectedProceed = ''.obs;
 
   @override
   void onInit() {
@@ -186,7 +184,8 @@ class CartController extends GetxController {
               variants: product.variants.isEmpty ? [] : product.choiceCart.toList(),
               additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
               quantity: product.quantity,
-              note: product.note
+              note: product.note,
+              removable: product.removable
             )
           );
       });
@@ -252,6 +251,7 @@ class CartController extends GetxController {
     product.choiceCart = choiceCart.call().values.toList();
     product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
 
+    print('removeable ${product.removable}');
     final check = updatedProducts.call().where((data) => data.uniqueId != product.uniqueId);
     final choice = check.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
     final additional = check.where((data) => additionalsToJson2(data.additionalCart).contains(additionalsToJson2(product.additionalCart)));
@@ -295,7 +295,6 @@ class CartController extends GetxController {
     options.clear();
     additionals.clear();
     choiceCart.call().clear();
-    isSelectedProceed('');
 
     if (product.call().variants.isNotEmpty) {
       product.call().variants.forEach((choice) {

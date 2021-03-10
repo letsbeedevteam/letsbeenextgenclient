@@ -48,7 +48,7 @@ class ActiveOrderData {
         this.updatedAt,
     });
 
-    List<ActiveOrderMenu> products;
+    List<ActiveOrderProduct> products;
     ActiveStore activeStore;
     Rider rider;
     User user;
@@ -66,7 +66,7 @@ class ActiveOrderData {
     DateTime updatedAt;
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
-        products: json["products"] == null ?  List<ActiveOrderMenu>() : List<ActiveOrderMenu>.from(json["products"].map((x) => ActiveOrderMenu.fromJson(x))),
+        products: json["products"] == null ?  List<ActiveOrderProduct>() : List<ActiveOrderProduct>.from(json["products"].map((x) => ActiveOrderProduct.fromJson(x))),
         activeStore: ActiveStore.fromJson(json["store"]),
         rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
         user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
@@ -234,34 +234,31 @@ class Fee {
     };
 }
 
-class ActiveOrderMenu {
-    ActiveOrderMenu({
+class ActiveOrderProduct {
+    ActiveOrderProduct({
         this.productId,
         this.name,
-        this.price,
         this.customerPrice,
         this.quantity,
-        this.choices,
+        this.variants,
         this.additionals,
         this.note,
     });
 
     int productId;
     String name;
-    String price;
     String customerPrice;
     int quantity;
-    List<Choice> choices;
+    List<Variants> variants;
     List<Additional> additionals;
     String note;
 
-    factory ActiveOrderMenu.fromJson(Map<String, dynamic> json) => ActiveOrderMenu(
+    factory ActiveOrderProduct.fromJson(Map<String, dynamic> json) => ActiveOrderProduct(
         productId: json["product_id"],
         name: json["name"],
-        price: json["price"].toString(),
         customerPrice: json["customer_price"],
         quantity: json["quantity"],
-        choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
+        variants: List<Variants>.from(json["variants"].map((x) => Variants.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
         note: json["note"] == null ? null : json["note"],
     );
@@ -269,9 +266,8 @@ class ActiveOrderMenu {
     Map<String, dynamic> toJson() => {
         "product_id": productId,
         "name": name,
-        "price": price,
         "quantity": quantity,
-        "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
+        "variants": List<dynamic>.from(variants.map((x) => x.toJson())),
         "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),
         "note": note,
     };
@@ -325,25 +321,25 @@ class Pick {
     };
 }
 
-class Choice {
-    Choice({
-        this.name,
+class Variants {
+    Variants({
+        this.type,
         this.customerPrice,
         this.pick,
     });
 
-    String name;
+    String type;
     String customerPrice;
     String pick;
 
-    factory Choice.fromJson(Map<String, dynamic> json) => Choice(
-        name: json["name"],
+    factory Variants.fromJson(Map<String, dynamic> json) => Variants(
+        type: json["type"],
         customerPrice: json["customer_price"],
         pick: json["pick"],
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
+        "type": type,
         "customer_price": customerPrice,
         "pick": pick,
     };

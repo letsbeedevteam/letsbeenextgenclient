@@ -182,7 +182,7 @@ class OrderHistoryMenu {
         this.name,
         this.price,
         this.quantity,
-        this.choices,
+        this.variants,
         this.additionals,
         this.note,
         this.customerPrice,
@@ -193,7 +193,7 @@ class OrderHistoryMenu {
     String price;
     int quantity;
     String customerPrice;
-    List<Choice> choices;
+    List<Variants> variants;
     List<Additional> additionals;
     String note;
 
@@ -203,7 +203,7 @@ class OrderHistoryMenu {
         price: json["price"].toString(),
         quantity: json["quantity"],
         customerPrice: json["customer_price"],
-        choices: List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
+        variants: List<Variants>.from(json["variants"].map((x) => Variants.fromJson(x))),
         additionals: List<Additional>.from(json["additionals"].map((x) => Additional.fromJson(x))),
         note: json["note"] == null ? null : json["note"],
     );
@@ -214,7 +214,7 @@ class OrderHistoryMenu {
         "price": price,
         "customer_price": customerPrice,
         "quantity": quantity,
-        "choices": List<dynamic>.from(choices.map((x) => x.toJson())),
+        "variants": List<dynamic>.from(variants.map((x) => x.toJson())),
         "additionals": List<dynamic>.from(additionals.map((x) => x.toJson())),
         "note": note == null ? null : note,
     };
@@ -312,25 +312,25 @@ class Additional {
 //     };
 // }
 
-class Choice {
-    Choice({
-        this.name,
+class Variants {
+    Variants({
+        this.type,
         this.customerPrice,
         this.pick,
     });
 
-    String name;
+    String type;
     String customerPrice;
     String pick;
 
-    factory Choice.fromJson(Map<String, dynamic> json) => Choice(
-        name: json["name"],
+    factory Variants.fromJson(Map<String, dynamic> json) => Variants(
+        type: json["type"],
         customerPrice: json["customer_price"],
         pick: json["pick"],
     );
 
     Map<String, dynamic> toJson() => {
-        "name": name,
+        "type": type,
         "customer_price": customerPrice,
         "pick": pick,
     };

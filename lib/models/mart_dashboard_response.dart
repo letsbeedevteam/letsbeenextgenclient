@@ -28,20 +28,20 @@ class MartDashboardResponse {
 class MartData {
   MartData({
     this.stores,
-    // this.recentStores
+    this.recentStores
   });
 
   List<MartStores> stores;
-  // List<MartStores> recentStores;
+  List<MartStores> recentStores;
 
   factory MartData.fromJson(Map<String, dynamic> json) => MartData(
     stores: json["stores"] == null ? List<MartStores>() : List<MartStores>.from(json["stores"].map((x) => MartStores.fromJson(x))),
-    // recentStores: json["recent_stores"] == null ? List<MartStores>() : List<MartStores>.from(json["recent_stores"].map((store) => MartStores.fromJson(store))),
+    recentStores: json["recent_stores"] == null ? List<MartStores>() : List<MartStores>.from(json["recent_stores"].map((store) => MartStores.fromJson(store))),
   );
 
   Map<String, dynamic> toJson() => {
-    "stores": List<MartStores>.from(stores.map((store) => store.toJson())),
-    // "recent_stores": List<MartStores>.from(stores.map((store) => store.toJson())),
+    "stores": List<dynamic>.from(stores.map((store) => store.toJson())),
+    "recent_stores": List<dynamic>.from(stores.map((store) => store.toJson())),
   };
 }
 

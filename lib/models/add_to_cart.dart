@@ -16,6 +16,7 @@ class AddToCart {
         this.additionals,
         this.quantity,
         this.note,
+        this.removable
     });
 
     int productId;
@@ -23,13 +24,15 @@ class AddToCart {
     List<int> additionals;
     int quantity;
     String note;
+    bool removable;
 
     factory AddToCart.fromJson(Map<String, dynamic> json) => AddToCart(
       productId: json["product_id"],
       variants: json["variants"],
       additionals: json["additionals"],
       quantity: json["quantity"],
-      note: json["note"]
+      note: json["note"],
+      removable: json["removable"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -38,6 +41,7 @@ class AddToCart {
       "additionals": additionals == null ? List<dynamic>() : List<dynamic>.from(additionals.map((x) => x)),
       "quantity": quantity,
       "note": note,
+      "removable": removable
     };
 }
 

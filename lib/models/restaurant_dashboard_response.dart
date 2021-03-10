@@ -28,20 +28,20 @@ class RestaurantDashboardResponse {
 class RestaurantData {
   RestaurantData({
     this.stores,
-    // this.recentStores
+    this.recentStores
   });
 
   List<RestaurantStores> stores;
-  // List<RestaurantStores> recentStores;
+  List<RestaurantStores> recentStores;
 
   factory RestaurantData.fromJson(Map<String, dynamic> json) => RestaurantData(
     stores: json["stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["stores"].map((x) => RestaurantStores.fromJson(x))),
-    // recentStores: json["recent_stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["recent_stores"].map((store) => RestaurantStores.fromJson(store))),
+    recentStores: json["recent_stores"] == null ? List<RestaurantStores>() : List<RestaurantStores>.from(json["recent_stores"].map((store) => RestaurantStores.fromJson(store))),
   );
 
   Map<String, dynamic> toJson() => {
-      "stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
-      // "recent_stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
+      "stores": List<dynamic>.from(stores.map((store) => store.toJson())),
+      "recent_stores": List<dynamic>.from(stores.map((store) => store.toJson())),
   };
 }
 
@@ -81,7 +81,7 @@ class RestaurantStores {
     type: json["type"],
     category: json["category"],
     logoUrl: json["logo_url"],
-    photoUrl: json["photo_url"],
+    photoUrl: json["photo_url"] == null ? '' : json["photo_url"],
     distance: json["distance"],
    address: RestaurantAddress.fromJson(json["address"])
   );

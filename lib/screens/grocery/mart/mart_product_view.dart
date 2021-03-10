@@ -153,7 +153,7 @@ class MartProductPage extends GetView<MartController> {
                                             children: [
                                               Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
                                               Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                              Text('${_.store.call().distance.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                              Text('${_.store.call().distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -254,10 +254,7 @@ class MartProductPage extends GetView<MartController> {
     return GestureDetector(
       onTap: () {
         controller.readOnly(true);
-        Future.delayed(Duration(milliseconds: 500)).then((data) {
-          if (Get.isDialogOpen) Get.back();
-          addCartDialog(product);
-        });
+        _bottomSheet(product);
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 10, right: 10, left: 10),
@@ -296,21 +293,27 @@ class MartProductPage extends GetView<MartController> {
                 ],
               ),
             ),
-            Hero(
-              tag: product.name,
-              child: FadeInImage.assetNetwork(
-                placeholder: cupertinoActivityIndicatorSmall, 
-                image: product.image, 
-                fit: BoxFit.fitWidth, 
-                height: 120, 
-                width: 140, 
-                placeholderScale: 5, 
-                imageErrorBuilder: (context, error, stackTrace) => Container(
+            FadeInImage.assetNetwork(
+              placeholder: cupertinoActivityIndicatorSmall, 
+              image: product.image, 
+              fit: BoxFit.fitWidth, 
+              height: 120, 
+              width: 140, 
+              placeholderScale: 5, 
+              imageErrorBuilder: (context, error, stackTrace) {
+                return error.toString().contains(product?.image) ? Container(
                   width: 140,
                   height: 120,
                   child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
-                )
-              ),
+                ) : FadeInImage.assetNetwork(
+                  placeholder: cupertinoActivityIndicatorSmall, 
+                  image: product.image, 
+                  fit: BoxFit.fitWidth, 
+                  height: 120, 
+                  width: 140, 
+                  placeholderScale: 5
+                );
+              }
             )
           ],
         ),
@@ -411,6 +414,223 @@ class MartProductPage extends GetView<MartController> {
         },
       ),
       barrierDismissible: false
+    );
+  }
+
+  Widget _storeProductBuild(Product product) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: Text(product.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(product.description, style: TextStyle(fontSize: 13 ,fontWeight: FontWeight.normal), textAlign: TextAlign.start),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: Text('₱ ${product.customerPrice}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                    )
+                  ],
+                ),
+              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+              Flexible(
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: FadeInImage.assetNetwork(
+                    placeholder: cupertinoActivityIndicatorSmall, 
+                    image: product.image, 
+                    fit: BoxFit.fitWidth, 
+                    height: 120, 
+                    width: 140, 
+                    placeholderScale: 5, 
+                    imageErrorBuilder: (context, error, stackTrace) => Container(
+                      width: 140,
+                      height: 120,
+                      child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                    )
+                  ),
+                ),
+              )
+            ]
+          ),
+        ),
+        Divider(),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(tr('proceedIfNotAvail'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+              child: GetX<MartController>(
+                builder: (_) {
+                  return Column(
+                    children: [
+                      RadioListTile(
+                        title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                        value: true,
+                        groupValue: _.isSelectedProceed.call(),
+                        onChanged: (value) =>  _.isSelectedProceed(value)
+                      ),
+                      RadioListTile(
+                        title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                        value: false,
+                        groupValue: _.isSelectedProceed.call(),
+                        onChanged: (value) => _.isSelectedProceed(value)
+                      )
+                    ],
+                  );
+                }
+              )
+            ),
+          ],
+        ) 
+      ],
+    );
+  }
+
+  _bottomSheet(Product product) {
+    controller.quantity(1);
+    controller.isSelectedProceed.nil();
+    Get.bottomSheet(
+      GetX<MartController>(
+        builder: (_) {          
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                flex: 1,
+                child: GestureDetector(
+                  onTap: () {
+                    _.isSelectedProceed.nil();
+                    Get.back();
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    width: Get.width
+                  ),
+                ),
+              ),
+              Flexible(
+                flex: 5,
+                child: Container(
+                    height: Get.height * 0.85,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                      color: Color(Config.WHITE)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(child: _storeProductBuild(product)),
+                        Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Container(
+                            width: Get.width,
+                            height: 60,
+                            color: Colors.white,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Color(Config.WHITE)
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                        Container(
+                                          height: 30,
+                                          width: 30,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: Colors.white
+                                          ),
+                                          child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () => _.decrement())
+                                        ),
+                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                        Text('${_.quantity.call()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                        Container(
+                                          height: 30,
+                                          width: 30,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: Color(Config.LETSBEE_COLOR)
+                                          ),
+                                          child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () => _.increment())
+                                        ),
+                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () => _.storeCartToStorage(product),
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          color: Color(Config.LETSBEE_COLOR)
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(tr('addToCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Text('₱ ${((double.tryParse(product.customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                          ],
+                                        )
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+              ),
+            ],
+          );
+        },
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      enableDrag: false,
+      isDismissible: false,
     );
   }
 }
