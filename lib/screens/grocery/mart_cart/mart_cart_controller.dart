@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -69,7 +70,7 @@ class MartCartController extends GetxController {
 
   updateCartRequest({Product product}) {
     Get.back();
-    successSnackBarTop(message: Config.updatedItem, seconds: 1);
+    successSnackBarTop(message: tr('updatedItem'), seconds: 1);
       
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
 
@@ -102,7 +103,7 @@ class MartCartController extends GetxController {
   deleteCart({String uniqueId}) {
     // isLoading(true);
     Get.back();
-    successSnackBarTop(message: Config.deletedItem, seconds: 1);
+    successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
@@ -113,7 +114,7 @@ class MartCartController extends GetxController {
   paymentMethod(int storeId, String paymentMethod) {
     print('storeId: $storeId');
     if (totalPrice.value < 100) {
-      errorSnackbarTop(message: Config.minimumTransaction);
+      errorSnackbarTop(message: tr('minimumTransaction'));
     } else {
 
       isPaymentLoading(true);
@@ -127,11 +128,11 @@ class MartCartController extends GetxController {
           DashboardController.to.fetchActiveOrders();
 
           if (response.code == 3506) {
-            errorSnackbarTop(title: Config.oops, message: Config.storeClosed);
+            errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
           } else {
             if (response.paymentUrl == null) {
               print('NO URL');
-              successSnackBarTop(title: Config.yay, message: Config.successOrder);
+              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
               final prod = listProductFromJson(box.read(Config.PRODUCTS));
               prod.removeWhere((data) => data.storeId == storeId);
@@ -166,15 +167,15 @@ class MartCartController extends GetxController {
         } else {
           
           if (response.code == 3006) {
-            errorSnackbarTop(title: Config.oops, message: response.message);
+            errorSnackbarTop(title: tr('oops'), message: response.message);
           } else {
-            errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+            errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
         }
         
       }).catchError((onError) {
         isPaymentLoading(false);
-        if (onError.toString().contains('Connection failed')) message(Config.noInternetConnection); else message(Config.somethingWentWrong);
+        if (onError.toString().contains('Connection failed')) message(tr('noInternetConnection')); else message(tr('somethingWentWrong'));
         print('Payment method: $onError');
       });
     }

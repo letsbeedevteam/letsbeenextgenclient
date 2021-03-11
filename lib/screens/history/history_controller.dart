@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/order_history_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -13,7 +13,7 @@ class HistoryController extends GetxController {
 
   var isLoading = false.obs;
   var history = OrderHistoryResponse().obs;
-  var historyMessage = Config.emptyOrderHistory.obs;
+  var historyMessage = tr('emptyOrderHistory').obs;
   
   @override
     void onInit() {
@@ -40,23 +40,23 @@ class HistoryController extends GetxController {
           history(response);
           history.call().data.sort((b, a) => a.updatedAt.compareTo(b.updatedAt));
         } else {
-          historyMessage(Config.emptyOrderHistory);
+          historyMessage(tr('emptyOrderHistory'));
           history.nil();
         }
 
       } else {
-        historyMessage(Config.somethingWentWrong);
+        historyMessage(tr('somethingWentWrong'));
       }
       
     }).catchError((onError) {
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        historyMessage(Config.noInternetConnection);
+        historyMessage(tr('noInternetConnection'));
       } else if (onError.toString().contains('Operation timed out')) {
-        historyMessage(Config.timedOut);
+        historyMessage(tr('timedOut'));
       } else {
-        historyMessage(Config.somethingWentWrong);
+        historyMessage(tr('somethingWentWrong'));
       }
       print('Error fetch history orders: $onError');
     });

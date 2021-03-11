@@ -45,7 +45,9 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
 
   Widget _footer() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
         Text(tr('didntSendCode'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Obx(() {

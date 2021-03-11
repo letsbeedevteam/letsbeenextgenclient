@@ -281,7 +281,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         }
       } else {
         activeOrders.nil();
-        onGoingMessage(Config.somethingWentWrong);
+        onGoingMessage(tr('somethingWentWrong'));
       }
     });
   }
@@ -376,7 +376,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       if (reason.call() == "Others") {
 
         if (reasonController.text.trim().isEmpty) {
-          errorSnackbarTop(title: Config.oops, message: tr('specifyYourReason'));
+          errorSnackbarTop(title: tr('oops'), message: tr('specifyYourReason'));
         } else {
           cancel();
         }
@@ -386,7 +386,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       }
 
     } else {
-      errorSnackbarTop(title: Config.oops, message: tr('selectReason'));
+      errorSnackbarTop(title: tr('oops'), message: tr('selectReason'));
     }
   }
 
@@ -417,9 +417,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       } else {
 
         if (response['code'] == 3009) {
-          errorSnackbarTop(title: Config.oops, message: tr('orderHasBeenDeclined'));
+          errorSnackbarTop(title: tr('oops'), message: tr('orderHasBeenDeclined'));
         } else {
-          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         }
       }
     });
@@ -456,15 +456,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
         // message(Config.NO_INTERNET_CONNECTION);
-        restaurantErrorMessage(Config.noInternetConnection);
-        martErrorMessage(Config.noInternetConnection);
+        restaurantErrorMessage(tr('noInternetConnection'));
+        martErrorMessage(tr('noInternetConnection'));
       } else if (onError.toString().contains('Operation timed out')) {
         // message(Config.TIMED_OUT);
-        restaurantErrorMessage(Config.timedOut);
-        martErrorMessage(Config.timedOut);
+        restaurantErrorMessage(tr('timedOut'));
+        martErrorMessage(tr('timedOut'));
       } else {
-        restaurantErrorMessage(Config.somethingWentWrong);
-        martErrorMessage(Config.somethingWentWrong);
+        box.remove(Config.PRODUCTS);
+        restaurantErrorMessage(tr('somethingWentWrong'));
+        martErrorMessage(tr('somethingWentWrong'));
         box.remove(Config.PRODUCTS);
       }
       hasMartError(true);
@@ -510,7 +511,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         }
         
       } else {
-        restaurantErrorMessage(Config.somethingWentWrong);
+        restaurantErrorMessage(tr('somethingWentWrong'));
       }
 
       isRestaurantLoadingScroll(false);
@@ -522,11 +523,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        restaurantErrorMessage(Config.noInternetConnection);
+        restaurantErrorMessage(tr('noInternetConnection'));
       } else if (onError.toString().contains('Operation timed out')) {
-        restaurantErrorMessage(Config.timedOut);
+        restaurantErrorMessage(tr('timedOut'));
       } else {
-        restaurantErrorMessage(Config.somethingWentWrong);
+        restaurantErrorMessage(tr('somethingWentWrong'));
       }
       print('Error fetch restaurant: $onError');
     });
@@ -570,7 +571,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       
       } else {
 
-        martErrorMessage(Config.somethingWentWrong);
+        martErrorMessage(tr('somethingWentWrong'));
       }
       
       isMartLoadingScroll(false);
@@ -582,11 +583,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {
-        martErrorMessage(Config.noInternetConnection);
+        martErrorMessage(tr('noInternetConnection'));
       } else if (onError.toString().contains('Operation timed out')) {
-        martErrorMessage(Config.timedOut);
+        martErrorMessage(tr('timedOut'));
       } else {
-        martErrorMessage(Config.somethingWentWrong);
+        martErrorMessage(tr('somethingWentWrong'));
       }
       print('Error fetch mart: $onError');
     });
@@ -598,7 +599,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     // restaurantErrorMessage(tr('noRestaurants'));
 
     if (restaurant.trim().isEmpty) {
-      errorSnackbarTop(title: Config.oops, message: Config.inputSearchField);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputSearchField'));
       restaurantSearchController.clear();
     } else {
       print(restaurant);
@@ -610,7 +611,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     // searchMarts.call().where((element) => element.name.toLowerCase().contains(mart.trim().toLowerCase()) || element.category.toLowerCase().contains(mart.trim().toLowerCase()));
     // martErrorMessage(tr('noShops'));
     if (mart.trim().isEmpty) {
-      errorSnackbarTop(title: Config.oops, message: Config.inputSearchField);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputSearchField'));
       martSearchController.clear();
     } else {
       print(mart);

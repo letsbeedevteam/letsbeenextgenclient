@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -35,12 +35,12 @@ class WebController extends GetxController {
           Future.delayed(Duration(seconds: 1));
           Get.back();
         } else {
-          errorSnackbarTop(title: 'Oops', message: Config.somethingWentWrong);
+          errorSnackbarTop(title: 'Oops', message: tr('somethingWentWrong'));
         }
 
       }).catchError((onError) {
         isLoading(false);
-        errorSnackbarTop(title: 'Oops', message: Config.somethingWentWrong);
+        errorSnackbarTop(title: 'Oops', message: tr('somethingWentWrong'));
         print('Error delete order: $onError');
       });
     });

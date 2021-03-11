@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -21,7 +22,7 @@ class RiderLocationController extends GetxController {
   var riderPosition = LatLng(0, 0).obs;
   var isMapLoading = true.obs;
   var isRiderLoading = true.obs;
-  var message = Config.loadingMap.obs;
+  var message = tr('loadingMap').obs;
   var mapStyle = ''.obs;
 
   Uint8List riderIcon;
@@ -47,14 +48,14 @@ class RiderLocationController extends GetxController {
   }
 
   void receiveRiderLocation() async {
-    message(Config.trackingRider);
+    message(tr('trackingRider'));
     _socketService.socket?.on('rider-location', (response) async {
       print('Rider location: $response');
       if (response['data']['location'] != null) {
         if (activeOrderData.call() != null) {
           if (response['data']['order_id'] == activeOrderData.call().id) {
             riderPosition(LatLng(response['data']['location']['lat'],response['data']['location']['lng']));
-            markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: BitmapDescriptor.fromBytes(riderIcon), infoWindow: InfoWindow(title: Config.yourRider));
+            markers[MarkerId('rider')] = Marker(markerId: MarkerId('rider'), position: riderPosition.call(), icon: BitmapDescriptor.fromBytes(riderIcon), infoWindow: InfoWindow(title: tr('yourRider')));
             
             if (isRiderLoading.call()) {
               final bound = LatLngBounds(southwest: currentPosition.call(), northeast: riderPosition.call());
@@ -89,13 +90,13 @@ class RiderLocationController extends GetxController {
       mapStyle(string);
       c.setMapStyle(mapStyle.call());
     });
-    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), icon: BitmapDescriptor.fromBytes(customerIcon), infoWindow: InfoWindow(title: Config.you));
+    markers[MarkerId('client')] = Marker(markerId: MarkerId('client'), position: currentPosition.call(), icon: BitmapDescriptor.fromBytes(customerIcon), infoWindow: InfoWindow(title: tr('you')));
   }
 
   currentRiderLocation() async {
     final c = await _mapController.future;
     if (markers[MarkerId('rider')] == null) {
-      alertSnackBarTop(message: Config.trackingRider);
+      alertSnackBarTop(message: tr('trackingRider'));
     } else {
       c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(markers[MarkerId('rider')].position.latitude, markers[MarkerId('rider')].position.longitude), zoom: 19)));
     }

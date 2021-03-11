@@ -5,6 +5,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountInfoController extends GetxController {
 
@@ -23,7 +24,7 @@ class AccountInfoController extends GetxController {
 
   @override
   void onInit() {
-    
+        
     nameController.text = _box.read(Config.USER_NAME);
     emailController.text = _box.read(Config.USER_EMAIL);
     numberController.text = _box.read(Config.USER_MOBILE_NUMBER).replaceFirst(RegExp(r'^0+'), "");
@@ -40,7 +41,7 @@ class AccountInfoController extends GetxController {
     if (nameController.text.isBlank || emailController.text.isBlank || numberController.text.isBlank) {
 
       isLoading(false);
-      alertSnackBarTop(title: Config.oops, message: Config.inputFields);
+      alertSnackBarTop(title: tr('oops'), message: tr('inputFields'));
 
     } else {
 
@@ -56,7 +57,7 @@ class AccountInfoController extends GetxController {
           
           if (response.status == 200) {
             
-            successSnackBarTop(title: Config.yay, message: Config.accountInfoUpdated);
+            successSnackBarTop(title: tr('yay'), message: tr('accountInfoUpdated'));
             _box.write(Config.USER_NAME, response.data.name);
             _box.write(Config.USER_EMAIL, response.data.email);
             _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
@@ -64,22 +65,22 @@ class AccountInfoController extends GetxController {
           } else {
 
             if (response.code == 2018) {
-              errorSnackbarTop(title: Config.oops, message: response.message);
+              errorSnackbarTop(title: tr('oops'), message: response.message);
             } else {
-              errorSnackbarTop(title: Config.oops, message: response.message);
+              errorSnackbarTop(title: tr('oops'), message: response.message);
             }
           }
 
           isLoading(false);
         }).catchError((onError) {
-          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });
 
       } else {
         
         isLoading(false);
-        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid); 
+        errorSnackbarTop(title: tr('oops'), message: tr('emailInvalid')); 
       }
     }
   }

@@ -97,7 +97,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     }).catchError((onError) {
       hasError(true);
       storeResponse.nil();
-      message(Config.somethingWentWrong);
+      message(tr('somethingWentWrong'));
       print('Error fetch mart by ID ${argument['id']}: $onError');
     });
   }

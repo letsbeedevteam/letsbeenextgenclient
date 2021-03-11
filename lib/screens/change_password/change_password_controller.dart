@@ -40,7 +40,7 @@ class ChangePasswordController extends GetxController {
     dismissKeyboard(Get.context);
 
     if ( newPassController.text.isBlank || repeatPassController.text.isBlank) {
-      alertSnackBarTop(title: Config.oops, message: Config.inputFields);
+      alertSnackBarTop(title: tr('oops'), message: tr('inputFields'));
       isLoading(false);
     } else {
 
@@ -57,7 +57,7 @@ class ChangePasswordController extends GetxController {
         if (response.status == 200) {
           _sucessPopUp();
         } else {
-          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         }
 
         isLoading(false);
@@ -65,12 +65,12 @@ class ChangePasswordController extends GetxController {
       }).catchError((onError) {
         isLoading(false);
         print('Forgot pass error: $onError');
-        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       });
 
       } else {
       
-        errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
+        errorSnackbarTop(title: tr('oops'), message: tr('incorrectRepeatPassword'));
         repeatPassController.selection = TextSelection.fromPosition(TextPosition(offset: repeatPassController.text.length));
         repeatPassFn.requestFocus();
         isLoading(false);
@@ -84,7 +84,7 @@ class ChangePasswordController extends GetxController {
     dismissKeyboard(Get.context);
     if (oldPassController.text.isBlank || newPassController.text.isBlank || repeatPassController.text.isBlank) {
 
-      alertSnackBarTop(title: Config.oops, message: Config.inputFields);
+      alertSnackBarTop(title: tr('oops'), message: tr('inputFields'));
       isLoading(false);
 
     } else {
@@ -100,12 +100,12 @@ class ChangePasswordController extends GetxController {
         _apiService.customerChangePassword(request: request).then((response) {
           
           if (response.status == 200) {
-            successSnackBarTop(message: Config.updatedSuccessfully);
+            successSnackBarTop(message: tr('updatedSuccessfully'));
             oldPassController.clear();
             newPassController.clear();
             repeatPassController.clear();
           } else {
-            errorSnackbarTop(title: Config.oops, message: response.message);
+            errorSnackbarTop(title: tr('oops'), message: response.message);
           }
 
           isLoading(false);
@@ -113,12 +113,12 @@ class ChangePasswordController extends GetxController {
         }).catchError((onError) {
           isLoading(false);
           print('Change pass error: $onError');
-          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         });
 
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
+        errorSnackbarTop(title: tr('oops'), message: tr('incorrectRepeatPassword'));
         isLoading(false);
       }
     }
