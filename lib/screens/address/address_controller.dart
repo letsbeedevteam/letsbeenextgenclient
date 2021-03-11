@@ -1,13 +1,14 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class AddressController extends GetxController {
 
   final ApiService apiService = Get.find();
+  final GetStorage box = Get.find();
 
   var addresses = GetAllAddressResponse().obs;
   var isLoading = false.obs;
@@ -25,11 +26,15 @@ class AddressController extends GetxController {
   Future<Null> refreshAddress() async => fetchAllAddresses();
 
   updateSelectedAddress({AddressData data}) {
-    successSnackBarTop(title: 'Your selected location is:', message: data.address, seconds: 1);
     DashboardController.to.updateCurrentLocation(data);
+    addresses.update((value) {
+      value.data.forEach((data) => data.id == box.read(Config.USER_ADDRESS_ID) ? data.isSelected = true : data.isSelected = false);
+    });
   }
 
   addAddress() => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.ADD_NEW_ADDRESS});
+
+  editAddress(AddressData data) => Get.toNamed(Config.MAP_ROUTE, arguments: {'type': Config.EDIT_NEW_ADDRESS, 'data': data.toJson()});
 
   fetchAllAddresses() {
     isLoading(true);
@@ -38,7 +43,9 @@ class AddressController extends GetxController {
       if (response.status == 200) {
         if (response.data.isNotEmpty) {
           addresses(response);
+          addresses.call().data.singleWhere((data) => data.id == box.read(Config.USER_ADDRESS_ID) ? data.isSelected = true : data.isSelected = false);
           addresses.call().data.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
         } else {
           addresses.nil();
           addressErrorMessage('No list of address');
@@ -46,13 +53,13 @@ class AddressController extends GetxController {
 
       } else {
         addresses.nil();
-        addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+        addressErrorMessage(Config.somethingWentWrong);
       }
       
     }).catchError((onError) {
       addresses.nil();
       isLoading(false);
-      addressErrorMessage(Config.SOMETHING_WENT_WRONG);
+      addressErrorMessage(Config.somethingWentWrong);
       // message(Config.SOMETHING_WENT_WRONG);
       print('Error fetch all address: $onError');
     });

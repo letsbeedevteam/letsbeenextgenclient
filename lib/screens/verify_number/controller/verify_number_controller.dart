@@ -1,11 +1,13 @@
+import 'package:code_field/code_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
+import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class VerifyNumberController extends GetxController with SingleGetTickerProviderMixin {
@@ -17,30 +19,11 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
   var selectedIndex = 0.obs;
   var isLoading = false.obs;
   var isKeyboardVisible = false.obs;
+  var isResendCodeLoading = false.obs;
 
   var signInData = SignInData().obs;
 
-  RxString firstDigit = ''.obs;
-  RxString secondDigit = ''.obs;
-  RxString thirdDigit = ''.obs;
-  RxString fourthDigit = ''.obs;
-  RxString fifthDigit = ''.obs;
-  RxString sixthDigit = ''.obs;
-  RxString currentDigit = ''.obs;
-
-  var first = TextEditingController();
-  var second = TextEditingController();
-  var third = TextEditingController();
-  var fourth = TextEditingController();
-  var fifth = TextEditingController();
-  var sixth = TextEditingController();
-
-  var firstFN = FocusNode();
-  var secondFN = FocusNode();
-  var thirdFN = FocusNode();
-  var fourthFN = FocusNode();
-  var fifthFN = FocusNode();
-  var sixthFN = FocusNode();
+  final codeControl = InputCodeControl(inputRegex: r'(^\-?\d*\.?\d*)');
 
   @override
   void onInit() {
@@ -49,6 +32,10 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
     keyboardVisibilityController.onChange.listen((bool visible) {
       isKeyboardVisible(visible);
+    });
+
+    codeControl.addListener(() {
+      if (codeControl.activeIndex == 6) confirmCode();
     });
 
     super.onInit();
@@ -61,21 +48,19 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
   void confirmCode() {
 
-    currentDigit('${first.text}${second.text}${third.text}${fourth.text}${fifth.text}${sixth.text}');
-
-     isLoading(true);
-    _apiService.cellphoneConfirmation(token: signInData.call().token, code: currentDigit.call()).then((response) {
+    isLoading(true);
+    _apiService.cellphoneConfirmation(token: signInData.call().token, code: codeControl.value).then((response) {
       if (response.status == 200) {
         _verifiedPopUp(response);
       } else {
-        errorSnackBarBottom(title: 'Oops!', message: 'Invalid code');
+        errorSnackBarBottom(title: Config.oops, message: Config.invalidCode);
       }
 
       isLoading(false);
 
     }).catchError((onError) {
       isLoading(false);
-      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
       print('Confirmation error: $onError');
     });
   }
@@ -102,6 +87,28 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     }
   }
 
+  void resendOtp() {
+
+    isResendCodeLoading(true);
+    _apiService.resendOtp(token: signInData.call().token).then((response) {
+
+      if (response.status == 200) {
+        signInData(response.data);
+        Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
+
+        successSnackBarTop(message: Config.resendCodeSuccess);
+
+      } else {
+        isResendCodeLoading(false);
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      }
+
+    }).catchError((onError) {
+      isResendCodeLoading(false);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+    });
+  }
+
   _verifiedPopUp(CellphoneConfirmationResponse response) {
     Get.dialog(
       AlertDialog(
@@ -113,7 +120,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
             children: [
               Image.asset(Config.PNG_PATH + 'verified.png'),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-              const Text('Your contact number has been verified successfully!', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
+              Text(tr('contactVerifiedSuccess'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black), textAlign: TextAlign.center),
               Padding(padding: EdgeInsets.symmetric(vertical: 5)),
               RaisedButton(
                 onPressed: () => _goToSetupLocation(response),
@@ -121,7 +128,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
                   borderRadius: BorderRadius.circular(20) 
                 ),
                 color: Color(Config.LETSBEE_COLOR),
-                child: Text('Dismiss', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
               )
             ]
           )
@@ -130,6 +137,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
           borderRadius: BorderRadius.circular(25)
         )
       ),
+      barrierDismissible: false
     );
   }
 }

@@ -1,29 +1,35 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/active_cart_response.dart';
-import 'package:letsbeeclient/models/addToCartResponse.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
-import 'package:letsbeeclient/models/cellphoneConfirmationResponse.dart';
-import 'package:letsbeeclient/models/createOrderResponse.dart';
-import 'package:letsbeeclient/models/deleteCartResponse.dart';
-import 'package:letsbeeclient/models/deleteOrderResponse.dart';
-import 'package:letsbeeclient/models/getAddressResponse.dart';
+import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
+import 'package:letsbeeclient/models/change_pass_request.dart';
+import 'package:letsbeeclient/models/change_pass_response.dart';
+import 'package:letsbeeclient/models/create_order_response.dart';
+import 'package:letsbeeclient/models/customer_edit_response.dart';
+import 'package:letsbeeclient/models/delete_order_response.dart';
+import 'package:letsbeeclient/models/edit_address_request.dart';
+import 'package:letsbeeclient/models/edit_address_response.dart';
+import 'package:letsbeeclient/models/edit_profile_request.dart';
+import 'package:letsbeeclient/models/fogot_pass_response.dart';
+import 'package:letsbeeclient/models/forgot_password_request.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
-// import 'package:letsbeeclient/models/getCart.dart';
-import 'package:letsbeeclient/models/newAddressRequest.dart';
-import 'package:letsbeeclient/models/newAddressResponse.dart';
-import 'package:letsbeeclient/models/numberResponse.dart';
-import 'package:letsbeeclient/models/orderHistoryResponse.dart';
-import 'package:letsbeeclient/models/refreshTokenResponse.dart';
-import 'package:letsbeeclient/models/restaurant.dart';
+import 'package:letsbeeclient/models/new_address_request.dart';
+import 'package:letsbeeclient/models/new_address_response.dart';
+import 'package:letsbeeclient/models/number_response.dart';
+import 'package:letsbeeclient/models/order_history_response.dart';
+import 'package:letsbeeclient/models/refresh_token_response.dart';
+import 'package:letsbeeclient/models/request_forgot_pass_response.dart';
+import 'package:letsbeeclient/models/restaurant_response.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-import 'package:letsbeeclient/models/signUpResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
+import 'package:letsbeeclient/models/signup_response.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
 import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/models/store_response.dart';
-// import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 
 class ApiService extends GetConnect {
 
@@ -63,6 +69,59 @@ class ApiService extends GetConnect {
     return signUpResponseFromJson(response.bodyString);
   }
 
+  Future<ChangePasswordResponse> customerChangePassword({ChangePasswordRequest request}) async {
+
+    print(request.toJson());
+    final response = await post(
+      '/auth/customer/change-password',
+      request.toJson(),
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Customer Change Password: ${response.body}');
+
+    return changePasswordResponseFromJson(response.bodyString);
+  }
+
+  Future<RequestForgotPassResponse> customerRequestForgotPassword({String contactNumber}) async {
+
+    final response = await post(
+      '/auth/customer/request-forgot-password',
+      {'cellphone_number': contactNumber}
+    );
+
+    print('Request Forgot Password: ${response.body}');
+
+    return requestForgotPassFromJson(response.bodyString);
+  }
+
+  Future<ForgotPassResponse> customerForgotPassword({ForgotPasswordRequest request}) async {
+    
+    print(request.toJson());
+    final response = await post(
+      '/auth/customer/forgot-password',
+      request.toJson()
+    );
+
+    print('Forgot Password: ${response.body}');
+
+    return forgotPassFromJson(response.bodyString);
+  }
+
+  Future<SignInResponse> resendOtp({String token}) async {
+
+    final response = await post(
+      '/auth/customer/resend-otp',
+      {'token': token}
+    );
+
+    print('Resend Otp: ${response.body}');
+
+    return signInResponseFromJson(response.bodyString);
+  }
+
   Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
 
     print(socialSignUp.toJson());
@@ -74,6 +133,21 @@ class ApiService extends GetConnect {
     print('Customer Social Sign Up: ${response.body}');
 
     return signUpResponseFromJson(response.bodyString);
+  }
+
+  Future<CustomerEditResponse> customerEditProfile({EditProfileRequest request}) async {
+
+    final response = await post(
+      '/auth/customer/edit',
+      request.toJson(),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+     print('Customer Edit Profile: ${response.body}');
+  
+    return customerEditResponseFromJson(response.bodyString);
   }
 
   Future<RefreshTokenResponse> refreshToken() async {
@@ -119,65 +193,7 @@ class ApiService extends GetConnect {
     var json = response.body;
     return Product.fromJson(json['data']);
   } 
-
-  Future<AddToCartResponse> addToCart(AddToCart addToCart) async {
-
-    final response = await put(
-      '/carts',
-      addToCart.toJson(),
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Add carts: ${response.body}');
-    
-    return addToCartResponseFromJson(response.bodyString);
-  }
-
-  Future<AddToCartResponse> updateCart(AddToCart addToCart, int cartId) async {
-    
-    final response = await post(
-      '/carts/$cartId',
-      addToCart.toJson(),
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Update carts: ${response.body}');
-    
-    return addToCartResponseFromJson(response.bodyString);
-  }
-
-  Future<DeleteCartResponse> deleteCart(int cartId) async {
-
-    final response = await delete(
-      '/carts/$cartId',
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Delete carts: ${response.body}');
-    
-    return deleteCartResponseFromJson(response.bodyString);
-  }
-
-  Future<ActiveCartResponse> getActiveCarts({int storeId}) async {
-
-    final response = await get(
-      '/carts?store_id=$storeId&lat=${_box.read(Config.USER_CURRENT_LATITUDE)}&lng=${_box.read(Config.USER_CURRENT_LONGITUDE)}',
-      headers: {
-        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
-      }
-    );
-
-    print('Get carts: ${response.body}');
-
-    return activeCartResponseFromJson(response.bodyString);
-  }
-
+  
   Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
     final response = await put(
       '/orders',
@@ -256,6 +272,21 @@ class ApiService extends GetConnect {
     return newAddressResponseFromJson(response.bodyString);
   }
 
+  Future<EditAddressResponse> editAddress(EditAddressRequest request) async {
+
+    final response = await post(
+      '/addresses',
+      request.toJson(),
+      headers: <String, String>{
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      },
+    );
+
+    print('Edit addresses: ${response.body}');
+
+    return editAddressResponseFromJson(response.bodyString);
+  }
+
   Future<NumberResponse> updateCellphoneNumber({String number, String token}) async {
 
     final response = await post(
@@ -286,10 +317,10 @@ class ApiService extends GetConnect {
     return cellphoneConfirmationResponseFromJson(response.bodyString);
   }
 
-  Future<RestaurantDashboardResponse> getRestaurantDashboard() async {
+  Future<RestaurantDashboardResponse> getRestaurantDashboard({@required int page}) async {
 
     final response = await get(
-      '/stores/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      '/stores/restaurants/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}?page=$page',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
@@ -301,10 +332,10 @@ class ApiService extends GetConnect {
     return restaurantDashboardFromJson(response.bodyString);
   }
 
-  Future<MartDashboardResponse> getMartDashboard() async {
+  Future<MartDashboardResponse> getMartDashboard({@required int page}) async {
 
     final response = await get(
-      '/stores/marts/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
+      '/stores/marts/dashboard/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}?page=$page',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
@@ -319,13 +350,13 @@ class ApiService extends GetConnect {
   Future<StoreResponse> fetchStoreById({int id}) async {
 
     final response = await get(
-      '/stores/$id',
+      '/stores/$id/products',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-  // 'Get restaurants: ${response.body}'.printWrapped();
+  'Get stores: ${response.body}'.printWrapped();
     // print('Get store: ${response.body}');
 
     return storeResponseFromJson(response.bodyString);

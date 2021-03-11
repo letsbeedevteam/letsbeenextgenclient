@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_presenter.dart';
 
@@ -75,7 +75,7 @@ class SignUpController extends GetxController implements AuthViewContract {
   void signUp() {
 
     if (emailController.text.isEmpty || passwordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
-      errorSnackbarTop(title: 'Oops!', message: 'Please input your required field(s)');
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
 
     } else {
       
@@ -95,14 +95,14 @@ class SignUpController extends GetxController implements AuthViewContract {
 
         } else {
           isLoading(false);
-          errorSnackbarTop(title: 'Oops!', message: 'Your repeat password is incorrect.');
+          errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
 
           confirmPasswordController.selection = TextSelection.fromPosition(TextPosition(offset: confirmPasswordController.text.length));
           confirmPasswordFN.requestFocus();
         }
 
       } else {
-        errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid.');
+        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
         isLoading(false);
       }
     }
@@ -110,7 +110,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   void goToVerifyNumber() {
      dismissKeyboard(Get.context);
-     successSnackBarTop(title: 'Yay!', message: 'Registered successfully! Please sign in your account.');
+     successSnackBarTop(title: Config.yay, message: Config.registeredSuccess);
   }
 
   void clear() {
@@ -127,7 +127,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: 'Error', message: error);
+    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);

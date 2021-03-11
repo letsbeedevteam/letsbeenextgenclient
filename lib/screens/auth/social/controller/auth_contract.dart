@@ -1,7 +1,6 @@
 
 import 'package:letsbeeclient/_utils/_base/BaseView.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-// import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 
 abstract class AuthModelContract {
   void onGoogleSignInRequest(OnSocialSignInRequest listener) {}

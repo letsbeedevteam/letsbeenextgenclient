@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_presenter.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AuthController extends GetxController implements AuthViewContract {
   
@@ -28,6 +29,32 @@ class AuthController extends GetxController implements AuthViewContract {
   var isShowPassword = false.obs;
   var isRememberMe = false.obs;
 
+  var language = ''.obs;
+
+  @override
+  void onInit() {
+    _presenter = AuthPresenter(controller: this);
+
+    if (_box.hasData(Config.LANGUAGE)) {
+      language(_box.read(Config.LANGUAGE));
+    } else {
+      language('EN');
+    }
+    super.onInit();
+  }
+
+  // void clear() {
+  //   _box.erase();
+  //   Get.context.deleteSaveLocale();
+  // }
+
+  void changeLanguage(String lang) {
+    language(lang);
+    _box.write(Config.LANGUAGE, lang);
+    Get.context.locale = lang == 'EN' ? Locale('en', 'US') : Locale('ko', 'KR');
+    Get.back();
+  } 
+
   void signIn() {
 
     isLoading(true);
@@ -35,7 +62,7 @@ class AuthController extends GetxController implements AuthViewContract {
     
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
 
-      errorSnackbarTop(title: 'Oops!', message: 'Please input your required field(s)');
+      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
       isLoading(false);
     } else {
       if(GetUtils.isEmail(emailController.text)) {
@@ -53,22 +80,29 @@ class AuthController extends GetxController implements AuthViewContract {
           } else {
 
             if (response.code != 2012) {
-              alertSnackBarTop(title: 'Oops!', message: 'Sign In Failed. Please try again.');
+              alertSnackBarTop(title: Config.oops, message: Config.signInFailed);
             } else {
-              alertSnackBarTop(title: 'Oops!', message: 'Your Let\'s Bee Account doesn\'t exist.');
+              alertSnackBarTop(title: Config.oops, message: Config.accountNotExist);
             }
+
+            passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
+            passwordFN.requestFocus();
           }
           isLoading(false);
 
         }).catchError((onError) {
           print('Sign In: $onError');
-          alertSnackBarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
           isLoading(false);
+          passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
+          passwordFN.requestFocus();
         });
 
       } else {
-        errorSnackbarTop(title: 'Oops!', message: 'Your email address is invalid');
+        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
         isLoading(false);
+        emailController.selection = TextSelection.fromPosition(TextPosition(offset: emailController.text.length));
+        emailFN.requestFocus();
       }
     }
   }
@@ -90,12 +124,6 @@ class AuthController extends GetxController implements AuthViewContract {
 
   void appleSignIn() {
     _presenter.appleSignIn();
-  }
-
-  @override
-  void onInit() {
-    _presenter = AuthPresenter(controller: this);
-    super.onInit();
   }
 
   @override
@@ -121,7 +149,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: 'Error', message: error);
+    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);

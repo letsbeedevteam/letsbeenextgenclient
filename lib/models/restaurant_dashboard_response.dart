@@ -40,8 +40,8 @@ class RestaurantData {
   );
 
   Map<String, dynamic> toJson() => {
-      "stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
-      "recent_stores": List<RestaurantStores>.from(stores.map((store) => store.toJson())),
+      "stores": List<dynamic>.from(stores.map((store) => store.toJson())),
+      "recent_stores": List<dynamic>.from(stores.map((store) => store.toJson())),
   };
 }
 
@@ -51,40 +51,53 @@ class RestaurantStores {
     this.name,
     this.description,
     this.location,
+    this.status,
+    this.type,
+    this.category,
     this.logoUrl,
     this.photoUrl,
-    this.status,
-    this.category,
-    this.type
+    this.distance,
+    this.address
   });
 
   int id;
   String name;
   String description;
   RestaurantLocation location;
+  String status;
+  String type;
+  String category;
   String logoUrl;
   String photoUrl;
-  String status;
-  String category;
-  String type;
+  double distance;
+  RestaurantAddress address;
 
   factory RestaurantStores.fromJson(Map<String, dynamic> json) => RestaurantStores(
     id: json["id"],
     name: json["name"],
     description: json["description"],
     location: RestaurantLocation.fromJson(json["location"]),
-    logoUrl: json["logo_url"],
-    photoUrl: json["photo_url"],
     status: json["status"],
+    type: json["type"],
     category: json["category"],
-    type: json["type"]
+    logoUrl: json["logo_url"],
+    photoUrl: json["photo_url"] == null ? '' : json["photo_url"],
+    distance: json["distance"],
+   address: RestaurantAddress.fromJson(json["address"])
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
     "description": description,
-    "location": location.toJson()
+    "location": location.toJson(),
+    "status": status,
+    "type": type,
+    "category": category,
+    "logo_url": logoUrl,
+    "photo_url": photoUrl,
+    "distance": distance,
+    "address": address.toJson()
   };
 }
 
@@ -109,5 +122,33 @@ class RestaurantLocation {
     "lat": lat,
     "lng": lng,
     "name": name,
+  };
+}
+
+class RestaurantAddress {
+  RestaurantAddress({
+    this.country,
+    this.state,
+    this.city,
+    this.barangay
+  });
+
+  String country;
+  String state;
+  String city;
+  String barangay;
+
+  factory RestaurantAddress.fromJson(Map<String, dynamic> json) => RestaurantAddress(
+    country: json["country"],
+    state: json["state"],
+    city: json["city"],
+    barangay: json["barangay"]
+  );
+
+  Map<String, dynamic> toJson() => {
+    "country": country,
+    "state": state,
+    "city": city,
+    "barangay": barangay
   };
 }

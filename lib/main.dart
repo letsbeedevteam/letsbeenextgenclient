@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:get/get.dart';
@@ -12,19 +13,30 @@ import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/routes.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
+import 'generated/codegen_loader.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
-  runApp(MyApp());
+
+  runApp(
+    EasyLocalization(
+      path: Config.TRANSLATION_PATH,
+      supportedLocales: [Locale('ko', 'KR'), Locale('en', 'US')],
+      fallbackLocale: Locale('en', 'US'),
+      assetLoader: CodegenLoader(),
+      child: MyApp(),
+    )
+  );
 }
 
 Future initServices() async {
   print('Starting services...');
-  await Get.putAsync<SecretLoader>(() async => SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json'));
-  await Get.putAsync(() async {
-    final secretLoad = await Get.find<SecretLoader>().loadKey();
-    KakaoContext.clientId = secretLoad.nativeAppKey;
+  await Get.putAsync<SecretLoader>(() async {
+    final secretLoad = SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json');
+    final load = await secretLoad.loadKey();
+    KakaoContext.clientId = load.nativeAppKey;
+    return secretLoad;
   });
   await Get.putAsync<GoogleSignIn>(() async => GoogleSignIn());
   await Get.putAsync<FacebookLogin>(() async => FacebookLogin());
@@ -41,6 +53,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       title: Config.LETS_BEE,
       theme: ThemeData(
         appBarTheme: AppBarTheme(

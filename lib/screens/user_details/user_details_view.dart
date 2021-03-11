@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/user_details/user_details_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UserDetailsPage extends GetView<UserDetailsController> {
 
@@ -15,13 +16,13 @@ class UserDetailsPage extends GetView<UserDetailsController> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Text('User Details', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          title: Text(tr('userDetails'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
           leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
             Get.back();
           }),
           centerTitle: true,
           bottom: PreferredSize(
-            child: Container(height: 2, color: Colors.grey.shade200),
+            child: Container(height: 1, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(3.0)
           ),
         ),
@@ -42,7 +43,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)
                     ),
-                    child: Text(controller.isLoading.call() ? 'Loading...' : 'Next', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                    child: Text(tr(controller.isLoading.call() ? 'loading' : 'next'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
                     onPressed: () => controller.isLoading.call() ? null : controller.sendCode(),
                   )
                 );
@@ -58,7 +59,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Name', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('name'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         SizedBox(
           height: 40,
@@ -72,7 +73,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                 controller.numberFN.requestFocus();
               },
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               textInputAction: TextInputAction.next,
               enableSuggestions: false,
               autocorrect: false,
@@ -96,7 +97,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             );
           }),
@@ -109,7 +110,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Contact Number', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+        Text(tr('contactNumber'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Obx(() {
           return SizedBox(
@@ -119,7 +120,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
               controller: controller.numberController,
               focusNode: controller.numberFN,
               textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
               maxLength: 10,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'(^\-?\d*\.?\d*)'))
@@ -155,7 +156,7 @@ class UserDetailsPage extends GetView<UserDetailsController> {
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none
                 ),
-                contentPadding: EdgeInsets.only(left: 15)
+                contentPadding: EdgeInsets.only(left: 15, right: 15)
               )
             ),
           );
