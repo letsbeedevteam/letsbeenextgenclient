@@ -32,7 +32,6 @@ void main() async {
 
 Future initServices() async {
   print('Starting services...');
-
   await Get.putAsync<SecretLoader>(() async {
     final secretLoad = SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json');
     final load = await secretLoad.loadKey();

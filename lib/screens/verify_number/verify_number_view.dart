@@ -74,7 +74,7 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
             textStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             box: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: controller.isLoading.call() ? Colors.grey.shade200 : Colors.white
+              color: controller.isLoading.call() ? Colors.grey.shade200 : Colors.white,
             ),
             focusedBox: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -85,7 +85,7 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
             ),
           ),
         );
-      }),
+      })
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -24,12 +23,8 @@ import 'package:letsbeeclient/services/socket_service.dart';
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
   
-  TabController tabController;
-  AnimationController animationController;
   PageController pageController;
-  Animation<Offset> offsetAnimation;
   Completer<void> refreshCompleter;
-  GifController gifController;
 
   final ApiService apiService = Get.find();
   final PushNotificationService pushNotificationService = Get.find();
@@ -57,20 +52,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
   var isLoading = false.obs;
-  // var isSearching = false.obs;
-  // var isOnChat = false.obs;
   var isSelectedLocation = false.obs;
-  // var message = ''.obs;
   var onGoingMessage = 'No Active Orders...'.obs;
   var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
-  // var addresses = GetAllAddressResponse().obs;
   var reason = ''.obs;
   var searchRestaurants = RxList<RestaurantStores>().obs;
   var recentRestaurants = RxList<RestaurantStores>().obs;
   var searchMarts = RxList<MartStores>().obs;
   var recentMarts = RxList<MartStores>().obs;
-  // var restaurantDashboard = RestaurantDashboardResponse().obs;
-  // var martDashboard = MartDashboardResponse().obs;
   var activeOrderData = ActiveOrderData().obs;
   var activeOrders = ActiveOrder().obs;
 
@@ -91,12 +80,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var countMartPage = 0.obs;
   var isMartLoadingScroll = false.obs;
 
-  static DashboardController get to => Get.find();
+  var language = ''.obs;
 
-  GifController changeGifRange({double range, int duration}) {
-    gifController.repeat(min:0, max:range,period: Duration(milliseconds: duration));
-    return gifController;
-  }
+  static DashboardController get to => Get.find();
 
   @override
   void onInit() {
@@ -110,12 +96,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     pushNotificationService.initialise();
 
     setupRefreshIndicator();
-    setupAnimation();
     setupTabs();
     refreshToken(page: 0);
 
-    gifController = GifController(vsync: this);
-
+    if (box.hasData(Config.LANGUAGE))language(box.read(Config.LANGUAGE)); else language('EN');
+    
     foodScrollController.addListener(() {
       if (foodScrollController.position.atEdge) {
         if (foodScrollController.position.pixels != 0) {
@@ -168,28 +153,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
+  void changeLanguage(String lang) {
+    language(lang);
+    box.write(Config.LANGUAGE, lang);
+    Get.context.locale = lang == 'EN' ? Locale('en', 'US') : Locale('ko', 'KR');
+    Get.back();
+    update();
+  } 
+
   void setupRefreshIndicator() {
     refreshCompleter = Completer();
   }
 
-  void setupAnimation() {
-
-    animationController = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this
-    );
-
-    offsetAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(1.5, 0.0),
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: Curves.elasticInOut,
-    ));
-  }
-
   void setupTabs() {
-    tabController = TabController(length: 1, vsync: this);
+    // tabController = TabController(length: 1, vsync: this);
     pageController = PageController();
   }
 
@@ -489,6 +466,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         box.remove(Config.PRODUCTS);
         restaurantErrorMessage(Config.somethingWentWrong);
         martErrorMessage(Config.somethingWentWrong);
+        box.remove(Config.PRODUCTS);
       }
       hasMartError(true);
       hasRestaurantError(true);
@@ -615,15 +593,28 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  searchRestaurant({String restaurant}) {
-    searchRestaurantValue(restaurant);
-    searchRestaurants.call().where((element) => element.name.toLowerCase().contains(restaurant.trim().toLowerCase()) || element.category.toLowerCase().contains(restaurant.trim().toLowerCase()));
-    restaurantErrorMessage(tr('noRestaurants'));
+  searchRestaurant(String restaurant) {
+    // searchRestaurantValue(restaurant);
+    // searchRestaurants.call().where((element) => element.name.toLowerCase().contains(restaurant.trim().toLowerCase()) || element.category.toLowerCase().contains(restaurant.trim().toLowerCase()));
+    // restaurantErrorMessage(tr('noRestaurants'));
+
+    if (restaurant.trim().isEmpty) {
+      errorSnackbarTop(title: Config.oops, message: Config.inputSearchField);
+      restaurantSearchController.clear();
+    } else {
+      print(restaurant);
+    }
   }
 
-  searchMart({String mart}) {
-    searchMartValue(mart);
-    searchMarts.call().where((element) => element.name.toLowerCase().contains(mart.trim().toLowerCase()) || element.category.toLowerCase().contains(mart.trim().toLowerCase()));
-    martErrorMessage(tr('noShops'));
+  searchMart(String mart) {
+    // searchMartValue(mart);
+    // searchMarts.call().where((element) => element.name.toLowerCase().contains(mart.trim().toLowerCase()) || element.category.toLowerCase().contains(mart.trim().toLowerCase()));
+    // martErrorMessage(tr('noShops'));
+    if (mart.trim().isEmpty) {
+      errorSnackbarTop(title: Config.oops, message: Config.inputSearchField);
+      martSearchController.clear();
+    } else {
+      print(mart);
+    }
   }
 }

@@ -111,7 +111,6 @@ class ApiService extends GetConnect {
   }
 
   Future<SignInResponse> resendOtp({String token}) async {
-    
     final response = await post(
       '/auth/customer/resend-otp',
       {'token': token}

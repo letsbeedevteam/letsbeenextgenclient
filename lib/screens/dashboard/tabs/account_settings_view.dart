@@ -9,28 +9,32 @@ class AccountSettingsPage extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildAccountManagement(),
+      child: GetBuilder<DashboardController>(
+        builder: (_) {
+          return Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _buildAccountManagement(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _buildNotifications(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _buildOthers(),
+                ),
+                const SizedBox(height: 20)
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildNotifications(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildOthers(),
-            ),
-            const SizedBox(height: 20)
-          ],
-        ),
-      ),
+          );
+        },
+      )
     );
   }
 
@@ -129,6 +133,23 @@ class AccountSettingsPage extends GetView<DashboardController> {
             ),
           ),
         ),
+        GestureDetector(
+          onTap: () => _translationBottomsheet(),
+          child: Container(
+            padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20, bottom: 10),
+            decoration: BoxDecoration(
+              color: Color(Config.WHITE)
+            ),
+            width: Get.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(tr('language'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                const Icon(Icons.chevron_right)
+              ],
+            ),
+          ),
+        ),
       ]
     );
   }
@@ -222,7 +243,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
 
   _logoutModal() {
     Get.defaultDialog(
-      title: 'Do you really want to log out your account?',
+      title: tr('logoutMessage'),
       backgroundColor: Color(Config.WHITE),
       titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
       radius: 8,
@@ -233,7 +254,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
         ),
         color: const Color(Config.LETSBEE_COLOR),
         onPressed: () =>  controller.signOut(),
-        child: const Text('YES', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+        child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
       ),
       cancel: RaisedButton(
         shape: RoundedRectangleBorder(
@@ -241,9 +262,39 @@ class AccountSettingsPage extends GetView<DashboardController> {
         ),
         color: const Color(Config.LETSBEE_COLOR),
         onPressed: () => Get.back(),
-        child: const Text('NO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+        child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
       ),
       barrierDismissible: false
+    );
+  }
+
+  _translationBottomsheet() {
+    Get.bottomSheet(
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          color: Color(Config.WHITE),
+        ),
+        child: Obx(() {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile(
+                title: Text('English', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                value: 'EN',
+                groupValue: controller.language.call(),
+                onChanged: controller.changeLanguage,
+              ),
+              RadioListTile(
+                title: Text('Korea', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                value: 'KR',
+                groupValue: controller.language.call(),
+                onChanged: controller.changeLanguage,
+              )
+            ],
+          );
+        }),
+      )
     );
   }
 }

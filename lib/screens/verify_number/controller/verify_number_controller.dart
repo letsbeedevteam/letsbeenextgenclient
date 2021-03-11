@@ -94,8 +94,8 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
       if (response.status == 200) {
         signInData(response.data);
-        Future.delayed(Duration(seconds: 60)).then((data) => isResendCodeLoading(false));
-        
+        Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
+
         successSnackBarTop(message: Config.resendCodeSuccess);
 
       } else {

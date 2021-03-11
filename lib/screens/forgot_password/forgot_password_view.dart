@@ -36,7 +36,7 @@ class ForgotPasswordPage extends GetView<ForgotPasswordController> {
               return controller.isSentCode.call() ? _codeTextField() : Container();
             }),
             _sendCodeButton(),
-           Obx(() {
+            Obx(() {
              return controller.isSentCode.call() ? _footer() : Container();
            })
           ],
@@ -53,7 +53,7 @@ class ForgotPasswordPage extends GetView<ForgotPasswordController> {
         Text(tr('didntSendCode'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         GestureDetector(
-          onTap: () => controller.isResendCodeLoading.call() ? null : controller.resendOtp(),
+          onTap: () => controller.isResendCodeLoading.call() ? null : controller.sendCode(type: 'resend_code'),
           child: Text(tr('resendCode'), style: TextStyle(fontSize: 15, color: controller.isResendCodeLoading.call() ? Color(Config.GREY_TEXT_COLOR) : Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
         ),
       ],
