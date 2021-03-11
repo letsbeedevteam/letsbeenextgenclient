@@ -1,5 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
-
 class Config {
 
   // Base URLs
@@ -62,48 +60,48 @@ class Config {
   static const GIF_PATH = 'assets/gifs/';
 
   // Error message
-  static final noInternetConnection = tr('noInternetConnection');
-  static final somethingWentWrong = tr('somethingWentWrong');
-  static final timedOut = tr('timedOut');
-  static final tokenExpired = tr('tokenExpired');
-  static final oops = tr('oops');
-  static final inputFields = tr('inputFields');
-  static final signInFailed = tr('signInFailed');
-  static final accountNotExist = tr('accountNotExist');
-  static final emailInvalid = tr('emailInvalid');
-  static final incorrectRepeatPassword = tr('incorrectRepeatPassword');
-  static final registeredSuccess = tr('registeredSuccess');
-  static final yay = tr('yay');
-  static final invalidCode = tr('invalidCode');
-  static final inputAddressDetail = tr('inputAddressDetail');
-  static final home = tr('home');
-  static final searchLocation = tr('searchLocation');
-  static final requiredChoice = tr('requiredChoice');
-  static final deletedItem = tr('deletedItem');
-  static final minimumTransaction = tr('minimumTransaction');
-  static final storeClosed = tr('storeClosed');
-  static final successOrder = tr('successOrder');
-  static final updatedItem = tr('updatedItem');
-  static final accountInfoUpdated = tr('accountInfoUpdated');
-  static final emptyOrderHistory = tr('emptyOrderHistory');
-  static final connected = tr('connected');
-  static final disconnected = tr('disconnected');
-  static final connecting = tr('connecting');
-  static final reconnecting = tr('reconnecting');
-  static final notSent = tr('notSent');
-  static final messageEmpty = tr('messageEmpty');
-  static final noMessages = tr('noMessages');
-  static final loadingConversation = tr('loadingConversation');
-  static final loadingMap = tr('loadingMap');
-  static final trackingRider = tr('trackingRider');
-  static final yourRider = tr('yourRider');
-  static final you = tr('you');
-  static final enterYourNumber = tr('enterYourNumber');
-  static final invalidNumber = tr('invalidNumber');
-  static final resendCodeSuccess = tr('resendCodeSuccess');
-  static final inputSearchField = tr('inputSearchField');
-  static final addedSuccessfully = tr('addedSuccessfully');
-  static final updatedSuccessfully = tr('updatedSuccessfully');
+  // static final noInternetConnection = tr('noInternetConnection');
+  // static final somethingWentWrong = tr('somethingWentWrong');
+  // static final timedOut = tr('timedOut');
+  // static final tokenExpired = tr('tokenExpired');
+  // static final oops = tr('oops');
+  // static final inputFields = tr('inputFields');
+  // static final signInFailed = tr('signInFailed');
+  // static final accountNotExist = tr('accountNotExist');
+  // static final emailInvalid = tr('emailInvalid');
+  // static final incorrectRepeatPassword = tr('incorrectRepeatPassword');
+  // static final registeredSuccess = tr('registeredSuccess');
+  // static final yay = tr('yay');
+  // static final invalidCode = tr('invalidCode');
+  // static final inputAddressDetail = tr('inputAddressDetail');
+  // static final home = tr('home');
+  // static final searchLocation = tr('searchLocation');
+  // static final requiredChoice = tr('requiredChoice');
+  // static final deletedItem = tr('deletedItem');
+  // static final minimumTransaction = tr('minimumTransaction');
+  // static final storeClosed = tr('storeClosed');
+  // static final successOrder = tr('successOrder');
+  // static final updatedItem = tr('updatedItem');
+  // static final accountInfoUpdated = tr('accountInfoUpdated');
+  // static final emptyOrderHistory = tr('emptyOrderHistory');
+  // static final connected = tr('connected');
+  // static final disconnected = tr('disconnected');
+  // static final connecting = tr('connecting');
+  // static final reconnecting = tr('reconnecting');
+  // static final notSent = tr('notSent');
+  // static final messageEmpty = tr('messageEmpty');
+  // static final noMessages = tr('noMessages');
+  // static final loadingConversation = tr('loadingConversation');
+  // static final loadingMap = tr('loadingMap');
+  // static final trackingRider = tr('trackingRider');
+  // static final yourRider = tr('yourRider');
+  // static final you = tr('you');
+  // static final enterYourNumber = tr('enterYourNumber');
+  // static final invalidNumber = tr('invalidNumber');
+  // static final resendCodeSuccess = tr('resendCodeSuccess');
+  // static final inputSearchField = tr('inputSearchField');
+  // static final addedSuccessfully = tr('addedSuccessfully');
+  // static final updatedSuccessfully = tr('updatedSuccessfully');
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';

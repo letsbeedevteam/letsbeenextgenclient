@@ -62,7 +62,7 @@ class AuthController extends GetxController implements AuthViewContract {
     
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
 
-      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
       isLoading(false);
     } else {
       if(GetUtils.isEmail(emailController.text)) {
@@ -80,9 +80,9 @@ class AuthController extends GetxController implements AuthViewContract {
           } else {
 
             if (response.code != 2012) {
-              alertSnackBarTop(title: Config.oops, message: Config.signInFailed);
+              alertSnackBarTop(title: tr('oops'), message: tr('signInFailed'));
             } else {
-              alertSnackBarTop(title: Config.oops, message: Config.accountNotExist);
+              alertSnackBarTop(title: tr('oops'), message: tr('accountNotExist'));
             }
 
             passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
@@ -92,14 +92,14 @@ class AuthController extends GetxController implements AuthViewContract {
 
         }).catchError((onError) {
           print('Sign In: $onError');
-          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
           passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
           passwordFN.requestFocus();
         });
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
+        errorSnackbarTop(title: tr('oops'), message: tr('emailInvalid'));
         isLoading(false);
         emailController.selection = TextSelection.fromPosition(TextPosition(offset: emailController.text.length));
         emailFN.requestFocus();
@@ -149,7 +149,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
+    if (error != 'User cancelled') errorSnackBarBottom(title: tr('oops'), message: tr('somethingWentWrong'));
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);

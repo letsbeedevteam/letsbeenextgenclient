@@ -158,7 +158,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }
    
     if (!hasNotSelectedChoice) {
-      errorSnackbarTop(title: Config.oops, message: Config.requiredChoice);
+      errorSnackbarTop(title: tr('oops'), message: tr('requiredChoice'));
     } else {
       
       product.uniqueId = uuid.v4();
@@ -252,7 +252,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }).catchError((onError) {
       hasError(true);
       storeResponse.nil();
-      message(Config.somethingWentWrong);
+      message(tr('somethingWentWrong'));
       print('Error fetch restaurant by ID ${argument['id']}: $onError');
     });
   }

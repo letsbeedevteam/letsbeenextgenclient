@@ -4,6 +4,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddressController extends GetxController {
 
@@ -53,13 +54,13 @@ class AddressController extends GetxController {
 
       } else {
         addresses.nil();
-        addressErrorMessage(Config.somethingWentWrong);
+        addressErrorMessage(tr('somethingWentWrong'));
       }
       
     }).catchError((onError) {
       addresses.nil();
       isLoading(false);
-      addressErrorMessage(Config.somethingWentWrong);
+      addressErrorMessage(tr('somethingWentWrong'));
       // message(Config.SOMETHING_WENT_WRONG);
       print('Error fetch all address: $onError');
     });

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -96,7 +97,7 @@ class MapController extends GetxController {
 
     if (argument['type'] == Config.ADD_NEW_ADDRESS) {
       if (addressLabel.isBlank || addressDetails.text.isBlank) {
-        errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+        errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
       } else {
         userCurrentAddress(addressDetails.text.trim());
         addAddress();
@@ -105,7 +106,7 @@ class MapController extends GetxController {
     } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
 
       if (addressLabel.isBlank || addressDetails.text.isBlank) {
-        errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+        errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
       } else {
         userCurrentAddress(addressDetails.text.trim());
         editAddress();
@@ -113,7 +114,7 @@ class MapController extends GetxController {
 
     } else {
       if (addressDetails.text.isBlank) {
-        errorSnackbarTop(title: Config.oops, message: Config.inputAddressDetail);
+        errorSnackbarTop(title: tr('oops'), message: tr('inputAddressDetail'));
       } else {
         userCurrentAddress(addressDetails.text.trim());
         addAddress();
@@ -191,7 +192,7 @@ class MapController extends GetxController {
       language: 'en',
       overlayBorderRadius: BorderRadius.all(Radius.circular(10)),
       logo: Container(height: 30),
-      hint: Config.searchLocation,
+      hint: tr('searchLocation'),
       components: [Component(Component.country, 'ph')],
     );
     
@@ -253,7 +254,7 @@ class MapController extends GetxController {
           ..fetchRestaurantDashboard(page: 0);
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
-          successSnackBarTop(message: Config.addedSuccessfully);
+          successSnackBarTop(message: tr('addedSuccessfully'));
           
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
@@ -262,7 +263,7 @@ class MapController extends GetxController {
 
         
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         print('Failed to add new address');
       }
 
@@ -270,7 +271,7 @@ class MapController extends GetxController {
     
     newAddressSub.onError((handleError) {
       isAddAddressLoading(false);
-      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Error add new address: $handleError');
     });
   }
@@ -315,10 +316,10 @@ class MapController extends GetxController {
 
         AddressController.to.refreshAddress();
         Get.back(closeOverlays: true);
-        successSnackBarTop(message: Config.updatedSuccessfully);
+        successSnackBarTop(message: tr('updatedSuccessfully'));
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         print('Failed to add new address');
       }
 
@@ -326,7 +327,7 @@ class MapController extends GetxController {
     
     editAddressSub.onError((handleError) {
       isAddAddressLoading(false);
-      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Error edit new address: $handleError');
     });
   }

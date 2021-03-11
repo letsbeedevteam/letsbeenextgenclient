@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
@@ -16,7 +17,7 @@ class AuthModel implements AuthModelContract {
       _request(Config.GOOGLE, auth.idToken, listener);
     }).catchError((onError) {
       if(onError.toString().contains(Config.NETWORK_ERROR)) {
-        listener.onSocialSignInRequestFailed(Config.noInternetConnection);
+        listener.onSocialSignInRequestFailed(tr('noInternetConnection'));
       } else {
         listener.onSocialSignInRequestFailed(onError.toString());
       }
@@ -46,7 +47,7 @@ class AuthModel implements AuthModelContract {
       if (onError.toString().contains('User canceled login.') || onError.toString().contains('REDIRECT_URL_MISMATCH')) {
         listener.onSocialSignInRequestFailed('User cancelled');
       } else if (onError.toString().contains('net::ERR_INTERNET_DISCONNECTED')) {
-        listener.onSocialSignInRequestFailed(Config.noInternetConnection);
+        listener.onSocialSignInRequestFailed(tr('noInternetConnection'));
       }
       print('onKakaoSignInRequestFailed: $onError');
     });
@@ -71,15 +72,15 @@ class AuthModel implements AuthModelContract {
       if (response.status == 200) {
         listener.onSocialSignInRequestSuccess(social, response.data);
       } else {
-        listener.onSocialSignInRequestFailed(Config.somethingWentWrong);
+        listener.onSocialSignInRequestFailed(tr('somethingWentWrong'));
       }
     }).catchError((onError) {
       if (onError.toString().contains('Connection timed out')) {
         listener.onSocialSignInRequestFailed('Connection timed out');
       } else if (onError.toString().contains('Operation timed out')) {
-        listener.onSocialSignInRequestFailed(Config.timedOut);
+        listener.onSocialSignInRequestFailed(tr('timedOut'));
       } else {
-        listener.onSocialSignInRequestFailed(Config.somethingWentWrong);
+        listener.onSocialSignInRequestFailed(tr('somethingWentWrong'));
       }
       print('$social request onError: $onError');
     });

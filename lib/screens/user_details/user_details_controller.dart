@@ -71,20 +71,20 @@ class UserDetailsController extends GetxController {
             _signedUpPopUp(data);
             dismissKeyboard(Get.context);
           } else {
-            alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+            alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
           isLoading(false);
         }).catchError((onError) {
-          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
+        errorSnackbarTop(title: tr('oops'), message: tr('invalidNumber'));
       }
 
     } else {
-      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
     }
   }
 
@@ -110,21 +110,21 @@ class UserDetailsController extends GetxController {
             _signedUpPopUp(data);
             dismissKeyboard(Get.context);
           } else {
-            alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+            alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
           isLoading(false);
         }).catchError((onError) {
-          alertSnackBarTop(title: Config.oops, message: Config.somethingWentWrong);
+          alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
+        errorSnackbarTop(title: tr('oops'), message: tr('invalidNumber'));
       }
     
 
     } else {
-      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
     }
   }
 

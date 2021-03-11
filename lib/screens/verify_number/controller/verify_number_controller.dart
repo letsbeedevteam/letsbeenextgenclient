@@ -53,14 +53,14 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
       if (response.status == 200) {
         _verifiedPopUp(response);
       } else {
-        errorSnackBarBottom(title: Config.oops, message: Config.invalidCode);
+        errorSnackBarBottom(title: tr('oops'), message: tr('invalidCode'));
       }
 
       isLoading(false);
 
     }).catchError((onError) {
       isLoading(false);
-      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Confirmation error: $onError');
     });
   }
@@ -96,16 +96,16 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
         signInData(response.data);
         Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
 
-        successSnackBarTop(message: Config.resendCodeSuccess);
+        successSnackBarTop(message: tr('resendCodeSuccess'));
 
       } else {
         isResendCodeLoading(false);
-        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       }
 
     }).catchError((onError) {
       isResendCodeLoading(false);
-      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
     });
   }
 

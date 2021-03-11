@@ -1,4 +1,5 @@
 import 'package:code_field/code_field.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -36,7 +37,7 @@ class ForgotPasswordController extends GetxController {
     type == 'resend_code' ? isResendCodeLoading(true) : isLoading(true);
     dismissKeyboard(Get.context);
     if (numberController.text.isEmpty) {
-      errorSnackbarTop(title: Config.oops, message: Config.enterYourNumber);
+      errorSnackbarTop(title: tr('oops'), message: tr('enterYourNumber'));
       type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
     } else {
 
@@ -48,23 +49,23 @@ class ForgotPasswordController extends GetxController {
             code(response.message);
             if (type == 'resend_code') {
               Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
-              successSnackBarTop(message: Config.resendCodeSuccess);
+              successSnackBarTop(message: tr('resendCodeSuccess'));
             }
             isSentCode(true);
           } else {
-            errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+            errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
 
           isLoading(false);
         }).catchError((onError) {
           print(onError.toString());
           type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
-          errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         });
 
       } else {
         type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
-        errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
+        errorSnackbarTop(title: tr('oops'), message: tr('invalidNumber'));
       }
     }
   }
@@ -78,16 +79,16 @@ class ForgotPasswordController extends GetxController {
       if (response.status == 200) {
         token(response.data.token);
         Future.delayed(Duration(seconds: 60)).then((data) => isResendCodeLoading(false));
-        successSnackBarTop(message: Config.resendCodeSuccess);
+        successSnackBarTop(message: tr('resendCodeSuccess'));
 
       } else {
         isResendCodeLoading(false);
-        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       }
 
     }).catchError((onError) {
       isResendCodeLoading(false);
-      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
     });
   }
 
@@ -103,11 +104,11 @@ class ForgotPasswordController extends GetxController {
         }).whenComplete(() => reset());
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.invalidCode);
+        errorSnackbarTop(title: tr('oops'), message: tr('invalidCode'));
       }
 
     } else {
-      errorSnackbarTop(title: Config.oops, message: Config.invalidCode);
+      errorSnackbarTop(title: tr('oops'), message: tr('invalidCode'));
     }
   }
 

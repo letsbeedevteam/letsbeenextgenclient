@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -75,7 +75,7 @@ class SignUpController extends GetxController implements AuthViewContract {
   void signUp() {
 
     if (emailController.text.isEmpty || passwordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
-      errorSnackbarTop(title: Config.oops, message: Config.inputFields);
+      errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
 
     } else {
       
@@ -95,14 +95,14 @@ class SignUpController extends GetxController implements AuthViewContract {
 
         } else {
           isLoading(false);
-          errorSnackbarTop(title: Config.oops, message: Config.incorrectRepeatPassword);
+          errorSnackbarTop(title: tr('oops'), message: tr('incorrectRepeatPassword'));
 
           confirmPasswordController.selection = TextSelection.fromPosition(TextPosition(offset: confirmPasswordController.text.length));
           confirmPasswordFN.requestFocus();
         }
 
       } else {
-        errorSnackbarTop(title: Config.oops, message: Config.emailInvalid);
+        errorSnackbarTop(title: tr('oops'), message: tr('emailInvalid'));
         isLoading(false);
       }
     }
@@ -110,7 +110,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   void goToVerifyNumber() {
      dismissKeyboard(Get.context);
-     successSnackBarTop(title: Config.yay, message: Config.registeredSuccess);
+     successSnackBarTop(title: tr('yay'), message: tr('registeredSuccess'));
   }
 
   void clear() {
@@ -127,7 +127,7 @@ class SignUpController extends GetxController implements AuthViewContract {
 
   @override
   void onError(String error) {
-    if (error != 'User cancelled') errorSnackBarBottom(title: Config.oops, message: Config.somethingWentWrong);
+    if (error != 'User cancelled') errorSnackBarBottom(title: tr('oops'), message: tr('somethingWentWrong'));
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);
