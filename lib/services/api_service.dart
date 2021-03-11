@@ -110,6 +110,18 @@ class ApiService extends GetConnect {
     return forgotPassFromJson(response.bodyString);
   }
 
+  Future<SignInResponse> resendOtp({String token}) async {
+    
+    final response = await post(
+      '/auth/customer/resend-otp',
+      {'token': token}
+    );
+
+    print('Resend Otp: ${response.body}');
+
+    return signInResponseFromJson(response.bodyString);
+  }
+
   Future<SignUpResponse> customerSocialSignUp({SocialSignUpRequest socialSignUp}) async {
 
     print(socialSignUp.toJson());

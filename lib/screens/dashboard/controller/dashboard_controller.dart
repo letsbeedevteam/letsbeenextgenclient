@@ -356,7 +356,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             message = tr('orderDelivered').replaceAll('{}', name);
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
 
-            if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
+            // if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
 
             Get.defaultDialog(
               title: tr('yay'),
@@ -486,6 +486,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         restaurantErrorMessage(Config.timedOut);
         martErrorMessage(Config.timedOut);
       } else {
+        box.remove(Config.PRODUCTS);
         restaurantErrorMessage(Config.somethingWentWrong);
         martErrorMessage(Config.somethingWentWrong);
       }

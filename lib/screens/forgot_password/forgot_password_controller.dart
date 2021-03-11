@@ -16,7 +16,7 @@ class ForgotPasswordController extends GetxController {
 
   var isLoading = false.obs;
   var isSentCode = false.obs;
-  var isShowResendCode = false.obs;
+  var isResendCodeLoading = false.obs;
   var token = ''.obs;
   var code = ''.obs;
 
@@ -46,7 +46,7 @@ class ForgotPasswordController extends GetxController {
           if (response.status == 200) {
             token(response.data.token);
             code(response.message);
-            if (Get.currentRoute == Config.FORGOT_PASS_ROUTE) Future.delayed(Duration(seconds: 5)).then((data) => isShowResendCode(true));
+            // if (Get.currentRoute == Config.FORGOT_PASS_ROUTE) Future.delayed(Duration(seconds: 5)).then((data) => isShowResendCode(true));
             isSentCode(true);
           } else {
             errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
@@ -64,6 +64,28 @@ class ForgotPasswordController extends GetxController {
         errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
       }
     }
+  }
+
+  void resendOtp() {
+
+    print(token.call());
+    isResendCodeLoading(true);
+    _apiService.resendOtp(token: token.call()).then((response) {
+
+      if (response.status == 200) {
+        token(response.data.token);
+        Future.delayed(Duration(seconds: 60)).then((data) => isResendCodeLoading(false));
+        successSnackBarTop(message: Config.resendCodeSuccess);
+
+      } else {
+        isResendCodeLoading(false);
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      }
+
+    }).catchError((onError) {
+      isResendCodeLoading(false);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+    });
   }
 
   void goToChangePassword() {
@@ -90,7 +112,6 @@ class ForgotPasswordController extends GetxController {
     token.nil();
     codeControl.clear();
     numberController.clear();
-    isShowResendCode(false);
     isSentCode(false);
   }
 }

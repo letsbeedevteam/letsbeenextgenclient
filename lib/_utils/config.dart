@@ -100,6 +100,7 @@ class Config {
   static final you = tr('you');
   static final enterYourNumber = tr('enterYourNumber');
   static final invalidNumber = tr('invalidNumber');
+  static final resendCodeSuccess = tr('resendCodeSuccess');
 
   // Google error code
   static const NETWORK_ERROR = 'network_error';
