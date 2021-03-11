@@ -100,7 +100,7 @@ class ChangePasswordController extends GetxController {
         _apiService.customerChangePassword(request: request).then((response) {
           
           if (response.status == 200) {
-            successSnackBarTop(message: response.message);
+            successSnackBarTop(message: Config.updatedSuccessfully);
             oldPassController.clear();
             newPassController.clear();
             repeatPassController.clear();

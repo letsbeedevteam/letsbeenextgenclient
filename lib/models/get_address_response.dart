@@ -36,7 +36,8 @@ class AddressData {
         this.name,
         this.address,
         this.note,
-        this.createdAt
+        this.createdAt,
+        this.isSelected
     });
 
     Location location;
@@ -46,6 +47,7 @@ class AddressData {
     String address;
     String note;
     String createdAt;
+    bool isSelected;
 
     factory AddressData.fromJson(Map<String, dynamic> json) => AddressData(
         location: Location.fromJson(json["location"]),
@@ -54,7 +56,8 @@ class AddressData {
         name: json["name"],
         address: json["address"],
         note: json["note"],
-        createdAt: json["createdAt"]
+        createdAt: json["createdAt"],
+        isSelected: false
     );
 
     Map<String, dynamic> toJson() => {

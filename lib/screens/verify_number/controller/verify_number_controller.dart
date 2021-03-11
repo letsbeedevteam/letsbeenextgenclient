@@ -19,6 +19,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
   var selectedIndex = 0.obs;
   var isLoading = false.obs;
   var isKeyboardVisible = false.obs;
+  var isResendCodeLoading = false.obs;
 
   var signInData = SignInData().obs;
 
@@ -84,6 +85,28 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
       _box.write(Config.IS_LOGGED_IN, true);
       Get.offAllNamed(Config.DASHBOARD_ROUTE);
     }
+  }
+
+  void resendOtp() {
+
+    isResendCodeLoading(true);
+    _apiService.resendOtp(token: signInData.call().token).then((response) {
+
+      if (response.status == 200) {
+        signInData(response.data);
+        Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
+
+        successSnackBarTop(message: Config.resendCodeSuccess);
+
+      } else {
+        isResendCodeLoading(false);
+        errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+      }
+
+    }).catchError((onError) {
+      isResendCodeLoading(false);
+      errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
+    });
   }
 
   _verifiedPopUp(CellphoneConfirmationResponse response) {

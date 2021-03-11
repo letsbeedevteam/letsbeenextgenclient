@@ -139,11 +139,7 @@ class DashboardPage extends GetView<DashboardController> {
                 onTap: (value) =>  _.tapped(value),
                 items: [
                   customNavigationBarItem(tr('food'), image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
-                  // customNavigationBarItem('Meal Kit', icon: Icon(FontAwesomeIcons.utensilSpoon)),
                   customNavigationBarItem(tr('groceries'), image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
-                  // customNavigationBarItem('Notification', icon: Icon(Icons.notifications)),
-                  // customNavigationBarItem('Reviews', icon: Icon(FontAwesomeIcons.youtube)),
-                  // customNavigationBarItem('History', icon: Icon(FontAwesomeIcons.clipboardList)),
                   customNavigationBarItem(tr('account'), image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
                 ],
               ),

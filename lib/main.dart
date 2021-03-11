@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -33,13 +32,6 @@ void main() async {
 
 Future initServices() async {
   print('Starting services...');
-  await fetchGif(AssetImage(Config.GIF_PATH + 'delivered.gif'));
-  await fetchGif(AssetImage(Config.GIF_PATH + 'mart_delivered.gif'));
-  await fetchGif(AssetImage(Config.GIF_PATH + 'mart.gif'));
-  await fetchGif(AssetImage(Config.GIF_PATH + 'motor.gif'));
-  await fetchGif(AssetImage(Config.GIF_PATH + 'preparing.gif'));
-  await fetchGif(AssetImage(Config.GIF_PATH + 'waiting.gif'));
-  
   await Get.putAsync<SecretLoader>(() async {
     final secretLoad = SecretLoader(jsonPath: Config.JSONS_PATH + 'secrets.json');
     final load = await secretLoad.loadKey();

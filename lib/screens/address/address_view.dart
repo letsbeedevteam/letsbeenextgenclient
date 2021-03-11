@@ -72,8 +72,8 @@ class AddressPage extends GetView<AddressController> {
   Widget _buildLocationList(AddressData data) {
     return GestureDetector(
       child: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: const BoxDecoration(
+        padding: const EdgeInsets.only(bottom: 15, left: 15, right: 15),
+        decoration: BoxDecoration(
           color: Color(Config.WHITE)
         ),
         child: Column(
@@ -82,7 +82,13 @@ class AddressPage extends GetView<AddressController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(data.name, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    Text(data.name, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
+                    data.isSelected ? Icon(Icons.check_circle, color: Colors.green, size: 15) : Container()
+                  ],
+                ),
                 GestureDetector(
                   child: const Icon(Icons.edit),
                   onTap: () => controller.editAddress(data),

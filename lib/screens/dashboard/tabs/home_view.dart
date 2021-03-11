@@ -17,43 +17,21 @@ class HomePage extends GetView<DashboardController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        SizedBox(
-          height: 40,
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Obx(() {
-              return IgnorePointer(
-                ignoring: controller.isLoading.call(),
-                child: TextField(
-                  controller: controller.restaurantSearchController,
-                  onChanged: (value) => controller.searchRestaurant(restaurant: value),
-                  cursorColor: Colors.black,
-                  style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 10),
-                    hintText: tr('searchFood'),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        controller.restaurantSearchController.clear();
-                        controller.searchRestaurantValue('');
-                      },
-                      icon: Icon(Icons.clear),
-                    ),
-                    hintStyle: TextStyle(fontSize: 14),
-                    fillColor: Colors.white,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      borderSide: BorderSide.none
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                  ),
-                ),
-              );
-            })
+        GestureDetector(
+          onTap: () => _searchBottomsheet(),
+          child: SizedBox(
+            height: 40,
+            width: Get.width,
+            child: Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white
+              ),
+              child: Text(tr('searchFood'), style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR), fontSize: 14))
+            ),
           ),
         ),
         Obx(() {
@@ -398,6 +376,126 @@ class HomePage extends GetView<DashboardController> {
           ],
         ),
       ),
+    );
+  }
+
+   Widget _searchField() {
+    return SizedBox(
+      height: 40,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child: Obx(() {
+          return IgnorePointer(
+            ignoring: controller.isLoading.call(),
+            child: TextField(
+              controller: controller.restaurantSearchController,
+              // onChanged: (value) => controller.searchRestaurant(restaurant: value),
+              cursorColor: Colors.black,
+              autofocus: true,
+              style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR)),
+              textInputAction: TextInputAction.search,
+              onSubmitted: controller.searchRestaurant,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 10),
+                hintText: tr('searchFood'),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    controller.restaurantSearchController.clear();
+                    // controller.searchRestaurantValue('');
+                  },
+                  icon: Icon(Icons.clear),
+                ),
+                hintStyle: TextStyle(fontSize: 14),
+                fillColor: Colors.white,
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderSide: BorderSide.none
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+            ),
+          );
+        })
+      ),
+    );
+  }
+
+  Widget _buildSearchList() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+          Image.asset(Config.PNG_PATH + 'search_store.png', height: 15, width: 15),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+          Text('Bongane', style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500))
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchRestaurant() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        color: Color(Config.WHITE),
+      ),
+      child: Column(
+        children: [
+          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+          _searchField(),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Column(
+                    children: [
+                      _buildSearchList(),
+                      _buildSearchList(),
+                      _buildSearchList(),
+                    ],
+                  ),
+                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _searchBottomsheet() {
+    controller.restaurantSearchController.clear();
+    Get.bottomSheet(
+      Column(
+        children: [
+          Flexible(
+            flex: 1,
+            child: GestureDetector(
+              onTap: () => Get.back(),
+              child: Container(
+                color: Colors.transparent,
+                width: Get.width
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 5,
+            child: _buildSearchRestaurant(),
+          )
+        ],
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
     );
   }
 }

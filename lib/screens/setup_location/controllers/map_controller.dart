@@ -253,7 +253,7 @@ class MapController extends GetxController {
           ..fetchRestaurantDashboard(page: 0);
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
-          successSnackBarTop(message: response.message);
+          successSnackBarTop(message: Config.addedSuccessfully);
           
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
@@ -294,9 +294,28 @@ class MapController extends GetxController {
       isAddAddressLoading(false);
       if(response.status == 200) {
         print('Success');
+
+        if (_box.read(Config.USER_ADDRESS_ID) == addressData.call().id) {
+
+          userCurrentAddress(this.addressDetails.text);
+          _box.write(Config.USER_ADDRESS_ID, addressData.call().id);
+          _box.write(Config.USER_CURRENT_LATITUDE, this.currentPosition.call().latitude);
+          _box.write(Config.USER_CURRENT_LONGITUDE, this.currentPosition.call().longitude);
+          _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+          _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, this.addressLabel.text);
+          _box.write(Config.NOTE_TO_RIDER, this.noteToRider.text);
+
+          DashboardController.to
+          ..isSelectedLocation(true)
+          ..userCurrentNameOfLocation(this.addressLabel.text)
+          ..userCurrentAddress(this.userCurrentAddress.call().trim())
+          ..fetchActiveOrders()
+          ..fetchRestaurantDashboard(page: 0);
+        }
+
         AddressController.to.refreshAddress();
         Get.back(closeOverlays: true);
-        successSnackBarTop(message: response.message);
+        successSnackBarTop(message: Config.updatedSuccessfully);
 
       } else {
         errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);

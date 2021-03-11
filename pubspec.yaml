@@ -24,7 +24,7 @@ dependencies:
   # Badge
   badges: ^1.1.6
 
-  # Lottie animation
+  # Loading animation
   loading_gifs: ^0.2.3
 
   # Dependency Injection
@@ -38,9 +38,6 @@ dependencies:
 
   # Svg 
   flutter_svg: ^0.19.1
-
-  # Gif
-  flutter_gifimage: ^1.0.1
 
   # Code Field
   code_field: ^1.22.0

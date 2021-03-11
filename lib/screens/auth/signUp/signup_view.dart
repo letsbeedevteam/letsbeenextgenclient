@@ -19,7 +19,7 @@ class SignUpPage extends GetView<SignUpController>  {
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.willPopCallback),
-            title: Text(tr('userCredentials'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+            title: Text(tr('signUp'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
             bottom: PreferredSize(
               child: Container(height: 1, color: Colors.grey.shade200),
               preferredSize: Size.fromHeight(4.0)

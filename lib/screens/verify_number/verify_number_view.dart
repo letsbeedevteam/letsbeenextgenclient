@@ -48,10 +48,12 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
       children: [
         Text(tr('didntSendCode'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        GestureDetector(
-          onTap: () => print('Renew code'),
-          child: Text(tr('resendCode'), style: TextStyle(fontSize: 15, color: Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
-        ),
+        Obx(() {
+          return GestureDetector(
+            onTap: () => controller.isResendCodeLoading.call() ? null : controller.resendOtp(),
+            child: Text(tr('resendCode'), style: TextStyle(fontSize: 15, color: controller.isResendCodeLoading.call() ? Color(Config.GREY_TEXT_COLOR) : Color(Config.YELLOW_TEXT_COLOR), fontWeight: FontWeight.w500))
+          );
+        })
       ],
     );
   }
@@ -59,7 +61,8 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
   Widget _getInputField() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
-      child: InputCodeField(
+      child: Obx(() {
+        return InputCodeField(
           control: controller.codeControl,
           count: 6,
           autofocus: true,
@@ -69,17 +72,18 @@ class VerifyNumberPage extends GetView<VerifyNumberController> {
             textStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             box: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.white
+              color: controller.isLoading.call() ? Colors.grey.shade200 : Colors.white,
             ),
             focusedBox: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
+              color: controller.isLoading.call() ? Colors.grey.shade200 : Colors.white,
               boxShadow: [
                 BoxShadow(color: Colors.black, spreadRadius: 1),
               ],
             ),
           ),
-        ),
+        );
+      })
     );
   }
 }

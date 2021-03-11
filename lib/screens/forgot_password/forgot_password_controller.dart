@@ -16,7 +16,7 @@ class ForgotPasswordController extends GetxController {
 
   var isLoading = false.obs;
   var isSentCode = false.obs;
-  var isShowResendCode = false.obs;
+  var isResendCodeLoading = false.obs;
   var token = ''.obs;
   var code = ''.obs;
 
@@ -32,12 +32,12 @@ class ForgotPasswordController extends GetxController {
     super.onInit();
   }
 
-  void sendCode() {
-    isLoading(true);
+  void sendCode({String type}) {
+    type == 'resend_code' ? isResendCodeLoading(true) : isLoading(true);
     dismissKeyboard(Get.context);
     if (numberController.text.isEmpty) {
       errorSnackbarTop(title: Config.oops, message: Config.enterYourNumber);
-      isLoading(false);
+      type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
     } else {
 
       if(numberController.text.length == 10) {
@@ -46,7 +46,10 @@ class ForgotPasswordController extends GetxController {
           if (response.status == 200) {
             token(response.data.token);
             code(response.message);
-            if (Get.currentRoute == Config.FORGOT_PASS_ROUTE) Future.delayed(Duration(seconds: 5)).then((data) => isShowResendCode(true));
+            if (type == 'resend_code') {
+              Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
+              successSnackBarTop(message: Config.resendCodeSuccess);
+            }
             isSentCode(true);
           } else {
             errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
@@ -55,12 +58,12 @@ class ForgotPasswordController extends GetxController {
           isLoading(false);
         }).catchError((onError) {
           print(onError.toString());
-          isLoading(false);
+          type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
           errorSnackbarTop(title: Config.oops, message: Config.somethingWentWrong);
         });
 
       } else {
-        isLoading(false);
+        type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
         errorSnackbarTop(title: Config.oops, message: Config.invalidNumber);
       }
     }
@@ -90,7 +93,6 @@ class ForgotPasswordController extends GetxController {
     token.nil();
     codeControl.clear();
     numberController.clear();
-    isShowResendCode(false);
     isSentCode(false);
   }
 }

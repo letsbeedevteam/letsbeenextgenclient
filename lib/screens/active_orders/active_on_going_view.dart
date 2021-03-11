@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gifimage/flutter_gifimage.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -361,12 +360,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: SizedBox(
-              child: GifImage(
-                controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
-                image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-              ),
-            ),
+            child: Image.asset(Config.GIF_PATH + 'waiting.gif'),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -381,13 +375,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child:  _.activeOrderData.call().activeStore.type == 'mart' ? GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
-              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-            ) : GifImage(
-             controller: DashboardController.to.changeGifRange(range: 28, duration: 1000),
-              image: AssetImage(Config.GIF_PATH + 'preparing.gif'),
-            )
+            child:  _.activeOrderData.call().activeStore.type == 'mart' ? Image.asset(Config.GIF_PATH + 'waiting.gif') : Image.asset(Config.GIF_PATH + 'preparing.gif')
           ),
           Text(_.activeOrderData.call().activeStore.type == 'mart' ? tr('waitingRider') : tr('preparingFood'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
           // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -413,10 +401,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: GifImage(
-              controller: DashboardController.to.changeGifRange(range: 28, duration: 2000),
-              image: _.activeOrderData.call().activeStore.type == 'mart' ? AssetImage(Config.GIF_PATH + 'mart.gif') : AssetImage(Config.GIF_PATH + 'preparing.gif') ,
-            )
+            child: _.activeOrderData.call().activeStore.type == 'mart' ? Image.asset(Config.GIF_PATH + 'mart.gif') : Image.asset(Config.GIF_PATH + 'preparing.gif')
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -431,10 +416,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 5000),
-              image: AssetImage(Config.GIF_PATH + 'motor.gif'),
-            )
+            child: Image.asset(Config.GIF_PATH + 'motor.gif')
           ),
           Text(tr('riderPickUp'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
         ],
@@ -445,13 +427,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: _.activeOrderData.call().activeStore.type == 'mart' ? GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
-              image: AssetImage(Config.GIF_PATH + 'mart_delivered.gif'),
-            ) : GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 2000),
-              image: AssetImage(Config.GIF_PATH + 'delivered.gif'),
-            )
+            child: _.activeOrderData.call().activeStore.type == 'mart' ? Image.asset(Config.GIF_PATH + 'mart_delivered.gif') : Image.asset(Config.GIF_PATH + 'delivered.gif')
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -465,10 +441,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
-            child: GifImage(
-              controller: DashboardController.to.changeGifRange(range: 88, duration: 1500),
-              image: AssetImage(Config.GIF_PATH + 'waiting.gif'),
-            )
+            child: Image.asset(Config.GIF_PATH + 'waiting.gif')
           ),
           Text(tr('waitingRider'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold)),
         ],
