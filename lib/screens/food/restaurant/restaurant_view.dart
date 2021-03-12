@@ -122,6 +122,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.pin,
                             background: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
                                     height: 200,
@@ -239,9 +240,12 @@ class RestaurantPage extends GetView<RestaurantController> {
               ),
             ),
             Expanded(
-              child: products.isNotEmpty ? ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: products.map((product) => _buildItem(product)).toList()
+              child: products.isNotEmpty ? RefreshIndicator(
+                onRefresh: () => controller.refreshStore(),
+                child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: products.map((product) => _buildItem(product)).toList()
+                ),
               ) : Container(
                 margin: EdgeInsets.only(top: 20),
                 child: Text('Your search not found...', style: TextStyle(fontSize: 18))

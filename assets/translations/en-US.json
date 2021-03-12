@@ -189,11 +189,5 @@
   "changePasswordSuccess": "You have successfully changed your password",
   "checkOrderHistory": "Please check your order history",
   "resendCodeSuccess": "Your code has been sent to your number",
-  "inputSearchField": "Please input your search field",
-  "addedSuccessfully": "Added successfully",
-  "updatedSuccessfully": "Updated successfully",
-  "language": "Language",
-  "logoutMessage": "Do you really want to log out your account?",
-  "yes": "Yes",
-  "no": "No"
+  "inputSearchField": "Please input your search field"
 }

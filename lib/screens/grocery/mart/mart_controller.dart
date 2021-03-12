@@ -7,7 +7,6 @@ import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 // import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
-import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:uuid/uuid.dart';
@@ -50,12 +49,6 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     super.onInit();
   }
 
-  @override
-  void onClose() {
-    DashboardController.to.fetchMartDashboard(page: 0);
-    super.onClose();
-  }
-
   searchProduct(String name) {
     productName(name);
     update();
@@ -75,24 +68,34 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     message(tr('loadingShop'));
     hasError(false);
     apiService.fetchStoreById(id: argument['id']).then((response) {
-      hasError(false);
-      storeResponse(response);
-      selectedName(storeResponse.call().data.first.name);
-      tabController = TabController(length: storeResponse.call().data.map((categorize) => categorize.name).length, vsync: this);
-      MartCartController.to..storeId(store.call().id);
-      tabController.addListener(() {
-        FocusScope.of(Get.context).requestFocus(FocusNode());
-        productName('');
-        update();
-      });
 
-      if (box.hasData(Config.PRODUCTS)) {
-        final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
-        list.call().clear();
-        list.call().addAll(products);
-        box.write(Config.PRODUCTS, listProductToJson(list.call()));
-        MartCartController.to.getProducts();
-      } 
+      if(response.data.isNotEmpty) {
+
+        storeResponse(response);
+        selectedName(storeResponse.call().data.first.name);
+        tabController = TabController(length: storeResponse.call().data.map((categorize) => categorize.name).length, vsync: this);
+        MartCartController.to..storeId(store.call().id);
+        tabController.addListener(() {
+          FocusScope.of(Get.context).requestFocus(FocusNode());
+          productName('');
+          update();
+        });
+
+        if (box.hasData(Config.PRODUCTS)) {
+          final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
+          list.call().clear();
+          list.call().addAll(products);
+          box.write(Config.PRODUCTS, listProductToJson(list.call()));
+          MartCartController.to.getProducts();
+        } 
+
+        hasError(false);
+
+      } else {
+        storeResponse.nil();
+        hasError(true);
+        message(tr('emptyProduct'));
+      }
 
     }).catchError((onError) {
       hasError(true);
@@ -117,4 +120,6 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     MartCartController.to.getProducts();
     Get.back();
   }
+
+  Future<Null> refreshStore() async => fetchStore();
 } 
