@@ -7,7 +7,6 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
-import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:uuid/uuid.dart';
@@ -61,12 +60,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     store(RestaurantStores.fromJson(argument['restaurant']));
 
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    DashboardController.to.fetchRestaurantDashboard(page: 0);
-    super.onClose();
   }
 
   void refreshProduct(Product getProduct) {
@@ -228,26 +221,34 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     message(tr('loadingRestaurant'));
     hasError(false);
     apiService.fetchStoreById(id: argument['id']).then((response) {
-     
-      storeResponse(response);
-      selectedName(storeResponse.call().data.first.name);
-      tabController = TabController(length: storeResponse.call().data.map((data) => data.name).length, vsync: this);
-      CartController.to..storeId(store.call().id);
-      tabController.addListener(() {
-        FocusScope.of(Get.context).requestFocus(FocusNode());
-        productName('');
-        update();
-      });
+      
+      if(response.data.isNotEmpty) {
 
-      if (box.hasData(Config.PRODUCTS)) {
-        final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
-        list.call().clear();
-        list.call().addAll(products);
-        box.write(Config.PRODUCTS, listProductToJson(list.call()));
-        CartController.to.getProducts();
-      } 
+        storeResponse(response);
+        selectedName(storeResponse.call().data.first.name);
+        tabController = TabController(length: storeResponse.call().data.map((data) => data.name).length, vsync: this);
+        CartController.to..storeId(store.call().id);
+        tabController.addListener(() {
+          FocusScope.of(Get.context).requestFocus(FocusNode());
+          productName('');
+          update();
+        });
 
-      hasError(false);
+        if (box.hasData(Config.PRODUCTS)) {
+          final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
+          list.call().clear();
+          list.call().addAll(products);
+          box.write(Config.PRODUCTS, listProductToJson(list.call()));
+          CartController.to.getProducts();
+        } 
+
+        hasError(false);
+
+      } else {
+        storeResponse.nil();
+        hasError(true);
+        message(tr('emptyProduct'));
+      }
 
     }).catchError((onError) {
       hasError(true);
@@ -256,4 +257,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
       print('Error fetch restaurant by ID ${argument['id']}: $onError');
     });
   }
+
+  Future<Null> refreshStore() async => fetchStore();
 }

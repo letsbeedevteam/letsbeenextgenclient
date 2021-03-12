@@ -236,9 +236,12 @@ class MartProductPage extends GetView<MartController> {
               ),
             ),
             Expanded(
-              child: products.isNotEmpty ? ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: products.map((product) => _buildItem(product)).toList()
+              child: products.isNotEmpty ? RefreshIndicator(
+                onRefresh: () => controller.refreshStore(),
+                child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: products.map((product) => _buildItem(product)).toList()
+                ),
               ) : Container(
                 margin: EdgeInsets.only(top: 20),
                 child: Text('Your search not found...', style: TextStyle(fontSize: 18))

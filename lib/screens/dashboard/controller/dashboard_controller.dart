@@ -12,10 +12,8 @@ import 'package:letsbeeclient/models/chat_response.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
-import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/models/search_history.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
@@ -33,52 +31,60 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   final GoogleSignIn _googleSignIn = Get.find();
   final FacebookLogin _facebookLogin = Get.find();
   
-  final restaurantSearchController = TextEditingController();
-  final martSearchController = TextEditingController();
+  final restaurantSearchController = TextEditingController().obs;
+  final martSearchController = TextEditingController().obs;
   final reasonController = TextEditingController();
 
   final foodScrollController = ScrollController();
   final martScrollController = ScrollController();
 
-  final widgets = [
-    HomePage(), 
-    MartPage(),
-    AccountSettingsPage(), 
-  ];
+  var isFloatVisible = false.obs;
+  var isHideAppBar = false.obs;
+  var isLoading = false.obs;
+  var isSearchLoading = false.obs;
+  var isOnSearch = false.obs;
+  var isSelectedLocation = false.obs;
 
   var pageIndex = 0.obs;
   var userCurrentNameOfLocation = ''.obs;
   var userCurrentAddress = ''.obs;
-  var isFloatVisible = false.obs;
-  var isHideAppBar = false.obs;
-  var isLoading = false.obs;
-  var isSelectedLocation = false.obs;
-  var onGoingMessage = 'No Active Orders...'.obs;
-  var cancelMessage = 'Your order has been cancelled. Please see the order history'.obs;
+  var onGoingMessage = ''.obs;
+  var cancelMessage = ''.obs;
   var reason = ''.obs;
-  var searchRestaurants = RxList<RestaurantStores>().obs;
-  var recentRestaurants = RxList<RestaurantStores>().obs;
-  var searchMarts = RxList<MartStores>().obs;
-  var recentMarts = RxList<MartStores>().obs;
-  var activeOrderData = ActiveOrderData().obs;
-  var activeOrders = ActiveOrder().obs;
-
-  var hasRestaurantError = false.obs;
-  var hasMartError = false.obs;
 
   var restaurantErrorMessage = tr('loadingRestaurants').obs;
   var martErrorMessage = tr('loadingShops').obs;
+  var searchRestaurantErrorMessage = tr('searching').obs;
+  var searchMartErrorMessage = tr('searching').obs;
+
+  var restaurants = RxList<RestaurantStores>().obs;
+  var recentRestaurants = RxList<RestaurantStores>().obs;
+  var searchRestaurants = RxList<RestaurantStores>().obs;
+
+  var marts = RxList<MartStores>().obs;
+  var recentMarts = RxList<MartStores>().obs;
+  var searchMarts = RxList<MartStores>().obs;
+
+  var activeOrderData = ActiveOrderData().obs;
+  var activeOrders = ActiveOrder().obs;
+
+  var searchHistoryList = RxMap<String, SearchHistory>().obs;
+
+  var hasRestaurantError = false.obs;
+  var hasMartError = false.obs;
 
   var isDisableDeliveryPushNotif = false.obs;
   var isDisablePromotionalPushNotif = false.obs;
 
   var countRestoPage = 0.obs;
-  var searchRestaurantValue = ''.obs;
   var isRestaurantLoadingScroll = true.obs;
+  var isSearchRestaurantLoading = false.obs;
+  var searchRestaurantValue = ''.obs;
   
-  var searchMartValue = ''.obs;
   var countMartPage = 0.obs;
-  var isMartLoadingScroll = false.obs;
+  var isMartLoadingScroll = true.obs;
+  var isSearchMartLoading = false.obs;
+  var searchMartValue = ''.obs;
 
   var language = ''.obs;
 
@@ -104,10 +110,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     foodScrollController.addListener(() {
       if (foodScrollController.position.atEdge) {
         if (foodScrollController.position.pixels != 0) {
-          if (!isRestaurantLoadingScroll.call()) {
-            fetchRestaurantDashboard(page: countRestoPage.call());
-          }
-          isRestaurantLoadingScroll(true);
+          if (!isOnSearch.call()) fetchRestaurantDashboard(page: countRestoPage.call());
         } 
       }
     });
@@ -115,13 +118,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     martScrollController.addListener(() {
       if (martScrollController.position.atEdge) {
         if (martScrollController.position.pixels != 0) {
-          if (!isMartLoadingScroll.call()) {
-            fetchMartDashboard(page: countMartPage.call());
-          }
-          isMartLoadingScroll(true);
+          if (!isOnSearch.call()) fetchMartDashboard(page: countMartPage.call());
         } 
       }
     });
+
+    if(box.hasData(Config.SEARCH_HISTORY)) {
+      searchHistoryFromJson(box.read(Config.SEARCH_HISTORY)).forEach((data) {
+        searchHistoryList.value[data.name] = data;
+      });
+    }
 
     super.onInit();
   }
@@ -166,22 +172,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void setupTabs() {
-    // tabController = TabController(length: 1, vsync: this);
     pageController = PageController();
+
+    pageController.addListener(() {
+      if (pageController.page == 0.0 || pageController.page == 1.0) isOnSearch(false);
+    });
   }
 
   void tapped(int tappedIndex) {
     if (tappedIndex == 0) {
-      // restaurantDashboard.nil();
-      // fetchRestaurantDashboard(page: 0);
       if (foodScrollController.hasClients) foodScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     } else if (tappedIndex == 1) {
-      // martDashboard.nil();
-      // fetchMartDashboard(page: 0);
       if (martScrollController.hasClients) martScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     }
-    searchRestaurantValue('');
-    searchMartValue('');
+    isOnSearch(false);
     pageIndex(tappedIndex);
     pageController.animateToPage(pageIndex.value, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
     dismissKeyboard(Get.context);
@@ -206,9 +210,12 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
 
   void clearData() {
+    restaurants.call().clear();
+    marts.call().clear();
+    activeOrders.nil();
     searchRestaurants.call().clear();
     searchMarts.call().clear();
-    activeOrders.nil();
+   
     box.remove(Config.USER_TOKEN);
     box.remove(Config.USER_ADDRESS_ID);
     box.remove(Config.USER_ID);
@@ -217,6 +224,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     box.remove(Config.USER_CURRENT_ADDRESS);
     box.remove(Config.USER_CURRENT_NAME_OF_LOCATION);
     box.remove(Config.IS_LOGGED_IN);
+    box.remove(Config.SEARCH_HISTORY);
   }
 
   void signOut() {
@@ -306,6 +314,24 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
             message = tr('orderDeclined').replaceAll('{}', name);
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+
+            if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
+              Get.defaultDialog(
+                title: tr('oops'),
+                content: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text('$message. ${tr('checkOrderHistory')}', style:  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+                ),
+                cancel: RaisedButton(
+                  onPressed: () => Get.back(),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20) 
+                  ),
+                  color: Color(Config.LETSBEE_COLOR),
+                  child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                )
+              );
+            }
           }
             break;
           case 'store-accepted': {
@@ -335,21 +361,23 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
             // if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
 
-            Get.defaultDialog(
-              title: tr('yay'),
-              content: Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: Text('$message. ${tr('checkOrderHistory')}', style:  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
-              ),
-              cancel: RaisedButton(
-                onPressed: () => Get.back(),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20) 
+            if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
+              Get.defaultDialog(
+                title: tr('yay'),
+                content: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text('$message. ${tr('checkOrderHistory')}', style:  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
                 ),
-                color: Color(Config.LETSBEE_COLOR),
-                child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
-              )
-            );
+                cancel: RaisedButton(
+                  onPressed: () => Get.back(),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20) 
+                  ),
+                  color: Color(Config.LETSBEE_COLOR),
+                  child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                )
+              );
+            }
 
             // fetchRestaurantDashboard(page: countRestoPage.call());
             // fetchMartDashboard(page: countMartPage.call());
@@ -477,6 +505,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   fetchRestaurantDashboard({@required int page}) {
     restaurantErrorMessage(tr('loadingRestaurants'));
     isLoading(true);
+    isRestaurantLoadingScroll(true);
     hasRestaurantError(false);
     apiService.getRestaurantDashboard(page: page).then((response) {
       isLoading(false);
@@ -485,36 +514,38 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (response.status == 200) {
 
-        final Map<int, RestaurantStores> newMap = Map();
-        response.data.recentStores.forEach((item) {
-          newMap[item.id] = item;
-        });
-        recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
+        if(response.data.recentStores.isNotEmpty) {
+          final Map<int, RestaurantStores> newMap = Map();
+          response.data.recentStores.forEach((item) {
+            newMap[item.id] = item;
+          });
+          recentRestaurants.call()..clear()..assignAll(newMap.values.toList());
+        }
 
         if (page == 0) {
           countRestoPage(1);
-          searchRestaurants.call()..clear()..assignAll(response.data.stores);
+          restaurants.call()..clear()..assignAll(response.data.stores);
         } else {
 
           if (response.data.stores.isNotEmpty) {
             countRestoPage.value++;
-            searchRestaurants.call().addAll(response.data.stores);
+            restaurants.call().addAll(response.data.stores);
           } else {
+            isRestaurantLoadingScroll(false);
             print('No restaurant store at page $page');
           }
         }
 
-        if(searchRestaurants.call().isEmpty) {
+        if(restaurants.call().isEmpty) {
           recentRestaurants.call().clear();
           hasRestaurantError(true);
           restaurantErrorMessage(tr('noRestaurants'));
         }
         
       } else {
+        isRestaurantLoadingScroll(false);
         restaurantErrorMessage(tr('somethingWentWrong'));
       }
-
-      isRestaurantLoadingScroll(false);
       
     }).catchError((onError) {
       isRestaurantLoadingScroll(false);
@@ -536,6 +567,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   fetchMartDashboard({@required int page}) {
     martErrorMessage(tr('loadingShops'));
     isLoading(true);
+    isMartLoadingScroll(true);
     hasMartError(false);
     apiService.getMartDashboard(page: page).then((response) {
       isLoading(false);
@@ -544,38 +576,39 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       _setRefreshCompleter();
       if (response.status == 200) {
 
-        final Map<int, MartStores> newMap = Map();
-        response.data.recentStores.forEach((item) {
-          newMap[item.id] = item;
-        });
-        recentMarts.call()..clear()..assignAll(newMap.values.toList());
+        if (response.data.recentStores.isNotEmpty) {
+          final Map<int, MartStores> newMap = Map();
+          response.data.recentStores.forEach((item) {
+            newMap[item.id] = item;
+          });
+          recentMarts.call()..clear()..assignAll(newMap.values.toList());
+        }
 
         if (page == 0) {
           countMartPage(1);
-          searchMarts.call()..clear()..assignAll(response.data.stores);
+          marts.call()..clear()..assignAll(response.data.stores);
         } else {
 
           if (response.data.stores.isNotEmpty && response.data.recentStores.isNotEmpty) {
             countMartPage.value++;
-            searchMarts.call().addAll(response.data.stores);
+            marts.call().addAll(response.data.stores);
           } else {
+            isMartLoadingScroll(false);
             print('No mart store at page $page');
           }
         }
 
-        if(searchMarts.call().isEmpty) {
-          searchMarts.call().clear();
+        if(marts.call().isEmpty) {
+          marts.call().clear();
           hasMartError(true);
           martErrorMessage(tr('noShops'));
         }
       
       } else {
-
+        isMartLoadingScroll(false);
         martErrorMessage(tr('somethingWentWrong'));
       }
       
-      isMartLoadingScroll(false);
-
     }).catchError((onError) {
       isMartLoadingScroll(false);
       hasMartError(true);
@@ -593,28 +626,153 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
   }
 
-  searchRestaurant(String restaurant) {
-    // searchRestaurantValue(restaurant);
-    // searchRestaurants.call().where((element) => element.name.toLowerCase().contains(restaurant.trim().toLowerCase()) || element.category.toLowerCase().contains(restaurant.trim().toLowerCase()));
-    // restaurantErrorMessage(tr('noRestaurants'));
+  fetchSearchRestaurant(String restaurant) {
 
     if (restaurant.trim().isEmpty) {
-      errorSnackbarTop(title: tr('oops'), message: tr('inputSearchField'));
-      restaurantSearchController.clear();
+      errorSnackBarBottom(message: tr('inputSearchField'));
     } else {
-      print(restaurant);
+
+      searchRestaurants.call().clear();
+      searchRestaurantValue(restaurant);
+      searchRestaurantErrorMessage(tr('loadingRestaurants'));
+      isSearchRestaurantLoading(true);
+      isOnSearch(true);
+      hasRestaurantError(false);
+      
+      if (Get.isSnackbarOpen) {
+        Get.back();
+        Future.delayed(Duration(milliseconds: 300));
+        Get.back();
+      } else {
+        Get.back();
+      }
+      
+      restaurantSearchController.update((data) {
+        data.text = restaurant;
+      });
+
+      apiService.searchRestaurant(name: restaurant.trim()).then((response) {
+        _setRefreshCompleter();
+        if (response.status == 200) {
+          
+          if (response.data.isNotEmpty) {
+            
+           
+            if (searchHistoryList.call().values.where((data) => data.type == Config.MART).length == 5) {
+              final getLastIndex = searchHistoryList.call().values.lastWhere((data) => data.type == Config.MART);
+              searchHistoryList.call().removeWhere((key, value) => value.type == Config.MART && value.name == getLastIndex.name);
+            }
+
+            searchRestaurants.call().assignAll(response.data);
+            
+            searchHistoryList.update((data) {
+              data[restaurant.trim()] = SearchHistory(name: restaurant.trim(), date: DateTime.now(), type: Config.RESTAURANT);
+            });
+
+            box.write(Config.SEARCH_HISTORY, searchHistoryToJson(searchHistoryList.call().values.toList()));
+          } else {
+            searchRestaurants.call().clear();
+            hasRestaurantError(true);
+            searchRestaurantErrorMessage(tr('noRestaurants'));
+          }
+
+          isSearchRestaurantLoading(false);
+        
+        } else {
+          hasRestaurantError(true);
+          isSearchRestaurantLoading(false);
+          searchRestaurantErrorMessage(tr('somethingWentWrong'));
+        }
+
+      }).catchError((onError) {
+        _setRefreshCompleter();
+        hasRestaurantError(true);
+        isSearchRestaurantLoading(false);
+        if (onError.toString().contains('Connection failed')) {
+          searchRestaurantErrorMessage(tr('noInternetConnection'));
+        } else if (onError.toString().contains('Operation timed out')) {
+          searchRestaurantErrorMessage(tr('timedOut'));
+        } else {
+          searchRestaurantErrorMessage(tr('somethingWentWrong'));
+        }
+        print('Search restaurant error: $onError');
+      });
     }
   }
 
-  searchMart(String mart) {
-    // searchMartValue(mart);
-    // searchMarts.call().where((element) => element.name.toLowerCase().contains(mart.trim().toLowerCase()) || element.category.toLowerCase().contains(mart.trim().toLowerCase()));
-    // martErrorMessage(tr('noShops'));
+  fetchSearchMart(String mart) {
+    
     if (mart.trim().isEmpty) {
-      errorSnackbarTop(title: tr('oops'), message: tr('inputSearchField'));
-      martSearchController.clear();
+      errorSnackBarBottom(message: tr('inputSearchField'));
     } else {
-      print(mart);
+      searchMarts.call().clear();
+      searchMartValue(mart);
+      searchMartErrorMessage(tr('loadingShops'));
+      isSearchMartLoading(true);
+      isOnSearch(true);
+      hasMartError(false);
+
+      if (Get.isSnackbarOpen) {
+        Get.back();
+        Future.delayed(Duration(milliseconds: 300));
+        Get.back();
+      } else {
+        Get.back();
+      }
+
+      martSearchController.update((data) {
+        data.text = mart;
+      });
+
+      apiService.searchMart(name: mart.trim()).then((response) {
+        _setRefreshCompleter();
+        if (response.status == 200) {
+          
+          if (response.data.isNotEmpty) {
+            
+            
+            if (searchHistoryList.call().values.where((data) => data.type == Config.MART).length == 5) {
+              final getLastIndex = searchHistoryList.call().values.lastWhere((data) => data.type == Config.MART);
+              searchHistoryList.call().removeWhere((key, value) => value.type == Config.MART && value.name == getLastIndex.name);
+            }
+
+            searchMarts.call().assignAll(response.data);
+
+            searchHistoryList.update((data) {
+              data[mart.trim()] = SearchHistory(name: mart.trim(), date:  DateTime.now(), type: Config.MART);
+            });
+            box.write(Config.SEARCH_HISTORY, searchHistoryToJson(searchHistoryList.call().values.toList()));
+          } else {
+            hasMartError(true);
+            searchMartErrorMessage(tr('noShops'));
+          }
+
+          isSearchMartLoading(false);
+        
+        } else {
+          hasMartError(true);
+          isSearchMartLoading(false);
+          searchMartErrorMessage(tr('somethingWentWrong'));
+        }
+
+      }).catchError((onError) {
+        hasMartError(true);
+        _setRefreshCompleter();
+        isSearchMartLoading(false);
+        if (onError.toString().contains('Connection failed')) {
+          searchMartErrorMessage(tr('noInternetConnection'));
+        } else if (onError.toString().contains('Operation timed out')) {
+          searchMartErrorMessage(tr('timedOut'));
+        } else {
+          searchMartErrorMessage(tr('somethingWentWrong'));
+        }
+        print('Search mart error: $onError');
+      });
     }
+  }
+
+  clearSearchHistory({@required String type}) {
+    searchHistoryList.call().removeWhere((key, value) => value.type == type);
+    box.write(Config.SEARCH_HISTORY, searchHistoryToJson(searchHistoryList.call().values.toList()));
   }
 }

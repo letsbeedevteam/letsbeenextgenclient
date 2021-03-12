@@ -7,146 +7,114 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/active_order_response.dart';
+import 'package:letsbeeclient/screens/dashboard/childs/mart_child_view.dart';
+import 'package:letsbeeclient/screens/dashboard/childs/restaurant_child_view.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/account_settings_view.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/home_view.dart';
+import 'package:letsbeeclient/screens/dashboard/tabs/mart_view.dart';
 import 'package:loading_gifs/loading_gifs.dart';
 
 class DashboardPage extends GetView<DashboardController> {
   
   @override
   Widget build(BuildContext context) {
-    return GetX<DashboardController>(
-      builder: (_) {
-        final currentIndex = _.pageIndex.call();
-        return GestureDetector(
-          onTap: () => dismissKeyboard(Get.context),
-          child: Scaffold(
-            resizeToAvoidBottomPadding: false,
-            body: Column(
-              children: [
-                Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                      AnimatedContainer(
-                      height: _.isHideAppBar.call() ? 0 : Get.height / 8.5,
-                      duration: Duration(seconds: 2),
-                      curve: Curves.fastLinearToSlowEaseIn,
-                      child: AppBar(
-                        elevation: 0,
-                        backgroundColor: Color(Config.WHITE),
-                        titleSpacing: 0.0,
-                        centerTitle: false,
-                        title: currentIndex == 2 ? Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.only(top: 20),
-                          child: Text(tr('myAccount'), style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
-                        ) : Padding(
-                          padding: EdgeInsets.only(left: 15, right: 15),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                              Row(
-                                children: [
-                                  Text('${tr('deliverTo')}: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    height: 25,
-                                    alignment: Alignment.centerLeft,
-                                    decoration: BoxDecoration(
-                                      color: Color(Config.LETSBEE_COLOR),
-                                      borderRadius: BorderRadius.circular(25)
-                                    ),
-                                    child: Text(_.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
-                                  )
-                                ],
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                              Row(
-                                children: [
-                                  Image.asset(Config.PNG_PATH + 'address.png', height: 18, width: 18),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                  Expanded(child: Text(_.userCurrentAddress.call(), style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal))),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // actions: [
-                        //   _.pageIndex.call() == 2 ? Container() :
-                        //   IconButton(icon: Image.asset(Config.PNG_PATH + 'jar-empty.png', gaplessPlayback: true, height: 25, width: 25), onPressed: () => print('Cart'), highlightColor: Colors.transparent, splashColor: Colors.transparent)
-                        // ],
-                      ),
-                    ),
-                  ],
+    return GestureDetector(
+      onTap: () => dismissKeyboard(Get.context),
+      child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        body: Column(
+          children: [
+            Obx(() {
+              return AnimatedContainer(
+                height: controller.isOnSearch.call() ? 0 : Get.height / 8.5,
+                duration: Duration(seconds: 2),
+                curve: Curves.fastLinearToSlowEaseIn,
+                child: AppBar(
+                  elevation: 0,
+                  backgroundColor: Color(Config.WHITE),
+                  titleSpacing: 0.0,
+                  centerTitle: false,
+                  title: controller.pageIndex() == 2 ? _buildMyAccount() : _buildDeliverTo()
                 ),
-                Flexible(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 1,
-                        margin: EdgeInsets.only(top: 2),
-                        color: Colors.grey.shade200
+              );
+            }),
+            Flexible(
+              child: Column(
+                children: [
+                  Obx(() {
+                    return controller.isOnSearch.call() ? Padding(padding: EdgeInsets.symmetric(vertical: 10)) : Container(
+                      height: 1,
+                      margin: EdgeInsets.only(top: 2),
+                      color: Colors.grey.shade200
+                    );
+                  }),
+                  Obx(() {
+                    return Expanded(
+                      child: PageView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: controller.pageController,
+                        onPageChanged: (index) {
+                          controller.pageIndex(index);
+                        },
+                        children: [
+                          controller.isOnSearch.call() ? RestaurantChildPage() : HomePage(), 
+                          controller.isOnSearch.call() ? MartChildPage() : MartPage(),
+                          AccountSettingsPage(), 
+                        ],
                       ),
-                      Expanded(
-                        child: PageView(
-                          physics: NeverScrollableScrollPhysics(),
-                          controller: _.pageController,
-                          onPageChanged: (index) {
-                            _.pageIndex(index);
-                          },
-                          children: _.widgets,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            floatingActionButton: _.pageIndex.call() == 2 ? Container() : _.activeOrders.call() == null ? Container() : Badge(
-              badgeContent: Text(_.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              padding: EdgeInsets.all(10),
-              borderSide: BorderSide(color: Colors.black, width: 1.5),
-              showBadge: _.activeOrders.call() != null,
-              child: FloatingActionButton(
-                splashColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                onPressed: () {
-                  _.fetchActiveOrders();
-                  if (_.activeOrders.call().data.length == 1) {
-                    controller.activeOrderData(_.activeOrders.call().data.first);
-                    Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
-                  } else {
-                    _activeOrderDialog();
-                  }
-                
-                },
-                child: Image.asset(Config.PNG_PATH + 'active_order.png', height: 50, width: 50),
-              ),
-            ),
-            bottomNavigationBar: Theme(
-              data: Get.theme.copyWith(
-                splashColor: Colors.transparent
-              ),
-              child: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                currentIndex: currentIndex,
-                selectedFontSize: 10.0,
-                unselectedFontSize: 10.0,
-                iconSize: 25,
-                onTap: (value) =>  _.tapped(value),
-                items: [
-                  customNavigationBarItem(tr('food'), image: Image.asset(_.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
-                  customNavigationBarItem(tr('groceries'), image: Image.asset(_.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
-                  customNavigationBarItem(tr('account'), image: Image.asset(_.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+                    );
+                  })
                 ],
               ),
             )
+          ],
+        ),
+        floatingActionButton: Obx(() {
+          return controller.pageIndex.call() == 2 ? Container() : controller.activeOrders.call() == null ? Container() : Badge(
+            badgeContent: Text(controller.activeOrders.call().data.length.toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            padding: EdgeInsets.all(10),
+            borderSide: BorderSide(color: Colors.black, width: 1.5),
+            showBadge: controller.activeOrders.call() != null,
+            child: FloatingActionButton(
+              splashColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              onPressed: () {
+                controller.fetchActiveOrders();
+                if (controller.activeOrders.call().data.length == 1) {
+                  controller.activeOrderData(controller.activeOrders.call().data.first);
+                  Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+                } else {
+                  _activeOrderDialog();
+                }
+              
+              },
+              child: Image.asset(Config.PNG_PATH + 'active_order.png', height: 50, width: 50),
+            ),
+          );
+        }),
+        bottomNavigationBar: Theme(
+          data: Get.theme.copyWith(
+            splashColor: Colors.transparent
           ),
-        );
-      },
+          child: Obx(() {
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: controller.pageIndex.call(),
+              selectedFontSize: 10.0,
+              unselectedFontSize: 10.0,
+              iconSize: 25,
+              onTap: (value) => controller.tapped(value),
+              items: [
+                customNavigationBarItem(tr('food'), image: Image.asset(controller.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
+                customNavigationBarItem(tr('groceries'), image: Image.asset(controller.pageIndex.call() == 1 ? '${Config.PNG_PATH}groc-act.png' : '${Config.PNG_PATH}groc-inact.png')),
+                customNavigationBarItem(tr('account'), image: Image.asset(controller.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
+              ],
+            );
+          }),
+        )
+      ),
     );
   }
 
@@ -176,6 +144,53 @@ class DashboardPage extends GetView<DashboardController> {
         )
       ),
       label: '',
+    );
+  }
+
+  Widget _buildMyAccount() {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.only(top: 20),
+      child: Text(tr('myAccount'), style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.normal)),
+    );
+  }
+
+  Widget _buildDeliverTo() {
+    return controller.isOnSearch.call() ? Container() : Padding(
+      padding: EdgeInsets.only(left: 15, right: 15),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+          Row(
+            children: [
+              Text('${tr('deliverTo')}: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                height: 25,
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: Color(Config.LETSBEE_COLOR),
+                  borderRadius: BorderRadius.circular(25)
+                ),
+                child: Obx(() {
+                  return Text(controller.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis);
+                }),
+              )
+            ],
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+          Row(
+            children: [
+              Image.asset(Config.PNG_PATH + 'address.png', height: 18, width: 18),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+              Expanded(child: Obx(() => Text(controller.userCurrentAddress.call(), style: TextStyle(fontSize: 14, color: Color(Config.USER_CURRENT_ADDRESS_TEXT_COLOR), fontWeight: FontWeight.normal)))),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

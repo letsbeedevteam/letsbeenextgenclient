@@ -43,6 +43,7 @@ class Config {
   static const NOTE_TO_RIDER = 'note_to_rider';
   static const PRODUCTS = 'products';
   static const LANGUAGE = 'language';
+  static const SEARCH_HISTORY = 'search_history';
 
 
   static const LETSBEE_STORAGE = 'LetsBeeStorage';

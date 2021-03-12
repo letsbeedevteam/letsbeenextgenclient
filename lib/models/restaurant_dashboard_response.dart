@@ -108,8 +108,8 @@ class RestaurantLocation {
     this.name
   });
 
-  double lat;
-  double lng;
+  dynamic lat;
+  dynamic lng;
   String name;
 
   factory RestaurantLocation.fromJson(Map<String, dynamic> json) => RestaurantLocation(

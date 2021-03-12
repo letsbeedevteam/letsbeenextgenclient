@@ -188,11 +188,5 @@
     "changePasswordSuccess": "비밀번호가 변경되었습니다.",
     "checkOrderHistory": "주문기록을 확인해 주세요.",
     "resendCodeSuccess": "확인번호가 재전송되었습니다.",
-    "inputSearchField": "검색하실 내용을 입력해 주세요.",
-    "addedSuccessfully": "성공적으로 추가됨",
-    "updatedSuccessfully": "성공적으로 업데이트 됨",
-    "language": "언어",
-    "logoutMessage": "계정을 로그 아웃 하시겠습니까",
-    "yes": "예",
-    "no": "아니"
+    "inputSearchField": "검색하실 내용을 입력해 주세요."
 }

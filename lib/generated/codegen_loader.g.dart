@@ -205,12 +205,15 @@ class CodegenLoader extends AssetLoader{
   "checkOrderHistory": "주문기록을 확인해 주세요.",
   "resendCodeSuccess": "확인번호가 재전송되었습니다.",
   "inputSearchField": "검색하실 내용을 입력해 주세요.",
+  
+  //NEW
   "addedSuccessfully": "성공적으로 추가됨",
   "updatedSuccessfully": "성공적으로 업데이트 됨",
   "language": "언어",
   "logoutMessage": "계정을 로그 아웃 하시겠습니까",
   "yes": "예",
-  "no": "아니"
+  "no": "아니",
+  "searching": "수색..."
 };
 static const Map<String,dynamic> en_US = {
   "signIn": "Sign In",
@@ -404,12 +407,21 @@ static const Map<String,dynamic> en_US = {
   "checkOrderHistory": "Please check your order history",
   "resendCodeSuccess": "Your code has been sent to your number",
   "inputSearchField": "Please input your search field",
+
+
+  // NEW
   "addedSuccessfully": "Added successfully",
   "updatedSuccessfully": "Updated successfully",
   "language": "Language",
   "logoutMessage": "Do you really want to log out your account?",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "searching": "Searching...",
+  "restaurant": "Restaurant",
+  "shop": "Shop",
+  "with": "with",
+  "emptyProduct": "No Products",
+  "searchFor": "Search for"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

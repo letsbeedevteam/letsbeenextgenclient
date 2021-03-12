@@ -20,6 +20,11 @@ extension IntExtension on String {
   }
 }
 
+extension TextFieldExtension on TextEditingController {
+
+  selectedText() => this.selection = TextSelection.fromPosition(TextPosition(offset: this.text.length));
+} 
+
 void errorSnackBarBottom({String title ,String message}) {
   if (Get.isSnackbarOpen) Get.back();
   Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 2)], backgroundColor: Colors.white, snackPosition: SnackPosition.BOTTOM, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0));
