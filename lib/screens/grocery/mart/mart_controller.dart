@@ -41,7 +41,6 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
   @override
   void onInit() {
-    isSelectedProceed.nil();
     storeResponse.nil();
     store.nil();
     Get.put(MartCartController());

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
+import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_controller.dart';
@@ -14,38 +15,54 @@ class MartCartPage extends GetView<MartCartController> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: controller.onWillPopBack,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
-            controller.isEdit(false);
-            Get.back(closeOverlays: true);
-          }),
-          centerTitle: true,
-          title: Text(tr('myCart'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-          bottom: PreferredSize(
-            child: Container(height: 1, color: Colors.grey.shade200),
-            preferredSize: Size.fromHeight(4.0)
+      child: GestureDetector(
+        onTap: () => dismissKeyboard(Get.context),
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
+              controller.isEdit(false);
+              Get.back(closeOverlays: true);
+            }),
+            centerTitle: true,
+            title: Text(tr('myCart'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            bottom: PreferredSize(
+              child: Container(height: 1, color: Colors.grey.shade200),
+              preferredSize: Size.fromHeight(4.0)
+            ),
           ),
-        ),
-        body: GetX<MartCartController>(
-          builder: (_) {
-            return _.updatedProducts.call().isEmpty ? Container(
-              width: Get.width,
-              margin: EdgeInsets.only(top: 20),
-              child: Column(
+          body: GetX<MartCartController>(
+            initState: (state) => controller.getDeliveryFee(),
+            builder: (_) {
+              return controller.updatedProducts.call().isEmpty ? Container(
+                width: Get.width,
+                margin: EdgeInsets.only(top: 20),
+                child: Column(
+                  children: [
+                    _buildDeliverTo(),
+                    Image.asset(Config.PNG_PATH + 'empty_cart.png', height: Get.height * 0.4),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(tr('emptyCart'), style: TextStyle(fontSize: 18, color: Colors.black), textAlign: TextAlign.center),
+                    ),
+                  ],
+                )
+              ) : controller.hasError.call() ? Column(
                 children: [
-                  _buildDeliverTo(),
-                  Image.asset(Config.PNG_PATH + 'empty_cart.png', height: Get.height * 0.4),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Text(tr('emptyCart'), style: TextStyle(fontSize: 18, color: Colors.black), textAlign: TextAlign.center),
-                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  controller.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                  _.hasError.call() ? Container() : CupertinoActivityIndicator(),
+                    Text(_.message.call()),
+                  _.hasError.call() ? RaisedButton(
+                      color: Color(Config.LETSBEE_COLOR),
+                      child: Text(tr('refresh')),
+                      onPressed: () => _.refreshDeliveryFee(),
+                  ) : Container()
                 ],
-              )
-            ) : _scrollView(_);
-          },
+              ) : _scrollView(controller);
+            },
+          )
         ),
       ),
     );
@@ -107,115 +124,118 @@ class MartCartPage extends GetView<MartCartController> {
 
   Widget _scrollView(MartCartController _) {
     final activeCart = _.updatedProducts.call().where((data) => !data.isRemove && data.storeId == _.storeId.call());
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-            child: Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Column(
-                children: [
-                  _buildDeliverTo(),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                        IgnorePointer(
-                          ignoring: _.isLoading.call(),
-                          child: SizedBox(
-                            height: 30,
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              color: Color(Config.LETSBEE_COLOR),
-                              child: _.isEdit.call() ? Text(tr('cancel'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text(tr('edit'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                              onPressed: controller.setEdit,
-                            )
-                          ),
-                        )
-                      ],
+    return RefreshIndicator(
+      onRefresh: () => controller.refreshDeliveryFee(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Column(
+                  children: [
+                    _buildDeliverTo(),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                          IgnorePointer(
+                            ignoring: _.isPaymentLoading.call(),
+                            child: SizedBox(
+                              height: 30,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                color: Color(Config.LETSBEE_COLOR),
+                                child: _.isEdit.call() ? Text(tr('cancel'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text(tr('edit'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                                onPressed: controller.setEdit,
+                              )
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(children: activeCart.map((e) => _buildMenuItem(e, _)).toList())
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('${tr('subTotal')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                Text('₱${(_.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                              ],
-                            ),
-                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('${tr('deliveryFee')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                Text('₱0.00', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 5),
-                              child: Divider(thickness: 1, color:  Colors.grey.shade200),
-                            ),
-                            Container(
-                              alignment: Alignment.bottomCenter,
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(children: activeCart.map((e) => _buildMenuItem(e, _)).toList())
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            children: [
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('${tr('total')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                  Text('₱${(_.totalPrice.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                                  Text('${tr('subTotal')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                                  Text('₱${(_.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
                                 ],
                               ),
-                            )
-                          ],
-                        ),
-                        _buildNoteToRider()
-                      ],
-                    ),
-                  )
-                ],
+                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('${tr('deliveryFee')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                                  Text('₱${controller.deliveryFee.call().toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 5),
+                                child: Divider(thickness: 1, color:  Colors.grey.shade200),
+                              ),
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('${tr('total')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                                    Text('₱${(_.totalPrice.call() + controller.deliveryFee.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          _buildNoteToRider()
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Container(
-          color: Colors.white,
-          padding: EdgeInsets.all(10),
-          child: IgnorePointer(
-            ignoring: _.isLoading.call() || _.isPaymentLoading.call(),
-            child: Container(
-              width: Get.width,
-              child: RaisedButton(
-                color: Color(Config.LETSBEE_COLOR),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(10),
+            child: IgnorePointer(
+              ignoring: _.isPaymentLoading.call(),
+              child: Container(
+                width: Get.width,
+                child: RaisedButton(
+                  color: Color(Config.LETSBEE_COLOR),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(_.isEdit.call() ? tr('done') : _.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                  ),
+                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(activeCart.first.storeId)
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(_.isEdit.call() ? tr('done') : _.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                ),
-                onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(activeCart.first.storeId)
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
@@ -345,117 +365,97 @@ class MartCartPage extends GetView<MartCartController> {
                 onPressed: () => controller.paymentMethod(storeId, 'cod'),
               ),
             ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Container(
+              width: Get.width,
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: RaisedButton(
+                color: Color(Config.LETSBEE_COLOR),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(tr('creditCard'), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+                    ),
+                  ],
+                ),
+                onPressed: () => controller.paymentMethod(storeId, 'card'),
+              ),
+            ),
+            // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
             // Container(
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       Padding(
-            //         padding: EdgeInsets.symmetric(horizontal: 10),
-            //         child: SizedBox(
-            //           width: 300,
-            //           child: Text('Reminder: For cancellation of online payment, it will take 5 to 7 days for refund.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 13, fontStyle: FontStyle.italic)),
+            //   width: Get.width,
+            //   padding: EdgeInsets.symmetric(horizontal: 30),
+            //   child: RaisedButton(
+            //     color: Color(Config.LETSBEE_COLOR),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(20),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Expanded(
+            //           flex: 1,
+            //           child: SizedBox(
+            //             height: 30,
+            //             width: 30,
+            //             child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue),
+            //           ),
             //         ),
-            //       ),
-            //       Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                  // Container(
-                  //   width: Get.width,
-                  //   padding: EdgeInsets.symmetric(horizontal: 30),
-                  //   child: RaisedButton(
-                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       // crossAxisAlignment: CrossAxisAlignment.center,
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         Expanded(
-                  //           flex: 1,
-                  //           child: SizedBox(
-                  //             height: 30,
-                  //             width: 30,
-                  //             child: Image.asset(Config.PNG_PATH + 'debit_card.png'),
-                  //           ),
-                  //         ),
-                  //         Expanded(
-                  //           flex: 2,
-                  //           child: Text('CREDIT / DEBIT CARD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                  //   ),
-                  // ),
-                  // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                  // Container(
-                  //   width: Get.width,
-                  //   padding: EdgeInsets.symmetric(horizontal: 30),
-                  //   child: RaisedButton(
-                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       // crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         Expanded(
-                  //           flex: 1,
-                  //           child: SizedBox(
-                  //             height: 30,
-                  //             width: 30,
-                  //             child: Icon(FontAwesomeIcons.globeAsia, color: Colors.blue),
-                  //           ),
-                  //         ),
-                  //         Expanded(
-                  //           flex: 2,
-                  //           child: Text('GCASH', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'gcash'),
-                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                  //   ),
-                  // ),
-                  // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                  // Container(
-                  //   width: Get.width,
-                  //   padding: EdgeInsets.symmetric(horizontal: 30),
-                  //   child: RaisedButton(
-                  //     color: Color(Config.LETSBEE_COLOR).withOpacity(1),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       // crossAxisAlignment: CrossAxisAlignment.center,
-                  //       children: [
-                  //         Expanded(
-                  //           flex: 1,
-                  //           child: SizedBox(
-                  //             height: 30,
-                  //             width: 30,
-                  //             child: Image.asset(Config.PNG_PATH + 'paypal.png'),
-                  //           ),
-                  //         ),
-                  //         Expanded(
-                  //           flex: 2,
-                  //           child: Text('PAYPAL', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     // onPressed: () => confirmLocationModal(restaurantID: restaurantId, paymentMethod: 'paypal'),
-                  //     onPressed: () => alertSnackBarTop(title: 'Oops!', message: 'Work in Progress. Please click the CASH ON DELIVERY instead.'),
-                  //   ),
-                  // ),
-                  // Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            //     ],
+            //         Expanded(
+            //           flex: 2,
+            //           child: Text(tr('gcash'), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+            //         ),
+            //       ],
+            //     ),
+            //     onPressed: () => print('Gcash'),
             //   ),
-            // )
+            // ),
+            // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            // Container(
+            //   width: Get.width,
+            //   padding: EdgeInsets.symmetric(horizontal: 30),
+            //   child: RaisedButton(
+            //     color: Color(Config.LETSBEE_COLOR),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(20),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Expanded(
+            //           flex: 1,
+            //           child: SizedBox(
+            //             height: 30,
+            //             width: 30,
+            //             child: Image.asset(Config.PNG_PATH + 'paypal.png'),
+            //           ),
+            //         ),
+            //         Expanded(
+            //           flex: 2,
+            //           child: Text(tr('paypal'), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 13)),
+            //         ),
+            //       ],
+            //     ),
+            //     onPressed: () => print('Paypal'),
+            //   ),
+            // ),
+            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
           ],
         )
       ),
@@ -472,7 +472,7 @@ class MartCartPage extends GetView<MartCartController> {
               Text(tr('confirmDeleteItem'), textAlign: TextAlign.center),
               Padding(padding: EdgeInsets.symmetric(vertical: 2)),
               Text('($menu)'),
-              _.isLoading.call() ? Text(tr('loading')) : Container()
+              _.isPaymentLoading.call() ? Text(tr('loading')) : Container()
             ],
           );
         },
@@ -488,7 +488,7 @@ class MartCartPage extends GetView<MartCartController> {
         ),
         child: Text(tr('cancel')), 
         onPressed: () {
-          if (!controller.isLoading.call()) Get.back();
+          if (!controller.isPaymentLoading.call()) Get.back();
         }
       ),
       confirm: RaisedButton(
@@ -565,31 +565,28 @@ class MartCartPage extends GetView<MartCartController> {
               borderRadius: BorderRadius.circular(10)
             ),
             color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-            child: _.isUpdateCartLoading.call() ? Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))) : Text(tr('updateCart'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+            child: Container(height: 10, width: 10, child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black))),
             onPressed: () => _.updateCartRequest(product: product),
           );
         },
       ),
       cancel: GetX<MartCartController>(
         builder: (_) {
-          return IgnorePointer(
-            ignoring: _.isUpdateCartLoading.call(),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10)
-              ),
-              color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
-              child: Text(tr('back'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-              onPressed: () {
-                if (Get.isSnackbarOpen) {
-                  Get.back();
-                  Future.delayed(Duration(milliseconds: 500));
-                  Get.back();
-                } else {
-                  Get.back();
-                }
-              },
+          return RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
             ),
+            color: Color(Config.LETSBEE_COLOR).withOpacity(1.0),
+            child: Text(tr('back'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
+            onPressed: () {
+              if (Get.isSnackbarOpen) {
+                Get.back();
+                Future.delayed(Duration(milliseconds: 500));
+                Get.back();
+              } else {
+                Get.back();
+              }
+            },
           );
         },
       ),
@@ -628,7 +625,7 @@ class MartCartPage extends GetView<MartCartController> {
                   child: Image.asset(Config.PNG_PATH + 'notes.png', width: 10,),
                 ),
                 filled: true,
-                fillColor: controller.isLoading.call() ? Colors.grey.shade200 : Colors.white,
+                fillColor: controller.isPaymentLoading.call() ? Colors.grey.shade200 : Colors.white,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none

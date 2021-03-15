@@ -134,7 +134,7 @@ class MapController extends GetxController {
     isBounced(true);
     final currentLocation = await lct.Location().getLocation();
     currentPosition(LatLng(currentLocation.latitude, currentLocation.longitude));
-    _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
+    _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 15)));
     isBounced(false);
   }
 
@@ -205,7 +205,7 @@ class MapController extends GetxController {
       final detail = await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
-      _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 18)));
+      _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 15)));
     }
   }
 

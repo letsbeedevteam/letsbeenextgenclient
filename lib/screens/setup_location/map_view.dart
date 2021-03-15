@@ -34,14 +34,14 @@ class MapPage extends GetView<MapController> {
               preferredSize: Size.fromHeight(5.0)
             ),
             actions: [
-              // SizedBox(height: 45, width: 45, child: IconButton(icon: Image.asset(Config.PNG_PATH + 'search.png'), onPressed: () => controller.handleSearchLocation())),
+              SizedBox(height: 45, width: 45, child: IconButton(icon: Image.asset(Config.PNG_PATH + 'search.png'), onPressed: () => controller.handleSearchLocation())),
               IconButton(icon: Image.asset(Config.PNG_PATH + 'gps.png'), onPressed: () => controller.gpsLocation())
             ],
           ),
           body: Container(
             child: Column(
               children: [
-                _buildMap(),
+                Obx(() => controller.currentPosition.call() == null ? Text(tr('loadingCoordinates'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)) : _buildMap()),
                 _buildFields(),
               ],
             ),
@@ -64,7 +64,7 @@ class MapPage extends GetView<MapController> {
               ) : GoogleMap(
                     mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
-                      zoom: 18,
+                      zoom: 15,
                       target: controller.currentPosition.call()
                     ),
                     myLocationButtonEnabled: false,

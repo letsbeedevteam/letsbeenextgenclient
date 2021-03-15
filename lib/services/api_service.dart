@@ -3,18 +3,20 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
+import 'package:letsbeeclient/models/cancel_order_response.dart';
+import 'package:letsbeeclient/models/cancel_payment_response.dart';
 import 'package:letsbeeclient/models/cellphone_confirmation_response.dart';
 import 'package:letsbeeclient/models/change_pass_request.dart';
 import 'package:letsbeeclient/models/change_pass_response.dart';
 import 'package:letsbeeclient/models/create_order_response.dart';
 import 'package:letsbeeclient/models/customer_edit_response.dart';
-import 'package:letsbeeclient/models/delete_order_response.dart';
 import 'package:letsbeeclient/models/edit_address_request.dart';
 import 'package:letsbeeclient/models/edit_address_response.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
 import 'package:letsbeeclient/models/fogot_pass_response.dart';
 import 'package:letsbeeclient/models/forgot_password_request.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
+import 'package:letsbeeclient/models/get_delivery_fee_response.dart';
 import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 import 'package:letsbeeclient/models/new_address_request.dart';
 import 'package:letsbeeclient/models/new_address_response.dart';
@@ -179,14 +181,15 @@ class ApiService extends GetConnect {
     return Product.fromJson(json['data']);
   } 
   
-  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, List<AddToCart> carts}) async {
+  Future<CreateOrderResponse> createOrder({int storeId, String paymentMethod, String noteToRider, List<AddToCart> carts}) async {
     final response = await put(
       '/orders',
       {
         'store_id': storeId,
         'payment_method': paymentMethod,
         'address_id': _box.read(Config.USER_ADDRESS_ID),
-        'carts': carts
+        'carts': carts,
+        'note': noteToRider
       },
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
@@ -198,18 +201,51 @@ class ApiService extends GetConnect {
     return createOrderResponseFromJson(response.bodyString);
   }
 
-  Future<DeleteOrderResponse> deleteOrderById({int orderId}) async {
-
-    final response = await delete(
-      '/orders/$orderId',
+  Future<GetDeliveryFeeResponse> getDeliveryFee({int storeId}) async {
+    final response = await get(
+      '/stores/$storeId/delivery-fee/${_box.read(Config.USER_CURRENT_LATITUDE)}/${_box.read(Config.USER_CURRENT_LONGITUDE)}',
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
       }
     );
 
-    print('Delete order: ${response.body}');
+    print('Delivery Fee: ${response.body}');
     
-    return deleteOrderResponseFromJson(response.bodyString);
+    return getDeliveryFeeFromJson(response.bodyString);
+  }
+
+  Future<CancelPaymentResponse> cancelOnlinePayment({int orderId}) async {
+
+    final response = await post(
+      '/orders/cancel-payment',
+      {
+        'order_id': orderId
+      },
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Cancel payment: ${response.body}');
+    
+    return cancelPaymentResponseFromJson(response.bodyString);
+  }
+
+  Future<CancelOrderResponse> cancelOrder({int orderId}) async {
+
+    final response = await post(
+      '/orders/cancel',
+      {
+        'order_id': orderId
+      },
+      headers: {
+        'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
+      }
+    );
+
+    print('Cancel order: ${response.body}');
+    
+    return cancelOrderResponseFromJson(response.bodyString);
   }
 
   Future<OrderHistoryResponse> orderHistory() async {

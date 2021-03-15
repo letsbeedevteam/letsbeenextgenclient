@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -61,6 +62,7 @@ class AccountInfoController extends GetxController {
             _box.write(Config.USER_NAME, response.data.name);
             _box.write(Config.USER_EMAIL, response.data.email);
             _box.write(Config.USER_MOBILE_NUMBER, response.data.cellphoneNumber);
+            DashboardController.to.update();
             
           } else {
 

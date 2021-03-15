@@ -13,83 +13,60 @@ class MartPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      alignment: Alignment.topCenter,
       children: [
-        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        GestureDetector(
-          onTap: () => _searchBottomsheet(),
-          child: SizedBox(
-            height: 40,
-            width: Get.width,
-            child: Container(
-              alignment: Alignment.centerLeft,
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white
+        RefreshIndicator(
+          onRefresh: () {
+            controller.refreshToken(page: 0);
+            return controller.refreshCompleter.future;
+          },
+          child: Obx(() {
+            return controller.marts.call().isEmpty ? Container(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                    controller.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                    Text(controller.martErrorMessage.call()),
+                    controller.hasMartError.call() ? RaisedButton(
+                      color: Color(Config.LETSBEE_COLOR),
+                      child: Text(tr('refresh')),
+                      onPressed: () => controller.refreshToken(page: 0),
+                    ) : Container() 
+                  ],
+                ),
               ),
-              child: Text(tr('searchGrocery'), style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR), fontSize: 14))
-            ),
-          ),
+            ) : Container(
+              height: Get.height,
+              child: _scrollView()
+            );
+          })
         ),
         Obx(() {
-          return Flexible(
-            child: Stack(
-              alignment: Alignment.topCenter,
+          return controller.isSelectedLocation.call() ? Container(
+            margin: EdgeInsets.only(top: 70),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              color: Color(Config.LETSBEE_COLOR)
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                RefreshIndicator(
-                  onRefresh: () {
-                    controller.refreshToken(page: 0);
-                    return controller.refreshCompleter.future;
-                  },
-                  child: controller.marts.call().isEmpty ? Container(
-                    child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                          controller.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                          Text(controller.martErrorMessage.call()),
-                          controller.hasMartError.call() ? RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR),
-                            child: Text(tr('refresh')),
-                            onPressed: () => controller.refreshToken(page: 0),
-                          ) : Container() 
-                        ],
-                      ),
-                    ),
-                  ) : Container(
-                    height: Get.height,
-                    child: _scrollView()
-                  )
+                SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
                 ),
-                controller.isSelectedLocation.call() ? Container(
-                  margin: EdgeInsets.only(top: 70),
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Color(Config.LETSBEE_COLOR)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 15,
-                        height: 15,
-                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
-                      ),
-                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                      Text(tr('loadingLocation'), style: TextStyle(fontWeight: FontWeight.bold))
-                    ],
-                  ),
-                ) : Container()
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text(tr('loadingLocation'), style: TextStyle(fontWeight: FontWeight.bold))
               ],
-            )
-          );
+            ),
+          ) : Container();
         })
       ],
     );
@@ -105,7 +82,25 @@ class MartPage extends GetView<DashboardController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           controller.recentMarts.call().isEmpty ? Container() : Container(
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            GestureDetector(
+              onTap: () => _searchBottomsheet(),
+              child: SizedBox(
+                height: 40,
+                width: Get.width,
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white
+                  ),
+                  child: Text(tr('searchGrocery'), style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR), fontSize: 14))
+                ),
+              ),
+            ),
+            controller.recentMarts.call().isEmpty ? Container() : Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -364,7 +359,7 @@ class MartPage extends GetView<DashboardController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: BorderSide.none,
               ),
             ),
           );
@@ -400,21 +395,23 @@ class MartPage extends GetView<DashboardController> {
     searchHistory.sort((b, a) => a.date.compareTo(b.date));
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         color: Color(Config.WHITE),
       ),
       child: Column(
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          _searchField(),
+          Row(
+            children: [
+              IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back(closeOverlays: true)),
+              Expanded(child: _searchField())
+            ],
+          ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 8), color: Colors.grey.shade200),
           Flexible(
             child: SingleChildScrollView(
               child:Column(
                 children: [
-                  searchHistory.isEmpty ? Container(
-                    child: Text(controller.searchMartErrorMessage.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                  ) : controller.searchMartValue.trim().isEmpty ? Column(
+                  controller.searchMartValue.trim().isEmpty ? Column(
                     children: searchHistory.take(5).map((data) => _buildSearchList(data)).toList(),
                   ) : Column(
                     children: matchSuggestion.map((data) => _buildSearchList(data)).toList(),
@@ -461,24 +458,7 @@ class MartPage extends GetView<DashboardController> {
     controller.searchMartValue('');
     controller.searchMartErrorMessage('');
     Get.bottomSheet(
-      Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                color: Colors.transparent,
-                width: Get.width
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 4,
-            child: Obx(() => _buildSearchMart()),
-          )
-        ],
-      ),
+      Obx(() => _buildSearchMart()),
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: false,

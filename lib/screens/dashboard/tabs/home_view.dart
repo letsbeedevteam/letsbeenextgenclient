@@ -14,83 +14,60 @@ class HomePage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      alignment: Alignment.topCenter,
       children: [
-        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        Container(
-          height: 40,
-          width: Get.width,
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          child: RaisedButton(
-            color: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8)
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(tr('searchFood'), style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR), fontSize: 14)),
-            ),
-            onPressed: () => _searchBottomsheet(),
-          ),
+        RefreshIndicator(
+          onRefresh: () {
+            controller.refreshToken(page: 0);
+            return controller.refreshCompleter.future;
+          },
+          child: Obx(() {
+            return controller.restaurants.call().isEmpty ? Container(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                    controller.isLoading.call() ? CupertinoActivityIndicator() : Container(),
+                    Text(controller.restaurantErrorMessage.call()),
+                    controller.hasRestaurantError.call() ? RaisedButton(
+                      color: Color(Config.LETSBEE_COLOR),
+                      child: Text(tr('refresh')),
+                      onPressed: () => controller.refreshToken(page: 0),
+                    ) : Container() 
+                  ],
+                ),
+              ),
+            ) : Container(
+              height: Get.height,
+              child: _scrollView()
+            );
+          })
         ),
         Obx(() {
-          return Flexible(
-            child: Stack(
-              alignment: Alignment.topCenter,
+          return controller.isSelectedLocation.call() ? Container(
+            margin: EdgeInsets.only(top: 70),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              color: Color(Config.LETSBEE_COLOR)
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                RefreshIndicator(
-                  onRefresh: () {
-                    controller.refreshToken(page: 0);
-                    return controller.refreshCompleter.future;
-                  },
-                  child: controller.restaurants.call().isEmpty ? Container(
-                    child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                          controller.isLoading.call() ? CupertinoActivityIndicator() : Container(),
-                          Text(controller.restaurantErrorMessage.call()),
-                          controller.hasRestaurantError.call() ? RaisedButton(
-                            color: Color(Config.LETSBEE_COLOR),
-                            child: Text(tr('refresh')),
-                            onPressed: () => controller.refreshToken(page: 0),
-                          ) : Container() 
-                        ],
-                      ),
-                    ),
-                  ) : Container(
-                    height: Get.height,
-                    child: _scrollView()
-                  )
+                SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
                 ),
-                controller.isSelectedLocation.call() ? Container(
-                  margin: EdgeInsets.only(top: 70),
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Color(Config.LETSBEE_COLOR)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 15,
-                        height: 15,
-                        child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.black)),
-                      ),
-                      Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                      Text(tr('loadingLocation'), style: TextStyle(fontWeight: FontWeight.bold))
-                    ],
-                  ),
-                ) : Container()
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                Text(tr('loadingLocation'), style: TextStyle(fontWeight: FontWeight.bold))
               ],
-            )
-          );
+            ),
+          ) : Container();
         })
       ],
     );
@@ -107,6 +84,24 @@ class HomePage extends GetView<DashboardController> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Container(
+              height: 40,
+              width: Get.width,
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: RaisedButton(
+                color: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(tr('searchFood'), style: TextStyle(color: Color(Config.SEARCH_TEXT_COLOR), fontSize: 14)),
+                ),
+                onPressed: () => _searchBottomsheet(),
+              ),
+            ),
             // Container(
             //   margin: EdgeInsets.only(top: 10),
             //   height: 80,
@@ -414,7 +409,7 @@ class HomePage extends GetView<DashboardController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: BorderSide.none,
               ),
             ),
           );
@@ -450,25 +445,27 @@ class HomePage extends GetView<DashboardController> {
     searchHistory.sort((b, a) => a.date.compareTo(b.date));
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         color: Color(Config.WHITE),
       ),
       child: Column(
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          _searchField(),
+          Row(
+            children: [
+              IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back(closeOverlays: true)),
+              Expanded(child: _searchField())
+            ],
+          ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 8), color: Colors.grey.shade200),
           Flexible(
             child: SingleChildScrollView(
-              child:Column(
+              child: Column(
                 children: [
-                  searchHistory.isEmpty ? Container(
-                    child: Text(controller.searchRestaurantErrorMessage.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                  ) : controller.searchRestaurantValue.trim().isEmpty ? Column(
+                  controller.searchRestaurantValue.trim().isEmpty ? Column(
                     children: searchHistory.take(5).map((data) => _buildSearchList(data)).toList(),
                   ) : Column(
                     children: matchSuggestion.map((data) => _buildSearchList(data)).toList(),
-                  ),
+                  ), 
                   matchSuggestion.isEmpty ? Container() : Container(height: 1, margin: EdgeInsets.symmetric(vertical: 5), color: Colors.grey.shade200),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -512,24 +509,7 @@ class HomePage extends GetView<DashboardController> {
     controller.searchRestaurantValue('');
     controller.searchRestaurantErrorMessage('');
     Get.bottomSheet(
-      Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                color: Colors.transparent,
-                width: Get.width
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 4,
-            child: Obx(() => _buildSearchRestaurant()),
-          )
-        ],
-      ),
+      Obx(() => _buildSearchRestaurant()),
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: false,
