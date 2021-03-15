@@ -620,73 +620,80 @@ class RestaurantPage extends GetView<RestaurantController> {
                           alignment: FractionalOffset.bottomCenter,
                           child: Container(
                             width: Get.width,
-                            height: 60,
                             color: Colors.white,
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10),
-                              child: Row(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Color(Config.WHITE)
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: Colors.white
-                                          ),
-                                          child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () => _.decrement())
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Text('${_.quantity.call()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: Color(Config.LETSBEE_COLOR)
-                                          ),
-                                          child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () => _.increment())
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () => controller.addToCart(controller.product.call()),
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(5),
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
-                                          color: Color(Config.LETSBEE_COLOR)
+                                          color: Color(Config.WHITE)
                                         ),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text(tr('addToCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: Colors.white
+                                              ),
+                                              child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () => _.decrement())
+                                            ),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Text('${_.quantity.call()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: Color(Config.LETSBEE_COLOR)
+                                              ),
+                                              child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () => _.increment())
+                                            ),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
                                           ],
-                                        )
+                                        ),
                                       ),
-                                    ),
-                                  )
+                                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () => controller.addToCart(controller.product.call()),
+                                          child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              color: Color(Config.LETSBEE_COLOR)
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(tr('addToCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                                Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                              ],
+                                            )
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
                                 ],
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

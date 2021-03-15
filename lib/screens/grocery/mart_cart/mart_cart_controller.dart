@@ -19,23 +19,25 @@ class MartCartController extends GetxController {
   final argument = Get.arguments;
   Completer<void> refreshCompleter;
 
-  var message = ''.obs;
   var totalPrice = 0.0.obs;
   var subTotal = 0.0.obs;
+  var storeId = 0.obs;
+  var deliveryFee = 0.0.obs;
+  
+  var quantity = 0.obs;
+
+  var message = ''.obs;
+
+  var hasError = false.obs;
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
-  var isUpdateCartLoading = false.obs;
   var isEdit = false.obs;
-  var storeId = 0.obs;
-  // var cart = ActiveCartResponse().obs;
-  var quantity = 0.obs;
   
   final noteToRider = TextEditingController();
   final noteToRiderNode = FocusNode();
 
   final addToCart = RxList<AddToCart>().obs;
   final updatedProducts = RxList<Product>().obs;
-  // final products = RxList<Product>().obs;
 
   static MartCartController get to => Get.find();
   
@@ -57,13 +59,10 @@ class MartCartController extends GetxController {
 
   setEdit() {
     isEdit(!isEdit.call());
-    isUpdateCartLoading(false);
   }
 
   Future<bool> onWillPopBack() async {
     isEdit(false);
-    isUpdateCartLoading(false);
-    // fetchActiveCarts(storeId: storeId.call());
     Get.back(closeOverlays: true);
     return true;
   }
@@ -101,7 +100,6 @@ class MartCartController extends GetxController {
   }
 
   deleteCart({String uniqueId}) {
-    // isLoading(true);
     Get.back();
     successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
@@ -120,7 +118,7 @@ class MartCartController extends GetxController {
       isPaymentLoading(true);
       Get.back();
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).then((response) {
+      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, noteToRider: noteToRider.text.trim(), carts: addToCart.call()).then((response) {
           
         isPaymentLoading(false);
 
@@ -130,20 +128,16 @@ class MartCartController extends GetxController {
           if (response.code == 3506) {
             errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
           } else {
+            noteToRider.clear();
             if (response.paymentUrl == null) {
               print('NO URL');
               successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
-              final prod = listProductFromJson(box.read(Config.PRODUCTS));
-              prod.removeWhere((data) => data.storeId == storeId);
-              box.write(Config.PRODUCTS, listProductToJson(prod));
-              MartController.to.list.call().removeWhere((data) => data.storeId == storeId);
-              getProducts();
-
+             
+              clearCart(storeId);
               DashboardController.to.fetchActiveOrders();
 
               Future.delayed(Duration(seconds: 1)).then((value) {
-                // fetchActiveCarts(storeId: storeId);
                 if (Get.isSnackbarOpen) {
                   Get.back();
                   Future.delayed(Duration(seconds: 1));
@@ -154,13 +148,13 @@ class MartCartController extends GetxController {
               });
 
             } else {
-              // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
               print('GO TO WEBVIEW: ${response.paymentUrl}');
-              // fetchActiveCarts(storeId: storeId);
               Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
                 'url': response.paymentUrl,
-                'order_id': response.data.id
-              });
+                'order_id': response.data.id,
+                'store_id': storeId,
+                'type': Config.MART
+              }).whenComplete(() => dismissKeyboard(Get.context));
             }
           }
 
@@ -179,6 +173,42 @@ class MartCartController extends GetxController {
         print('Payment method: $onError');
       });
     }
+  }
+
+  clearCart(int storeId) {
+    final prod = listProductFromJson(box.read(Config.PRODUCTS));
+    prod.removeWhere((data) => data.storeId == storeId);
+    box.write(Config.PRODUCTS, listProductToJson(prod));
+    MartController.to.list.call().removeWhere((data) => data.storeId == storeId);
+    getProducts();
+  }
+
+  Future<Null> refreshDeliveryFee() async => getDeliveryFee();
+
+  getDeliveryFee() {
+    message(tr('loadingCart'));
+    isLoading(true);
+    hasError(true);
+    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
+
+      if (response.status == 200) {
+        hasError(false);
+        deliveryFee(double.tryParse(response.data.deliveryFee));
+        getProducts();
+
+      } else {
+        hasError(true);
+        message(tr('somethingWentWrong'));
+      }
+
+      isLoading(false);
+
+    }).catchError((onError) {
+      hasError(true);
+      isLoading(false);
+      message(tr('somethingWentWrong'));
+      print('Delivery Fee Error: $onError');
+    });
   }
 
   getProducts() {
@@ -210,8 +240,6 @@ class MartCartController extends GetxController {
         )
       );
     });
-
-    // print(addToCart.toJson());
 
     if (newMap.isNotEmpty) {
       updatedProducts.call().assignAll(newMap.values);

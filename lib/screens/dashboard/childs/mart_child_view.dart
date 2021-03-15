@@ -44,6 +44,11 @@ class MartChildPage extends GetView<DashboardController> {
             onPressed: () => _searchBottomsheet(),
           ),
         ),
+        Container(
+          height: 1,
+          margin: EdgeInsets.only(top: 10),
+          color: Colors.grey.shade200
+        ),
         Flexible(
           child: RefreshIndicator(
             onRefresh: () {
@@ -237,7 +242,7 @@ class MartChildPage extends GetView<DashboardController> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
+                borderSide: BorderSide.none,
               ),
             ),
           );
@@ -276,21 +281,23 @@ class MartChildPage extends GetView<DashboardController> {
     searchHistory.sort((b, a) => a.date.compareTo(b.date));
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         color: Color(Config.WHITE),
       ),
       child: Column(
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          _searchField(),
+          Row(
+            children: [
+              IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back(closeOverlays: true)),
+              Expanded(child: _searchField())
+            ],
+          ),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 8), color: Colors.grey.shade200),
           Flexible(
             child: SingleChildScrollView(
               child:Column(
                 children: [
-                  searchHistory.isEmpty ? Container(
-                    child: Text(controller.searchMartErrorMessage.call(), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                  ) : controller.searchMartValue.trim().isEmpty ? Column(
+                  controller.searchMartValue.trim().isEmpty ? Column(
                     children: searchHistory.take(5).map((data) => _buildSearchList(data)).toList(),
                   ) : Column(
                     children: matchSuggestion.map((data) => _buildSearchList(data)).toList(),
@@ -335,24 +342,7 @@ class MartChildPage extends GetView<DashboardController> {
   _searchBottomsheet() {
     controller.searchMartErrorMessage('');
     Get.bottomSheet(
-      Column(
-        children: [
-          Flexible(
-            flex: 1,
-            child: GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                color: Colors.transparent,
-                width: Get.width
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 4,
-            child: Obx(() => _buildSearchMart()),
-          )
-        ],
-      ),
+      Obx(() => _buildSearchMart()),
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: false,

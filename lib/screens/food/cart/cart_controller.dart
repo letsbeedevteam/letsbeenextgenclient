@@ -21,14 +21,17 @@ class CartController extends GetxController {
   final argument = Get.arguments;
   Completer<void> refreshCompleter;
 
-  var message = ''.obs;
   var totalPrice = 0.0.obs;
   var subTotal = 0.0.obs;
+  var storeId = 0.obs;
+  var deliveryFee = 0.0.obs;
+
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
   var isEdit = false.obs;
-  var storeId = 0.obs;
-  // var cart = ActiveCartResponse().obs;
+  var hasError = false.obs;
+
+  var message = ''.obs;
 
   final streetTFController = TextEditingController();
   final barangayTFController = TextEditingController();
@@ -76,7 +79,6 @@ class CartController extends GetxController {
   }
 
   deleteCart({String uniqueId}) {
-    // isLoading(true);
     Get.back();
     successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
@@ -110,11 +112,7 @@ class CartController extends GetxController {
               print('NO URL');
               successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
-              final prod = listProductFromJson(box.read(Config.PRODUCTS));
-              prod.removeWhere((data) => data.storeId == storeId);
-              box.write(Config.PRODUCTS, listProductToJson(prod));
-              RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
-              getProducts();
+              clearCart(storeId);
 
               DashboardController.to.fetchActiveOrders();
 
@@ -135,7 +133,9 @@ class CartController extends GetxController {
               // fetchActiveCarts(storeId: storeId);
               Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
                 'url': order.paymentUrl,
-                'order_id': order.data.id
+                'order_id': order.data.id,
+                'store_id': storeId,
+                'type': Config.RESTAURANT
               });
             }
           }
@@ -150,6 +150,42 @@ class CartController extends GetxController {
         print('Payment method: $onError');
       });
     }
+  }
+
+  Future<Null> refreshDeliveryFee() async => getDeliveryFee();
+
+  getDeliveryFee() {
+    message(tr('loadingCart'));
+    isLoading(true);
+    hasError(true);
+    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
+
+      if (response.status == 200) {
+        hasError(false);
+        deliveryFee(double.tryParse(response.data.deliveryFee));
+        getProducts();
+
+      } else {
+        hasError(true);
+        message(tr('somethingWentWrong'));
+      }
+
+      isLoading(false);
+
+    }).catchError((onError) {
+      hasError(true);
+      isLoading(false);
+      message(tr('somethingWentWrong'));
+      print('Delivery Fee Error: $onError');
+    });
+  }
+
+  clearCart(int storeId) {
+    final prod = listProductFromJson(box.read(Config.PRODUCTS));
+    prod.removeWhere((data) => data.storeId == storeId);
+    box.write(Config.PRODUCTS, listProductToJson(prod));
+    RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
+    getProducts();
   }
 
   getProducts() {

@@ -50,7 +50,7 @@ class DashboardPage extends GetView<DashboardController> {
                     );
                   }),
                   Obx(() {
-                    return Expanded(
+                    return Flexible(
                       child: PageView(
                         physics: NeverScrollableScrollPhysics(),
                         controller: controller.pageController,
@@ -96,7 +96,7 @@ class DashboardPage extends GetView<DashboardController> {
         }),
         bottomNavigationBar: Theme(
           data: Get.theme.copyWith(
-            splashColor: Colors.transparent
+            splashColor: Colors.transparent,
           ),
           child: Obx(() {
             return BottomNavigationBar(
@@ -105,6 +105,8 @@ class DashboardPage extends GetView<DashboardController> {
               selectedFontSize: 10.0,
               unselectedFontSize: 10.0,
               iconSize: 25,
+              selectedLabelStyle: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+              selectedItemColor: Colors.black,
               onTap: (value) => controller.tapped(value),
               items: [
                 customNavigationBarItem(tr('food'), image: Image.asset(controller.pageIndex.call() == 0 ? '${Config.PNG_PATH}food-act.png' : '${Config.PNG_PATH}food-inact.png')),
@@ -112,7 +114,7 @@ class DashboardPage extends GetView<DashboardController> {
                 customNavigationBarItem(tr('account'), image: Image.asset(controller.pageIndex.call() == 2 ? '${Config.PNG_PATH}acc-act.png' : '${Config.PNG_PATH}acc-inact.png')),
               ],
             );
-          }),
+          })
         )
       ),
     );
@@ -121,25 +123,27 @@ class DashboardPage extends GetView<DashboardController> {
   BottomNavigationBarItem customNavigationBarItem(String label, {Image image, Icon icon}) {
     return BottomNavigationBarItem(
       icon: icon == null ? Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-          SizedBox(height: 23, width: 23, child: image),
+          SizedBox(height: 20, width: 20, child: image),
           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
           Text(label, style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold))
         ],
       ) : icon,
       activeIcon: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: Color(Config.LETSBEE_COLOR),
           borderRadius: BorderRadius.circular(5)
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 1)),
+            SizedBox(height: 25, width: 25, child: image),
+            Text(label, style: TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold)),
             Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            SizedBox(height: 30, width: 30, child: image),
-            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-            Text(label, style: TextStyle(fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold))
           ],
         )
       ),
@@ -167,17 +171,30 @@ class DashboardPage extends GetView<DashboardController> {
           Row(
             children: [
               Text('${tr('deliverTo')}: ', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                height: 25,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  color: Color(Config.LETSBEE_COLOR),
-                  borderRadius: BorderRadius.circular(25)
+              GestureDetector(
+                onTap: () => Get.toNamed(Config.ADDRESS_ROUTE),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  height: 25,
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    color: Color(Config.LETSBEE_COLOR),
+                    borderRadius: BorderRadius.circular(25)
+                  ),
+                  child: Obx(() {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(controller.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis),
+                        RotatedBox(
+                          quarterTurns: 3,
+                          child: Icon(Icons.chevron_left),
+                        )
+                      ],
+                    );
+                  }),
                 ),
-                child: Obx(() {
-                  return Text(controller.userCurrentNameOfLocation.call(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black), overflow: TextOverflow.ellipsis);
-                }),
               )
             ],
           ),

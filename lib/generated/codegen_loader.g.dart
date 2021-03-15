@@ -205,15 +205,25 @@ class CodegenLoader extends AssetLoader{
   "checkOrderHistory": "주문기록을 확인해 주세요.",
   "resendCodeSuccess": "확인번호가 재전송되었습니다.",
   "inputSearchField": "검색하실 내용을 입력해 주세요.",
-  
-  //NEW
-  "addedSuccessfully": "성공적으로 추가됨",
-  "updatedSuccessfully": "성공적으로 업데이트 됨",
+  "addedSuccessfully": "추가되었습니다.",
+  "updatedSuccessfully": "변경되어었습니다",
   "language": "언어",
-  "logoutMessage": "계정을 로그 아웃 하시겠습니까",
-  "yes": "예",
-  "no": "아니",
-  "searching": "수색..."
+  "logoutMessage": "정말 로그아웃하시겠습니까?",
+  "yes": "네",
+  "no": "아니오",
+  "searching": "검색 중…",
+  "restaurant": "가맹점",
+  "shop": "매장",
+  "with": "와",
+  "emptyProduct": "상품이 없습니다.",
+  "searchFor": "검색어",
+  "creditCard": "신용 / 체크 카드",
+  "gcash": "지케시",
+  "paypal": "페이팔",
+  "loadingCart": "장바구니를 가져오는 중...",
+  "loadingPayment": "지불화면 연결 중...",
+  "pleaseWait": "기다려 주세요...",
+  "paymentMethod": "지불 방식"
 };
 static const Map<String,dynamic> en_US = {
   "signIn": "Sign In",
@@ -407,9 +417,6 @@ static const Map<String,dynamic> en_US = {
   "checkOrderHistory": "Please check your order history",
   "resendCodeSuccess": "Your code has been sent to your number",
   "inputSearchField": "Please input your search field",
-
-
-  // NEW
   "addedSuccessfully": "Added successfully",
   "updatedSuccessfully": "Updated successfully",
   "language": "Language",
@@ -421,7 +428,14 @@ static const Map<String,dynamic> en_US = {
   "shop": "Shop",
   "with": "with",
   "emptyProduct": "No Products",
-  "searchFor": "Search for"
+  "searchFor": "Search for",
+  "creditCard": "CREDIT / DEBIT CARD",
+  "gcash": "GCASH",
+  "paypal": "PAYPAL",
+  "loadingCart": "Loading Cart...",
+  "loadingPayment": "Loading Payment...",
+  "pleaseWait": "Please wait...",
+  "paymentMethod": "Payment Method"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

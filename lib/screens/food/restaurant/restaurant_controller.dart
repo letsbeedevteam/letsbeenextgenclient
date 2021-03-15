@@ -53,7 +53,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   @override
   void onInit() {
     Get.put(CartController());
-    isSelectedProceed.nil();
     storeResponse.nil();
     store.nil();
 
@@ -73,7 +72,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     totalPriceOfChoice(0.00);
     quantity(1);
     tFRequestController.clear();
-    isSelectedProceed.nil();
     choiceCart.call().clear();
   }
 
@@ -145,9 +143,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     if (product.variants.isEmpty) {
       hasNotSelectedChoice = true;
     } else {
-      product.variants.forEach((choice) {
-        hasNotSelectedChoice = choice.options.where(((option) => option.selectedValue != null)).isNotEmpty;
-      });
+      hasNotSelectedChoice = product.variants.length == choiceCart.call().values.toList().length;
     }
    
     if (!hasNotSelectedChoice) {

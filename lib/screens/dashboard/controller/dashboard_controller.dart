@@ -41,6 +41,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isFloatVisible = false.obs;
   var isHideAppBar = false.obs;
   var isLoading = false.obs;
+  var isCancelOrderLoading = false.obs;
   var isSearchLoading = false.obs;
   var isOnSearch = false.obs;
   var isSelectedLocation = false.obs;
@@ -119,7 +120,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       if (martScrollController.position.atEdge) {
         if (martScrollController.position.pixels != 0) {
           if (!isOnSearch.call()) fetchMartDashboard(page: countMartPage.call());
-        } 
+        }
       }
     });
 
@@ -137,6 +138,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
     socketService.socket?.on('connect', (_) {
       print('Connected');
+      if (Get.currentRoute == Config.AUTH_ROUTE) socketService.disconnectSocket();
       fetchActiveOrders();
       receiveUpdateOrder();
       receiveChat();
@@ -316,6 +318,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
 
             if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
+              if (Get.isDialogOpen) Get.back();
               Get.defaultDialog(
                 title: tr('oops'),
                 content: Container(
@@ -362,6 +365,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             // if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
 
             if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
+
+              if (Get.isDialogOpen) Get.back();
+
               Get.defaultDialog(
                 title: tr('yay'),
                 content: Container(
@@ -406,11 +412,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if (reasonController.text.trim().isEmpty) {
           errorSnackbarTop(title: tr('oops'), message: tr('specifyYourReason'));
         } else {
-          cancel();
+          cancelOrderRequest();
         }
 
       } else {
-        cancel();
+        cancelOrderRequest();
       }
 
     } else {
@@ -418,12 +424,14 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
-  cancel() {
-    socketService.socket?.emitWithAck('cancel-order', {'order_id': activeOrderData.value.id}, ack: (response) {
-      print(response);
-      if (response['status'] == 200) {
+  cancelOrderRequest() {
+    isCancelOrderLoading(true);
+    
+    apiService.cancelOrder(orderId: activeOrderData.value.id).then((response) {
+      if(response.status == 200) {
         reasonController.clear();
         reason.nil();
+        activeOrderData.nil();
         fetchActiveOrders();
         Get.back(closeOverlays: true);
         Get.defaultDialog(
@@ -440,16 +448,21 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             child: Text(tr('dismiss'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
           )
         );
-        reason.nil();
-        activeOrderData.nil();
       } else {
 
-        if (response['code'] == 3009) {
+        if (response.code  == 3009) {
           errorSnackbarTop(title: tr('oops'), message: tr('orderHasBeenDeclined'));
         } else {
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         }
       }
+
+      isCancelOrderLoading(false);
+
+    }).catchError((onError) {
+      isCancelOrderLoading(false);
+      errorSnackbarTop(title: 'Oops', message: tr('somethingWentWrong'));
+      print('Error cancel order: $onError');
     });
   }
 
@@ -525,6 +538,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if (page == 0) {
           countRestoPage(1);
           restaurants.call()..clear()..assignAll(response.data.stores);
+          isRestaurantLoadingScroll(false);
         } else {
 
           if (response.data.stores.isNotEmpty) {
@@ -587,9 +601,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if (page == 0) {
           countMartPage(1);
           marts.call()..clear()..assignAll(response.data.stores);
+          isMartLoadingScroll(false);
         } else {
 
-          if (response.data.stores.isNotEmpty && response.data.recentStores.isNotEmpty) {
+          if (response.data.stores.isNotEmpty) {
             countMartPage.value++;
             marts.call().addAll(response.data.stores);
           } else {
@@ -774,5 +789,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   clearSearchHistory({@required String type}) {
     searchHistoryList.call().removeWhere((key, value) => value.type == type);
     box.write(Config.SEARCH_HISTORY, searchHistoryToJson(searchHistoryList.call().values.toList()));
+    update();
   }
 }

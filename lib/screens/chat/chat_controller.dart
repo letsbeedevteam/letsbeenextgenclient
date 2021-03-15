@@ -35,7 +35,7 @@ class ChatController extends GetxController {
     }
     
     dashboardController.socket?.on('connect', (_) {
-      Future.delayed(Duration(seconds: 2)).then((value) => isConnected(true));
+      isConnected(true);
       print('Connected');
       color(Colors.green);
       connectMessage(tr('connected'));

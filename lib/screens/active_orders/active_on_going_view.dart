@@ -575,8 +575,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
               borderRadius: BorderRadius.circular(5)
             ),
             color: Color(Config.RED),
-            child: Text(tr('proceed'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-            onPressed: () => controller.cancelOrderById(),
+            child: Obx(() => Text(controller.isCancelOrderLoading.call() ? tr('loading') : tr('proceed'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14))),
+            onPressed: () => controller.isCancelOrderLoading.call() ? null : controller.cancelOrderById(),
           )
         ],
       ),
