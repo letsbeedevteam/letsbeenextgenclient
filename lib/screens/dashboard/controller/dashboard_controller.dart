@@ -53,6 +53,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var cancelMessage = ''.obs;
   var reason = ''.obs;
 
+  var connectMessage = tr('connecting').obs;
+  var isConnected = true.obs;
+  var color = Colors.orange.obs;
+
   var restaurantErrorMessage = tr('loadingRestaurants').obs;
   var martErrorMessage = tr('loadingShops').obs;
   var searchRestaurantErrorMessage = tr('searching').obs;
@@ -137,21 +141,32 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.connectSocket();
 
     socketService.socket?.on('connect', (_) {
+      isConnected(true);
+      color(Colors.green);
+      connectMessage(tr('connected'));
       print('Connected');
-      if (Get.currentRoute == Config.AUTH_ROUTE) socketService.disconnectSocket();
       fetchActiveOrders();
       receiveUpdateOrder();
       receiveChat();
     });
     socketService.socket?.on('connecting', (_) {
+      isConnected(false);
+      color(Colors.orange);
+      connectMessage(tr('connecting'));
       print('Connecting');
       onGoingMessage(tr('loading'));
     });
     socketService.socket?.on('reconnecting', (_) {
+      isConnected(false);
+      color(Colors.orange);
+      connectMessage(tr('reconnecting'));
       print('Reconnecting');
       onGoingMessage(tr('loading'));
     });
     socketService.socket?.on('disconnect', (_) {
+      isConnected(false);
+      color(Colors.red);
+      connectMessage(tr('disconnected'));
       onGoingMessage(tr('loading'));
       print('Disconnected');
     });
@@ -365,9 +380,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             // if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
 
             if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
-
               if (Get.isDialogOpen) Get.back();
-
               Get.defaultDialog(
                 title: tr('yay'),
                 content: Container(

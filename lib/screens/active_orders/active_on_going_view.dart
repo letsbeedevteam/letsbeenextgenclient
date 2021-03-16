@@ -36,6 +36,17 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
             child: Center(child: Text(controller.cancelMessage.call(), style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
         ) : Column(
           children: [
+            Obx(() {
+              return AnimatedContainer(
+                width: double.infinity,
+                color: controller.color.call(),
+                duration: Duration(milliseconds: 500),
+                height: controller.isConnected.call() ? 0 : 25,
+                child: Center(
+                  child: Text(controller.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                )
+              );
+            }),
             Expanded(
               flex: 8,
               child: _scrollView()
