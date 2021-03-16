@@ -117,14 +117,7 @@ class CartController extends GetxController {
               DashboardController.to.fetchActiveOrders();
 
               Future.delayed(Duration(seconds: 1)).then((value) {
-                // fetchActiveCarts(storeId: storeId);
-                if (Get.isSnackbarOpen) {
-                  Get.back();
-                  Future.delayed(Duration(seconds: 1));
-                  Get.back();
-                } else {
-                  Get.back();
-                }
+                Get.back(closeOverlays: true);
               });
 
             } else {
