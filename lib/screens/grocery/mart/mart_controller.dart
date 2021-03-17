@@ -66,6 +66,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   fetchStore() {
     message(tr('loadingShop'));
     hasError(false);
+    storeResponse.nil();
     apiService.fetchStoreById(id: argument['id']).then((response) {
 
       if(response.data.isNotEmpty) {

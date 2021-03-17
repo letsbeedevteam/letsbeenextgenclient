@@ -50,17 +50,6 @@ class DashboardPage extends GetView<DashboardController> {
                     );
                   }),
                   Obx(() {
-                    return AnimatedContainer(
-                      width: double.infinity,
-                      color: controller.color.call(),
-                      duration: Duration(milliseconds: 500),
-                      height: controller.isConnected.call() ? 0 : 25,
-                      child: Center(
-                        child: Text(controller.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      )
-                    );
-                  }),
-                  Obx(() {
                     return Flexible(
                       child: PageView(
                         physics: NeverScrollableScrollPhysics(),

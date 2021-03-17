@@ -9,6 +9,7 @@ import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/search_history.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
+import 'package:intl/intl.dart' as intl;
 
 class RestaurantChildPage extends GetView<DashboardController> {
 
@@ -101,7 +102,7 @@ class RestaurantChildPage extends GetView<DashboardController> {
               child: Text(title, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15), textAlign: TextAlign.start),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-            searchRestaurant.isNotEmpty ? Column(children: searchRestaurant.map((e) => _buildRestaurantItem(e)).toList()) 
+            searchRestaurant.isNotEmpty ? Column(children: searchRestaurant.map((e) => _openCloseStore(restaurant: e)).toList()) 
             : Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,17 +124,135 @@ class RestaurantChildPage extends GetView<DashboardController> {
     );
   }
 
-  Widget _buildRestaurantItem(RestaurantStores restaurant) {
+  Widget _openCloseStore({RestaurantStores restaurant}) {
+    final now = DateTime.now();
+    final day = intl.DateFormat('EEEE').format(now);
+ 
+    switch (day) {
+      case 'Monday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.monday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.monday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+      break;
+      case 'Tuesday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.tuesday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.tuesday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        }     
+      }
+      break;
+      case 'Wednesday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.wednesday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.wednesday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+      break;
+      case 'Thursday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.thursday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.thursday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+      break;
+      case 'Friday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.friday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.friday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+      break;
+      case 'Saturday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.saturday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.saturday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        }     
+      }
+      break;
+      case 'Sunday': {
+        final closingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.sunday.closingTime));
+        final openingTime = intl.DateFormat.jm().format(intl.DateFormat("hh:mm:ss").parse(restaurant.workingDays.sunday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+      break;
+      default: {
+        final closingTime = DateFormat.jm().format(DateFormat("hh:mm:ss").parse(restaurant.workingDays.monday.closingTime));
+        final openingTime = DateFormat.jm().format(DateFormat("hh:mm:ss").parse(restaurant.workingDays.monday.openingTime));
+        if (restaurant.stature == 'temporary-closed' || restaurant.stature == 'closed') {
+          return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', stature:  restaurant.stature, status: 'closed');
+        } else {
+          if( now.hour >= openingTime.tod().hour && now.hour < closingTime.tod().hour) {
+            return _buildRestaurantItem(restaurant: restaurant);
+          } else {
+            return _buildRestaurantItem(restaurant: restaurant, storeTime: '$openingTime - $closingTime', status: 'closed');
+          }
+        } 
+      }
+    }
+  }
+
+  Widget _buildRestaurantItem({RestaurantStores restaurant, String storeTime, String stature, String status = 'open'}) {
     final name = restaurant.location.name == null || restaurant.location.name == '' ? '${restaurant.name}' : '${restaurant.name} - ${restaurant.location.name}';
     return GestureDetector(
-      onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson()}),
+      onTap: () => Get.toNamed(Config.RESTAURANT_ROUTE, arguments: {'id': restaurant.id, 'restaurant': restaurant.toJson(), 'status': status}),
       child: Container(
-        alignment: Alignment.topCenter,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
-          color: Colors.white,
+          color: status == 'closed' ? Color(0xFFFBFBFC).withOpacity(0.8) : Colors.white,
         ),
-        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        margin: EdgeInsets.only(bottom: 20, left: 5, right: 5),
         padding: EdgeInsets.all(10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -141,15 +260,14 @@ class RestaurantChildPage extends GetView<DashboardController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Container(
-                alignment: Alignment.center,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: SizedBox(
-                    width: Get.width,
-                    height: 180,
-                    child: FadeInImage.assetNetwork(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              child: SizedBox(
+                width: Get.width,
+                height: 180,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    FadeInImage.assetNetwork(
                       placeholder: cupertinoActivityIndicatorSmall, 
                       width: Get.width, 
                       image: restaurant?.photoUrl, 
@@ -166,14 +284,19 @@ class RestaurantChildPage extends GetView<DashboardController> {
                           fit: BoxFit.cover,
                           placeholderScale: 5
                       );
-                    }) 
-                  ),
-                ),
+                    }),
+                    status == 'closed' ? Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFBFBFC).withOpacity(0.8)
+                      ),
+                    ) : Container()
+                  ],
+                ) 
               ),
             ),
             Container(
               padding: EdgeInsets.only(top: 10, left: 5, right: 5),
-              child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), overflow: TextOverflow.ellipsis),
+              child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: status != 'closed' ? Colors.black : Colors.grey), overflow: TextOverflow.ellipsis),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 3)),
             Padding(
@@ -182,6 +305,15 @@ class RestaurantChildPage extends GetView<DashboardController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   OneRating(),
+                  status == 'closed' ? Container(
+                    alignment: Alignment.bottomRight,
+                    decoration: BoxDecoration(
+                      color: Color(Config.LETSBEE_COLOR),
+                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), topLeft: Radius.circular(8)),
+                    ),
+                    padding: EdgeInsets.all(8),
+                    child: Text('Store Hours $storeTime', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                  ) :
                   Row(
                     children: [
                       Container(
@@ -198,7 +330,7 @@ class RestaurantChildPage extends GetView<DashboardController> {
                           ],
                         ),
                       ),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 5)), 
                       Container(
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(

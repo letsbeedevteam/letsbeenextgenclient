@@ -231,12 +231,13 @@ class ApiService extends GetConnect {
     return cancelPaymentResponseFromJson(response.bodyString);
   }
 
-  Future<CancelOrderResponse> cancelOrder({int orderId}) async {
+  Future<CancelOrderResponse> cancelOrder({int orderId, String note}) async {
 
     final response = await post(
       '/orders/cancel',
       {
-        'order_id': orderId
+        'order_id': orderId,
+        'note': note
       },
       headers: {
         'Authorization': 'Bearer ${_box.read(Config.USER_TOKEN)}',
