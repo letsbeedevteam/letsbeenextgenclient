@@ -57,7 +57,7 @@ class MartProductPage extends GetView<MartController> {
                           GetX<MartCartController>(
                             builder: (cart) {
                               final filtered = cart.updatedProducts.call().where((data) => !data.isRemove && data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
-                              return GestureDetector(
+                              return controller.argument['status'] == "open" ? GestureDetector(
                                 onTap: () => Get.toNamed(Config.MART_CART_ROUTE, arguments: controller.store.call().id),
                                 child: Container(
                                   margin: EdgeInsets.only(right: 10),
@@ -77,7 +77,7 @@ class MartProductPage extends GetView<MartController> {
                                     ]
                                   ),
                                 ),
-                              );
+                              ) : Container();
                             }
                           )
                         ],
@@ -254,10 +254,13 @@ class MartProductPage extends GetView<MartController> {
   }
 
   Widget _buildItem(Product product) {
+    final available = product.status == 'available' && controller.argument['status'] == 'open';
     return GestureDetector(
       onTap: () {
         controller.readOnly(true);
-        _bottomSheet(product);
+        if (available) {
+          _bottomSheet(product);
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 10, right: 10, left: 10),
@@ -280,43 +283,55 @@ class MartProductPage extends GetView<MartController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                        Container(
-                        child: Text(product.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                        child: Text(product.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Text(product.description, style: TextStyle(fontSize: 13 ,fontWeight: FontWeight.normal), textAlign: TextAlign.start),
+                        child: Text(product.description, style: TextStyle(fontSize: 13 ,fontWeight: FontWeight.normal, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
                       )
                     ],
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
                     margin: EdgeInsets.only(top: 10),
-                    child: Text('₱ ${product.customerPrice}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), textAlign: TextAlign.start),
+                    child: Text('₱ ${product.customerPrice}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
                   )
                 ],
               ),
             ),
-            FadeInImage.assetNetwork(
-              placeholder: cupertinoActivityIndicatorSmall, 
-              image: product.image, 
-              fit: BoxFit.fitWidth, 
-              height: 120, 
-              width: 140, 
-              placeholderScale: 5, 
-              imageErrorBuilder: (context, error, stackTrace) {
-                return error.toString().contains(product?.image) ? Container(
-                  width: 140,
-                  height: 120,
-                  child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
-                ) : FadeInImage.assetNetwork(
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                FadeInImage.assetNetwork(
                   placeholder: cupertinoActivityIndicatorSmall, 
                   image: product.image, 
                   fit: BoxFit.fitWidth, 
                   height: 120, 
                   width: 140, 
-                  placeholderScale: 5
-                );
-              }
+                  placeholderScale: 5, 
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return error.toString().contains(product?.image) ? Container(
+                      width: 140,
+                      height: 120,
+                      child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                    ) : FadeInImage.assetNetwork(
+                      placeholder: cupertinoActivityIndicatorSmall, 
+                      image: product.image, 
+                      fit: BoxFit.fitWidth, 
+                      height: 120, 
+                      width: 140, 
+                      placeholderScale: 5
+                    );
+                  }
+                ),
+                available ? Container() : Container(
+                  height: 120, 
+                  width: 140, 
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFBFBFC).withOpacity(0.8)
+                  ),
+                )
+              ],
             )
           ],
         ),

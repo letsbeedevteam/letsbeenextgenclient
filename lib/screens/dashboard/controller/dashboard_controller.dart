@@ -17,7 +17,7 @@ import 'package:letsbeeclient/models/search_history.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
-// import 'package:intl/intl.dart';
+
 
 class DashboardController extends GetxController with SingleGetTickerProviderMixin {
   
@@ -138,9 +138,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   }
   
   refreshSocket() {
-    socketService.connectSocket();
 
     socketService.socket?.on('connect', (_) {
+      socketService.socket?.clearListeners();
       isConnected(true);
       color(Colors.green);
       connectMessage(tr('connected'));
@@ -165,8 +165,8 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     });
     socketService.socket?.on('disconnect', (_) {
       isConnected(false);
-      color(Colors.red);
-      connectMessage(tr('disconnected'));
+      color(Colors.orange);
+      connectMessage(tr('reconnecting'));
       onGoingMessage(tr('loading'));
       print('Disconnected');
     });
@@ -440,7 +440,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   cancelOrderRequest() {
     isCancelOrderLoading(true);
     
-    apiService.cancelOrder(orderId: activeOrderData.value.id).then((response) {
+    apiService.cancelOrder(orderId: activeOrderData.value.id, note: reasonController.text.trim()).then((response) {
       if(response.status == 200) {
         reasonController.clear();
         reason.nil();
@@ -487,23 +487,22 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     hasMartError(false);
     hasRestaurantError(false);
     isLoading(true);
-    // message(title);
     apiService.refreshToken().then((response) {
-      // message(null);
       _setRefreshCompleter();
       if(response.status == 200) {
-        // _timer.cancel();
-        // box.remove(Config.NEXT_DAY);
+
         box.write(Config.USER_TOKEN, response.data.accessToken);
-        socketService.connectSocket();
-        // startEvery24Hours();
+
+        if (socketService.socket == null) {
+          socketService.connectSocket(box.read(Config.USER_TOKEN));
+        } else {
+          socketService.reconnectSocket(response.data.accessToken);
+        }
       } 
 
-      Future.delayed(Duration(seconds: 1)).then((value) {
-        refreshSocket();
-        fetchRestaurantDashboard(page: page);
-        fetchMartDashboard(page: page);
-      });
+      refreshSocket();
+      fetchRestaurantDashboard(page: page);
+      fetchMartDashboard(page: page);
       
     }).catchError((onError) {
       isLoading(false);

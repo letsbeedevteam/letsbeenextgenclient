@@ -57,7 +57,9 @@ class RestaurantStores {
     this.logoUrl,
     this.photoUrl,
     this.distance,
-    this.address
+    this.address,
+    this.workingDays,
+    this.stature
   });
 
   int id;
@@ -71,6 +73,8 @@ class RestaurantStores {
   String photoUrl;
   double distance;
   RestaurantAddress address;
+  RestaurantWorkingDays workingDays;
+  String stature;
 
   factory RestaurantStores.fromJson(Map<String, dynamic> json) => RestaurantStores(
     id: json["id"],
@@ -83,7 +87,9 @@ class RestaurantStores {
     logoUrl: json["logo_url"],
     photoUrl: json["photo_url"] == null ? '' : json["photo_url"],
     distance: json["distance"],
-   address: RestaurantAddress.fromJson(json["address"])
+    address: RestaurantAddress.fromJson(json["address"]),
+    workingDays: json["working_days"] == null ? null : RestaurantWorkingDays.fromJson(json["working_days"]),
+    stature: json["stature"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,7 +103,9 @@ class RestaurantStores {
     "logo_url": logoUrl,
     "photo_url": photoUrl,
     "distance": distance,
-    "address": address.toJson()
+    "address": address.toJson(),
+    "working_days": workingDays == null ? null : workingDays.toJson(),
+    "stature": stature
   };
 }
 
@@ -152,3 +160,68 @@ class RestaurantAddress {
     "barangay": barangay
   };
 }
+
+class RestaurantWorkingDays {
+    RestaurantWorkingDays({
+        this.sunday,
+        this.monday,
+        this.tuesday,
+        this.wednesday,
+        this.thursday,
+        this.friday,
+        this.saturday,
+    });
+
+    RestaurantDay sunday;
+    RestaurantDay monday;
+    RestaurantDay tuesday;
+    RestaurantDay wednesday;
+    RestaurantDay thursday;
+    RestaurantDay friday;
+    RestaurantDay saturday;
+
+    factory RestaurantWorkingDays.fromJson(Map<String, dynamic> json) => RestaurantWorkingDays(
+      sunday: RestaurantDay.fromJson(json["sunday"]),
+      monday: RestaurantDay.fromJson(json["monday"]),
+      tuesday: RestaurantDay.fromJson(json["tuesday"]),
+      wednesday: RestaurantDay.fromJson(json["wednesday"]),
+      thursday: RestaurantDay.fromJson(json["thursday"]),
+      friday: RestaurantDay.fromJson(json["friday"]),
+      saturday: RestaurantDay.fromJson(json["saturday"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+      "sunday": sunday.toJson(),
+      "monday": monday.toJson(),
+      "tuesday": tuesday.toJson(),
+      "wednesday": wednesday.toJson(),
+      "thursday": thursday.toJson(),
+      "friday": friday.toJson(),
+      "saturday": saturday.toJson(),
+    };
+}
+
+class RestaurantDay {
+    RestaurantDay({
+        this.status,
+        this.openingTime,
+        this.closingTime,
+    });
+
+    bool status;
+    String openingTime;
+    String closingTime;
+
+    factory RestaurantDay.fromJson(Map<String, dynamic> json) => RestaurantDay(
+        status: json["status"],
+        openingTime: json["opening_time"],
+        closingTime: json["closing_time"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "status": status,
+        "opening_time": openingTime,
+        "closing_time": closingTime,
+    };
+}
+

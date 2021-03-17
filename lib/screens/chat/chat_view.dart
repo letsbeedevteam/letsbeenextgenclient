@@ -37,11 +37,11 @@ class ChatPage extends GetView<ChatController> {
                 builder: (_) {
                   return AnimatedContainer(
                     width: double.infinity,
-                    color: _.color.call(),
+                    color: _.dashboardController.color.call(),
                     duration: Duration(milliseconds: 500),
-                    height: _.isConnected.call() ? 0 : 25,
+                    height: _.dashboardController.isConnected.call() ? 0 : 25,
                     child: Center(
-                      child: Text(_.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text(_.dashboardController.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     )
                   );
                 },

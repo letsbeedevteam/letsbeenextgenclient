@@ -5,24 +5,23 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/models/chat_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
+import 'package:letsbeeclient/services/socket_service.dart';
 
 class ChatController extends GetxController {
   
   final replyTF = TextEditingController();
   final scrollController = ScrollController();
   final arguments = Get.arguments;
+  SocketService _socketService = Get.find();
   
   var activeOrderData = ActiveOrderData().obs;
   var chat = RxList<ChatData>().obs;
-  var connectMessage = tr('connecting').obs;
   var message = ''.obs;
   var title = ''.obs;
   var isLoading = false.obs;
   var isSending = false.obs;
-  var isConnected = true.obs;
-  var color = Colors.orange.obs;
 
-  final dashboardController = DashboardController.to.socketService;
+  final dashboardController = DashboardController.to;
 
   @override
   void onInit() {
@@ -33,45 +32,53 @@ class ChatController extends GetxController {
     } else {
       this.title("${activeOrderData.call().activeStore.name} (${activeOrderData.call().activeStore.locationName})");
     }
-    
-    dashboardController.socket?.on('connect', (_) {
-      isConnected(true);
+
+    _socketService.socket?.on('connect', (_) {
+      _socketService.socket.clearListeners();
+      dashboardController.isConnected(true);
+      dashboardController.color(Colors.green);
+      dashboardController.connectMessage(tr('connected'));
+      dashboardController.fetchActiveOrders();
+      dashboardController.receiveUpdateOrder();
+      dashboardController.receiveChat();
+
       print('Connected');
-      color(Colors.green);
-      connectMessage(tr('connected'));
       fetchOrderChats(orderId: activeOrderData.call().id);
       updadateReceiveChat();
-
       chat.call().where((data) => !data.isSent).forEach((element) {
         messageRiderRequest(element.message);
       });
     });
-    dashboardController.socket?.on('connecting', (_) {
-      isConnected(false);
+    _socketService.socket?.on('connecting', (_) {
+      dashboardController.isConnected(false);
+      dashboardController.color(Colors.orange);
+      dashboardController.connectMessage(tr('connecting'));
+
       print('Connecting');
-      color(Colors.orange);
-      connectMessage(tr('connecting'));
     });
-    dashboardController.socket?.on('reconnecting', (_) {
-      isConnected(false);
+    _socketService.socket?.on('reconnecting', (_) {
+      dashboardController.isConnected(false);
+      dashboardController.color(Colors.orange);
+      dashboardController.connectMessage(tr('reconnecting'));
+
       isSending(false);
       print('Reconnecting');
-      color(Colors.orange);
-      connectMessage(tr('reconnecting'));
     });
-    dashboardController.socket?.on('disconnect', (_) {
-      isConnected(false);
+    _socketService.socket?.on('disconnect', (_) {
+      dashboardController.isConnected(false);
+      dashboardController.color(Colors.orange);
+      dashboardController.connectMessage(tr('reconnecting'));
+
       isSending(false);
-      color(Colors.red);
-      connectMessage(tr('disconnected'));
       print('Disconnected');
     });
-    dashboardController.socket?.on('error', (_) {
-      isConnected(false);
+    _socketService.socket?.on('error', (_) {
+      dashboardController.isConnected(false);
+      dashboardController.color(Colors.red);
+      dashboardController.connectMessage(tr('notSent'));
+
       isSending(false);
-      color(Colors.red);
       print('Error socket: $_');
-      connectMessage(tr('notSent'));
     });
 
     fetchOrderChats(orderId: activeOrderData.call().id);
@@ -106,7 +113,7 @@ class ChatController extends GetxController {
   }
 
   messageRiderRequest(String message) {
-    dashboardController.socket?.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
+    _socketService.socket?.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
       print('sent $response');
       if (response['status'] == 200) {
         final test = ChatData.fromJson(response['data']);
@@ -114,7 +121,11 @@ class ChatController extends GetxController {
         chat.call().add(test);
         chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
         replyTF.clear();
-        scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+        try {
+          scrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.easeOut);
+        } catch(e) {
+          print(e);
+        }
       } else {
         errorSnackbarTop(title: tr('oops'), message: tr('notSent'));
       }
@@ -122,15 +133,15 @@ class ChatController extends GetxController {
   }
 
   updadateReceiveChat() {
-    dashboardController.socket?.on('order-chat', (response) {
-      print('receive message: $response');
-      final orderChat = ChatData.fromJson(response['data']);
-      if (activeOrderData.call() != null) {
-        if (orderChat.orderId == activeOrderData.call().id) {
-          chat.call().add(orderChat);
-          chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    _socketService.socket?.on('order-chat', (response) {
+      print('receive message 111: $response');
+        final orderChat = ChatData.fromJson(response['data']);
+        if (activeOrderData.call() != null) {
+          if (orderChat.orderId == activeOrderData.call().id) {
+            chat.call().add(orderChat);
+            chat.call().sort((a, b) => a.createdAt.compareTo(b.createdAt));
+          }
         }
-      }
     });
   }
 
@@ -138,14 +149,14 @@ class ChatController extends GetxController {
     message(tr('loadingConversation'));
     isLoading(true);
 
-    dashboardController.socket?.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
+    _socketService.socket?.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
       'fetch: $response'.printWrapped();
       isLoading(false);
       if (response['status'] == 200) {
 
         final chatResponse = ChatResponse.fromJson(response);
 
-        chat.call().addAll(chatResponse.data);
+        chat.call().assignAll(chatResponse.data);
         chat.call().sort((a, b) => a.id.compareTo(b.id));
         if(chat.call().isEmpty) message(tr('noMessages'));
 

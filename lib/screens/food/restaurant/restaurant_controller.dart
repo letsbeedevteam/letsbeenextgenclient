@@ -216,6 +216,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   fetchStore() {
     message(tr('loadingRestaurant'));
     hasError(false);
+    storeResponse.nil();
     apiService.fetchStoreById(id: argument['id']).then((response) {
       
       if(response.data.isNotEmpty) {

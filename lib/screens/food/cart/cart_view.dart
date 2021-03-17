@@ -593,7 +593,7 @@ class CartPage extends GetView<CartController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: choice.options.map((e) {
-                return RadioListTile(
+                return e.status ? RadioListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -605,7 +605,7 @@ class CartPage extends GetView<CartController> {
                   value: e.name,
                   groupValue: e.selectedValue,
                   onChanged: (value) => controller.updateChoices(choice.id, e)
-                );
+                ) : Container();
               }).toList(),
             ),
           )
@@ -615,7 +615,7 @@ class CartPage extends GetView<CartController> {
   }
 
   Widget _buildOptionalItem(Additional additional) {
-    return Container(
+    return additional.status ? Container(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: CheckboxListTile(
@@ -632,7 +632,7 @@ class CartPage extends GetView<CartController> {
           onChanged: (value) => controller.updateAdditionals(additional.id, additional),
         ),
       ),
-    );
+    ) : Container();
   }
 
   Widget _storeProductBuild(Product product) {
@@ -725,7 +725,7 @@ class CartPage extends GetView<CartController> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text('${tr('selectUpTo')} ${product.additionals.length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
+                child: Text('${tr('selectUpTo')} ${product.additionals.where((data) => data.status).length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,

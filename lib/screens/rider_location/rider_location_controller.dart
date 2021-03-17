@@ -29,7 +29,7 @@ class RiderLocationController extends GetxController {
   Uint8List riderIcon;
   Uint8List customerIcon;
 
-final dashboardController = DashboardController.to.socketService;
+  final dashboardController = DashboardController.to.socketService;
 
   @override
   void onInit() {
@@ -37,12 +37,6 @@ final dashboardController = DashboardController.to.socketService;
     activeOrderData(arguments);
     currentPosition(LatLng(activeOrderData.call().address.location.lat, activeOrderData.call().address.location.lng));
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    // hasPolyline(false);
-    super.onClose();
   }
 
   void setupIcon() async {
