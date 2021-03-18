@@ -61,7 +61,10 @@ class MapPage extends GetView<MapController> {
               height: Get.height,
               child: controller.isMapLoading.call() ? Center(
                 child: Text(tr('loadingCoordinates'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
-              ) : GoogleMap(
+              ) : FutureBuilder(
+                future: controller.mapFuture,
+                builder: (context, snapshot) {
+                  return GoogleMap(
                     mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
                       zoom: 15,
@@ -75,7 +78,9 @@ class MapPage extends GetView<MapController> {
                       controller.onCameraMovePosition(position);
                     },
                     onCameraIdle: () => controller.getCurrentAddress(),
-                  ),
+                  );
+                },
+              ),
             ),
             controller.isMapLoading.call() ? Container() : Padding(
               padding: EdgeInsets.only(bottom: 25),
