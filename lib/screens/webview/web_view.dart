@@ -29,6 +29,21 @@ class WebViewPage extends GetView<WebController> {
             child: Container(height: 1, color: Colors.grey.shade200),
             preferredSize: Size.fromHeight(4.0)
           ),
+          actions: [
+            Obx(() {
+              return controller.isPaymentSuccess.call() ? Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 10.0),
+                child: RaisedButton(
+                  color: Color(Config.LETSBEE_COLOR),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)
+                  ),
+                  onPressed: () => controller.goBackToRestoPage(),
+                  child: Text(tr('done'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                ),
+              ) : Container();
+            })
+          ],
         ),
         body: Stack(
           alignment: Alignment.center,

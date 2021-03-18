@@ -28,26 +28,42 @@ class RiderLocationPage extends GetView<RiderLocationController> {
           IconButton(icon: Icon(Icons.house, size: 30), onPressed: () => controller.gpsLocation())
         ],
       ),
-      body: Container(
-        child: Stack(
-          children: [
-            Obx(() {
-              return GoogleMap(
-                mapType: MapType.normal,
-                initialCameraPosition: CameraPosition(
-                  // zoom: 15,
-                  target: controller.currentPosition.call()
+      body: Column(
+        children: [
+          Obx(() => AnimatedContainer(
+            width: double.infinity,
+            color: controller.dashboardController.color.call(),
+            duration: Duration(milliseconds: 500),
+            height: controller.dashboardController.isConnected.call() ? 0 : 25,
+            child: Center(
+              child: Text(controller.dashboardController.connectMessage.call(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            )
+          )),
+          Flexible(
+            child: Stack(
+              children: [
+                FutureBuilder(
+                  future: controller.mapFuture,
+                  builder: (context, snapshot) {
+                    return Obx(() => GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        zoom: 15,
+                        target: controller.currentPosition.call()
+                      ),
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: false,
+                      compassEnabled: false,
+                      markers: Set<Marker>.of(controller.markers.values),
+                      onMapCreated: controller.onMapCreated,
+                    ));
+                  },
                 ),
-                myLocationButtonEnabled: false,
-                myLocationEnabled: false,
-                compassEnabled: false,
-                markers: Set<Marker>.of(controller.markers.values),
-                onMapCreated: controller.onMapCreated,
-              );
-            }),
-            Obx(() => controller.isMapLoading.call() ? Container(color: Color(Config.WHITE), child: Center(child: Text(controller.message.call()))) : Container())
-          ],
-        )
+                Obx(() => controller.isMapLoading.call() ? Container(color: Color(Config.WHITE), child: Center(child: Text(controller.message.call(), style: TextStyle(fontSize: 15)))) : Container())
+              ],
+            ),
+          ),
+        ],
       )
     );
   }

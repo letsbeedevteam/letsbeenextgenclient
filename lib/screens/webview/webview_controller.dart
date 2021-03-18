@@ -46,20 +46,20 @@ class WebController extends GetxController {
 
         if(value.status == 200) {
           DashboardController.to.fetchActiveOrders();
-          dismissSnackBar();
-        } else {
-          dismissSnackBar();
-        }
+        } 
+
+        Get.back();
+
 
       }).catchError((onError) {
         isCancelPaymentLoading(false);
-        dismissSnackBar();
+        Get.back();
         print('Error delete order: $onError');
       });
     });
   }
 
-  dismissSnackBar() {
+  goBackToRestoPage() {
     Get.back();
     Future.delayed(Duration(milliseconds: 500));
     Get.back();

@@ -53,6 +53,8 @@ class MapController extends GetxController {
   var buttonTitle = 'next'.obs;
   var addressData = AddressData().obs;
 
+  Future mapFuture = Future.delayed(Duration(seconds: 2), () => true);
+
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
   StreamSubscription<EditAddressResponse> editAddressSub;
