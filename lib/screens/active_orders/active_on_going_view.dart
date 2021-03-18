@@ -23,7 +23,10 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         }),
         centerTitle: true,
         actions: [
-          IconButton(icon: Icon(Icons.close), onPressed: () =>  Get.back())
+          IconButton(icon: controller.activeOrderData.call().status != 'delivered' ? RotatedBox(
+            quarterTurns: 3,
+            child: Icon(Icons.chevron_left),
+          ) : Icon(Icons.close), onPressed: () =>  Get.back())
         ],
         bottom: PreferredSize(
           child: Container(height: 1, color: Colors.grey.shade200),
@@ -51,18 +54,16 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
               flex: 8,
               child: _scrollView()
             ),
-            Expanded(
-              child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(10),
-              child: (controller.activeOrderData.call().status != 'pending' && controller.activeOrderData.call().activeStore.type != 'mart') || (controller.activeOrderData.call().status != 'store-accepted' && controller.activeOrderData.call().activeStore.type == 'mart') ? Container(
-                width: Get.width,
-                child: IgnorePointer(
+            Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(10),
+            child: (controller.activeOrderData.call().status != 'pending' && controller.activeOrderData.call().activeStore.type != 'mart') || (controller.activeOrderData.call().status != 'store-accepted' && controller.activeOrderData.call().activeStore.type == 'mart') ? Container(
+              width: Get.width,
+              child: IgnorePointer(
                   ignoring: controller.activeOrderData.call().rider == null || controller.activeOrderData.call().status == 'delivered',
                   child: _messageRider()
                 )
-                ) : Container( width: Get.width, child: _cancelOrder()),
-              ),
+              ) : Container( width: Get.width, child: _cancelOrder()),
             ) 
           ],
         );
@@ -78,7 +79,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(15),
         child: Text(tr('cancelOrder'), style: TextStyle(color: Color(Config.WHITE), fontWeight: FontWeight.bold, fontSize: 15)),
       ),
       onPressed: _cancelDialog
@@ -93,7 +94,7 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(15),
         child: Text(tr('messageRider'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
       ),
       onPressed: () => controller.goToChatPage(fromNotificartion: false)
