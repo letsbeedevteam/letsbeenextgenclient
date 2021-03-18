@@ -3,8 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/models/signInResponse.dart';
-// import 'package:letsbeeclient/models/social.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 

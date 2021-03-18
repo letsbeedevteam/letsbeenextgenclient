@@ -40,8 +40,8 @@ class MartData {
   );
 
   Map<String, dynamic> toJson() => {
-      "stores": List<MartStores>.from(stores.map((store) => store.toJson())),
-      "recent_stores": List<MartStores>.from(stores.map((store) => store.toJson())),
+    "stores": List<dynamic>.from(stores.map((store) => store.toJson())),
+    "recent_stores": List<dynamic>.from(stores.map((store) => store.toJson())),
   };
 }
 
@@ -51,55 +51,76 @@ class MartStores {
     this.name,
     this.description,
     this.location,
+    this.status,
+    this.type,
+    this.category,
     this.logoUrl,
     this.photoUrl,
-    this.status,
-    this.category,
-    this.type
+    this.distance,
+    this.address,
+    this.workingDays,
+    this.stature
   });
 
   int id;
   String name;
   String description;
-  RestaurantLocation location;
+  MartLocation location;
+  String status;
+  String type;
+  String category;
   String logoUrl;
   String photoUrl;
-  String status;
-  String category;
-  String type;
+  double distance;
+  MartAddress address;
+  MartWorkingDays workingDays;
+  String stature;
 
   factory MartStores.fromJson(Map<String, dynamic> json) => MartStores(
     id: json["id"],
     name: json["name"],
     description: json["description"],
-    location: RestaurantLocation.fromJson(json["location"]),
+    location: MartLocation.fromJson(json["location"]),
+    status: json["status"],
+    type: json["type"],
+    category: json["category"],
     logoUrl: json["logo_url"],
     photoUrl: json["photo_url"],
-    status: json["status"],
-    category: json["category"],
-    type: json["type"]
+    distance: json["distance"],
+    address: MartAddress.fromJson(json["address"]),
+    workingDays: json["working_days"] == null ? null : MartWorkingDays.fromJson(json["working_days"]),
+    stature: json["stature"]
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
     "description": description,
-    "location": location.toJson()
+    "location": location.toJson(),
+    "status": status,
+    "type": type,
+    "category": category,
+    "logo_url": logoUrl,
+    "photo_url": photoUrl,
+    "distance": distance,
+    "address": address.toJson(),
+    "working_days": workingDays == null ? null : workingDays.toJson(),
+    "stature": stature
   };
 }
 
-class RestaurantLocation {
-  RestaurantLocation({
+class MartLocation {
+  MartLocation({
     this.lat,
     this.lng,
     this.name
   });
 
-  double lat;
-  double lng;
+  dynamic lat;
+  dynamic lng;
   String name;
 
-  factory RestaurantLocation.fromJson(Map<String, dynamic> json) => RestaurantLocation(
+  factory MartLocation.fromJson(Map<String, dynamic> json) => MartLocation(
     lat: json["lat"],
     lng: json["lng"],
     name: json["name"]
@@ -111,3 +132,97 @@ class RestaurantLocation {
     "name": name,
   };
 }
+
+class MartAddress {
+  MartAddress({
+    this.country,
+    this.state,
+    this.city,
+    this.barangay
+  });
+
+  String country;
+  String state;
+  String city;
+  String barangay;
+
+  factory MartAddress.fromJson(Map<String, dynamic> json) => MartAddress(
+    country: json["country"],
+    state: json["state"],
+    city: json["city"],
+    barangay: json["barangay"]
+  );
+
+  Map<String, dynamic> toJson() => {
+    "country": country,
+    "state": state,
+    "city": city,
+    "barangay": barangay
+  };
+}
+
+class MartWorkingDays {
+    MartWorkingDays({
+        this.sunday,
+        this.monday,
+        this.tuesday,
+        this.wednesday,
+        this.thursday,
+        this.friday,
+        this.saturday,
+    });
+
+    MartDay sunday;
+    MartDay monday;
+    MartDay tuesday;
+    MartDay wednesday;
+    MartDay thursday;
+    MartDay friday;
+    MartDay saturday;
+
+    factory MartWorkingDays.fromJson(Map<String, dynamic> json) => MartWorkingDays(
+      sunday: MartDay.fromJson(json["sunday"]),
+      monday: MartDay.fromJson(json["monday"]),
+      tuesday: MartDay.fromJson(json["tuesday"]),
+      wednesday: MartDay.fromJson(json["wednesday"]),
+      thursday: MartDay.fromJson(json["thursday"]),
+      friday: MartDay.fromJson(json["friday"]),
+      saturday: MartDay.fromJson(json["saturday"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+      "sunday": sunday.toJson(),
+      "monday": monday.toJson(),
+      "tuesday": tuesday.toJson(),
+      "wednesday": wednesday.toJson(),
+      "thursday": thursday.toJson(),
+      "friday": friday.toJson(),
+      "saturday": saturday.toJson(),
+    };
+}
+
+class MartDay {
+    MartDay({
+        this.status,
+        this.openingTime,
+        this.closingTime,
+    });
+
+    bool status;
+    String openingTime;
+    String closingTime;
+
+    factory MartDay.fromJson(Map<String, dynamic> json) => MartDay(
+        status: json["status"],
+        openingTime: json["opening_time"],
+        closingTime: json["closing_time"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "status": status,
+        "opening_time": openingTime,
+        "closing_time": closingTime,
+    };
+}
+
+

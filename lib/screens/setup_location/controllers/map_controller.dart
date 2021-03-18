@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
@@ -7,8 +8,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/_utils/secrets.dart';
-import 'package:letsbeeclient/models/newAddressRequest.dart';
-import 'package:letsbeeclient/models/newAddressResponse.dart';
+import 'package:letsbeeclient/models/edit_address_request.dart';
+import 'package:letsbeeclient/models/edit_address_response.dart';
+import 'package:letsbeeclient/models/get_address_response.dart';
+import 'package:letsbeeclient/models/new_address_request.dart';
+import 'package:letsbeeclient/models/new_address_response.dart';
 import 'package:letsbeeclient/screens/address/address_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -19,10 +23,12 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class MapController extends GetxController {
 
+  GoogleMapController _mapController;
+
+
   final GetStorage _box = Get.find();
   final SecretLoader _secretLoader = Get.find();
   final ApiService _apiService = Get.find();
-  final Completer<GoogleMapController> _mapController = Completer();
   final argument = Get.arguments;
   
   var isMapLoading = true.obs;
@@ -44,20 +50,34 @@ class MapController extends GetxController {
   final noteToRiderNode = FocusNode();
   final addressDetailsNode = FocusNode();
 
-  var buttonTitle = 'Next'.obs;
+  var buttonTitle = 'next'.obs;
+  var addressData = AddressData().obs;
 
   GoogleMapsPlaces _places;
   StreamSubscription<NewAddressResponse> newAddressSub;
+  StreamSubscription<EditAddressResponse> editAddressSub;
 
   @override 
   void onInit() {
     if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+
       currentPosition(LatLng(_box.read(Config.USER_CURRENT_LATITUDE), _box.read(Config.USER_CURRENT_LONGITUDE)));
-      buttonTitle('Save');
+      buttonTitle('save');
+      isMapLoading(false);
+
+    } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
+      addressData(AddressData.fromJson(argument['data']));
+      currentPosition(LatLng(addressData.call().location.lat, addressData.call().location.lng));
+
+      addressLabel.text = addressData.call().name;
+      addressDetails.text = addressData.call().address;
+      noteToRider.text = addressData.call().note;
+
+      buttonTitle('save');
       isMapLoading(false);
 
     } else {
-      buttonTitle('Next');
+      buttonTitle('next');
       isMapLoading(true);
       currentLocation();
     }
@@ -75,11 +95,30 @@ class MapController extends GetxController {
 
   void goToDashboardPage() {
 
-    if (noteToRider.text.isBlank || addressLabel.text.isBlank || addressDetails.text.isBlank) {
-      errorSnackbarTop(title: 'Oops!', message: 'Please input the required field(s)');
+    if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+      if (addressLabel.isBlank || addressDetails.text.isBlank) {
+        errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        addAddress();
+      }
+
+    } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
+
+      if (addressLabel.isBlank || addressDetails.text.isBlank) {
+        errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        editAddress();
+      }
+
     } else {
-      userCurrentAddress(addressDetails.text.trim());
-      addAddress();
+      if (addressDetails.text.isBlank) {
+        errorSnackbarTop(title: tr('oops'), message: tr('inputAddressDetail'));
+      } else {
+        userCurrentAddress(addressDetails.text.trim());
+        addAddress();
+      }
     }
   }
 
@@ -94,16 +133,14 @@ class MapController extends GetxController {
   void gpsLocation() async {
     isBounced(true);
     final currentLocation = await lct.Location().getLocation();
-    final c = await _mapController.future;
     currentPosition(LatLng(currentLocation.latitude, currentLocation.longitude));
-    c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 18)));
+    _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 15)));
     isBounced(false);
   }
 
   void onMapCreated(GoogleMapController controller) async {
-    _mapController.complete(controller);
-    final c = await _mapController.future;
-    c.setMapStyle(mapStyle.call());
+    _mapController = controller;
+    _mapController.setMapStyle(mapStyle.call());
   }
 
   void onCameraMovePosition(CameraPosition position) {
@@ -155,7 +192,7 @@ class MapController extends GetxController {
       language: 'en',
       overlayBorderRadius: BorderRadius.all(Radius.circular(10)),
       logo: Container(height: 30),
-      hint: 'Search your location',
+      hint: tr('searchLocation'),
       components: [Component(Component.country, 'ph')],
     );
     
@@ -168,8 +205,7 @@ class MapController extends GetxController {
       final detail = await _places.getDetailsByPlaceId(p.placeId);
       final lat = detail.result.geometry.location.lat;
       final lng = detail.result.geometry.location.lng;
-      final c = await _mapController.future;
-      c.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 18)));
+      _mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 15)));
     }
   }
 
@@ -178,7 +214,7 @@ class MapController extends GetxController {
   }
 
   Future<bool> willPopCallback() async {
-    argument['type'] == Config.ADD_NEW_ADDRESS ? Get.back(closeOverlays: true) : Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    argument['type'] == Config.ADD_NEW_ADDRESS || argument['type'] == Config.EDIT_NEW_ADDRESS ? Get.back(closeOverlays: true) : Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
     return true;
   }
 
@@ -187,7 +223,7 @@ class MapController extends GetxController {
 
     isAddAddressLoading(true);
     final request = NewAddressRequest(
-      name: this.addressLabel.text,
+      name: this.addressLabel.text.isBlank ? 'Home' : this.addressLabel.text,
       location: AddressLocation(
         lat: this.currentPosition.call().latitude,
         lng: this.currentPosition.call().longitude
@@ -215,9 +251,11 @@ class MapController extends GetxController {
           ..userCurrentNameOfLocation(response.data.name)
           ..userCurrentAddress(this.userCurrentAddress.call().trim())
           ..fetchActiveOrders()
-          ..fetchRestaurantDashboard();
+          ..fetchRestaurantDashboard(page: 0);
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
+          successSnackBarTop(message: tr('addedSuccessfully'));
+          
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
           Get.offAllNamed(Config.DASHBOARD_ROUTE);
@@ -225,7 +263,7 @@ class MapController extends GetxController {
 
         
       } else {
-        errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         print('Failed to add new address');
       }
 
@@ -233,8 +271,64 @@ class MapController extends GetxController {
     
     newAddressSub.onError((handleError) {
       isAddAddressLoading(false);
-      errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Error add new address: $handleError');
+    });
+  }
+
+  void editAddress() {
+    dismissKeyboard(Get.context);
+
+    isAddAddressLoading(true);
+    final request = EditAddressRequest(
+      addressId: addressData.call().id,
+      name: this.addressLabel.text,
+      location: EditAddressLocation(
+        lat: this.currentPosition.call().latitude,
+        lng: this.currentPosition.call().longitude
+      ),
+      address: this.addressDetails.text,
+      note: this.noteToRider.text
+    );
+
+    editAddressSub = _apiService.editAddress(request).asStream().listen((response) {
+      isAddAddressLoading(false);
+      if(response.status == 200) {
+        print('Success');
+
+        if (_box.read(Config.USER_ADDRESS_ID) == addressData.call().id) {
+
+          userCurrentAddress(this.addressDetails.text);
+          _box.write(Config.USER_ADDRESS_ID, addressData.call().id);
+          _box.write(Config.USER_CURRENT_LATITUDE, this.currentPosition.call().latitude);
+          _box.write(Config.USER_CURRENT_LONGITUDE, this.currentPosition.call().longitude);
+          _box.write(Config.USER_CURRENT_ADDRESS, userCurrentAddress.call());
+          _box.write(Config.USER_CURRENT_NAME_OF_LOCATION, this.addressLabel.text);
+          _box.write(Config.NOTE_TO_RIDER, this.noteToRider.text);
+
+          DashboardController.to
+          ..isSelectedLocation(true)
+          ..userCurrentNameOfLocation(this.addressLabel.text)
+          ..userCurrentAddress(this.userCurrentAddress.call().trim())
+          ..fetchActiveOrders()
+          ..fetchRestaurantDashboard(page: 0);
+        }
+
+        AddressController.to.refreshAddress();
+        Get.back(closeOverlays: true);
+        successSnackBarTop(message: tr('updatedSuccessfully'));
+
+      } else {
+        errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
+        print('Failed to add new address');
+      }
+
+    });
+    
+    editAddressSub.onError((handleError) {
+      isAddAddressLoading(false);
+      errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
+      print('Error edit new address: $handleError');
     });
   }
 }

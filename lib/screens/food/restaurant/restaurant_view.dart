@@ -1,6 +1,7 @@
 // import 'package:badges/badges.dart';
 // import 'package:carousel_slider/carousel_slider.dart';
 import 'package:badges/badges.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,6 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
-// import 'package:letsbeeclient/models/restaurant.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
@@ -20,7 +20,7 @@ class RestaurantPage extends GetView<RestaurantController> {
       return GetX<RestaurantController>(
         initState: controller.fetchStore(),
         builder: (_) {
-          return _.store.call() == null ? Container(
+          return _.storeResponse.call() == null ? Container(
             child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
@@ -36,7 +36,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                     Text(_.message.call()),
                     _.hasError.call() ? RaisedButton(
                       color: Color(Config.LETSBEE_COLOR),
-                      child: Text('Refresh'),
+                      child: Text(tr('refresh')),
                       onPressed: () => _.fetchStore(),
                     ) : Container()
                   ],
@@ -46,7 +46,7 @@ class RestaurantPage extends GetView<RestaurantController> {
           ) : GestureDetector(
             onTap: () => dismissKeyboard(Get.context),
             child: Scaffold(
-              resizeToAvoidBottomPadding: false,
+              resizeToAvoidBottomInset: false,
               body: NestedScrollView(
                 controller: controller.nestedScrollViewController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -60,9 +60,9 @@ class RestaurantPage extends GetView<RestaurantController> {
                           leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
                           actions: [
                             Obx(() {
-                              final filtered = controller.list.call().where((data) => !data.isRemove && data.storeId == controller.store.call().data.id && data.userId == controller.box.read(Config.USER_ID));
-                              return GestureDetector(
-                                onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().data.id),
+                              final filtered = controller.list.call().where((data) => !data.isRemove && data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
+                              return controller.argument['status'] == "open" ? GestureDetector(
+                                onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().id),
                                 child: Container(
                                   margin: EdgeInsets.only(right: 10),
                                   child: Stack(
@@ -81,11 +81,11 @@ class RestaurantPage extends GetView<RestaurantController> {
                                     ]
                                   ),
                                 ),
-                              );
+                              ) : Container();
                             })
                           ],
                           expandedHeight: 330.0,
-                          floating: true,
+                          floating: false,
                           pinned: true,
                           backgroundColor: Color(Config.WHITE),
                           elevation: 0,
@@ -97,8 +97,8 @@ class RestaurantPage extends GetView<RestaurantController> {
                             indicatorColor: Colors.transparent,
                             unselectedLabelColor: Colors.grey,
                             unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
-                            onTap: (data) => _.selectedName(_.store.call().data.categorized[data].name),
-                            tabs: _.store.call().data.categorized.map((data) {
+                            onTap: (value) => _.selectedName(_.storeResponse.call().data[value].name),
+                            tabs: _.storeResponse.call().data.map((data) {
                               return Obx(() => Tab(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -122,11 +122,12 @@ class RestaurantPage extends GetView<RestaurantController> {
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.pin,
                             background: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
                                     height: 200,
                                     child: Center(
-                                      child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().data.photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                                      child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
                                   ),
                                 ),
                                 Container(
@@ -138,11 +139,11 @@ class RestaurantPage extends GetView<RestaurantController> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Container(height: 10),
-                                      _.store.call().data.location.name != '' ?
-                                      Text('${_.store.call().data.name} - ${_.store.call().data.location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
-                                      : Text(_.store.call().data.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                      _.store.call().location.name != '' ?
+                                      Text('${_.store.call().name} - ${_.store.call().location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
+                                      : Text(_.store.call().name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                      Text('No address', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
+                                      Text('${_.store.call().address.barangay} ${_.store.call().address.city} ${_.store.call().address.state} ${_.store.call().address.country}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
                                       Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                                       Row(
                                         children: [
@@ -156,7 +157,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                               children: [
                                                 Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
                                                 Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                                Text('10.8KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                Text('${_.store.call().distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -169,7 +170,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                             ),
                                             child: Row(
                                               children: [
-                                                Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                                Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
                                                 Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
                                                 Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                                               ],
@@ -191,10 +192,10 @@ class RestaurantPage extends GetView<RestaurantController> {
                 },
                 body: GetX<RestaurantController>(
                   builder: (restaurant) {
-                    return _.store.call() != null ? TabBarView(
+                    return _.storeResponse.call() != null ? TabBarView(
                       physics: NeverScrollableScrollPhysics(),
                       controller: restaurant.tabController,
-                      children: restaurant.store.call().data.categorized.map((categorize) => _buildCategoryItem(categorize)).toList(),
+                      children: restaurant.storeResponse.call().data.map((data) => _buildCategoryItem(data)).toList(),
                     ) : Container();
                   },
                 ),
@@ -205,66 +206,65 @@ class RestaurantPage extends GetView<RestaurantController> {
       );
     }
 
-    Widget _buildCategoryItem(Categorized categorize) {
+  Widget _buildCategoryItem(Data data) {
     return Container(
-      child: Column(
-        children: [
-          Padding(padding: EdgeInsets.only(top: 10)),
-          GetX<RestaurantController>(
-            builder: (_) {
-              return Container(
-                height: 35,
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: TextFormField(
-                  cursorColor: Colors.black,
-                  readOnly: _.readOnly.call(),
-                  onTap: () {
-                    if(controller.nestedScrollViewController.hasClients) controller.nestedScrollViewController.jumpTo(controller.nestedScrollViewController.position.maxScrollExtent);
-                    _.readOnly(false);
-                  },
-                  onChanged: controller.searchProduct,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 10),
-                    hintText: 'Search...',
-                    fillColor: Colors.grey.shade200,
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      borderSide: BorderSide.none
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
+      child: Obx(() {
+        final products = data.products.where((data) => data.name.toLowerCase().contains(controller.productName.call().toLowerCase()));
+        return Column(
+          children: [
+            Container(
+              height: 35,
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: TextFormField(
+                cursorColor: Colors.black,
+                readOnly: controller.readOnly.call(),
+                onTap: () {
+                  if(controller.nestedScrollViewController.hasClients) controller.nestedScrollViewController.jumpTo(controller.nestedScrollViewController.position.maxScrollExtent);
+                  controller.readOnly(false);
+                },
+                onChanged: controller.searchProduct,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintText: tr('search'),
+                  fillColor: Colors.grey.shade200,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderSide: BorderSide.none
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
-              );
-            }, 
-          ),
-          Expanded(
-            child: GetX<RestaurantController>(
-              builder: (_) {
-                final products = categorize.products.where((data) => data.name.toLowerCase().contains(_.productName.call().toLowerCase()));
-                return products.isNotEmpty ? ListView(
+              ),
+            ),
+            Expanded(
+              child: products.isNotEmpty ? RefreshIndicator(
+                onRefresh: () => controller.refreshStore(),
+                child: ListView(
                   physics: NeverScrollableScrollPhysics(),
                   children: products.map((product) => _buildItem(product)).toList()
-                ) : Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: Text('Your search not found...', style: TextStyle(fontSize: 18))
-                );
-              },  
+                ),
+              ) : Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Text('Your search not found...', style: TextStyle(fontSize: 18))
+              )
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      })
     );
   }
 
   Widget _buildItem(Product product) {
+    final available = product.status == 'available' && controller.argument['status'] == 'open';
     return GestureDetector(
       onTap: () {
         controller.readOnly(true);
-        _bottomSheet(product);
+        if (available) {
+          _bottomSheet(product);
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 10, right: 10, left: 10),
@@ -285,45 +285,63 @@ class RestaurantPage extends GetView<RestaurantController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        child: Text(product.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
+                        child: Text(product.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        child: Text(product.name, style: TextStyle(fontSize: 13 ,fontWeight: FontWeight.normal), textAlign: TextAlign.start),
+                        child: Text(product.description, style: TextStyle(fontSize: 13 ,fontWeight: FontWeight.normal, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
                       )
                     ],
                   ),
                 ),
-                Hero(
-                  tag: product.name,
-                  child: FadeInImage.assetNetwork(
-                    placeholder: cupertinoActivityIndicatorSmall, 
-                    image: product.image, 
-                    fit: BoxFit.fitWidth, 
-                    height: 120, 
-                    width: 140, 
-                    placeholderScale: 5, 
-                    imageErrorBuilder: (context, error, stackTrace) => Container(
-                      width: 140,
-                      height: 120,
-                      child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    FadeInImage.assetNetwork(
+                      placeholder: cupertinoActivityIndicatorSmall, 
+                      image: product.image, 
+                      fit: BoxFit.fitWidth, 
+                      height: 120, 
+                      width: 140, 
+                      placeholderScale: 5, 
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return error.toString().contains(product?.image) ? Container(
+                          width: 140,
+                          height: 120,
+                          child: Center(child: Icon(Icons.image_not_supported_outlined, size: 35)),
+                        ) : FadeInImage.assetNetwork(
+                          placeholder: cupertinoActivityIndicatorSmall, 
+                          image: product.image, 
+                          fit: BoxFit.fitWidth, 
+                          height: 120, 
+                          width: 140, 
+                          placeholderScale: 5
+                        ); 
+                      }
+                    ),
+                    available ? Container() : Container(
+                      height: 120, 
+                      width: 140, 
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFBFBFC).withOpacity(0.8)
+                      ),
                     )
-                  ),
+                  ],
                 ),
               ],
             ),
             Container(
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(top: 10),
-              child: Text('₱ ${product.customerPrice}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.start),
-            )
+              child: Text('₱ ${product.customerPrice}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: available ? Colors.black : Colors.grey), textAlign: TextAlign.start),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRequiredItem(Choice choice) {
+  Widget _buildRequiredItem(Variants choice) {
     return Container(
       child: Column(
         children: [
@@ -332,14 +350,14 @@ class RestaurantPage extends GetView<RestaurantController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${choice.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                Text('${choice.type}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Color(Config.LETSBEE_COLOR),
                     borderRadius: BorderRadius.circular(20)
                   ),
-                  child: Text('Required', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  child: Text(tr('required'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -350,7 +368,7 @@ class RestaurantPage extends GetView<RestaurantController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: choice.options.map((e) {
-                return RadioListTile(
+                return e.status ? RadioListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,7 +380,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                   value: e.name,
                   groupValue: e.selectedValue,
                   onChanged: (value) => controller.updateChoices(choice.id, e)
-                );
+                ) : Container();
               }).toList(),
             ),
           )
@@ -372,7 +390,7 @@ class RestaurantPage extends GetView<RestaurantController> {
   }
 
   Widget _buildOptionalItem(Additional additional) {
-    return Container(
+    return additional.status ? Container(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: CheckboxListTile(
@@ -389,7 +407,7 @@ class RestaurantPage extends GetView<RestaurantController> {
           onChanged: (value) =>controller.updateAdditionals(additional.id, additional),
         ),
       ),
-    );
+    ) : Container();
   }
 
   Widget _storeProductBuild(Product product) {
@@ -455,9 +473,9 @@ class RestaurantPage extends GetView<RestaurantController> {
               ),
             ),
             Divider(),
-            product.choices.isNotEmpty ? Column(
+            product.variants.isNotEmpty ? Column(
               mainAxisSize: MainAxisSize.min,
-              children: product.choices.map((e) => _buildRequiredItem(e)).toList()
+              children: product.variants.map((e) => _buildRequiredItem(e)).toList()
             ) : Container(),
             product.additionals.isNotEmpty ? Column(
               mainAxisSize: MainAxisSize.min,
@@ -468,21 +486,22 @@ class RestaurantPage extends GetView<RestaurantController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Adds-On', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                    Text(tr('addsOn'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                     Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade400,
                         borderRadius: BorderRadius.circular(20)
                       ),
-                      child: Text('Optional', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text(tr('optional'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
               ),
+              product.additionals.length == 1 ? Container() :
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Select up to ${product.additionals.length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
+                child: Text('${tr('selectUpTo')} ${product.additionals.where((data) => data.status).length}', style: TextStyle(color: Colors.black.withOpacity(0.35), fontSize: 14)),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -498,14 +517,14 @@ class RestaurantPage extends GetView<RestaurantController> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Special Instructions', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+                      Text(tr('specialInstructions'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                       Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade400,
                           borderRadius: BorderRadius.circular(20)
                         ),
-                        child: Text('Optional', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text(tr('optional'), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -515,7 +534,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                   child: TextFormField(
                     controller: controller.tFRequestController,
                     decoration: InputDecoration(
-                      hintText: 'E.g. Remove onions please.',
+                      hintText: tr('exampleInstruction'),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(
@@ -544,10 +563,11 @@ class RestaurantPage extends GetView<RestaurantController> {
             ) ,
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('How do you like to proceed if this is not available?', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18))
+                  child: Text(tr('proceedIfNotAvail'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
@@ -556,14 +576,14 @@ class RestaurantPage extends GetView<RestaurantController> {
                       return Column(
                         children: [
                           RadioListTile(
-                            title: Text('Remove this time', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Remove this time',
+                            title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                            value: true,
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) =>  _.isSelectedProceed(value)
                           ),
                           RadioListTile(
-                            title: Text('Cancel the entire order', style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                            value: 'Cancel the entire order',
+                            title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                            value: false,
                             groupValue: _.isSelectedProceed.call(),
                             onChanged: (value) => _.isSelectedProceed(value)
                           )
@@ -615,73 +635,80 @@ class RestaurantPage extends GetView<RestaurantController> {
                           alignment: FractionalOffset.bottomCenter,
                           child: Container(
                             width: Get.width,
-                            height: 60,
                             color: Colors.white,
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 10),
-                              child: Row(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Color(Config.WHITE)
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: Colors.white
-                                          ),
-                                          child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () => _.decrement())
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Text('${_.quantity.call()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5),
-                                            color: Color(Config.LETSBEE_COLOR)
-                                          ),
-                                          child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () => _.increment())
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () => controller.addToCart(controller.product.call()),
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(5),
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
-                                          color: Color(Config.LETSBEE_COLOR)
+                                          color: Color(Config.WHITE)
                                         ),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            Text('Add to Cart', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                                            Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().price)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: Colors.white
+                                              ),
+                                              child: IconButton(icon: Icon(Icons.remove, size: 15), onPressed: () => _.decrement())
+                                            ),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Text('${_.quantity.call()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: Color(Config.LETSBEE_COLOR)
+                                              ),
+                                              child: IconButton(icon: Icon(Icons.add, size: 15), onPressed: () => _.increment())
+                                            ),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
                                           ],
-                                        )
+                                        ),
                                       ),
-                                    ),
-                                  )
+                                      Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () => controller.addToCart(controller.product.call()),
+                                          child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(5),
+                                              color: Color(Config.LETSBEE_COLOR)
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(tr('addToCart'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                                Text('₱ ${((_.totalPriceOfChoice.call() + _.totalPriceOfAdditional.call() + double.tryParse(_.product.call().customerPrice)) * _.quantity.call()).toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                              ],
+                                            )
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Padding(padding: EdgeInsets.symmetric(vertical: 8)),
                                 ],
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

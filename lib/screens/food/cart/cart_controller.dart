@@ -1,12 +1,12 @@
 import 'dart:async';
 
 // import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
-// import 'package:letsbeeclient/models/active_cart_response.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -21,14 +21,17 @@ class CartController extends GetxController {
   final argument = Get.arguments;
   Completer<void> refreshCompleter;
 
-  var message = ''.obs;
   var totalPrice = 0.0.obs;
   var subTotal = 0.0.obs;
+  var storeId = 0.obs;
+  var deliveryFee = 0.0.obs;
+
   var isLoading = false.obs;
   var isPaymentLoading = false.obs;
   var isEdit = false.obs;
-  var storeId = 0.obs;
-  // var cart = ActiveCartResponse().obs;
+  var hasError = false.obs;
+
+  var message = ''.obs;
 
   final streetTFController = TextEditingController();
   final barangayTFController = TextEditingController();
@@ -46,6 +49,15 @@ class CartController extends GetxController {
   var choicesTotalPrice = 0.00.obs;
   var additionalTotalPrice = 0.00.obs;
 
+  final tFRequestController = TextEditingController();
+  var product = Product().obs;
+  var quantity = 1.obs;
+  var totalPriceOfChoice = 0.00.obs;
+  var additionals = List<Additional>().obs;
+  var options = List<Option>().obs;
+  var choiceCart = RxMap<int, ChoiceCart>().obs;
+  var totalPriceOfAdditional = 0.00.obs;
+
   @override
   void onInit() {
     // cart.nil();
@@ -58,57 +70,17 @@ class CartController extends GetxController {
 
   Future<bool> onWillPopBack() async {
     isEdit(false);
-    // fetchActiveCarts(storeId: storeId.call());
     Get.back(closeOverlays: true);
     return true;
   }
-
-  // void _setRefreshCompleter() {
-  //   refreshCompleter?.complete();
-  //   refreshCompleter = Completer();
-  // }
 
   setEdit() {
     isEdit(!isEdit.call());
   }
 
-  // fetchActiveCarts({@required int storeId, Function callback}) {
-  //   isLoading(true);
-
-  //   _apiService.getActiveCarts(storeId: storeId).then((response) {
-  //     isLoading(false);
-  //     _setRefreshCompleter();
-  //     if(response.status == 200) {
-
-  //       if (response.data.isEmpty) {
-  //         this.cart.nil();
-  //         this.message('No list of carts');
-  //         this.isEdit(false);
-  //       } else {
-  //         totalPrice(response.data.map((e) => double.tryParse(e.customerTotalPrice.toString()) + response.deliveryFee).reduce((value, element) => value + element).roundToDouble());
-  //         subTotal(response.data.map((e) => double.tryParse(e.totalPrice.toString())).reduce((value, element) => value + element).roundToDouble());
-  //         response.data.sort((b, a) => a.createdAt.compareTo(b.createdAt));
-  //         this.cart(response);
-  //       }
-
-  //       callback();
-      
-  //     } else {
-  //       this.message(Config.SOMETHING_WENT_WRONG);
-  //     }
-
-  //   }).catchError((onError) {
-  //     isLoading(false);
-  //     _setRefreshCompleter();
-  //     if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
-  //     print('Get cart: $onError');
-  //   });
-  // }
-
   deleteCart({String uniqueId}) {
-    // isLoading(true);
     Get.back();
-    successSnackBarTop(title: 'Success!', message: 'Your item has been deleted', seconds: 1);
+    successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.uniqueId == uniqueId);
     RestaurantController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
@@ -119,7 +91,7 @@ class CartController extends GetxController {
   paymentMethod(int storeId, String paymentMethod) {
 
     if (totalPrice.value < 100) {
-      errorSnackbarTop(title: 'Alert', message: 'Please, the minimum transaction was ₱100');
+      errorSnackbarTop(message: tr('minimumTransaction'));
     } else {
       isPaymentLoading(true);
       Get.back();
@@ -134,29 +106,18 @@ class CartController extends GetxController {
           DashboardController.to.fetchActiveOrders();
           
           if (order.code == 3506) {
-            errorSnackbarTop(title: 'Oops!', message: 'The store has been closed');
+            errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
           } else {
             if (order.paymentUrl == null) {
               print('NO URL');
-              successSnackBarTop(title: 'Success!', message: 'Please check your on going order');
+              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
-              final prod = listProductFromJson(box.read(Config.PRODUCTS));
-              prod.removeWhere((data) => data.storeId == storeId);
-              box.write(Config.PRODUCTS, listProductToJson(prod));
-              RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
-              getProducts();
+              clearCart(storeId);
 
               DashboardController.to.fetchActiveOrders();
 
               Future.delayed(Duration(seconds: 1)).then((value) {
-                // fetchActiveCarts(storeId: storeId);
-                if (Get.isSnackbarOpen) {
-                  Get.back();
-                  Future.delayed(Duration(seconds: 1));
-                  Get.back();
-                } else {
-                  Get.back();
-                }
+                Get.back(closeOverlays: true);
               });
 
             } else {
@@ -165,55 +126,77 @@ class CartController extends GetxController {
               // fetchActiveCarts(storeId: storeId);
               Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
                 'url': order.paymentUrl,
-                'order_id': order.data.id
+                'order_id': order.data.id,
+                'store_id': storeId,
+                'type': Config.RESTAURANT
               });
             }
           }
 
         } else {
-          
-          if (order.code == 3005) {
-            errorSnackbarTop(title: 'Oops!', message: 'There\'s a pending request');
-          } else  errorSnackbarTop(title: 'Oops!', message: Config.SOMETHING_WENT_WRONG);
+          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         }
         
       }).catchError((onError) {
         isPaymentLoading(false);
-        if (onError.toString().contains('Connection failed')) message(Config.NO_INTERNET_CONNECTION); else message(Config.SOMETHING_WENT_WRONG);
+        if (onError.toString().contains('Connection failed')) message(tr('noInternetConnection')); else message(tr('somethingWentWrong'));
         print('Payment method: $onError');
       });
     }
   }
 
-  // getCurrentLocationText() {
-  //   streetTFController.text = box.read(Config.USER_CURRENT_STREET);
-  //   cityTFController.text = box.read(Config.USER_CURRENT_CITY);
-  //   barangayTFController.text = box.read(Config.USER_CURRENT_BARANGAY);
-  // }
+  Future<Null> refreshDeliveryFee() async => getDeliveryFee();
 
-  // saveConfirmLocation() {
-  //   final address = '${streetTFController.text}, ${cityTFController.text}, ${barangayTFController.text}';
-  //   box.write(Config.USER_CURRENT_STREET, streetTFController.text);
-  //   box.write(Config.USER_CURRENT_CITY, cityTFController.text);
-  //   box.write(Config.USER_CURRENT_BARANGAY, barangayTFController.text);
-  //   box.write(Config.USER_CURRENT_ADDRESS, address);
-  //   DashboardController.to.userCurrentAddress(address);
-  // }
+  getDeliveryFee() {
+    message(tr('loadingCart'));
+    isLoading(true);
+    hasError(true);
+    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
+
+      if (response.status == 200) {
+        hasError(false);
+        deliveryFee(double.tryParse(response.data.deliveryFee));
+        getProducts();
+
+      } else {
+        hasError(true);
+        message(tr('somethingWentWrong'));
+      }
+
+      isLoading(false);
+
+    }).catchError((onError) {
+      hasError(true);
+      isLoading(false);
+      message(tr('somethingWentWrong'));
+      print('Delivery Fee Error: $onError');
+    });
+  }
+
+  clearCart(int storeId) {
+    final prod = listProductFromJson(box.read(Config.PRODUCTS));
+    prod.removeWhere((data) => data.storeId == storeId);
+    box.write(Config.PRODUCTS, listProductToJson(prod));
+    RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
+    getProducts();
+  }
 
   getProducts() {
     choicesTotalPrice(0.00);
     additionalTotalPrice(0.00);
     final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove && data.storeId == storeId.call());
     addToCart.call().clear();
+    options.clear();
+    additionals.clear();
     
     if (products.isNotEmpty) {
 
       updatedProducts.call().assignAll(products);
       updatedProducts.call().forEach((product) { 
 
-          for (var j = 0;  j < product.choices.length; j++) {
+          for (var j = 0;  j < product.variants.length; j++) {
 
-            final choice =  product.choices[j];
+            final choice =  product.variants[j];
             choice.options.where((data) => data.name == data.selectedValue).forEach((option) {
               choicesTotalPrice.value += double.tryParse(option.customerPrice.toString()) * product.quantity;
             });
@@ -228,10 +211,11 @@ class CartController extends GetxController {
           addToCart.call().add(
             AddToCart(
               productId: product.id,
-              choices: product.choices.isEmpty ? [] : product.choiceCart.toList(),
-              additionals: product.additionals.where((element) => !element.selectedValue).map((e) => e.id).toList(),
+              variants: product.variants.isEmpty ? [] : product.choiceCart.toList(),
+              additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
               quantity: product.quantity,
-              note: product.note
+              note: product.note,
+              removable: product.removable
             )
           );
       });
@@ -241,5 +225,138 @@ class CartController extends GetxController {
     } else {
       updatedProducts.call().clear();
     }
+  }
+
+  void updateChoices(int id, Option option) {
+    product.update((val) {
+      val.variants.where((element) => element.id == id).forEach((choice) {
+        choice.options.forEach((data) { 
+          if (data.name == option.name) {
+            data.selectedValue = option.name;
+            options.add(data);
+          } else {
+            data.selectedValue = null;
+            options.remove(data);
+          }
+
+          choiceCart.call()[id] = ChoiceCart(
+            id: id,
+            optionId: option.id
+          );
+
+        });
+      });
+    });
+
+    totalPriceOfChoice(options.where((data) => data.status).map((data) => double.tryParse(data.customerPrice.toString())).reduce((value, element) => value + element).toDouble());
+    update();
+  }
+
+  void updateAdditionals(int id, Additional additional) {
+    product.update((val) {
+      val.additionals.forEach((data) {
+        if (additional.name == data.name) {
+          data.selectedValue = !data.selectedValue;
+          if (!data.selectedValue) {
+            additionals.add(additional);
+          } else {
+            additionals.remove(additional);
+          }
+        } 
+      });
+    });
+
+    if (additionals.isEmpty) {
+      totalPriceOfAdditional(0.00);
+    } else {
+      totalPriceOfAdditional(additionals.where((data) => !data.selectedValue).map((data) => double.tryParse(data.customerPrice.toString())).reduce((value, element) => value + element).toDouble());
+    }
+
+    update();
+  }
+
+  void updateCart(Product product) {
+    product.note = tFRequestController.text.trim().isEmpty ? null : tFRequestController.text;
+    product.quantity = quantity.call();
+    product.choiceCart = choiceCart.call().values.toList();
+    product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
+
+    print('removeable ${product.removable}');
+    final check = updatedProducts.call().where((data) => data.uniqueId != product.uniqueId);
+    final choice = check.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
+    final additional = check.where((data) => additionalsToJson2(data.additionalCart).contains(additionalsToJson2(product.additionalCart)));
+    
+    if (choice.isNotEmpty && additional.isNotEmpty) {
+      final filtered = check.singleWhere((data) => data.uniqueId != product.uniqueId && choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)) && additionalsToJson2(data.additionalCart).contains(additionalsToJson2(product.additionalCart)));
+      filtered.quantity = filtered.quantity + quantity.call();
+      filtered.choiceCart = product.choiceCart;
+      filtered.additionalCart = product.additionalCart;
+      filtered.note = product.note;
+      updatedProducts.call().removeWhere((data) => data.uniqueId == product.uniqueId);
+    } else {
+      updatedProducts.call().where((data) => data.uniqueId == product.uniqueId).forEach((data) => data = product);
+    }
+
+    RestaurantController.to.list.call()..clear()..addAll(updatedProducts.call());
+    box.write(Config.PRODUCTS, listProductToJson(updatedProducts.call()));
+
+    getProducts();
+    Get.back();
+    successSnackBarTop(message: tr('updatedItem'), seconds: 1);
+  }
+
+  void increment() {
+    quantity.value++;
+  }
+
+  void decrement() {
+    if (quantity.value <= 1) {
+      quantity(1);
+    } else {
+      quantity.value--;
+    }
+  }
+
+  void refreshProduct(Product getProduct) {
+    product(getProduct);
+    quantity(product.call().quantity);
+    tFRequestController.clear();
+    tFRequestController.text = product.call().note;
+    options.clear();
+    additionals.clear();
+    choiceCart.call().clear();
+
+    if (product.call().variants.isNotEmpty) {
+      product.call().variants.forEach((choice) {
+        choice.options.forEach((data) { 
+          if (data.name == data.selectedValue) {
+            options.add(data);
+            choiceCart.call()[choice.id] = ChoiceCart(
+              id: choice.id,
+              optionId: data.id
+            );
+          }
+        });
+      });
+
+      totalPriceOfChoice(options.where((data) => data.status).map((data) => double.tryParse(data.customerPrice.toString())).reduce((value, element) => value + element).toDouble());
+    }
+
+    if (product.call().additionals.isNotEmpty) {
+      
+      product.call().additionals.forEach((data) {
+        if (!data.selectedValue) {
+          additionals.add(data);
+        } 
+      });
+      
+      if (additionals.isEmpty) {
+        totalPriceOfAdditional(0.00);
+      } else {
+        totalPriceOfAdditional(additionals.where((data) => !data.selectedValue).map((data) => double.tryParse(data.customerPrice.toString())).reduce((value, element) => value + element).toDouble());
+      }
+    }
+    
+    update();
   }
 }

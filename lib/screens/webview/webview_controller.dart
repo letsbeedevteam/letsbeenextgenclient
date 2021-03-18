@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
-import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -12,37 +12,56 @@ class WebController extends GetxController {
   final argument = Get.arguments;
 
   var isLoading = true.obs;
+  var isCancelPaymentLoading = false.obs;
+  
+  var isPaymentSuccess = false.obs;
+
+  var orderId = 0.obs;
+  var storeId = 0.obs;
 
   @override
   void onInit() {
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    orderId(argument['order_id']);
+    storeId(argument['store_id']);
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    isPaymentSuccess(false);
+    super.onClose();
+  }
 
-  deleteOrderById() {
+  Future<Null> back() async => isPaymentSuccess.call() ? Get.back() : await cancelOrderPayment();
 
-    isLoading(true);
-    deleteSnackBarTop(title: 'Cancelling the payment', message: 'Please wait, and it will automatically go back.');
+  cancelOrderPayment() {
+    
+    isCancelPaymentLoading(true);
+    alertSnackBarTop(message: tr('pleaseWait'));
 
     Future.delayed(Duration(seconds: 1)).then((value) {
-      apiService.deleteOrderById(orderId: argument['order_id']).then((value) {
-        isLoading(false);
+      apiService.cancelOnlinePayment(orderId: orderId.call()).then((value) {
+        isCancelPaymentLoading(false);
 
         if(value.status == 200) {
           DashboardController.to.fetchActiveOrders();
-          Get.back(closeOverlays: true);
-          Future.delayed(Duration(seconds: 1));
-          Get.back();
+          dismissSnackBar();
         } else {
-          errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
+          dismissSnackBar();
         }
 
       }).catchError((onError) {
-        isLoading(false);
-        errorSnackbarTop(title: 'Oops', message: Config.SOMETHING_WENT_WRONG);
+        isCancelPaymentLoading(false);
+        dismissSnackBar();
         print('Error delete order: $onError');
       });
     });
+  }
+
+  dismissSnackBar() {
+    Get.back();
+    Future.delayed(Duration(milliseconds: 500));
+    Get.back();
   }
 }

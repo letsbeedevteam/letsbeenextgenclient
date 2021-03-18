@@ -1,22 +1,20 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService extends GetxService {
 
-  final GetStorage _box = Get.find();
-
   IO.Socket socket;
 
-  void connectSocket() {
+  void connectSocket(String token) {
 
     this.socket = IO.io(Config.BASE_URL + Config.CUSTOMER_NAMESPACE, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
-      'extraHeaders': {'x-auth-token': _box.read(Config.USER_TOKEN)}
+      'extraHeaders': {'x-auth-token': token}
     });
-    
+
+  
     this.socket..disconnect()..connect();
 
     // this.socket.on("connect", (_) => print('Connected'));
@@ -28,10 +26,18 @@ class SocketService extends GetxService {
     // this.socket.on("error", (_) => print('Error: $_'));
   }
 
+  void reconnectSocket(String token) {
+    if (this.socket != null) {
+      this.socket.io.options['extraHeaders'] = {'x-auth-token': token};
+      this.socket..disconnect()..connect();
+    }
+  }
+
   void disconnectSocket() {
     if(this.socket != null) {
       this.socket.disconnect();
       this.socket.on("disconnect", (_) => print('Disconnected: $_'));
+      this.socket.dispose();
       this.socket = null;
     }
   }
