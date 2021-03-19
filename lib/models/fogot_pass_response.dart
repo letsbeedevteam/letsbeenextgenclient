@@ -8,7 +8,7 @@ class ForgotPassResponse {
     this.message
   });
 
-  int status;
+  String status;
   String message;
 
   factory ForgotPassResponse.fromJson(Map<String, dynamic> json) => ForgotPassResponse(

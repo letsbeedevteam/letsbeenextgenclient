@@ -68,7 +68,7 @@ class AuthController extends GetxController implements AuthViewContract {
       if(GetUtils.isEmail(emailController.text)) {
         
         _apiService.customerSignIn(email: emailController.text, password: passwordController.text).then((response) {
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             
             _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson()).whenComplete(() {
@@ -77,17 +77,17 @@ class AuthController extends GetxController implements AuthViewContract {
               dismissKeyboard(Get.context);
             });
 
+          } else if (response.status == Config.NOT_FOUND) {
+            alertSnackBarTop(title: tr('oops'), message: tr('accountNotExist'));
+            emailController.selection = TextSelection.fromPosition(TextPosition(offset: emailController.text.length));
+            emailFN.requestFocus();
           } else {
 
-            if (response.code != 2012) {
-              alertSnackBarTop(title: tr('oops'), message: tr('signInFailed'));
-            } else {
-              alertSnackBarTop(title: tr('oops'), message: tr('accountNotExist'));
-            }
-
+            alertSnackBarTop(title: tr('oops'), message: tr('signInFailed'));
             passwordController.selection = TextSelection.fromPosition(TextPosition(offset: passwordController.text.length));
             passwordFN.requestFocus();
           }
+
           isLoading(false);
 
         }).catchError((onError) {

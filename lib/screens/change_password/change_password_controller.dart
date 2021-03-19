@@ -54,7 +54,7 @@ class ChangePasswordController extends GetxController {
 
       _apiService.customerForgotPassword(request: request).then((response) {
       
-        if (response.status == 200) {
+        if (response.status == Config.OK) {
           _sucessPopUp();
         } else {
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
@@ -99,7 +99,7 @@ class ChangePasswordController extends GetxController {
 
         _apiService.customerChangePassword(request: request).then((response) {
           
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             successSnackBarTop(message: tr('updatedSuccessfully'));
             oldPassController.clear();
             newPassController.clear();

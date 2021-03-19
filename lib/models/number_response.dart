@@ -10,25 +10,25 @@ class NumberResponse {
     this.message,
     this.status,
     this.data,
-    this.code,
+    this.errorMessage,
   });
 
   dynamic message;
-  int status;
-  int code;
+  String status;
+  String errorMessage;
   NumberData data;
 
   factory NumberResponse.fromJson(Map<String, dynamic> json) => NumberResponse(
     message: json['message'] == null || json['message'] == '' ? null : json['message'],
     status: json["status"],
-    code: json["code"] == null || json["code"] == ""  ? null : json["code"],
+    errorMessage: json["error_message"] == null || json["error_message"] == ""  ? null : json["error_message"],
     data: json["data"] == null || json["data"] == "" ? null :  NumberData.fromJson(json['data']) 
   );
 
   Map<String, dynamic> toJson() => {
     "status": status,
     "message": message,
-    "code": code,
+    "error_message": errorMessage,
     "data": data
   };
 }

@@ -57,13 +57,16 @@ class CartController extends GetxController {
   var options = List<Option>().obs;
   var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
-
+  
   @override
   void onInit() {
-    // cart.nil();
     refreshCompleter = Completer();
 
-    // fetchActiveCarts(getRestaurantId: 1);
+    if (argument != null) {
+      storeId(argument['storeId']);
+    }
+    getProducts();
+
  
     super.onInit();
   }
@@ -71,6 +74,7 @@ class CartController extends GetxController {
   Future<bool> onWillPopBack() async {
     isEdit(false);
     Get.back(closeOverlays: true);
+    DashboardController.to.updateCart();
     return true;
   }
 
@@ -83,7 +87,7 @@ class CartController extends GetxController {
     successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.uniqueId == uniqueId);
-    RestaurantController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
+    if(argument == null) RestaurantController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
     getProducts();
   }
@@ -98,17 +102,17 @@ class CartController extends GetxController {
 
       // successSnackBarTop(title: 'Order processing..', message: 'Please wait...');
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).then((order) {
+      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).then((response) {
           
         isPaymentLoading(false);
 
-        if(order.status == 200) {
+        if(response.status == Config.OK) {
           DashboardController.to.fetchActiveOrders();
           
-          if (order.code == 3506) {
+          if (response.status == Config.INVALID) {
             errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
           } else {
-            if (order.paymentUrl == null) {
+            if (response.paymentUrl == null) {
               print('NO URL');
               successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
@@ -122,11 +126,11 @@ class CartController extends GetxController {
 
             } else {
               // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
-              print('GO TO WEBVIEW: ${order.paymentUrl}');
+              print('GO TO WEBVIEW: ${response.paymentUrl}');
               // fetchActiveCarts(storeId: storeId);
               Get.toNamed(Config.WEBVIEW_ROUTE, arguments: {
-                'url': order.paymentUrl,
-                'order_id': order.data.id,
+                'url': response.paymentUrl,
+                'order_id': response.data.id,
                 'store_id': storeId,
                 'type': Config.RESTAURANT
               });
@@ -134,7 +138,7 @@ class CartController extends GetxController {
           }
 
         } else {
-          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
+          errorSnackbarTop(title: tr('oops'), message: response.errorMessage);
         }
         
       }).catchError((onError) {
@@ -153,10 +157,9 @@ class CartController extends GetxController {
     hasError(true);
     _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         hasError(false);
         deliveryFee(double.tryParse(response.data.deliveryFee));
-        getProducts();
 
       } else {
         hasError(true);
@@ -184,7 +187,7 @@ class CartController extends GetxController {
   getProducts() {
     choicesTotalPrice(0.00);
     additionalTotalPrice(0.00);
-    final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove && data.storeId == storeId.call());
+    final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId == storeId.call());
     addToCart.call().clear();
     options.clear();
     additionals.clear();
@@ -281,7 +284,6 @@ class CartController extends GetxController {
     product.choiceCart = choiceCart.call().values.toList();
     product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
 
-    print('removeable ${product.removable}');
     final check = updatedProducts.call().where((data) => data.uniqueId != product.uniqueId);
     final choice = check.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
     final additional = check.where((data) => additionalsToJson2(data.additionalCart).contains(additionalsToJson2(product.additionalCart)));
@@ -297,9 +299,8 @@ class CartController extends GetxController {
       updatedProducts.call().where((data) => data.uniqueId == product.uniqueId).forEach((data) => data = product);
     }
 
-    RestaurantController.to.list.call()..clear()..addAll(updatedProducts.call());
+    if (argument == null) RestaurantController.to.list.call()..assignAll(updatedProducts.call());
     box.write(Config.PRODUCTS, listProductToJson(updatedProducts.call()));
-
     getProducts();
     Get.back();
     successSnackBarTop(message: tr('updatedItem'), seconds: 1);

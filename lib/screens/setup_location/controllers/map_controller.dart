@@ -236,7 +236,7 @@ class MapController extends GetxController {
 
     newAddressSub = _apiService.addNewAddress(request).asStream().listen((response) {
       isAddAddressLoading(false);
-      if(response.status == 200) {
+      if(response.status == Config.OK) {
         print('Success');
         userCurrentAddress(response.data.address.trim());
         _box.write(Config.USER_ADDRESS_ID, response.data.id);
@@ -295,7 +295,7 @@ class MapController extends GetxController {
 
     editAddressSub = _apiService.editAddress(request).asStream().listen((response) {
       isAddAddressLoading(false);
-      if(response.status == 200) {
+      if(response.status == Config.OK) {
         print('Success');
 
         if (_box.read(Config.USER_ADDRESS_ID) == addressData.call().id) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/order_history_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -34,7 +35,7 @@ class HistoryController extends GetxController {
     apiService.orderHistory().then((response) {
       isLoading(false);
       _setRefreshCompleter();
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
 
         if (response.data.isNotEmpty) {
           history(response);

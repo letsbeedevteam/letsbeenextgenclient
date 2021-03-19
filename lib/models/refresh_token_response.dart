@@ -7,7 +7,7 @@ class RefreshTokenResponse {
     this.data
   });
 
-  int status;
+  String status;
   RefreshTokenData data;
 
   factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) => RefreshTokenResponse(

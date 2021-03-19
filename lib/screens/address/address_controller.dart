@@ -52,7 +52,7 @@ class AddressController extends GetxController {
     isLoading(true);
     apiService.getAllAddress().then((response) {
       isLoading(false);
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         if (response.data.isNotEmpty) {
           addresses(response);
           addresses.call().data.singleWhere((data) => data.id == box.read(Config.USER_ADDRESS_ID) ? data.isSelected = true : data.isSelected = false);

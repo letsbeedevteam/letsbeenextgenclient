@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -41,10 +42,10 @@ class WebController extends GetxController {
     alertSnackBarTop(message: tr('pleaseWait'));
 
     Future.delayed(Duration(seconds: 1)).then((value) {
-      apiService.cancelOnlinePayment(orderId: orderId.call()).then((value) {
+      apiService.cancelOnlinePayment(orderId: orderId.call()).then((response) {
         isCancelPaymentLoading(false);
 
-        if(value.status == 200) {
+        if(response.status == Config.OK) {
           DashboardController.to.fetchActiveOrders();
         } 
 

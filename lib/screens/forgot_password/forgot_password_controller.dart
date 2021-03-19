@@ -44,7 +44,7 @@ class ForgotPasswordController extends GetxController {
       if(numberController.text.length == 10) {
         _apiService.customerRequestForgotPassword(contactNumber: '0${numberController.text}').then((response) {
           
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             token(response.data.token);
             code(response.message);
             if (type == 'resend_code') {
@@ -76,7 +76,7 @@ class ForgotPasswordController extends GetxController {
     isResendCodeLoading(true);
     _apiService.resendOtp(token: token.call()).then((response) {
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         token(response.data.token);
         Future.delayed(Duration(seconds: 60)).then((data) => isResendCodeLoading(false));
         successSnackBarTop(message: tr('resendCodeSuccess'));

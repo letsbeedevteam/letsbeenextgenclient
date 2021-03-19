@@ -8,7 +8,7 @@ class EditAddressResponse {
         this.message,
     });
 
-    int status;
+    String status;
     String message;
 
     factory EditAddressResponse.fromJson(Map<String, dynamic> json) => EditAddressResponse(

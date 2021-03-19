@@ -13,7 +13,7 @@ class ChatResponse {
     this.data
   });
 
-  int status;
+  String status;
   List<ChatData> data;
   
   factory ChatResponse.fromJson(Map<String, dynamic> json) => ChatResponse(

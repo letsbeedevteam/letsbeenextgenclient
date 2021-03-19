@@ -12,17 +12,17 @@ class Restaurant {
     Restaurant({
         this.status,
         this.data,
-        this.code
+        this.errorMessage
     });
 
-    int status;
+    String status;
     Data data;
-    int code;
+    String errorMessage;
 
     factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
         status: json["status"] == null ? 0 : json["status"],
         data: json["data"] == null ? Data() : Data.fromJson(json["data"]),
-        code: json["code"]
+        errorMessage: json["error_message"] == null ? null : json["error_message"]
     );
 
     Map<String, dynamic> toJson() => {

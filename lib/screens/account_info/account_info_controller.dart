@@ -56,7 +56,7 @@ class AccountInfoController extends GetxController {
 
         _apiService.customerEditProfile(request: editProfileRequest).then((response) {
           
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             
             successSnackBarTop(title: tr('yay'), message: tr('accountInfoUpdated'));
             _box.write(Config.USER_NAME, response.data.name);
@@ -66,11 +66,7 @@ class AccountInfoController extends GetxController {
             
           } else {
 
-            if (response.code == 2018) {
-              errorSnackbarTop(title: tr('oops'), message: response.message);
-            } else {
-              errorSnackbarTop(title: tr('oops'), message: response.message);
-            }
+            errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
 
           isLoading(false);

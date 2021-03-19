@@ -50,10 +50,10 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
     isLoading(true);
     _apiService.cellphoneConfirmation(token: signInData.call().token, code: codeControl.value).then((response) {
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         _verifiedPopUp(response);
       } else {
-        errorSnackBarBottom(title: tr('oops'), message: tr('invalidCode'));
+        errorSnackbarTop(title: tr('oops'), message: tr('invalidCode'));
       }
 
       isLoading(false);
@@ -92,7 +92,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     isResendCodeLoading(true);
     _apiService.resendOtp(token: signInData.call().token).then((response) {
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         signInData(response.data);
         Future.delayed(Duration(seconds: 30)).then((data) => isResendCodeLoading(false));
 

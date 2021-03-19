@@ -9,7 +9,7 @@ class RequestForgotPassResponse {
     this.data
   });
 
-  int status;
+  String status;
   String message;
   RequestForgotPassData data;
 

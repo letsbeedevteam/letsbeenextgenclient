@@ -14,7 +14,7 @@ class ActiveOrder {
         this.data,
     });
 
-    int status;
+    String status;
     List<ActiveOrderData> data;
 
     factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(

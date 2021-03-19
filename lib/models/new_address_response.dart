@@ -15,7 +15,7 @@ class NewAddressResponse {
         this.message,
     });
 
-    int status;
+    String status;
     Data data;
     String message;
 

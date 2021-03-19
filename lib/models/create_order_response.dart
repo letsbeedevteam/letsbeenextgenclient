@@ -13,21 +13,21 @@ class CreateOrderResponse {
       this.status,
       this.data,
       this.paymentUrl,
-      this.code,
+      this.errorMessage,
       this.message
     });
 
-    int status;
+    String status;
     String paymentUrl;
     RestaurantData data;
     dynamic message;
-    int code;
+    String errorMessage;
 
     factory CreateOrderResponse.fromJson(Map<String, dynamic> json) => CreateOrderResponse(
         status: json["status"],
         data: json["data"] == null ? RestaurantData(id: 0) : RestaurantData.fromJson(json["data"]),
         paymentUrl: json["payment_url"] == null || json["payment_url"] == '' ? null : json["payment_url"],
-        code: json["code"],
+        errorMessage: json["error_message"],
         message: json["message"],
     );
 
@@ -35,7 +35,7 @@ class CreateOrderResponse {
         "status": status,
         "data": data,
         "payment_url": paymentUrl,
-        "code": code
+        "error_message": errorMessage
     };
 }
 

@@ -63,7 +63,7 @@ class UserDetailsController extends GetxController {
       );
 
       _apiService.customerSocialSignUp(socialSignUp: request).then((response) {
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             final data = SignInData(
               token: response.data.token,
               cellphoneNumber: '0${numberController.text}'
@@ -102,7 +102,7 @@ class UserDetailsController extends GetxController {
         );
 
         _apiService.customerSignUp(signUp: request).then((response) {
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             final data = SignInData(
               token: response.data.token,
               cellphoneNumber: '0${numberController.text}'

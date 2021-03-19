@@ -69,7 +69,7 @@ class AuthModel implements AuthModelContract {
   void _request(String social, String token, OnSocialSignInRequest listener) {
     _authService.socialRequest(social, token).then((response) { 
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         listener.onSocialSignInRequestSuccess(social, response.data);
       } else {
         listener.onSocialSignInRequestFailed(tr('somethingWentWrong'));

@@ -7,6 +7,7 @@ import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 // import 'package:letsbeeclient/_utils/extensions.dart';
 // import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/store_response.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:uuid/uuid.dart';
@@ -38,7 +39,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   var isSelectedProceed = false.obs;
 
   static MartController get to => Get.find();
-
+  
   @override
   void onInit() {
     storeResponse.nil();
@@ -82,9 +83,8 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
         });
 
         if (box.hasData(Config.PRODUCTS)) {
-          final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
-          list.call().clear();
-          list.call().addAll(products);
+          final products = listProductFromJson(box.read(Config.PRODUCTS));
+          list.call().assignAll(products);
           box.write(Config.PRODUCTS, listProductToJson(list.call()));
           MartCartController.to.getProducts();
         } 
@@ -105,21 +105,68 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     });
   }
 
-  void storeCartToStorage(Product product) {
+  void checkPreviousCart(Product product) {
+    
+    final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id);
+
+    if (products.isNotEmpty) {
+      print('REMOVE THE PREVIOUS CART FIRST');
+    } else {
+      addToCart(product);
+    }
+  }
+
+  void addToCart(Product product) {
     
     product.uniqueId = uuid.v4();
+    product.note = null;
     product.userId = box.read(Config.USER_ID);
     product.storeId = store.call().id;
+    product.quantity = quantity.call();
+    product.choiceCart = [];
+    product.additionalCart = [];
     product.type = Config.MART;
     product.removable = isSelectedProceed.call();
 
-    for (var i = 0; i < quantity.call(); i++) {
-      list.call().add(product);
-    }
+    final prod = list.call().where((data) => data.storeId == store.call().id);
+
+      if (prod.isNotEmpty) {
+        
+        try {
+
+          final fileredProduct = prod.where((data) => data.id == product.id);
+
+          if (fileredProduct.toList().isEmpty) {
+            list.call().add(product);
+          } else {
+
+            fileredProduct.first.quantity = fileredProduct.first.quantity + product.quantity;
+
+          }
+        } catch (error) {
+          list.call().add(product);
+          print(error);
+        }
+
+      } else {
+        print('Added cart when theres no product if found');
+        list.call().add(product);
+      }
+
     box.write(Config.PRODUCTS, listProductToJson(list.call()));
+    final products = listProductFromJson(box.read(Config.PRODUCTS));
+    list.call().clear();
+    list.call().addAll(products);
     MartCartController.to.getProducts();
+    DashboardController.to.updateCart();
     Get.back();
   }
 
   Future<Null> refreshStore() async => fetchStore();
+
+  Future<bool> onWillPopBack() async {
+    Get.back();
+    DashboardController.to.updateCart();
+    return true;
+  }
 } 

@@ -21,10 +21,7 @@ class MartCartPage extends GetView<MartCartController> {
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
-            leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
-              controller.isEdit(false);
-              Get.back(closeOverlays: true);
-            }),
+            leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.onWillPopBack),
             centerTitle: true,
             title: Text(tr('myCart'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             bottom: PreferredSize(
@@ -123,7 +120,7 @@ class MartCartPage extends GetView<MartCartController> {
   }
 
   Widget _scrollView(MartCartController _) {
-    final activeCart = _.updatedProducts.call().where((data) => !data.isRemove && data.storeId == _.storeId.call());
+    final activeCart = _.updatedProducts.call().where((data) => data.storeId == _.storeId.call());
     return RefreshIndicator(
       onRefresh: () => controller.refreshDeliveryFee(),
       child: Column(
@@ -707,43 +704,43 @@ class MartCartPage extends GetView<MartCartController> {
             ]
           ),
         ),
-        Divider(),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(tr('proceedIfNotAvail'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
-            ),
-            GetBuilder<MartCartController>(
-              builder: (_) {
-                return Column(
-                  children: [
-                    RadioListTile(
-                      title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                      value: true,
-                      groupValue: product.removable,
-                      onChanged: (value) {
-                        product.removable = value;
-                        _.update();
-                      }
-                    ),
-                    RadioListTile(
-                      title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
-                      value: false,
-                      groupValue: product.removable,
-                      onChanged: (value) {
-                        product.removable = value;
-                        _.update();
-                      }
-                    )
-                  ],
-                );
-              }
-            )
-          ],
-        ) 
+        // Divider(),
+        // Column(
+        //   mainAxisSize: MainAxisSize.min,
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: [
+        //     Container(
+        //       padding: EdgeInsets.symmetric(horizontal: 20),
+        //       child: Text(tr('proceedIfNotAvail'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 18)),
+        //     ),
+        //     GetBuilder<MartCartController>(
+        //       builder: (_) {
+        //         return Column(
+        //           children: [
+        //             RadioListTile(
+        //               title: Text(tr('removeThisTime'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+        //               value: true,
+        //               groupValue: product.removable,
+        //               onChanged: (value) {
+        //                 product.removable = value;
+        //                 _.update();
+        //               }
+        //             ),
+        //             RadioListTile(
+        //               title: Text(tr('cancelEntireOrder'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+        //               value: false,
+        //               groupValue: product.removable,
+        //               onChanged: (value) {
+        //                 product.removable = value;
+        //                 _.update();
+        //               }
+        //             )
+        //           ],
+        //         );
+        //       }
+        //     )
+        //   ],
+        // ) 
       ],
     );
   }
@@ -861,7 +858,7 @@ class MartCartPage extends GetView<MartCartController> {
         },
       ),
       backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+      isScrollControlled: false,
       enableDrag: false,
       isDismissible: false,
     );
