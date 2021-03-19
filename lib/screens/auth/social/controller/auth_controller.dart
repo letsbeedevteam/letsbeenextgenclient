@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -31,6 +33,8 @@ class AuthController extends GetxController implements AuthViewContract {
 
   var language = ''.obs;
 
+  StreamSubscription<SignInResponse> signInSub;
+
   @override
   void onInit() {
     _presenter = AuthPresenter(controller: this);
@@ -43,10 +47,30 @@ class AuthController extends GetxController implements AuthViewContract {
     super.onInit();
   }
 
-  // void clear() {
-  //   _box.erase();
-  //   Get.context.deleteSaveLocale();
-  // }
+  goToSignUp() => Get.toNamed(Config.SIGNUP_ROUTE).whenComplete(() {
+    isGoogleLoading(false);
+    isFacebookLoading(false);
+    isKakaoLoading(false);
+    isLoading(false);
+    signInSub?.cancel();
+    _presenter.closeSubscriptions();
+  });
+
+  goToForgotPassword() =>  Get.toNamed(Config.FORGOT_PASS_ROUTE).whenComplete(() {
+    isGoogleLoading(false);
+    isFacebookLoading(false);
+    isKakaoLoading(false);
+    isLoading(false);
+    signInSub?.cancel();
+    _presenter.closeSubscriptions();
+  });
+
+  @override
+  void onClose() {
+    signInSub.cancel();
+    _presenter.closeSubscriptions();
+    super.onClose();
+  }
 
   void changeLanguage(String lang) {
     language(lang);
@@ -67,7 +91,7 @@ class AuthController extends GetxController implements AuthViewContract {
     } else {
       if(GetUtils.isEmail(emailController.text)) {
         
-        _apiService.customerSignIn(email: emailController.text, password: passwordController.text).then((response) {
+        signInSub = _apiService.customerSignIn(email: emailController.text, password: passwordController.text).asStream().listen((response) {
           if (response.status == Config.OK) {
             
             _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
@@ -90,7 +114,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
           isLoading(false);
 
-        }).catchError((onError) {
+        })..onError((onError) {
           print('Sign In: $onError');
           alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);

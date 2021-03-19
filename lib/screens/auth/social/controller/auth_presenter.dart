@@ -33,6 +33,9 @@ class AuthPresenter implements AuthPresenterContract, OnSocialSignInRequest {
   }
 
   @override
+  void closeSubscriptions() => _model.onCloseSubscription();
+
+  @override
   void onSocialSignInRequestSuccess(String social, SignInData data) {
     controller.onSocialSignInSuccess(social, data);
   }

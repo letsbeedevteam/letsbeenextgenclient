@@ -511,13 +511,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         } else {
           socketService.reconnectSocket(response.data.accessToken);
         }
+
+        refreshSocket();
+        fetchRestaurantDashboard(page: page);
+        fetchMartDashboard(page: page);
+
+      } else if (response.status == Config.UNAUTHORIZED) {
+        
+        print('SESSION EXPIRED!');
+
       } else {
-
+        restaurantErrorMessage(tr('somethingWentWrong'));
+        martErrorMessage(tr('somethingWentWrong'));
+        box.remove(Config.PRODUCTS);
       }
-
-      refreshSocket();
-      fetchRestaurantDashboard(page: page);
-      fetchMartDashboard(page: page);
       
     }).catchError((onError) {
       isLoading(false);

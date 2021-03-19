@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:code_field/code_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,10 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
   final codeControl = InputCodeControl(inputRegex: r'(^\-?\d*\.?\d*)');
 
+  StreamSubscription<CellphoneConfirmationResponse> cellphoneNumberSub;
+  StreamSubscription<SignInResponse> resendOtpSub;
+
+
   @override
   void onInit() {
     
@@ -46,10 +52,17 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
     update();
   }
 
+  @override
+  void onClose() {
+    cellphoneNumberSub?.cancel();
+    resendOtpSub?.cancel();
+    super.onClose();
+  }
+
   void confirmCode() {
 
     isLoading(true);
-    _apiService.cellphoneConfirmation(token: signInData.call().token, code: codeControl.value).then((response) {
+    cellphoneNumberSub = _apiService.cellphoneConfirmation(token: signInData.call().token, code: codeControl.value).asStream().listen((response) {
       if (response.status == Config.OK) {
         _verifiedPopUp(response);
       } else {
@@ -58,7 +71,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
 
       isLoading(false);
 
-    }).catchError((onError) {
+    })..onError((onError) {
       isLoading(false);
       errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Confirmation error: $onError');
@@ -90,7 +103,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
   void resendOtp() {
 
     isResendCodeLoading(true);
-    _apiService.resendOtp(token: signInData.call().token).then((response) {
+    resendOtpSub = _apiService.resendOtp(token: signInData.call().token).asStream().listen((response) {
 
       if (response.status == Config.OK) {
         signInData(response.data);
@@ -103,7 +116,7 @@ class VerifyNumberController extends GetxController with SingleGetTickerProvider
         errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       }
 
-    }).catchError((onError) {
+    })..onError((onError) {
       isResendCodeLoading(false);
       errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
     });

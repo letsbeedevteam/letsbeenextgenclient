@@ -7,6 +7,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
+import 'package:letsbeeclient/models/create_order_response.dart';
+import 'package:letsbeeclient/models/get_delivery_fee_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart/mart_controller.dart';
@@ -39,6 +41,9 @@ class MartCartController extends GetxController {
   final addToCart = RxList<AddToCart>().obs;
   final updatedProducts = RxList<Product>().obs;
 
+  StreamSubscription<CreateOrderResponse> createOrderSub;
+  StreamSubscription<GetDeliveryFeeResponse> deliveryFeeSub;
+  
   static MartCartController get to => Get.find();
 
   @override
@@ -66,6 +71,8 @@ class MartCartController extends GetxController {
   }
 
   Future<bool> onWillPopBack() async {
+    createOrderSub?.cancel();
+    deliveryFeeSub?.cancel();
     isEdit(false);
     Get.back(closeOverlays: true);
     DashboardController.to.updateCart();
@@ -103,7 +110,7 @@ class MartCartController extends GetxController {
       isPaymentLoading(true);
       Get.back();
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, noteToRider: noteToRider.text.trim(), carts: addToCart.call()).then((response) {
+      createOrderSub = _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, noteToRider: noteToRider.text.trim(), carts: addToCart.call()).asStream().listen((response) {
           
         isPaymentLoading(false);
 
@@ -142,7 +149,7 @@ class MartCartController extends GetxController {
           errorSnackbarTop(title: tr('oops'), message: response.errorMessage);
         }
         
-      }).catchError((onError) {
+      })..onError((onError) {
         isPaymentLoading(false);
         if (onError.toString().contains('Connection failed')) message(tr('noInternetConnection')); else message(tr('somethingWentWrong'));
         print('Payment method: $onError');
@@ -164,7 +171,7 @@ class MartCartController extends GetxController {
     message(tr('loadingCart'));
     isLoading(true);
     hasError(true);
-    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
+    deliveryFeeSub = _apiService.getDeliveryFee(storeId: storeId.call()).asStream().listen((response) {
 
       if (response.status == Config.OK) {
         hasError(false);
@@ -177,7 +184,7 @@ class MartCartController extends GetxController {
 
       isLoading(false);
 
-    }).catchError((onError) {
+    })..onError((onError) {
       hasError(true);
       isLoading(false);
       message(tr('somethingWentWrong'));

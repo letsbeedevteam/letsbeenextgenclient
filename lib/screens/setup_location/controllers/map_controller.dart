@@ -59,6 +59,7 @@ class MapController extends GetxController {
   StreamSubscription<NewAddressResponse> newAddressSub;
   StreamSubscription<EditAddressResponse> editAddressSub;
 
+  
   @override 
   void onInit() {
     if (argument['type'] == Config.ADD_NEW_ADDRESS) {
@@ -86,6 +87,13 @@ class MapController extends GetxController {
     setup();
 
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    newAddressSub?.cancel();
+    editAddressSub?.cancel();
+    super.onClose();
   }
 
   void currentLocation() async {
@@ -269,9 +277,7 @@ class MapController extends GetxController {
         print('Failed to add new address');
       }
 
-    });
-    
-    newAddressSub.onError((handleError) {
+    })..onError((handleError) {
       isAddAddressLoading(false);
       errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Error add new address: $handleError');
@@ -325,9 +331,7 @@ class MapController extends GetxController {
         print('Failed to add new address');
       }
 
-    });
-    
-    editAddressSub.onError((handleError) {
+    })..onError((handleError) {
       isAddAddressLoading(false);
       errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       print('Error edit new address: $handleError');

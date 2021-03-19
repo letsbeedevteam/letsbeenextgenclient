@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/customer_edit_response.dart';
 import 'package:letsbeeclient/models/edit_profile_request.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -22,6 +25,14 @@ class AccountInfoController extends GetxController {
   final nameFN = FocusNode();
   final emailFN = FocusNode();
   final numberFN = FocusNode();
+
+  StreamSubscription<CustomerEditResponse> editProfSub;
+
+  @override
+  void onClose() {
+    editProfSub?.cancel();
+    super.onClose();
+  }
 
   @override
   void onInit() {
@@ -54,7 +65,7 @@ class AccountInfoController extends GetxController {
           number: '0${numberController.text}'
         );
 
-        _apiService.customerEditProfile(request: editProfileRequest).then((response) {
+        editProfSub = _apiService.customerEditProfile(request: editProfileRequest).asStream().listen((response) {
           
           if (response.status == Config.OK) {
             
@@ -70,7 +81,7 @@ class AccountInfoController extends GetxController {
           }
 
           isLoading(false);
-        }).catchError((onError) {
+        })..onError((onError) {
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });

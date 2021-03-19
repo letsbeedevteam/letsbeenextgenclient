@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -17,6 +19,8 @@ class AddressController extends GetxController {
   var isLoading = false.obs;
   var addressErrorMessage = ''.obs;
 
+  StreamSubscription<GetAllAddressResponse> addressSub;
+
   static AddressController get to => Get.find();
 
   @override
@@ -24,6 +28,12 @@ class AddressController extends GetxController {
     addresses.nil();
     fetchAllAddresses();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    addressSub?.cancel();
+    super.onClose();
   }
 
   Future<Null> refreshAddress() async => fetchAllAddresses();
@@ -50,7 +60,7 @@ class AddressController extends GetxController {
 
   fetchAllAddresses() {
     isLoading(true);
-    apiService.getAllAddress().then((response) {
+    addressSub = apiService.getAllAddress().asStream().listen((response) {
       isLoading(false);
       if (response.status == Config.OK) {
         if (response.data.isNotEmpty) {
@@ -68,7 +78,7 @@ class AddressController extends GetxController {
         addressErrorMessage(tr('somethingWentWrong'));
       }
       
-    }).catchError((onError) {
+    })..onError((onError) {
       addresses.nil();
       isLoading(false);
       addressErrorMessage(tr('somethingWentWrong'));

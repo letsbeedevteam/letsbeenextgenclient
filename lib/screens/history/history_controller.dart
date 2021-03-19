@@ -16,14 +16,22 @@ class HistoryController extends GetxController {
   var history = OrderHistoryResponse().obs;
   var historyMessage = tr('emptyOrderHistory').obs;
   
+  StreamSubscription<OrderHistoryResponse> orderHistorySub;
+  
   @override
-    void onInit() {
-      history.nil();
-      
-      refreshCompleter = Completer();
+  void onInit() {
+    history.nil();
+    
+    refreshCompleter = Completer();
 
-      super.onInit();
-    }
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    orderHistorySub?.cancel();
+    super.onClose();
+  }
 
   void _setRefreshCompleter() {
     refreshCompleter?.complete();
@@ -32,7 +40,7 @@ class HistoryController extends GetxController {
 
   fetchOrderHistory() {
     isLoading(true);
-    apiService.orderHistory().then((response) {
+    orderHistorySub = apiService.orderHistory().asStream().listen((response) {
       isLoading(false);
       _setRefreshCompleter();
       if (response.status == Config.OK) {
@@ -49,7 +57,7 @@ class HistoryController extends GetxController {
         historyMessage(tr('somethingWentWrong'));
       }
       
-    }).catchError((onError) {
+    })..onError((onError) {
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {

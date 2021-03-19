@@ -39,6 +39,7 @@ class ApiService extends GetConnect {
   @override
   void onInit() {
     httpClient.baseUrl = Config.BASE_URL;
+    httpClient.timeout = Duration(milliseconds: 10);
     super.onInit();
   }
 

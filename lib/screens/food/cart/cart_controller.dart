@@ -8,6 +8,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
+import 'package:letsbeeclient/models/create_order_response.dart';
+import 'package:letsbeeclient/models/get_delivery_fee_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
@@ -57,6 +59,9 @@ class CartController extends GetxController {
   var options = List<Option>().obs;
   var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
+
+  StreamSubscription<CreateOrderResponse> createOrderSub;
+  StreamSubscription<GetDeliveryFeeResponse> deliveryFeeSub;
   
   @override
   void onInit() {
@@ -72,6 +77,8 @@ class CartController extends GetxController {
   }
 
   Future<bool> onWillPopBack() async {
+    createOrderSub?.cancel();
+    deliveryFeeSub?.cancel();
     isEdit(false);
     Get.back(closeOverlays: true);
     DashboardController.to.updateCart();
@@ -102,7 +109,7 @@ class CartController extends GetxController {
 
       // successSnackBarTop(title: 'Order processing..', message: 'Please wait...');
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).then((response) {
+      createOrderSub = _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, carts: addToCart.call()).asStream().listen((response) {
           
         isPaymentLoading(false);
 
@@ -141,7 +148,7 @@ class CartController extends GetxController {
           errorSnackbarTop(title: tr('oops'), message: response.errorMessage);
         }
         
-      }).catchError((onError) {
+      })..onError((onError) {
         isPaymentLoading(false);
         if (onError.toString().contains('Connection failed')) message(tr('noInternetConnection')); else message(tr('somethingWentWrong'));
         print('Payment method: $onError');
@@ -155,7 +162,7 @@ class CartController extends GetxController {
     message(tr('loadingCart'));
     isLoading(true);
     hasError(true);
-    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
+    deliveryFeeSub = _apiService.getDeliveryFee(storeId: storeId.call()).asStream().listen((response) {
 
       if (response.status == Config.OK) {
         hasError(false);
@@ -168,7 +175,7 @@ class CartController extends GetxController {
 
       isLoading(false);
 
-    }).catchError((onError) {
+    })..onError((onError) {
       hasError(true);
       isLoading(false);
       message(tr('somethingWentWrong'));

@@ -53,6 +53,12 @@ class SignUpController extends GetxController implements AuthViewContract {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    _presenter.closeSubscriptions();
+    super.onClose();
+  }
+
   void googleSignIn() {
     isGoogleLoading(true);
     _presenter.googleSignIn();

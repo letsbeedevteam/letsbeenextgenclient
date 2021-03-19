@@ -65,10 +65,10 @@ class SignUpPage extends GetView<SignUpController>  {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Obx(() {
-                return Radio(
-                  value: true,
-                  onChanged: (isStatus) => controller.isAgreeTerms(!controller.isAgreeTerms.call()),
-                  groupValue: !controller.isAgreeTerms(),
+                return IconButton(
+                  color: controller.isAgreeTerms.call() ? Color(Config.LETSBEE_COLOR) : Colors.black,
+                  icon: Icon(controller.isAgreeTerms.call() ? Icons.radio_button_on : Icons.radio_button_off),
+                  onPressed: () => controller.isAgreeTerms(!controller.isAgreeTerms.call()),
                 );
               }),
               Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
@@ -89,22 +89,22 @@ class SignUpPage extends GetView<SignUpController>  {
             ]
           ),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          IgnorePointer(
-            ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
-            child: SizedBox(
-              width: Get.width * 0.85,
-              child: Obx(() {
-                return RaisedButton(
+          Obx(() {
+            return IgnorePointer(
+              ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
+              child: SizedBox(
+                width: Get.width * 0.85,
+                child: RaisedButton(
                   onPressed: () => controller.isLoading.call() ? null : controller.signUp(),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20) 
                   ),
                   color: Color(Config.LETSBEE_COLOR),
                   child: Text(tr(controller.isLoading.call() ? 'signingUp' : 'signUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
-                );
-              }),
-            ),
-          ),
+                )
+              ),
+            );
+          }),
           Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         ],
       ),

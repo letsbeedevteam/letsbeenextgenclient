@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,7 @@ import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/models/signup_request.dart';
+import 'package:letsbeeclient/models/signup_response.dart';
 import 'package:letsbeeclient/models/social_signup_request.dart';
 import 'package:letsbeeclient/screens/auth/signUp/controller/signup_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -24,6 +27,8 @@ class UserDetailsController extends GetxController {
 
   var data = SignInData().obs;
 
+  StreamSubscription<SignUpResponse> signUpSub;
+
   @override
   void onInit() {
     if (argument != null) {
@@ -35,6 +40,7 @@ class UserDetailsController extends GetxController {
   @override
   void onClose() {
     data.nil();
+    signUpSub?.cancel();
     super.onClose();
   }
 
@@ -62,7 +68,7 @@ class UserDetailsController extends GetxController {
         cellphoneNumber: '0${numberController.text}'
       );
 
-      _apiService.customerSocialSignUp(socialSignUp: request).then((response) {
+      signUpSub = _apiService.customerSocialSignUp(socialSignUp: request).asStream().listen((response) {
           if (response.status == Config.OK) {
             final data = SignInData(
               token: response.data.token,
@@ -74,7 +80,7 @@ class UserDetailsController extends GetxController {
             alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
           isLoading(false);
-        }).catchError((onError) {
+        })..onError((onError) {
           alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });
@@ -101,7 +107,7 @@ class UserDetailsController extends GetxController {
           cellphoneNumber: '0${numberController.text}'
         );
 
-        _apiService.customerSignUp(signUp: request).then((response) {
+        signUpSub = _apiService.customerSignUp(signUp: request).asStream().listen((response) {
           if (response.status == Config.OK) {
             final data = SignInData(
               token: response.data.token,
@@ -113,7 +119,7 @@ class UserDetailsController extends GetxController {
             alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           }
           isLoading(false);
-        }).catchError((onError) {
+        })..onError((onError) {
           alertSnackBarTop(title: tr('oops'), message: tr('somethingWentWrong'));
           isLoading(false);
         });
