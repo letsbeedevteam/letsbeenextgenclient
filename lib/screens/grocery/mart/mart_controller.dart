@@ -21,7 +21,6 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
   final uuid = Uuid();
   final argument = Get.arguments;
   final nestedScrollViewController = ScrollController();
-  final list = RxList<Product>().obs;
 
   var quantity = 0.obs;
 
@@ -84,12 +83,12 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
         if (box.hasData(Config.PRODUCTS)) {
           final products = listProductFromJson(box.read(Config.PRODUCTS));
-          list.call().assignAll(products);
-          box.write(Config.PRODUCTS, listProductToJson(list.call()));
+          MartCartController.to.updatedProducts.call().assignAll(products);
+          box.write(Config.PRODUCTS, listProductToJson(MartCartController.to.updatedProducts.call()));
           MartCartController.to.getProducts();
         } else {
-          list.call().clear();
-          box.write(Config.PRODUCTS, listProductToJson(list.call()));
+          MartCartController.to.updatedProducts.call().clear();
+          box.write(Config.PRODUCTS, listProductToJson(MartCartController.to.updatedProducts.call()));
           MartCartController.to.getProducts();
         }
 
@@ -111,43 +110,48 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
 
   void checkPreviousCart(Product product) {
     
-    final products = list.call().where((data) => data.storeId != store.call().id);
+    if (box.hasData(Config.PRODUCTS)) {
 
-    if (products.isNotEmpty) {
-      print('REMOVE THE PREVIOUS CART FIRST');
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id);
 
-      Get.defaultDialog(
-        title: tr('alertCartMessage'),
-        backgroundColor: Color(Config.WHITE),
-        titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-        radius: 8,
-        content: Container(),
-        confirm: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)
+      if (products.isNotEmpty) {
+        print('REMOVE THE PREVIOUS CART FIRST');
+
+        Get.defaultDialog(
+          title: tr('alertCartMessage'),
+          backgroundColor: Color(Config.WHITE),
+          titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
+          radius: 8,
+          content: Container(),
+          confirm: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            color: const Color(Config.LETSBEE_COLOR),
+            onPressed: () async {
+              
+              final products = listProductFromJson(box.read(Config.PRODUCTS));
+              MartCartController.to.updatedProducts.call().assignAll(products);
+              MartCartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId);
+              box.write(Config.PRODUCTS, listProductToJson(MartCartController.to.updatedProducts.call()));
+              Get.back();
+              addToCart(product);
+            },
+            child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
           ),
-          color: const Color(Config.LETSBEE_COLOR),
-          onPressed: () async {
-            
-            final products = listProductFromJson(box.read(Config.PRODUCTS));
-            list.call().assignAll(products);
-            list.call().removeWhere((data) => data.storeId != product.storeId);
-            box.write(Config.PRODUCTS, listProductToJson(list.call()));
-            Get.back();
-            addToCart(product);
-          },
-          child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-        ),
-        cancel: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)
+          cancel: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            color: const Color(Config.LETSBEE_COLOR),
+            onPressed: () => Get.back(),
+            child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
           ),
-          color: const Color(Config.LETSBEE_COLOR),
-          onPressed: () => Get.back(),
-          child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-        ),
-        barrierDismissible: false
-      );
+          barrierDismissible: false
+        );
+      } else {
+        addToCart(product);
+      }
 
     } else {
       addToCart(product);
@@ -166,7 +170,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     product.type = Config.MART;
     product.removable = isSelectedProceed.call();
 
-    final prod = list.call().where((data) => data.storeId == store.call().id);
+    final prod = MartCartController.to.updatedProducts.call().where((data) => data.storeId == store.call().id);
 
       if (prod.isNotEmpty) {
         
@@ -175,26 +179,25 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
           final fileredProduct = prod.where((data) => data.id == product.id);
 
           if (fileredProduct.toList().isEmpty) {
-            list.call().add(product);
+            MartCartController.to.updatedProducts.call().add(product);
           } else {
 
             fileredProduct.first.quantity = fileredProduct.first.quantity + product.quantity;
 
           }
         } catch (error) {
-          list.call().add(product);
+          MartCartController.to.updatedProducts.call().add(product);
           print(error);
         }
 
       } else {
         print('Added cart when theres no product if found');
-        list.call().add(product);
+        MartCartController.to.updatedProducts.call().add(product);
       }
 
-    box.write(Config.PRODUCTS, listProductToJson(list.call()));
+    box.write(Config.PRODUCTS, listProductToJson(MartCartController.to.updatedProducts.call()));
     final products = listProductFromJson(box.read(Config.PRODUCTS));
-    list.call().clear();
-    list.call().addAll(products);
+    MartCartController.to.updatedProducts.call().assignAll(products);
     MartCartController.to.getProducts();
     DashboardController.to.updateCart();
     Get.back();

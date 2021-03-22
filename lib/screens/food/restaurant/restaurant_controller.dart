@@ -28,7 +28,6 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   var storeResponse = StoreResponse().obs;
   var listOfProcucts = RxList<Product>().obs;
   var product = Product().obs;
-  final list = RxList<Product>().obs;
 
   var hasError = false.obs;
   var readOnly = false.obs;
@@ -137,59 +136,65 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
   void checkPreviousCart(Product product) {
     
-    final products = list.call().where((data) => data.storeId != store.call().id);
+    if(box.hasData(Config.PRODUCTS)) {
 
-    var hasNotSelectedChoice = false;
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id);
 
-    if (product.variants.isEmpty) {
-      hasNotSelectedChoice = true;
-    } else {
-      hasNotSelectedChoice = product.variants.length == choiceCart.call().values.toList().length;
-    }
-   
-    if (!hasNotSelectedChoice) {
-      errorSnackbarTop(title: tr('oops'), message: tr('requiredChoice'));
-    } else {
+      var hasNotSelectedChoice = false;
 
-      if (products.isNotEmpty) {
-        print('REMOVE THE PREVIOUS CART FIRST');
-
-        Get.defaultDialog(
-          title: tr('alertCartMessage'),
-          backgroundColor: Color(Config.WHITE),
-          titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-          radius: 8,
-          content: Container(),
-          confirm: RaisedButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10)
-            ),
-            color: const Color(Config.LETSBEE_COLOR),
-            onPressed: () async {
-              
-              final products = listProductFromJson(box.read(Config.PRODUCTS));
-              list.call().assignAll(products);
-              list.call().removeWhere((data) => data.storeId != product.storeId);
-              box.write(Config.PRODUCTS, listProductToJson(list.call()));
-              Get.back();
-              addToCart(product);
-            },
-            child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-          ),
-          cancel: RaisedButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10)
-            ),
-            color: const Color(Config.LETSBEE_COLOR),
-            onPressed: () => Get.back(),
-            child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-          ),
-          barrierDismissible: false
-        );
-
+      if (product.variants.isEmpty) {
+        hasNotSelectedChoice = true;
       } else {
-        addToCart(product);
+        hasNotSelectedChoice = product.variants.length == choiceCart.call().values.toList().length;
       }
+    
+      if (!hasNotSelectedChoice) {
+        errorSnackbarTop(title: tr('oops'), message: tr('requiredChoice'));
+      } else {
+
+        if (products.isNotEmpty) {
+          print('REMOVE THE PREVIOUS CART FIRST');
+
+          Get.defaultDialog(
+            title: tr('alertCartMessage'),
+            backgroundColor: Color(Config.WHITE),
+            titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
+            radius: 8,
+            content: Container(),
+            confirm: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+              ),
+              color: const Color(Config.LETSBEE_COLOR),
+              onPressed: () async {
+                
+                final products = listProductFromJson(box.read(Config.PRODUCTS));
+                CartController.to.updatedProducts.call().assignAll(products);
+                CartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId);
+                box.write(Config.PRODUCTS, listProductToJson(CartController.to.updatedProducts.call()));
+                Get.back();
+                addToCart(product);
+              },
+              child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+            ),
+            cancel: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+              ),
+              color: const Color(Config.LETSBEE_COLOR),
+              onPressed: () => Get.back(),
+              child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+            ),
+            barrierDismissible: false
+          );
+
+        } else {
+          addToCart(product);
+        }
+      }
+
+    } else {
+      addToCart(product);
     }
   }
 
@@ -205,7 +210,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     product.type = Config.RESTAURANT;
     product.removable = isSelectedProceed.call();
 
-    final prod = list.call().where((data) => data.storeId == store.call().id);
+    final prod = CartController.to.updatedProducts.call().where((data) => data.storeId == store.call().id);
 
     if (prod.isNotEmpty) {
       
@@ -214,41 +219,40 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
         final filteredChoice = prod.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
 
         if (filteredChoice.toList().isEmpty) {
-          list.call().add(product);
+          CartController.to.updatedProducts.call().add(product);
         } else {
 
           if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart) && additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
             filteredChoice.first.note = tFRequestController.text.isNotEmpty ? product.note : null; 
             filteredChoice.first.quantity = filteredChoice.first.quantity + product.quantity;
           } else {
-              list.call().add(product);
+            CartController.to.updatedProducts.call().add(product);
           }
 
         }
       } catch (error) {
-        list.call().add(product);
+        CartController.to.updatedProducts.call().add(product);
         print(error);
       }
 
     } else {
       print('Added cart when theres no product if found');
-      list.call().add(product);
+      CartController.to.updatedProducts.call().add(product);
     }
 
     choiceCart.call().clear();
-    box.write(Config.PRODUCTS, listProductToJson(list.call()));
+    box.write(Config.PRODUCTS, listProductToJson(CartController.to.updatedProducts.call()));
     final products = listProductFromJson(box.read(Config.PRODUCTS));
-    list.call().clear();
-    list.call().addAll(products);
+    CartController.to.updatedProducts.call().assignAll(products);
     CartController.to.getProducts();
     DashboardController.to.updateCart();
 
     if(Get.isSnackbarOpen) {
-        Get.back();
-        Future.delayed(Duration(milliseconds: 300));
-        Get.back();
+      Get.back();
+      Future.delayed(Duration(milliseconds: 300));
+      Get.back();
     } else {
-        Get.back();
+      Get.back();
     }
   }
 
@@ -279,12 +283,12 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
 
           if (box.hasData(Config.PRODUCTS)) {
             final products = listProductFromJson(box.read(Config.PRODUCTS));
-            list.call().assignAll(products);
-            box.write(Config.PRODUCTS, listProductToJson(list.call()));
+            CartController.to.updatedProducts.call().assignAll(products);
+            box.write(Config.PRODUCTS, listProductToJson(CartController.to.updatedProducts.call()));
             CartController.to.getProducts();
           } else {
-            list.call().clear();
-            box.write(Config.PRODUCTS, listProductToJson(list.call()));
+            CartController.to.updatedProducts.call().clear();
+            box.write(Config.PRODUCTS, listProductToJson(CartController.to.updatedProducts.call()));
             CartController.to.getProducts();
           }
 

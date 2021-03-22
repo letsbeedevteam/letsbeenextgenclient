@@ -315,19 +315,38 @@ class MartChildPage extends GetView<DashboardController> {
                 ) : Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
-                    padding: EdgeInsets.all(5),
                     margin: EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(Config.WHITE)
-                    ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                        Text('${mart.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color(Config.WHITE)
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              Text('${mart.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color(Config.WHITE)
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),

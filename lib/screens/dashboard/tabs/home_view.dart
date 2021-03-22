@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/_utils/customWidgets.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/search_history.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
@@ -342,49 +341,40 @@ class HomePage extends GetView<DashboardController> {
               child: Text(name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OneRating(),
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                  Row(
+            Row(
+              children: [
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color(Config.WHITE)
+                  ),
+                  child: Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(Config.WHITE)
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                            Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(Config.WHITE)
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                            Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      )
+                      Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                      Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                     ],
-                  )
-                ],
-              ),
-            ),
+                  ),
+                ),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color(Config.WHITE)
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                      Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                )
+              ],
+            )
           ],
         ),
         decoration: BoxDecoration(
@@ -467,19 +457,38 @@ class HomePage extends GetView<DashboardController> {
                 ) : Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Container(
-                    padding: EdgeInsets.all(5),
                     margin: EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(Config.WHITE)
-                    ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                        Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color(Config.WHITE)
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color(Config.WHITE)
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
+                              Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                              Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),

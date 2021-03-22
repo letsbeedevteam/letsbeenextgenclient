@@ -53,6 +53,9 @@ class WebViewPage extends GetView<WebController> {
                 return WebView(
                   initialUrl: controller.argument['url'],
                   javascriptMode: JavascriptMode.unrestricted,
+                  onWebViewCreated: (webViewController) {
+                    controller.webViewController = webViewController;
+                  },
                   gestureNavigationEnabled: true,
                   onPageFinished: (url) {
                     print('print: $url');
@@ -65,10 +68,10 @@ class WebViewPage extends GetView<WebController> {
                       }
                       DashboardController.to..fetchActiveOrders()..updateCart();
                     }
-                    controller..isLoading(false);
+                    controller..isLoading(false)..hasError(false);
                   },
                   onWebResourceError: (error) {
-                    controller..isLoading(false);
+                    controller..isLoading(false)..hasError(true);
                     print('Webview ERROR: ${error.description}');
                   },
                 );
@@ -81,6 +84,17 @@ class WebViewPage extends GetView<WebController> {
                   Padding(padding: EdgeInsets.only(top: 20)),
                   CupertinoActivityIndicator(),
                   Text(tr('loadingPayment'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                ],
+              ) : controller.hasError() ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(padding: EdgeInsets.only(top: 20)),
+                  Text(tr('somethingWentWrong'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+                  RaisedButton(
+                      color: Color(Config.LETSBEE_COLOR),
+                      child: Text(tr('refresh')),
+                      onPressed: () => controller.webViewController?.reload(),
+                  )
                 ],
               ) : Container())
             )

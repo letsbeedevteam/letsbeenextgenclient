@@ -1,6 +1,4 @@
 import 'dart:async';
-
-// import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -12,8 +10,6 @@ import 'package:letsbeeclient/models/create_order_response.dart';
 import 'package:letsbeeclient/models/get_delivery_fee_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
-import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
-// import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class CartController extends GetxController {
@@ -98,7 +94,6 @@ class CartController extends GetxController {
     successSnackBarTop(message: tr('deletedItem'), seconds: 1);
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.uniqueId == uniqueId);
-    if(argument == null) RestaurantController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
     getProducts();
   }
@@ -192,7 +187,6 @@ class CartController extends GetxController {
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.storeId == storeId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    if(argument == null) RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
     getProducts();
   }
 
@@ -315,7 +309,6 @@ class CartController extends GetxController {
       updatedProducts.call().where((data) => data.uniqueId == product.uniqueId).forEach((data) => data = product);
     }
 
-    if (argument == null) RestaurantController.to.list.call()..assignAll(updatedProducts.call());
     box.write(Config.PRODUCTS, listProductToJson(updatedProducts.call()));
     getProducts();
     Get.back();

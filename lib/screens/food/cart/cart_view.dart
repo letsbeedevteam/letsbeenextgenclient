@@ -7,6 +7,7 @@ import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class CartPage extends GetView<CartController> {
 
@@ -118,32 +119,12 @@ class CartPage extends GetView<CartController> {
 
   Widget _header() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildDeliverTo(),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-              Obx(() {
-                return IgnorePointer(
-                  ignoring: controller.isLoading.call(),
-                  child: SizedBox(
-                    height: 30,
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      color: Color(Config.LETSBEE_COLOR),
-                      child: controller.isEdit.call() ? Text(tr('cancel'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text(tr('edit'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                      onPressed: controller.setEdit,
-                    )
-                  ),
-                );
-              })
-            ],
-          ),
+          child: Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
         ),
       ],
     );
@@ -156,7 +137,6 @@ class CartPage extends GetView<CartController> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            controller.isEdit.call() ? Divider(thickness: 1, color: Colors.grey.shade200) : Container(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -251,96 +231,78 @@ class CartPage extends GetView<CartController> {
   }
 
   Widget _buildMenuItem(Product product) {
-    return IgnorePointer(
-      ignoring: !controller.isEdit.call(),
-      child: GestureDetector(
-        onTap: () => _bottomSheet(product),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 100),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
-                    boxShadow: [
-                      BoxShadow(
-                        color: controller.isEdit.call() ? Colors.grey.shade300 : Color(Config.WHITE),
-                        blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
-                        offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
-                      )
-                    ]
+    return GestureDetector(
+      onTap: () => _bottomSheet(product),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: Slidable(
+          actionPane: SlidableScrollActionPane(),
+          actionExtentRatio: 0.30,
+          secondaryActions: [
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(left: 20, bottom: 5),
+              height: Get.height,
+              child: IconSlideAction(
+                caption: tr('delete'),
+                color: Colors.red,
+                icon: Icons.delete,
+                onTap: () => deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId),
+              ),
+            )
+          ],
+          child: Container(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                        ),
+                      ),
+                      Text('₱${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
+                    ],
                   ),
-                  curve: Curves.easeInOut,
-                  child: Container(
-                    padding: controller.isEdit.call() ? EdgeInsets.all(5) : EdgeInsets.zero,
+                  Container(
+                    margin: EdgeInsets.only(top: 3),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                              ),
-                            ),
-                            Text('₱${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
-                          ],
+                        Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                        Column(
+                          children: product.variants.map((e) => _buildChoice(e, product.quantity)).toList(),
                         ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                        product.additionals.where((data) => !data.selectedValue).isEmpty ? Container() : Column(
+                          children: product.additionals.where((data) => !data.selectedValue).map((e) => _buildAddsOn(e, product.quantity)).toList(),
+                        ),
+                      ],
+                    )
+                  ),
+                  product.note != null ? Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(tr('specialInstructions'), style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.black)),
                         Container(
-                          margin: EdgeInsets.only(top: 3),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                              Column(
-                                children: product.variants.map((e) => _buildChoice(e, product.quantity)).toList(),
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                              product.additionals.where((data) => !data.selectedValue).isEmpty ? Container() : Column(
-                                children: product.additionals.where((data) => !data.selectedValue).map((e) => _buildAddsOn(e, product.quantity)).toList(),
-                              ),
-                            ],
-                          )
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
+                          child: Text(product.note.toString(), style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.grey))
                         ),
-                        product.note != null ? Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(tr('specialInstructions'), style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.black)),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
-                                child: Text(product.note.toString(), style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15, color: Colors.grey))
-                              ),
-                            ],
-                          ),
-                        ) : Container(),
-                        Divider(thickness: 1, color: Colors.grey.shade200),
                       ],
                     ),
-                  )
-                ),
+                  ) : Container(),
+                  Divider(thickness: 1, color: Colors.grey.shade200),
+                ],
               ),
-              controller.isEdit.call() ? Padding(padding: EdgeInsets.only(left: 5)) : Container(),
-              Container(
-                child: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 100),
-                  child: controller.isEdit.call() ? 
-                  GestureDetector(
-                    key: UniqueKey(), 
-                    child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () => deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId)) : Container(key: UniqueKey())
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+        )
       ),
     );
   }
