@@ -441,7 +441,8 @@ static const Map<String,dynamic> en_US = {
   // NEW
   "signingOut": "Signing Out...",
   "alertCartMessage": "You already selected different restaurant/mart. If you continue, your cart selection will be removed.",
-  "alertAddressMessage": "By changing your current location, you will lose your selections inside the cart. Would you like to continue?"
+  "alertAddressMessage": "By changing your current location, you will lose your selections inside the cart. Would you like to continue?",
+  "orderPlacedAt": "Order placed at"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

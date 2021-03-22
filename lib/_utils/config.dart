@@ -87,7 +87,7 @@ class Config {
 
   // Colors 
   static const LETSBEE_COLOR = 0xFFF5D247;
-  static const WHITE = 0xFFF8F8FA;
+  static const WHITE = 0xFFF5F5F5;
   static const RED = 0xFFDE5842;
   static const SEARCH_TEXT_COLOR = 0xFF999999;
   static const USER_CURRENT_ADDRESS_TEXT_COLOR = 0xFF666666;

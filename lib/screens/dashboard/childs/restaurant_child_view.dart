@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
-import 'package:letsbeeclient/_utils/customWidgets.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/search_history.dart';
@@ -252,103 +251,87 @@ class RestaurantChildPage extends GetView<DashboardController> {
           borderRadius: BorderRadius.circular(8.0),
           color: status == 'closed' ? Color(0xFFFBFBFC).withOpacity(0.8) : Colors.white,
         ),
-        margin: EdgeInsets.only(bottom: 20, left: 5, right: 5),
-        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: SizedBox(
-                width: Get.width,
-                height: 180,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    FadeInImage.assetNetwork(
-                      placeholder: cupertinoActivityIndicatorSmall, 
-                      width: Get.width, 
-                      image: restaurant?.photoUrl, 
-                      fit: BoxFit.cover, 
-                      placeholderScale: 5, 
-                      imageErrorBuilder: (context, error, stackTrace) {
-                      return error.toString().contains(restaurant?.photoUrl) ? Center(
-                        child: Container(
-                          height: 130, 
-                          child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(
-                          placeholder: cupertinoActivityIndicatorSmall, 
-                          width: Get.width, 
-                          image: restaurant?.photoUrl, 
-                          fit: BoxFit.cover,
-                          placeholderScale: 5
-                      );
-                    }),
-                    status == 'closed' ? Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFFBFBFC).withOpacity(0.8)
-                      ),
-                    ) : Container()
-                  ],
-                ) 
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: SizedBox(
+                  width: Get.width,
+                  height: 180,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      FadeInImage.assetNetwork(
+                        placeholder: cupertinoActivityIndicatorSmall, 
+                        width: Get.width, 
+                        image: restaurant?.photoUrl, 
+                        fit: BoxFit.cover, 
+                        placeholderScale: 5, 
+                        imageErrorBuilder: (context, error, stackTrace) {
+                        return error.toString().contains(restaurant?.photoUrl) ? Center(
+                          child: Container(
+                            height: 130, 
+                            child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(
+                            placeholder: cupertinoActivityIndicatorSmall, 
+                            width: Get.width, 
+                            image: restaurant?.photoUrl, 
+                            fit: BoxFit.cover,
+                            placeholderScale: 5
+                        );
+                      }),
+                      status == 'closed' ? Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFBFBFC).withOpacity(0.8)
+                        ),
+                      ) : Container()
+                    ],
+                  ) 
+                ),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 10, left: 5, right: 5),
+              padding: EdgeInsets.only(top: 10, left: 10, right: 10),
               child: Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: status != 'closed' ? Colors.black : Colors.grey), overflow: TextOverflow.ellipsis),
             ),
             Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OneRating(),
-                  status == 'closed' ? Container(
-                    alignment: Alignment.bottomRight,
+            Row(
+              children: [
+                Spacer(),
+                status == 'closed' ? Container(
+                  alignment: Alignment.bottomRight,
+                  decoration: BoxDecoration(
+                    color: Color(Config.LETSBEE_COLOR),
+                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), topLeft: Radius.circular(8)),
+                  ),
+                  padding: EdgeInsets.all(8),
+                  child: Text('Store Hours $storeTime', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
+                ) : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Container(
+                    padding: EdgeInsets.all(5),
+                    margin: EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      color: Color(Config.LETSBEE_COLOR),
-                      borderRadius: BorderRadius.only(bottomRight: Radius.circular(8), topLeft: Radius.circular(8)),
+                      borderRadius: BorderRadius.circular(20),
+                      color: Color(Config.WHITE)
                     ),
-                    padding: EdgeInsets.all(8),
-                    child: Text('Store Hours $storeTime', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 12)),
-                  ) :
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(Config.WHITE)
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                            Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 5)), 
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color(Config.WHITE)
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                            Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                        Text('${restaurant.distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

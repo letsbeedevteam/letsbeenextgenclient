@@ -384,14 +384,14 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'store-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          _.activeOrderData.call().activeStore.type == 'restaurant' ? 
+          Text('${tr('orderPlacedAt')} ' + DateFormat('hh:mm a').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)) : Container(),
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
             child:  _.activeOrderData.call().activeStore.type == 'mart' ? Image.asset(Config.GIF_PATH + 'waiting.gif') : Image.asset(Config.GIF_PATH + 'preparing.gif')
           ),
           Text(_.activeOrderData.call().activeStore.type == 'mart' ? tr('waitingRider') : tr('preparingFood'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-          // Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          // _.activeOrderData.call().activeStore.type == 'mart' ? Container() : Text(tr('waitingRider'), style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15, fontWeight: FontWeight.normal))
         ],
       );
         break;
@@ -410,6 +410,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'rider-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          _.activeOrderData.call().activeStore.type == 'mart' ? 
+          Text('${tr('orderPlacedAt')} ' + DateFormat('hh:mm a').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)) : Container(),
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
