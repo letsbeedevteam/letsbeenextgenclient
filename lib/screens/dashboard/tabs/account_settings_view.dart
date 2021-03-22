@@ -243,7 +243,7 @@ class AccountSettingsPage extends GetView<DashboardController> {
 
   _logoutModal() {
     Get.defaultDialog(
-      title: tr('logoutMessage'),
+      title: tr('signOutMessage'),
       backgroundColor: Color(Config.WHITE),
       titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
       radius: 8,
@@ -253,15 +253,15 @@ class AccountSettingsPage extends GetView<DashboardController> {
           borderRadius: BorderRadius.circular(10)
         ),
         color: const Color(Config.LETSBEE_COLOR),
-        onPressed: () =>  controller.signOut(),
-        child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+        onPressed: () =>  controller.isSigningOut.call() ? null : controller.signOut(),
+        child: Obx(() => Text(controller.isSigningOut.call() ? tr('signingOut') : tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15))),
       ),
       cancel: RaisedButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10)
         ),
         color: const Color(Config.LETSBEE_COLOR),
-        onPressed: () => Get.back(),
+        onPressed: () => controller.isSigningOut.call() ? null : Get.back(),
         child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
       ),
       barrierDismissible: false

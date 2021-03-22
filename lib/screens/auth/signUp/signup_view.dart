@@ -66,8 +66,8 @@ class SignUpPage extends GetView<SignUpController>  {
             children: [
               Obx(() {
                 return IconButton(
-                  color: controller.isAgreeTerms.call() ? Color(Config.LETSBEE_COLOR) : Colors.black,
-                  icon: Icon(controller.isAgreeTerms.call() ? Icons.radio_button_on : Icons.radio_button_off),
+                  color: !controller.isAgreeTerms.call() ? Color(Config.LETSBEE_COLOR) : Colors.black,
+                  icon: Icon(!controller.isAgreeTerms.call() ? Icons.radio_button_on : Icons.radio_button_off),
                   onPressed: () => controller.isAgreeTerms(!controller.isAgreeTerms.call()),
                 );
               }),

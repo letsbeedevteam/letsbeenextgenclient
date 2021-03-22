@@ -86,7 +86,7 @@ class Config {
   static const MART = 'mart';
 
   // Colors 
-  static const LETSBEE_COLOR = 0xFFFCD000;
+  static const LETSBEE_COLOR = 0xFFF5D247;
   static const WHITE = 0xFFF8F8FA;
   static const RED = 0xFFDE5842;
   static const SEARCH_TEXT_COLOR = 0xFF999999;

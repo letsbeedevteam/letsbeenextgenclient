@@ -70,24 +70,28 @@ class CartController extends GetxController {
     if (argument != null) {
       storeId(argument['storeId']);
     }
-    getProducts();
+    if(box.hasData(Config.PRODUCTS)) getProducts();
 
  
     super.onInit();
   }
 
   Future<bool> onWillPopBack() async {
-    createOrderSub?.cancel();
-    deliveryFeeSub?.cancel();
+    createOrderSub?.cancel()?.whenComplete(() {
+      isPaymentLoading(false);
+      isLoading(false);
+    });
+    deliveryFeeSub?.cancel()?.whenComplete(() {
+      isPaymentLoading(false);
+      isLoading(false);
+    });
     isEdit(false);
     Get.back(closeOverlays: true);
     DashboardController.to.updateCart();
     return true;
   }
 
-  setEdit() {
-    isEdit(!isEdit.call());
-  }
+  setEdit() => isEdit(!isEdit.call());
 
   deleteCart({String uniqueId}) {
     Get.back();
@@ -114,7 +118,6 @@ class CartController extends GetxController {
         isPaymentLoading(false);
 
         if(response.status == Config.OK) {
-          DashboardController.to.fetchActiveOrders();
           
           if (response.status == Config.INVALID) {
             errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
@@ -125,11 +128,11 @@ class CartController extends GetxController {
 
               clearCart(storeId);
 
-              DashboardController.to.fetchActiveOrders();
+              DashboardController.to..fetchActiveOrders()..updateCart();
 
-              Future.delayed(Duration(seconds: 1)).then((value) {
-                Get.back(closeOverlays: true);
-              });
+              Get.back(closeOverlays: true);
+              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
+
 
             } else {
               // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
@@ -159,79 +162,85 @@ class CartController extends GetxController {
   Future<Null> refreshDeliveryFee() async => getDeliveryFee();
 
   getDeliveryFee() {
-    message(tr('loadingCart'));
-    isLoading(true);
-    hasError(true);
-    deliveryFeeSub = _apiService.getDeliveryFee(storeId: storeId.call()).asStream().listen((response) {
-
-      if (response.status == Config.OK) {
-        hasError(false);
-        deliveryFee(double.tryParse(response.data.deliveryFee));
-
-      } else {
-        hasError(true);
-        message(tr('somethingWentWrong'));
-      }
-
-      isLoading(false);
-
-    })..onError((onError) {
+    if (updatedProducts.call().isNotEmpty) {
+      message(tr('loadingCart'));
+      isLoading(true);
       hasError(true);
-      isLoading(false);
-      message(tr('somethingWentWrong'));
-      print('Delivery Fee Error: $onError');
-    });
+      deliveryFeeSub = _apiService.getDeliveryFee(storeId: storeId.call()).asStream().listen((response) {
+
+        if (response.status == Config.OK) {
+          hasError(false);
+          deliveryFee(double.tryParse(response.data.deliveryFee));
+
+        } else {
+          hasError(true);
+          message(tr('somethingWentWrong'));
+        }
+
+        isLoading(false);
+
+      })..onError((onError) {
+        hasError(true);
+        isLoading(false);
+        message(tr('somethingWentWrong'));
+        print('Delivery Fee Error: $onError');
+      });
+    }
   }
 
   clearCart(int storeId) {
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.storeId == storeId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
+    if(argument == null) RestaurantController.to.list.call().removeWhere((data) => data.storeId == storeId);
     getProducts();
   }
 
   getProducts() {
-    choicesTotalPrice(0.00);
-    additionalTotalPrice(0.00);
-    final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId == storeId.call());
-    addToCart.call().clear();
-    options.clear();
-    additionals.clear();
-    
-    if (products.isNotEmpty) {
+    if(box.hasData(Config.PRODUCTS)) {
+      choicesTotalPrice(0.00);
+      additionalTotalPrice(0.00);
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId == storeId.call());
+      addToCart.call().clear();
+      options.clear();
+      additionals.clear();
+      
+      if (products.isNotEmpty) {
 
-      updatedProducts.call().assignAll(products);
-      updatedProducts.call().forEach((product) { 
+        updatedProducts.call().assignAll(products);
+        updatedProducts.call().forEach((product) { 
 
-          for (var j = 0;  j < product.variants.length; j++) {
+            for (var j = 0;  j < product.variants.length; j++) {
 
-            final choice =  product.variants[j];
-            choice.options.where((data) => data.name == data.selectedValue).forEach((option) {
-              choicesTotalPrice.value += double.tryParse(option.customerPrice.toString()) * product.quantity;
-            });
-          }
-
-          product.additionals.forEach((additional) {
-            if(!additional.selectedValue) {
-              additionalTotalPrice.value += double.tryParse(additional.customerPrice.toString()) * product.quantity;
+              final choice =  product.variants[j];
+              choice.options.where((data) => data.name == data.selectedValue).forEach((option) {
+                choicesTotalPrice.value += double.tryParse(option.customerPrice.toString()) * product.quantity;
+              });
             }
-          });
-          
-          addToCart.call().add(
-            AddToCart(
-              productId: product.id,
-              variants: product.variants.isEmpty ? [] : product.choiceCart.toList(),
-              additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
-              quantity: product.quantity,
-              note: product.note,
-              removable: product.removable
-            )
-          );
-      });
 
-      totalPrice(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
-      subTotal(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+            product.additionals.forEach((additional) {
+              if(!additional.selectedValue) {
+                additionalTotalPrice.value += double.tryParse(additional.customerPrice.toString()) * product.quantity;
+              }
+            });
+            
+            addToCart.call().add(
+              AddToCart(
+                productId: product.id,
+                variants: product.variants.isEmpty ? [] : product.choiceCart.toList(),
+                additionals: product.additionals.isEmpty ? [] : product.additionalCart.toList(),
+                quantity: product.quantity,
+                note: product.note,
+                removable: product.removable
+              )
+            );
+        });
+
+        totalPrice(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+        subTotal(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+      } else {
+        updatedProducts.call().clear();
+      }
     } else {
       updatedProducts.call().clear();
     }

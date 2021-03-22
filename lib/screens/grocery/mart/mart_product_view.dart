@@ -544,7 +544,6 @@ class MartProductPage extends GetView<MartController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
-                flex: 1,
                 child: GestureDetector(
                   onTap: () {
                     _.isSelectedProceed.nil();
@@ -557,7 +556,7 @@ class MartProductPage extends GetView<MartController> {
                 ),
               ),
               Flexible(
-                flex: 5,
+                flex: 4,
                 child: Container(
                     height: Get.height * 0.85,
                     decoration: BoxDecoration(
@@ -657,7 +656,7 @@ class MartProductPage extends GetView<MartController> {
       backgroundColor: Colors.transparent,
       isScrollControlled: false,
       enableDrag: false,
-      isDismissible: false,
+      isDismissible: true,
     );
   }
 }

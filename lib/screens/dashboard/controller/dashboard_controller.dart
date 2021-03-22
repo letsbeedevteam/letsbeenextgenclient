@@ -256,16 +256,16 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.disconnectSocket();
     clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
-        case Config.GOOGLE: _googleSignOut();
-        break;
-        case Config.FACEBOOK: _facebookSignOut();
-        break;
-        case Config.APPLE: _signOut();
-        break;
-        case Config.KAKAO: _signOut();
-        break;
-        default: _signOut();
-      }
+      case Config.GOOGLE: _googleSignOut();
+      break;
+      case Config.FACEBOOK: _facebookSignOut();
+      break;
+      case Config.APPLE: _signOut();
+      break;
+      case Config.KAKAO: _signOut();
+      break;
+      default: _signOut();
+    }
   }
 
   void _facebookSignOut() async {

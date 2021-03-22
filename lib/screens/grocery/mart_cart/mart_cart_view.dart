@@ -860,7 +860,7 @@ class MartCartPage extends GetView<MartCartController> {
       backgroundColor: Colors.transparent,
       isScrollControlled: false,
       enableDrag: false,
-      isDismissible: false,
+      isDismissible: true,
     );
   }
 }

@@ -14,7 +14,7 @@ class AddressPage extends GetView<AddressController> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () => Get.back()),
+        leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.onWillPopBack),
         title: Text(tr('addresses'), style: TextStyle(fontSize: 15, color: Colors.black)),
         centerTitle: true,
       ),
@@ -107,7 +107,7 @@ class AddressPage extends GetView<AddressController> {
           ],
         ),
       ),
-      onTap: () => controller.updateSelectedAddress(data: data),
+      onTap: () => controller.checkCartBeforeChangeAddress(data: data),
     );
   }
 }

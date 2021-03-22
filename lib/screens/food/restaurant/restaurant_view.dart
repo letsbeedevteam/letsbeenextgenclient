@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
@@ -20,7 +21,7 @@ class RestaurantPage extends GetView<RestaurantController> {
       return WillPopScope(
         onWillPop: controller.onWillPopBack,
         child: GetX<RestaurantController>(
-          initState: controller.fetchStore(),
+          initState: (state) => controller.fetchStore(),
           builder: (_) {
             return _.storeResponse.call() == null ? Container(
               child: Scaffold(
@@ -59,32 +60,34 @@ class RestaurantPage extends GetView<RestaurantController> {
                           top: false,
                           bottom: false,
                           sliver: SliverAppBar(
-                            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => controller.onWillPopBack),
+                            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: controller.onWillPopBack),
                             actions: [
-                              Obx(() {
-                                final filtered = controller.list.call().where((data) => data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
-                                return controller.argument['status'] == "open" ? GestureDetector(
-                                  onTap: () => Get.toNamed(Config.CART_ROUTE),
-                                  child: Container(
-                                    margin: EdgeInsets.only(right: 10),
-                                    child: Stack(
-                                      alignment: Alignment.bottomRight,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
-                                        ),
-                                        Badge(
-                                          badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                          showBadge: filtered.isNotEmpty,
-                                          borderSide: BorderSide(color: Colors.black, width: 1.5),
-                                          padding: EdgeInsets.all(5),
-                                        )
-                                      ]
+                              GetX<CartController>(
+                                builder: (cart) {
+                                  final filtered = cart.updatedProducts.call().where((data) => data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
+                                  return controller.argument['status'] == "open" ? GestureDetector(
+                                    onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().id),
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 10),
+                                      child: Stack(
+                                        alignment: Alignment.bottomRight,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.all(10),
+                                            child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
+                                          ),
+                                          Badge(
+                                            badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                            showBadge: filtered.isNotEmpty,
+                                            borderSide: BorderSide(color: Colors.black, width: 1.5),
+                                            padding: EdgeInsets.all(5),
+                                          )
+                                        ]
+                                      ),
                                     ),
-                                  ),
-                                ) : Container();
-                              })
+                                  ) : Container();
+                                }
+                              )
                             ],
                             expandedHeight: 330.0,
                             floating: false,
