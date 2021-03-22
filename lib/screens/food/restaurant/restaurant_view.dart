@@ -94,35 +94,43 @@ class RestaurantPage extends GetView<RestaurantController> {
                             pinned: true,
                             backgroundColor: Color(Config.WHITE),
                             elevation: 0,
-                            bottom: TabBar(
-                              controller: _.tabController,
-                              isScrollable: true,
-                              labelColor: Colors.black,
-                              indicatorSize: TabBarIndicatorSize.label,
-                              indicatorColor: Colors.transparent,
-                              unselectedLabelColor: Colors.grey,
-                              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
-                              onTap: (value) => _.selectedName(_.storeResponse.call().data[value].name),
-                              tabs: _.storeResponse.call().data.map((data) {
-                                return Obx(() => Tab(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text(data.name.capitalizeFirst, style: const TextStyle(fontSize: 15)),
-                                      const Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(topLeft: const Radius.circular(8), topRight: const Radius.circular(8)),
-                                          color: _.selectedName.call() == data.name ? Colors.black : Colors.transparent,
+                            bottom: PreferredSize(
+                              preferredSize: const Size.fromHeight(kToolbarHeight),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: TabBar(
+                                  controller: _.tabController,
+                                  isScrollable: true,
+                                  labelColor: Colors.black,
+                                  indicatorSize: TabBarIndicatorSize.label,
+                                  indicatorColor: Colors.transparent,
+                                  unselectedLabelColor: Colors.grey,
+                                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+                                  onTap: (value) => _.selectedName(_.storeResponse.call().data[value].name),
+                                  tabs: _.storeResponse.call().data.map((data) {
+                                    return Obx(() => Tab(
+                                      child: Container(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text(data.name.capitalizeFirst, style: const TextStyle(fontSize: 15)),
+                                            const Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: const BorderRadius.only(topLeft: const Radius.circular(8), topRight: const Radius.circular(8)),
+                                                color: _.selectedName.call() == data.name ? Colors.black : Colors.transparent,
+                                              ),
+                                              height: 4,
+                                              padding: EdgeInsets.symmetric(horizontal: data.name.length.toDouble() * 5),
+                                            )
+                                          ],
                                         ),
-                                        height: 4,
-                                        padding: EdgeInsets.symmetric(horizontal: data.name.length.toDouble() * 5),
                                       )
-                                    ],
-                                  )
-                                ));
-                              }).toList(), 
+                                    ));
+                                  }).toList(), 
+                                ),
+                              ),
                             ),
                             flexibleSpace: FlexibleSpaceBar(
                               collapseMode: CollapseMode.pin,

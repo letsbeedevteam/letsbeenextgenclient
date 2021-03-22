@@ -96,8 +96,8 @@ class ActiveOrderData {
         "rider_id": riderId,
         "status": status,
         "reason": reason,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
+        "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt.toIso8601String(),
     };
 }
 
