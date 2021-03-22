@@ -79,7 +79,6 @@ class MyApp extends StatelessWidget {
       defaultTransition: Transition.topLevel,
       initialBinding: SplashBind(),
       initialRoute: Config.SPLASH_ROUTE,
-      // home: SplashPage(),
     );
   }
 }

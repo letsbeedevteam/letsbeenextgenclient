@@ -4,15 +4,18 @@ class RefreshTokenResponse {
 
   RefreshTokenResponse({
     this.status,
-    this.data
+    this.data,
+    this.errorMessage
   });
 
-  int status;
+  String status;
   RefreshTokenData data;
+  String errorMessage;
 
   factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) => RefreshTokenResponse(
       status: json["status"],
       data:json["data"] == null ? RefreshTokenData() : RefreshTokenData.fromJson(json["data"]),
+      errorMessage: json["error_message"] == null ? null : json["error_message"]
   );
 
 }

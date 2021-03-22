@@ -8,18 +8,18 @@ class CellphoneConfirmationResponse {
     this.status,
     this.data,
     this.message,
-    this.code,
+    this.errorMessage
   });
 
-  int status;
+  String status;
   String message;
-  int code;
+  String errorMessage;
   CellphoneConfirmationData data;
 
   factory CellphoneConfirmationResponse.fromJson(Map<String, dynamic> json) => CellphoneConfirmationResponse(
     status: json['status'],
     message: json['message'] == null ? null : json['message'],
-    code: json['code'] == null ? null : json['code'],
+    errorMessage: json['error_message'] == null ? null : json['error_message'],
     data: json['data'] == null ? null : CellphoneConfirmationData.fromJson(json['data']),
   );
 }

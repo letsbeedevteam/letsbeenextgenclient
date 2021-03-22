@@ -16,7 +16,7 @@ class SearchMartResponse {
         this.data,
     });
 
-    int status;
+    String status;
     List<MartStores> data;
 
     factory SearchMartResponse.fromJson(Map<String, dynamic> json) => SearchMartResponse(

@@ -14,7 +14,7 @@ class OrderHistoryResponse {
         this.data,
     });
 
-    int status;
+    String status;
     List<OrderHistoryData> data;
 
     factory OrderHistoryResponse.fromJson(Map<String, dynamic> json) => OrderHistoryResponse(

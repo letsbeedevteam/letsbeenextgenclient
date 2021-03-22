@@ -7,19 +7,19 @@ class SignInResponse {
     this.status,
     this.data,
     this.message,
-    this.code
+    this.errorMessage
   });
 
-  int status;
+  String status;
   SignInData data;
   dynamic message;
-  int code;
+  String errorMessage;
 
   factory SignInResponse.fromJson(Map<String, dynamic> json) => SignInResponse(
     status: json['status'],
     data: json['data'] == null ? null : SignInData.fromJson(json['data']),
     message: json['message'] == null || json['message'] == '' ? null : json['message'],
-    code: json['code'] == null || json['code'] == '' ? null : json['code']
+    errorMessage: json['error_message'] == null || json['error_message'] == '' ? null : json['error_message']
   );
 }
 

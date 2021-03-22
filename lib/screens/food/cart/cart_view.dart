@@ -20,10 +20,7 @@ class CartPage extends GetView<CartController> {
           elevation: 0,
           titleSpacing: 0.0,
           centerTitle: true,
-          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: () {
-            controller.isEdit(false);
-            Get.back(closeOverlays: true);
-          }),
+          leading: IconButton(icon: Icon(Icons.chevron_left), onPressed: controller.onWillPopBack),
           title: Text(tr('myCart'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
           bottom: PreferredSize(
             child: Container(height: 1, color: Colors.grey.shade200),

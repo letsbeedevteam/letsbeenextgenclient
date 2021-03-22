@@ -11,7 +11,7 @@ class MartDashboardResponse {
     this.data
   });
 
-  int status;
+  String status;
   MartData data;
 
   factory MartDashboardResponse.fromJson(Map<String, dynamic> json) => MartDashboardResponse(

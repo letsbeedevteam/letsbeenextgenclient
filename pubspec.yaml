@@ -28,7 +28,7 @@ dependencies:
   loading_gifs: ^0.2.3
 
   # Dependency Injection
-  get: ^3.25.6
+  get: ^3.26.0
 
   # Shared preference
   get_storage: ^1.4.0

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/screens/auth/social/controller/auth_contract.dart';
 import 'package:letsbeeclient/services/auth_service.dart';
 import 'package:letsbeeclient/_utils/config.dart';
@@ -8,6 +11,9 @@ import 'package:letsbeeclient/_utils/config.dart';
 class AuthModel implements AuthModelContract {
 
   final AuthService _authService = Get.find();
+
+  StreamSubscription<SignInResponse> socialSignInSub;
+  
 
   @override
   void onGoogleSignInRequest(OnSocialSignInRequest listener) {
@@ -67,14 +73,14 @@ class AuthModel implements AuthModelContract {
   }
 
   void _request(String social, String token, OnSocialSignInRequest listener) {
-    _authService.socialRequest(social, token).then((response) { 
+    socialSignInSub = _authService.socialRequest(social, token).asStream().listen((response) { 
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         listener.onSocialSignInRequestSuccess(social, response.data);
       } else {
         listener.onSocialSignInRequestFailed(tr('somethingWentWrong'));
       }
-    }).catchError((onError) {
+    })..onError((onError) {
       if (onError.toString().contains('Connection timed out')) {
         listener.onSocialSignInRequestFailed('Connection timed out');
       } else if (onError.toString().contains('Operation timed out')) {
@@ -85,4 +91,7 @@ class AuthModel implements AuthModelContract {
       print('$social request onError: $onError');
     });
   }
+
+  @override
+  void onCloseSubscription() => socialSignInSub?.cancel();
 }

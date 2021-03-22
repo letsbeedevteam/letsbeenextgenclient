@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/models/chat_response.dart';
@@ -115,7 +116,7 @@ class ChatController extends GetxController {
   messageRiderRequest(String message) {
     _socketService.socket?.emitWithAck('message-rider', {'order_id': activeOrderData.call().id, 'rider_user_id': activeOrderData.call().rider.userId, 'message': message}, ack: (response) {
       print('sent $response');
-      if (response['status'] == 200) {
+      if (response['status'] == Config.OK) {
         final test = ChatData.fromJson(response['data']);
         chat.call().removeWhere((element) => !element.isSent);
         chat.call().add(test);
@@ -152,7 +153,7 @@ class ChatController extends GetxController {
     _socketService.socket?.emitWithAck('order-chats', {'order_id': orderId}, ack: (response) {
       'fetch: $response'.printWrapped();
       isLoading(false);
-      if (response['status'] == 200) {
+      if (response['status'] == Config.OK) {
 
         final chatResponse = ChatResponse.fromJson(response);
 

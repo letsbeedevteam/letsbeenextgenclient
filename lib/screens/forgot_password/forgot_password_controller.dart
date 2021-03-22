@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:code_field/code_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/request_forgot_pass_response.dart';
+import 'package:letsbeeclient/models/signin_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
 class ForgotPasswordController extends GetxController {
@@ -21,6 +25,8 @@ class ForgotPasswordController extends GetxController {
   var token = ''.obs;
   var code = ''.obs;
 
+  StreamSubscription<RequestForgotPassResponse> forogtSub;
+  StreamSubscription<SignInResponse> resendOtpSub;
 
   @override
   void onInit() {
@@ -33,6 +39,13 @@ class ForgotPasswordController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    forogtSub?.cancel();
+    resendOtpSub?.cancel();
+    super.onClose();
+  }
+
   void sendCode({String type}) {
     type == 'resend_code' ? isResendCodeLoading(true) : isLoading(true);
     dismissKeyboard(Get.context);
@@ -42,9 +55,10 @@ class ForgotPasswordController extends GetxController {
     } else {
 
       if(numberController.text.length == 10) {
-        _apiService.customerRequestForgotPassword(contactNumber: '0${numberController.text}').then((response) {
-          
-          if (response.status == 200) {
+
+        forogtSub = _apiService.customerRequestForgotPassword(contactNumber: '0${numberController.text}').asStream().listen((response) {
+
+          if (response.status == Config.OK) {
             token(response.data.token);
             code(response.message);
             if (type == 'resend_code') {
@@ -57,10 +71,11 @@ class ForgotPasswordController extends GetxController {
           }
 
           isLoading(false);
-        }).catchError((onError) {
-          print(onError.toString());
-          type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
-          errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
+
+        })..onError((onError) {
+            print(onError.toString());
+            type == 'resend_code' ? isResendCodeLoading(false) : isLoading(false);
+            errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
         });
 
       } else {
@@ -74,9 +89,9 @@ class ForgotPasswordController extends GetxController {
 
     print(token.call());
     isResendCodeLoading(true);
-    _apiService.resendOtp(token: token.call()).then((response) {
+    resendOtpSub = _apiService.resendOtp(token: token.call()).asStream().listen((response) {
 
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
         token(response.data.token);
         Future.delayed(Duration(seconds: 60)).then((data) => isResendCodeLoading(false));
         successSnackBarTop(message: tr('resendCodeSuccess'));
@@ -86,7 +101,7 @@ class ForgotPasswordController extends GetxController {
         errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
       }
 
-    }).catchError((onError) {
+    })..onError((onError) {
       isResendCodeLoading(false);
       errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
     });

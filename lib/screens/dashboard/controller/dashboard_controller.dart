@@ -14,6 +14,7 @@ import 'package:letsbeeclient/models/mart_dashboard_response.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/search_history.dart';
+import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:letsbeeclient/services/push_notification_service.dart';
 import 'package:letsbeeclient/services/socket_service.dart';
@@ -45,6 +46,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
   var isSearchLoading = false.obs;
   var isOnSearch = false.obs;
   var isSelectedLocation = false.obs;
+  var isSigningOut = false.obs;
 
   var pageIndex = 0.obs;
   var userCurrentNameOfLocation = ''.obs;
@@ -93,6 +95,9 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   var language = ''.obs;
 
+  var cart = Config.RESTAURANT.obs;
+  var products = RxList<Product>().obs;
+
   static DashboardController get to => Get.find();
 
   @override
@@ -109,6 +114,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     setupRefreshIndicator();
     setupTabs();
     refreshToken(page: 0);
+    updateCart();
 
     if (box.hasData(Config.LANGUAGE))language(box.read(Config.LANGUAGE)); else language('EN');
     
@@ -198,8 +204,10 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   void tapped(int tappedIndex) {
     if (tappedIndex == 0) {
+      cart(Config.RESTAURANT);
       if (foodScrollController.hasClients) foodScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     } else if (tappedIndex == 1) {
+      cart(Config.MART);
       if (martScrollController.hasClients) martScrollController.animateTo(1, duration: Duration(milliseconds: 500), curve: Curves.decelerate);
     }
     isOnSearch(false);
@@ -248,30 +256,35 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.disconnectSocket();
     clearData();
     switch (box.read(Config.SOCIAL_LOGIN_TYPE)) {
-        case Config.GOOGLE: _googleSignOut();
-        break;
-        case Config.FACEBOOK: _facebookSignOut();
-        break;
-        case Config.APPLE: _signOut();
-        break;
-        case Config.KAKAO: _signOut();
-        break;
-        default: _signOut();
-      }
+      case Config.GOOGLE: _googleSignOut();
+      break;
+      case Config.FACEBOOK: _facebookSignOut();
+      break;
+      case Config.APPLE: _signOut();
+      break;
+      case Config.KAKAO: _signOut();
+      break;
+      default: _signOut();
+    }
   }
 
   void _facebookSignOut() async {
-    await _facebookLogin.logOut();
-    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    isSigningOut(true);
+    await _facebookLogin.logOut().then((data) {
+      Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false).whenComplete(() => isSigningOut(false));
+    });
   }
 
   void _googleSignOut() async {
-    await _googleSignIn.disconnect();
-    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    isSigningOut(true);
+    await _googleSignIn.disconnect().then((data) {
+      Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false).whenComplete(() => isSigningOut(false));
+    });
   }
 
   void _signOut() {
-    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false);
+    isSigningOut(true);
+    Get.offNamedUntil(Config.AUTH_ROUTE, (route) => false).whenComplete(() => isSigningOut(false));
   }
 
   void _setRefreshCompleter() {
@@ -296,7 +309,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     socketService.socket?.emitWithAck('active-orders', '', ack: (response) {
       'Active orders: $response'.printWrapped();
       activeOrders(ActiveOrder.fromJson(response));
-      if (activeOrders.call().status == 200) {
+      if (activeOrders.call().status == Config.OK) {
         onGoingMessage(tr('noActiveOrder'));
         if (activeOrders.call().data.isEmpty) {
           activeOrders.nil();
@@ -316,7 +329,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       'Receive update: $response'.printWrapped();
       fetchActiveOrders();
       String message;
-      if (response['status'] == 200) {
+      if (response['status'] == Config.OK) {
         
         if (activeOrderData.call() != null) {
           if (activeOrderData.call().id == response['data']['id']) {
@@ -441,7 +454,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     isCancelOrderLoading(true);
     
     apiService.cancelOrder(orderId: activeOrderData.value.id, note: reasonController.text.trim()).then((response) {
-      if(response.status == 200) {
+      if(response.status == Config.OK) {
         reasonController.clear();
         reason.nil();
         activeOrderData.nil();
@@ -463,7 +476,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         );
       } else {
 
-        if (response.code  == 3009) {
+        if (response.status == Config.INVALID) {
           errorSnackbarTop(title: tr('oops'), message: tr('orderHasBeenDeclined'));
         } else {
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
@@ -489,7 +502,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     isLoading(true);
     apiService.refreshToken().then((response) {
       _setRefreshCompleter();
-      if(response.status == 200) {
+      if(response.status == Config.OK) {
 
         box.write(Config.USER_TOKEN, response.data.accessToken);
 
@@ -498,11 +511,20 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         } else {
           socketService.reconnectSocket(response.data.accessToken);
         }
-      } 
 
-      refreshSocket();
-      fetchRestaurantDashboard(page: page);
-      fetchMartDashboard(page: page);
+        refreshSocket();
+        fetchRestaurantDashboard(page: page);
+        fetchMartDashboard(page: page);
+
+      } else if (response.status == Config.UNAUTHORIZED) {
+        
+        print('SESSION EXPIRED!');
+
+      } else {
+        restaurantErrorMessage(tr('somethingWentWrong'));
+        martErrorMessage(tr('somethingWentWrong'));
+        box.remove(Config.PRODUCTS);
+      }
       
     }).catchError((onError) {
       isLoading(false);
@@ -516,7 +538,6 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         restaurantErrorMessage(tr('timedOut'));
         martErrorMessage(tr('timedOut'));
       } else {
-        box.remove(Config.PRODUCTS);
         restaurantErrorMessage(tr('somethingWentWrong'));
         martErrorMessage(tr('somethingWentWrong'));
         box.remove(Config.PRODUCTS);
@@ -537,7 +558,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       hasRestaurantError(false);
       _setRefreshCompleter();
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
 
         if(response.data.recentStores.isNotEmpty) {
           final Map<int, RestaurantStores> newMap = Map();
@@ -600,7 +621,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
       isSelectedLocation(false);
       hasMartError(false);
       _setRefreshCompleter();
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
 
         if (response.data.recentStores.isNotEmpty) {
           final Map<int, MartStores> newMap = Map();
@@ -680,7 +701,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
       apiService.searchRestaurant(name: restaurant.trim()).then((response) {
         _setRefreshCompleter();
-        if (response.status == 200) {
+        if (response.status == Config.OK) {
           
           if (response.data.isNotEmpty) {
             
@@ -753,7 +774,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
       apiService.searchMart(name: mart.trim()).then((response) {
         _setRefreshCompleter();
-        if (response.status == 200) {
+        if (response.status == Config.OK) {
           
           if (response.data.isNotEmpty) {
             
@@ -802,5 +823,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     searchHistoryList.call().removeWhere((key, value) => value.type == type);
     box.write(Config.SEARCH_HISTORY, searchHistoryToJson(searchHistoryList.call().values.toList()));
     update();
+  }
+
+  updateCart() {
+    if(box.hasData(Config.PRODUCTS)) {
+      products.call().assignAll(listProductFromJson(box.read(Config.PRODUCTS)));
+    } else {
+      products.call().clear();
+    }
   }
 }

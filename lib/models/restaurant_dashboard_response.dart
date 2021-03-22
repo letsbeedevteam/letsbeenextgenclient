@@ -11,7 +11,7 @@ class RestaurantDashboardResponse {
     this.data
   });
 
-  int status;
+  String status;
   RestaurantData data;
 
   factory RestaurantDashboardResponse.fromJson(Map<String, dynamic> json) => RestaurantDashboardResponse(

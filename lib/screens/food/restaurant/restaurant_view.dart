@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/store_response.dart';
+import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 // import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/food/restaurant/restaurant_controller.dart';
@@ -17,192 +18,197 @@ class RestaurantPage extends GetView<RestaurantController> {
   
   @override
     Widget build(BuildContext context) {
-      return GetX<RestaurantController>(
-        initState: controller.fetchStore(),
-        builder: (_) {
-          return _.storeResponse.call() == null ? Container(
-            child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-              ),
-              body: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _.hasError.call() ? Container() : CupertinoActivityIndicator(),
-                    Text(_.message.call()),
-                    _.hasError.call() ? RaisedButton(
-                      color: Color(Config.LETSBEE_COLOR),
-                      child: Text(tr('refresh')),
-                      onPressed: () => _.fetchStore(),
-                    ) : Container()
-                  ],
+      return WillPopScope(
+        onWillPop: controller.onWillPopBack,
+        child: GetX<RestaurantController>(
+          initState: (state) => controller.fetchStore(),
+          builder: (_) {
+            return _.storeResponse.call() == null ? Container(
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => controller.onWillPopBack),
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                ),
+                body: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _.hasError.call() ? Container() : CupertinoActivityIndicator(),
+                      Text(_.message.call()),
+                      _.hasError.call() ? RaisedButton(
+                        color: Color(Config.LETSBEE_COLOR),
+                        child: Text(tr('refresh')),
+                        onPressed: () => _.fetchStore(),
+                      ) : Container()
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ) : GestureDetector(
-            onTap: () => dismissKeyboard(Get.context),
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: NestedScrollView(
-                controller: controller.nestedScrollViewController,
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [
-                    SliverOverlapAbsorber(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                      sliver: SliverSafeArea(
-                        top: false,
-                        bottom: false,
-                        sliver: SliverAppBar(
-                          leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: () => Get.back()),
-                          actions: [
-                            Obx(() {
-                              final filtered = controller.list.call().where((data) => !data.isRemove && data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
-                              return controller.argument['status'] == "open" ? GestureDetector(
-                                onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().id),
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 10),
-                                  child: Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.all(10),
-                                        child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
-                                      ),
-                                      Badge(
-                                        badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                        showBadge: filtered.isNotEmpty,
-                                        borderSide: BorderSide(color: Colors.black, width: 1.5),
-                                        padding: EdgeInsets.all(5),
-                                      )
-                                    ]
-                                  ),
-                                ),
-                              ) : Container();
-                            })
-                          ],
-                          expandedHeight: 330.0,
-                          floating: false,
-                          pinned: true,
-                          backgroundColor: Color(Config.WHITE),
-                          elevation: 0,
-                          bottom: TabBar(
-                            controller: _.tabController,
-                            isScrollable: true,
-                            labelColor: Colors.black,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            indicatorColor: Colors.transparent,
-                            unselectedLabelColor: Colors.grey,
-                            unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
-                            onTap: (value) => _.selectedName(_.storeResponse.call().data[value].name),
-                            tabs: _.storeResponse.call().data.map((data) {
-                              return Obx(() => Tab(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(data.name.capitalizeFirst, style: const TextStyle(fontSize: 15)),
-                                    const Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(topLeft: const Radius.circular(8), topRight: const Radius.circular(8)),
-                                        color: _.selectedName.call() == data.name ? Colors.black : Colors.transparent,
-                                      ),
-                                      height: 4,
-                                      padding: EdgeInsets.symmetric(horizontal: data.name.length.toDouble() * 5),
-                                    )
-                                  ],
-                                )
-                              ));
-                            }).toList(), 
-                          ),
-                          flexibleSpace: FlexibleSpaceBar(
-                            collapseMode: CollapseMode.pin,
-                            background: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                    height: 200,
-                                    child: Center(
-                                      child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(height: 10),
-                                      _.store.call().location.name != '' ?
-                                      Text('${_.store.call().name} - ${_.store.call().location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
-                                      : Text(_.store.call().name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
-                                      Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                      Text('${_.store.call().address.barangay} ${_.store.call().address.city} ${_.store.call().address.state} ${_.store.call().address.country}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
-                                      Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                      Row(
+            ) : GestureDetector(
+              onTap: () => dismissKeyboard(Get.context),
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: NestedScrollView(
+                  controller: controller.nestedScrollViewController,
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      SliverOverlapAbsorber(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                        sliver: SliverSafeArea(
+                          top: false,
+                          bottom: false,
+                          sliver: SliverAppBar(
+                            leading: IconButton(icon: Image.asset(Config.PNG_PATH + 'back_button.png'), onPressed: controller.onWillPopBack),
+                            actions: [
+                              GetX<CartController>(
+                                builder: (cart) {
+                                  final filtered = cart.updatedProducts.call().where((data) => data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
+                                  return controller.argument['status'] == "open" ? GestureDetector(
+                                    onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().id),
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 10),
+                                      child: Stack(
+                                        alignment: Alignment.bottomRight,
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.all(5),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color: Colors.white
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
-                                                Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                                Text('${_.store.call().distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                                              ],
-                                            ),
+                                            margin: EdgeInsets.all(10),
+                                            child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
                                           ),
-                                          Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
-                                          Container(
+                                          Badge(
+                                            badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                            showBadge: filtered.isNotEmpty,
+                                            borderSide: BorderSide(color: Colors.black, width: 1.5),
                                             padding: EdgeInsets.all(5),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color: Colors.white
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
-                                                Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
-                                                Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                                              ],
-                                            ),
                                           )
-                                        ],
+                                        ]
+                                      ),
+                                    ),
+                                  ) : Container();
+                                }
+                              )
+                            ],
+                            expandedHeight: 330.0,
+                            floating: false,
+                            pinned: true,
+                            backgroundColor: Color(Config.WHITE),
+                            elevation: 0,
+                            bottom: TabBar(
+                              controller: _.tabController,
+                              isScrollable: true,
+                              labelColor: Colors.black,
+                              indicatorSize: TabBarIndicatorSize.label,
+                              indicatorColor: Colors.transparent,
+                              unselectedLabelColor: Colors.grey,
+                              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+                              onTap: (value) => _.selectedName(_.storeResponse.call().data[value].name),
+                              tabs: _.storeResponse.call().data.map((data) {
+                                return Obx(() => Tab(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(data.name.capitalizeFirst, style: const TextStyle(fontSize: 15)),
+                                      const Padding(padding: const EdgeInsets.symmetric(vertical: 3)),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(topLeft: const Radius.circular(8), topRight: const Radius.circular(8)),
+                                          color: _.selectedName.call() == data.name ? Colors.black : Colors.transparent,
+                                        ),
+                                        height: 4,
+                                        padding: EdgeInsets.symmetric(horizontal: data.name.length.toDouble() * 5),
                                       )
                                     ],
+                                  )
+                                ));
+                              }).toList(), 
+                            ),
+                            flexibleSpace: FlexibleSpaceBar(
+                              collapseMode: CollapseMode.pin,
+                              background: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                      height: 200,
+                                      child: Center(
+                                        child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: _.store.call().photoUrl, fit: BoxFit.fill, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) => Center(child: Icon(Icons.image_not_supported_outlined, size: 35)))
+                                    ),
                                   ),
-                                ),
-                                Divider(thickness: 0.3)
-                              ],
+                                  Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(height: 10),
+                                        _.store.call().location.name != '' ?
+                                        Text('${_.store.call().name} - ${_.store.call().location.name}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)
+                                        : Text(_.store.call().name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                        Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                                        Text('${_.store.call().address.barangay} ${_.store.call().address.city} ${_.store.call().address.state} ${_.store.call().address.country}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal), overflow: TextOverflow.ellipsis),
+                                        Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(20),
+                                                color: Colors.white
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(Config.PNG_PATH + 'address.png', height: 15, width: 15, color: Colors.black),
+                                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                                  Text('${_.store.call().distance?.toStringAsFixed(2)}KM', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
+                                            Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(20),
+                                                color: Colors.white
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(Config.PNG_PATH + 'delivery-time.png', height: 15, width: 15, color: Colors.black),
+                                                  Padding(padding: EdgeInsets.symmetric(horizontal: 2)),
+                                                  Text("37'", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(thickness: 0.3)
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ];
-                },
-                body: GetX<RestaurantController>(
-                  builder: (restaurant) {
-                    return _.storeResponse.call() != null ? TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: restaurant.tabController,
-                      children: restaurant.storeResponse.call().data.map((data) => _buildCategoryItem(data)).toList(),
-                    ) : Container();
+                      )
+                    ];
                   },
+                  body: GetX<RestaurantController>(
+                    builder: (restaurant) {
+                      return _.storeResponse.call() != null ? TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: restaurant.tabController,
+                        children: restaurant.storeResponse.call().data.map((data) => _buildCategoryItem(data)).toList(),
+                      ) : Container();
+                    },
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     }
 
@@ -684,7 +690,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                       Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: () => controller.addToCart(controller.product.call()),
+                                          onTap: () => controller.checkPreviousCart(controller.product.call()),
                                           child: Container(
                                             padding: EdgeInsets.all(10),
                                             decoration: BoxDecoration(

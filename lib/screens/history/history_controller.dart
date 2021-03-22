@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/order_history_response.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -15,14 +16,22 @@ class HistoryController extends GetxController {
   var history = OrderHistoryResponse().obs;
   var historyMessage = tr('emptyOrderHistory').obs;
   
+  StreamSubscription<OrderHistoryResponse> orderHistorySub;
+  
   @override
-    void onInit() {
-      history.nil();
-      
-      refreshCompleter = Completer();
+  void onInit() {
+    history.nil();
+    
+    refreshCompleter = Completer();
 
-      super.onInit();
-    }
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    orderHistorySub?.cancel();
+    super.onClose();
+  }
 
   void _setRefreshCompleter() {
     refreshCompleter?.complete();
@@ -31,10 +40,10 @@ class HistoryController extends GetxController {
 
   fetchOrderHistory() {
     isLoading(true);
-    apiService.orderHistory().then((response) {
+    orderHistorySub = apiService.orderHistory().asStream().listen((response) {
       isLoading(false);
       _setRefreshCompleter();
-      if (response.status == 200) {
+      if (response.status == Config.OK) {
 
         if (response.data.isNotEmpty) {
           history(response);
@@ -48,7 +57,7 @@ class HistoryController extends GetxController {
         historyMessage(tr('somethingWentWrong'));
       }
       
-    }).catchError((onError) {
+    })..onError((onError) {
       isLoading(false);
       _setRefreshCompleter();
       if (onError.toString().contains('Connection failed')) {

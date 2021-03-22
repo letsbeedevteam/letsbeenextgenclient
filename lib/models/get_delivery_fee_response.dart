@@ -11,7 +11,7 @@ class GetDeliveryFeeResponse {
     this.message
   });
 
-  int status;
+  String status;
   DeliveryFeeData data;
   String message;
 

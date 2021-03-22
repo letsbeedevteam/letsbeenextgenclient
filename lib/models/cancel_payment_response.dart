@@ -12,22 +12,22 @@ class CancelPaymentResponse {
     CancelPaymentResponse({
       this.status,
       this.message,
-      this.code
+      this.errorMessage
     });
 
-    int status;
+    String status;
     String message;
-    int code;
+    String errorMessage;
 
     factory CancelPaymentResponse.fromJson(Map<String, dynamic> json) => CancelPaymentResponse(
         status: json["status"],
         message: json["message"],
-        code: json["code"]
+        errorMessage: json["error_message"]
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
         "message": message,
-        "code": code
+        "error_message": errorMessage
     };
 }

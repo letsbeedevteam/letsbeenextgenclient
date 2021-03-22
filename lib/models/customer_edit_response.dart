@@ -13,19 +13,19 @@ class CustomerEditResponse {
         this.status,
         this.data,
         this.message,
-        this.code
+        this.errorMessage
     });
 
-    int status;
+    String status;
     Data data;
     String message;
-    int code;
+    String errorMessage;
 
     factory CustomerEditResponse.fromJson(Map<String, dynamic> json) => CustomerEditResponse(
         status: json["status"],
         data: Data.fromJson(json["data"]),
         message: json["message"],
-        code: json["code"] == null || json["code"] == '' ? null : json["code"]
+        errorMessage: json["code"] == null || json["code"] == '' ? null : json["code"]
     );
 
     Map<String, dynamic> toJson() => {

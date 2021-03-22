@@ -7,6 +7,7 @@ import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
 import 'package:letsbeeclient/models/restaurant_dashboard_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
+import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 import 'package:uuid/uuid.dart';
@@ -42,7 +43,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   var options = List<Option>().obs;
   var choiceCart = RxMap<int, ChoiceCart>().obs;
   var totalPriceOfAdditional = 0.00.obs;
-  var isSelectedProceed = false.obs;
+  var isSelectedProceed = true.obs;
 
   var hasNoChoices = false.obs;
   // var choiceIds = List<ChoiceCart>().obs;
@@ -134,9 +135,9 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     }
   }
 
-  void addToCart(Product product) {
-
-    print(product.toJson());
+  void checkPreviousCart(Product product) {
+    
+    final products = list.call().where((data) => data.storeId != store.call().id);
 
     var hasNotSelectedChoice = false;
 
@@ -149,62 +150,105 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     if (!hasNotSelectedChoice) {
       errorSnackbarTop(title: tr('oops'), message: tr('requiredChoice'));
     } else {
+
+      if (products.isNotEmpty) {
+        print('REMOVE THE PREVIOUS CART FIRST');
+
+        Get.defaultDialog(
+          title: tr('alertCartMessage'),
+          backgroundColor: Color(Config.WHITE),
+          titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
+          radius: 8,
+          content: Container(),
+          confirm: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            color: const Color(Config.LETSBEE_COLOR),
+            onPressed: () async {
+              
+              final products = listProductFromJson(box.read(Config.PRODUCTS));
+              list.call().assignAll(products);
+              list.call().removeWhere((data) => data.storeId != product.storeId);
+              box.write(Config.PRODUCTS, listProductToJson(list.call()));
+              Get.back();
+              addToCart(product);
+            },
+            child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+          ),
+          cancel: RaisedButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            color: const Color(Config.LETSBEE_COLOR),
+            onPressed: () => Get.back(),
+            child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+          ),
+          barrierDismissible: false
+        );
+
+      } else {
+        addToCart(product);
+      }
+    }
+  }
+
+  void addToCart(Product product) {
+
+    product.uniqueId = uuid.v4();
+    product.note = tFRequestController.text.trim().isEmpty ? null : tFRequestController.text;
+    product.userId = box.read(Config.USER_ID);
+    product.storeId = store.call().id;
+    product.quantity = quantity.call();
+    product.choiceCart = choiceCart.call().values.toList();
+    product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
+    product.type = Config.RESTAURANT;
+    product.removable = isSelectedProceed.call();
+
+    final prod = list.call().where((data) => data.storeId == store.call().id);
+
+    if (prod.isNotEmpty) {
       
-      product.uniqueId = uuid.v4();
-      product.note = tFRequestController.text.trim().isEmpty ? null : tFRequestController.text;
-      product.userId = box.read(Config.USER_ID);
-      product.storeId = store.call().id;
-      product.quantity = quantity.call();
-      product.isRemove = false;
-      product.choiceCart = choiceCart.call().values.toList();
-      product.additionalCart = additionals.where((element) => !element.selectedValue).map((data) => data.id).toList();
-      product.type = Config.RESTAURANT;
-      product.removable = isSelectedProceed.call();
-  
-      final prod = list.call().where((data) => !data.isRemove && data.storeId == store.call().id);
+      try {
 
-      if (prod.isNotEmpty) {
-        
-        try {
+        final filteredChoice = prod.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
 
-          final filteredChoice = prod.where((data) => choicesToJson2(data.choiceCart).contains(choicesToJson2(product.choiceCart)));
-
-          if (filteredChoice.toList().isEmpty) {
-            list.call().add(product);
-          } else {
-
-            if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart) && additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
-              filteredChoice.first.note = tFRequestController.text.isNotEmpty ? product.note : null; 
-              filteredChoice.first.quantity = filteredChoice.first.quantity + product.quantity;
-            } else {
-               list.call().add(product);
-            }
-
-          }
-        } catch (error) {
+        if (filteredChoice.toList().isEmpty) {
           list.call().add(product);
-          print(error);
+        } else {
+
+          if (choicesToJson2(filteredChoice.first.choiceCart) == choicesToJson2(product.choiceCart) && additionalsToJson2(filteredChoice.first.additionalCart) == additionalsToJson2(product.additionalCart)) {
+            filteredChoice.first.note = tFRequestController.text.isNotEmpty ? product.note : null; 
+            filteredChoice.first.quantity = filteredChoice.first.quantity + product.quantity;
+          } else {
+              list.call().add(product);
+          }
+
         }
-
-      } else {
-        print('Added cart when theres no product if found');
+      } catch (error) {
         list.call().add(product);
+        print(error);
       }
 
-      choiceCart.call().clear();
-      box.write(Config.PRODUCTS, listProductToJson(list.call()));
-      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
-      list.call().clear();
-      list.call().addAll(products);
-      CartController.to.getProducts();
+    } else {
+      print('Added cart when theres no product if found');
+      list.call().add(product);
+    }
 
-      if(Get.isSnackbarOpen) {
-         Get.back();
-         Future.delayed(Duration(milliseconds: 300));
-         Get.back();
-      } else {
-         Get.back();
-      }
+    choiceCart.call().clear();
+    box.write(Config.PRODUCTS, listProductToJson(list.call()));
+    final products = listProductFromJson(box.read(Config.PRODUCTS));
+    list.call().clear();
+    list.call().addAll(products);
+    CartController.to.getProducts();
+    DashboardController.to.updateCart();
+
+    if(Get.isSnackbarOpen) {
+        Get.back();
+        Future.delayed(Duration(milliseconds: 300));
+        Get.back();
+    } else {
+        Get.back();
     }
   }
 
@@ -219,32 +263,44 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     storeResponse.nil();
     apiService.fetchStoreById(id: argument['id']).then((response) {
       
-      if(response.data.isNotEmpty) {
+      if(response.status == Config.OK) {
 
-        storeResponse(response);
-        selectedName(storeResponse.call().data.first.name);
-        tabController = TabController(length: storeResponse.call().data.map((data) => data.name).length, vsync: this);
-        CartController.to..storeId(store.call().id);
-        tabController.addListener(() {
-          FocusScope.of(Get.context).requestFocus(FocusNode());
-          productName('');
-          update();
-        });
+        if(response.data.isNotEmpty) {
 
-        if (box.hasData(Config.PRODUCTS)) {
-          final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove);
-          list.call().clear();
-          list.call().addAll(products);
-          box.write(Config.PRODUCTS, listProductToJson(list.call()));
-          CartController.to.getProducts();
-        } 
+          storeResponse(response);
+          selectedName(storeResponse.call().data.first.name);
+          tabController = TabController(length: storeResponse.call().data.map((data) => data.name).length, vsync: this);
+          CartController.to..storeId(store.call().id);
+          tabController.addListener(() {
+            FocusScope.of(Get.context).requestFocus(FocusNode());
+            productName('');
+            update();
+          });
 
-        hasError(false);
+          if (box.hasData(Config.PRODUCTS)) {
+            final products = listProductFromJson(box.read(Config.PRODUCTS));
+            list.call().assignAll(products);
+            box.write(Config.PRODUCTS, listProductToJson(list.call()));
+            CartController.to.getProducts();
+          } else {
+            list.call().clear();
+            box.write(Config.PRODUCTS, listProductToJson(list.call()));
+            CartController.to.getProducts();
+          }
+
+          hasError(false);
+
+        } else {
+          storeResponse.nil();
+          hasError(true);
+          message(tr('emptyProduct'));
+        }
 
       } else {
+
         storeResponse.nil();
         hasError(true);
-        message(tr('emptyProduct'));
+        message(tr('somethingWentWrong'));
       }
 
     }).catchError((onError) {
@@ -256,4 +312,10 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
   }
 
   Future<Null> refreshStore() async => fetchStore();
+
+  Future<bool> onWillPopBack() async {
+    Get.back();
+    DashboardController.to.updateCart();
+    return true;
+  }
 }

@@ -7,6 +7,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/add_to_cart.dart';
+import 'package:letsbeeclient/models/create_order_response.dart';
+import 'package:letsbeeclient/models/get_delivery_fee_response.dart';
 import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart/mart_controller.dart';
@@ -39,11 +41,19 @@ class MartCartController extends GetxController {
   final addToCart = RxList<AddToCart>().obs;
   final updatedProducts = RxList<Product>().obs;
 
-  static MartCartController get to => Get.find();
+  StreamSubscription<CreateOrderResponse> createOrderSub;
+  StreamSubscription<GetDeliveryFeeResponse> deliveryFeeSub;
   
+  static MartCartController get to => Get.find();
+
   @override
   void onInit() {
     // cart.nil();
+    if (argument != null) {
+      storeId(argument['storeId']);
+    }
+    
+    if(box.hasData(Config.PRODUCTS)) getProducts();
     super.onInit();
   }
 
@@ -57,46 +67,33 @@ class MartCartController extends GetxController {
     }
   }
 
-  setEdit() {
-    isEdit(!isEdit.call());
-  }
-
+  setEdit() => isEdit(!isEdit.call());
+  
   Future<bool> onWillPopBack() async {
+    createOrderSub?.cancel()?.whenComplete(() {
+      isPaymentLoading(false);
+      isLoading(false);
+    });
+    deliveryFeeSub?.cancel()?.whenComplete(() {
+      isPaymentLoading(false);
+      isLoading(false);
+    });
     isEdit(false);
     Get.back(closeOverlays: true);
+    DashboardController.to.updateCart();
     return true;
   }
 
   updateCartRequest({Product product}) {
+    
+    product.quantity = quantity.call();
+    updatedProducts.call().where((data) => data.uniqueId == product.uniqueId).forEach((data) => data = product);
+    
+    if (argument == null) MartController.to.list.call()..assignAll(updatedProducts.call());
+    box.write(Config.PRODUCTS, listProductToJson(updatedProducts.call()));
+    getProducts();
     Get.back();
     successSnackBarTop(message: tr('updatedItem'), seconds: 1);
-      
-    final prod = listProductFromJson(box.read(Config.PRODUCTS));
-
-    if(product.quantity == quantity.call()) {
-      prod.where((data) => data.uniqueId == product.uniqueId).forEach((data) {
-        data.removable = product.removable;
-      });
-    }
-
-    if (product.quantity < quantity.call()) {
-      prod.where((data) => data.uniqueId == product.uniqueId);
-      for (var i = 0; i < quantity.call() - product.quantity; i++) {
-        prod.add(product);
-      }
-    } else {
-      print(product.quantity - quantity.call());
-      prod.where((data) => data.uniqueId == product.uniqueId).take(product.quantity - quantity.call()).forEach((data) {
-        data.removable = product.removable;
-        data.isRemove = true;
-      });
-     
-      prod.removeWhere((data) => data.isRemove);
-    }
-    
-    MartController.to.list.call()..clear()..addAll(prod);
-    box.write(Config.PRODUCTS, listProductToJson(prod));
-    getProducts();
   }
 
   deleteCart({String uniqueId}) {
@@ -105,7 +102,7 @@ class MartCartController extends GetxController {
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.uniqueId == uniqueId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    MartController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
+    if(argument == null) MartController.to.list.call().removeWhere((data) => data.uniqueId == uniqueId);
     getProducts();
   }
 
@@ -115,31 +112,29 @@ class MartCartController extends GetxController {
       errorSnackbarTop(message: tr('minimumTransaction'));
     } else {
 
+      dismissKeyboard(Get.context);
       isPaymentLoading(true);
       Get.back();
 
-      _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, noteToRider: noteToRider.text.trim(), carts: addToCart.call()).then((response) {
+      createOrderSub = _apiService.createOrder(storeId: storeId, paymentMethod: paymentMethod, noteToRider: noteToRider.text.trim(), carts: addToCart.call()).asStream().listen((response) {
           
         isPaymentLoading(false);
 
-        if(response.status == 200) {
+        if(response.status == Config.OK) {
           DashboardController.to.fetchActiveOrders();
 
-          if (response.code == 3506) {
+          if (response.status == Config.INVALID) {
             errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
           } else {
             noteToRider.clear();
             if (response.paymentUrl == null) {
               print('NO URL');
-              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
-
              
               clearCart(storeId);
-              DashboardController.to.fetchActiveOrders();
+              DashboardController.to..fetchActiveOrders()..updateCart();
 
-              Future.delayed(Duration(seconds: 1)).then((value) {
-                Get.back(closeOverlays: true);
-              });
+              Get.back(closeOverlays: true);
+              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
 
             } else {
               print('GO TO WEBVIEW: ${response.paymentUrl}');
@@ -154,14 +149,10 @@ class MartCartController extends GetxController {
 
         } else {
           
-          if (response.code == 3006) {
-            errorSnackbarTop(title: tr('oops'), message: response.message);
-          } else {
-            errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
-          }
+          errorSnackbarTop(title: tr('oops'), message: response.errorMessage);
         }
         
-      }).catchError((onError) {
+      })..onError((onError) {
         isPaymentLoading(false);
         if (onError.toString().contains('Connection failed')) message(tr('noInternetConnection')); else message(tr('somethingWentWrong'));
         print('Payment method: $onError');
@@ -173,72 +164,69 @@ class MartCartController extends GetxController {
     final prod = listProductFromJson(box.read(Config.PRODUCTS));
     prod.removeWhere((data) => data.storeId == storeId);
     box.write(Config.PRODUCTS, listProductToJson(prod));
-    MartController.to.list.call().removeWhere((data) => data.storeId == storeId);
+    if (argument == null) MartController.to.list.call().removeWhere((data) => data.storeId == storeId);
     getProducts();
   }
 
   Future<Null> refreshDeliveryFee() async => getDeliveryFee();
 
   getDeliveryFee() {
-    message(tr('loadingCart'));
-    isLoading(true);
-    hasError(true);
-    _apiService.getDeliveryFee(storeId: storeId.call()).then((response) {
-
-      if (response.status == 200) {
-        hasError(false);
-        deliveryFee(double.tryParse(response.data.deliveryFee));
-        getProducts();
-
-      } else {
-        hasError(true);
-        message(tr('somethingWentWrong'));
-      }
-
-      isLoading(false);
-
-    }).catchError((onError) {
+    if(updatedProducts.call().isNotEmpty) {
+      message(tr('loadingCart'));
+      isLoading(true);
       hasError(true);
-      isLoading(false);
-      message(tr('somethingWentWrong'));
-      print('Delivery Fee Error: $onError');
-    });
+      deliveryFeeSub = _apiService.getDeliveryFee(storeId: storeId.call()).asStream().listen((response) {
+
+        if (response.status == Config.OK) {
+          hasError(false);
+          deliveryFee(double.tryParse(response.data.deliveryFee));
+
+        } else {
+          hasError(true);
+          message(tr('somethingWentWrong'));
+        }
+
+        isLoading(false);
+
+      })..onError((onError) {
+        hasError(true);
+        isLoading(false);
+        message(tr('somethingWentWrong'));
+        print('Delivery Fee Error: $onError');
+      });
+    }
   }
 
   getProducts() {
 
-    final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => !data.isRemove && data.storeId == storeId.call());
+    if (box.hasData(Config.PRODUCTS)) {
 
-    final Map<String, Product> newMap = Map();
-    final quantity = {};
-    addToCart.call().clear();
-    
-    products.forEach((item) {
-      newMap[item.name] = item;
-      quantity[item.name] = quantity.containsKey(item.name) ? quantity[item.name] + 1 : 1;
-    });
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId == storeId.call());
+      addToCart.call().clear();
 
-    newMap.values.forEach((item) {
-      item.quantity = quantity[item.name];
+      if (products.isNotEmpty) {
+        updatedProducts.call().assignAll(products);
 
-      print('Product ID: ${item.name} == Quantity: ${item.quantity} == Price: ${item.customerPrice} == User ID: ${item.userId} == removable: ${item.removable}');
+        updatedProducts.call().forEach((product) { 
 
-      addToCart.call().add(
-        AddToCart(
-          productId: item.id,
-          variants: null,
-          additionals: null,
-          quantity: item.quantity,
-          note: null,
-          removable: item.removable
-        )
-      );
-    });
+          addToCart.call().add(
+            AddToCart(
+              productId: product.id,
+              variants: null,
+              additionals: null,
+              quantity: product.quantity,
+              note: null,
+              removable: product.removable
+            )
+          );
+        });
 
-    if (newMap.isNotEmpty) {
-      updatedProducts.call().assignAll(newMap.values);
-      totalPrice(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
-      subTotal(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+        totalPrice(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+        subTotal(updatedProducts.call().map((e) => double.tryParse(e.customerPrice) * e.quantity).reduce((value, element) => value + element)).roundToDouble();
+      } else {
+        updatedProducts.call().clear();
+      }
+
     } else {
       updatedProducts.call().clear();
     }

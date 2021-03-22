@@ -35,7 +35,10 @@ class DashboardPage extends GetView<DashboardController> {
                   backgroundColor: Color(Config.WHITE),
                   titleSpacing: 0.0,
                   centerTitle: false,
-                  title: controller.pageIndex() == 2 ? _buildMyAccount() : _buildDeliverTo()
+                  title: controller.pageIndex() == 2 ? _buildMyAccount() : _buildDeliverTo(),
+                  actions: [
+                    _buildCart()
+                  ],
                 ),
               );
             }),
@@ -116,6 +119,31 @@ class DashboardPage extends GetView<DashboardController> {
             );
           })
         )
+      ),
+    );
+  }
+
+  Widget _buildCart() {
+    final filtered = controller.products.call().where((data) => data.userId == controller.box.read(Config.USER_ID));
+    return GestureDetector(
+      onTap: () => Get.toNamed(controller.cart.call() == Config.RESTAURANT ? Config.CART_ROUTE : Config.MART_CART_ROUTE, arguments: {'storeId': filtered.isNotEmpty ? filtered.first.storeId : 0}),
+      child: Container(
+        margin: EdgeInsets.only(right: 10),
+        child: Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            Container(
+              margin: EdgeInsets.all(10),
+              child: Image.asset(filtered.isEmpty ? Config.PNG_PATH + 'jar-empty.png' : Config.PNG_PATH + 'jar-full.png', height: 30, width: 30),
+            ),
+            Badge(
+              badgeContent: Text(filtered.isEmpty ? '' : filtered.map((e) => e.quantity).reduce((value, element) => value+element).toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              showBadge: filtered.isNotEmpty,
+              borderSide: BorderSide(color: Colors.black, width: 1.5),
+              padding: EdgeInsets.all(5),
+            )
+          ]
+        ),
       ),
     );
   }

@@ -9,7 +9,7 @@ class SignUpResponse {
     this.data
   });
 
-  int status;
+  String status;
   String message;
   SignUpData data;
 

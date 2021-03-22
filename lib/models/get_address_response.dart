@@ -14,7 +14,7 @@ class GetAllAddressResponse {
         this.data,
     });
 
-    int status;
+    String status;
     List<AddressData> data;
 
     factory GetAllAddressResponse.fromJson(Map<String, dynamic> json) => GetAllAddressResponse(

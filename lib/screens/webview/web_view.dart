@@ -56,15 +56,14 @@ class WebViewPage extends GetView<WebController> {
                   gestureNavigationEnabled: true,
                   onPageFinished: (url) {
                     print('print: $url');
-                   
                     if (url.contains('payment') || url.contains('https://bux.ph/test/xendit/')) {
                       controller..isPaymentSuccess(true)..update();
-                      DashboardController.to.fetchActiveOrders();
                       if (controller.argument['type'] == Config.RESTAURANT) {
                         CartController.to.clearCart(controller.storeId.call());
                       } else {
                         MartCartController.to.clearCart(controller.storeId.call());
                       }
+                      DashboardController.to..fetchActiveOrders()..updateCart();
                     }
                     controller..isLoading(false);
                   },

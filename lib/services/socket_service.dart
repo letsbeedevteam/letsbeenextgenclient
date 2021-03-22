@@ -14,31 +14,18 @@ class SocketService extends GetxService {
       'extraHeaders': {'x-auth-token': token}
     });
 
-  
-    this.socket..disconnect()..connect();
-
-    // this.socket.on("connect", (_) => print('Connected'));
-    // this.socket.on("connecting", (_) => print('Connecting'));
-    // this.socket.on("reconnecting", (_) => print('Reconnecting'));
-    // this.socket.on("disconnect", (_) => print('Disconnected: $_'));
-    // this.socket.on("connect_error", (_) => print('Connect error: $_'));
-    // this.socket.on("connect_timeout", (_) => print('Connect timeout: $_'));
-    // this.socket.on("error", (_) => print('Error: $_'));
+    this.socket?.disconnect()?.connect();
   }
 
   void reconnectSocket(String token) {
-    if (this.socket != null) {
-      this.socket.io.options['extraHeaders'] = {'x-auth-token': token};
-      this.socket..disconnect()..connect();
-    }
+    this.socket?.io?.options['extraHeaders'] = {'x-auth-token': token};
+    this.socket?.disconnect()?.connect();
   }
 
   void disconnectSocket() {
-    if(this.socket != null) {
-      this.socket.disconnect();
-      this.socket.on("disconnect", (_) => print('Disconnected: $_'));
-      this.socket.dispose();
-      this.socket = null;
-    }
+    this.socket?.disconnect();
+    this.socket?.on("disconnect", (_) => print('Disconnected: $_'));
+    this.socket?.dispose();
+    this.socket = null;
   }
 }

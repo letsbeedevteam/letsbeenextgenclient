@@ -36,12 +36,7 @@ class AuthPage extends GetView<AuthController> {
             children: [
               _headerTitles(),
               _emailAndPassword(),
-              Obx(() {
-                return IgnorePointer(
-                  ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
-                  child: _footer()
-                );
-              })
+              _footer()
             ],
           ),
         )
@@ -73,7 +68,7 @@ class AuthPage extends GetView<AuthController> {
             Text(tr('signInFooter'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
             Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
             GestureDetector(
-              onTap: () => Get.toNamed(Config.SIGNUP_ROUTE),
+              onTap: () => controller.goToSignUp(),
               child: Text(tr('signUp'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR))),
             )
           ],
@@ -81,7 +76,10 @@ class AuthPage extends GetView<AuthController> {
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Text(tr('or'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-        _socialLoginButtons(),
+        Obx(() => IgnorePointer(
+          ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
+          child: _socialLoginButtons()
+        ))
       ],
     );
   }
@@ -113,27 +111,27 @@ class AuthPage extends GetView<AuthController> {
                 ]
               ),
               GestureDetector(
-                onTap: () => Get.toNamed(Config.FORGOT_PASS_ROUTE),
+                onTap: () => controller.goToForgotPassword(),
                 child: Text(tr('forgotPassword'), style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(Config.YELLOW_TEXT_COLOR)))
               ),
             ],
           ),
-          IgnorePointer(
-            ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
-            child: SizedBox(
-              width: Get.width * 0.85,
-              child: Obx(() {
-                return RaisedButton(
+          Obx(() {
+            return IgnorePointer(
+              ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
+              child: SizedBox(
+                width: Get.width * 0.85,
+                child: RaisedButton(
                   onPressed: () => controller.isLoading.call() ? null : controller.signIn(),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20) 
                   ),
                   color: Color(Config.LETSBEE_COLOR),
                   child: Text(tr(controller.isLoading.call() ? 'signingIn': 'signIn'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
-                );
-              }),
-            ),
-          )
+                )
+              ),
+            );
+          })
         ],
       ),
     );
@@ -146,45 +144,48 @@ class AuthPage extends GetView<AuthController> {
         Text(tr('email'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
         Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         Obx(() {
-          return SizedBox(
-            height: 40,
-            child: TextFormField(
-              enabled: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call(),
-              controller: controller.emailController,
-              focusNode: controller.emailFN,
-              onEditingComplete: () {
-                controller.passwordController.selection = TextSelection.fromPosition(TextPosition(offset: controller.passwordController.text.length));
-                controller.passwordFN.requestFocus();
-              },
-              textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
-              keyboardType: TextInputType.emailAddress, 
-              textInputAction: TextInputAction.next,
-              enableSuggestions: false,
-              autocorrect: false,
-              obscureText: false,
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Image.asset(Config.PNG_PATH + 'email.png', width: 10,),
-                ),
-                fillColor: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call() ? Colors.grey.shade200 : Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                contentPadding: EdgeInsets.only(left: 15, right: 15)
-              )
+          return IgnorePointer(
+            ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
+            child: SizedBox(
+              height: 40,
+              child: TextFormField(
+                enabled: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call(),
+                controller: controller.emailController,
+                focusNode: controller.emailFN,
+                onEditingComplete: () {
+                  controller.passwordController.selection = TextSelection.fromPosition(TextPosition(offset: controller.passwordController.text.length));
+                  controller.passwordFN.requestFocus();
+                },
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+                keyboardType: TextInputType.emailAddress, 
+                textInputAction: TextInputAction.next,
+                enableSuggestions: false,
+                autocorrect: false,
+                obscureText: false,
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.asset(Config.PNG_PATH + 'email.png', width: 10,),
+                  ),
+                  fillColor: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call() ? Colors.grey.shade200 : Colors.white,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  contentPadding: EdgeInsets.only(left: 15, right: 15)
+                )
+              ),
             ),
           );
         })
@@ -201,42 +202,45 @@ class AuthPage extends GetView<AuthController> {
         SizedBox(
           height: 40,
           child: Obx(() {
-            return TextFormField(
-              enabled: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call(),
-              controller: controller.passwordController,
-              focusNode: controller.passwordFN,
-              textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
-              textInputAction: TextInputAction.done,
-              enableSuggestions: false,
-              autocorrect: false,
-              obscureText: !controller.isShowPassword.call(),
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Image.asset(Config.PNG_PATH + 'password.png', width: 10,),
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () => controller.isShowPassword(!controller.isShowPassword.call()),
-                  icon: controller.isShowPassword.call() ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
-                ),
-                fillColor: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call() ? Colors.grey.shade200 : Colors.white,
-                filled: true,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none
-                ),
-                contentPadding: EdgeInsets.only(left: 15, right: 15)
-              )
+            return IgnorePointer(
+              ignoring: controller.isLoading.call() || controller.isFacebookLoading.call() || controller.isGoogleLoading.call() || controller.isKakaoLoading.call(),
+              child: TextFormField(
+                enabled: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call(),
+                controller: controller.passwordController,
+                focusNode: controller.passwordFN,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+                textInputAction: TextInputAction.done,
+                enableSuggestions: false,
+                autocorrect: false,
+                obscureText: !controller.isShowPassword.call(),
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.asset(Config.PNG_PATH + 'password.png', width: 10,),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () => controller.isShowPassword(!controller.isShowPassword.call()),
+                    icon: controller.isShowPassword.call() ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
+                  ),
+                  fillColor: !controller.isLoading.call() || !controller.isFacebookLoading.call() || !controller.isGoogleLoading.call() || !controller.isKakaoLoading.call() ? Colors.grey.shade200 : Colors.white,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none
+                  ),
+                  contentPadding: EdgeInsets.only(left: 15, right: 15)
+                )
+              ),
             );
           }),
         )

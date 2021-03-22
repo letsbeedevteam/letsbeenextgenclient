@@ -208,7 +208,7 @@ class CodegenLoader extends AssetLoader{
   "addedSuccessfully": "추가되었습니다.",
   "updatedSuccessfully": "변경되어었습니다",
   "language": "언어",
-  "logoutMessage": "정말 로그아웃하시겠습니까?",
+  "signOutMessage": "정말 로그아웃하시겠습니까?",
   "yes": "네",
   "no": "아니오",
   "searching": "검색 중…",
@@ -338,7 +338,7 @@ static const Map<String,dynamic> en_US = {
   "selectUpTo": "Select up to",
   "exampleInstruction": "E.g. Remove onions please.",
   "proceedIfNotAvail": "How do you like to proceed if this is not available?",
-  "removeThisTime": "Remove this time",
+  "removeThisTime": "Remove this item",
   "cancelEntireOrder": "Cancel the entire order",
   "addToCart": "Add to Cart",
   "updateCart": "Update cart",
@@ -420,7 +420,7 @@ static const Map<String,dynamic> en_US = {
   "addedSuccessfully": "Added successfully",
   "updatedSuccessfully": "Updated successfully",
   "language": "Language",
-  "logoutMessage": "Do you really want to log out your account?",
+  "signOutMessage": "Do you really want to sign out your account?",
   "yes": "Yes",
   "no": "No",
   "searching": "Searching...",
@@ -435,7 +435,13 @@ static const Map<String,dynamic> en_US = {
   "loadingCart": "Loading Cart...",
   "loadingPayment": "Loading Payment...",
   "pleaseWait": "Please wait...",
-  "paymentMethod": "Payment Method"
+  "paymentMethod": "Payment Method",
+
+
+  // NEW
+  "signingOut": "Signing Out...",
+  "alertCartMessage": "You already selected different restaurant/mart. If you continue, your cart selection will be removed.",
+  "alertAddressMessage": "By changing your current location, you will lose your selections inside the cart. Would you like to continue?"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

@@ -32,7 +32,7 @@ class StoreResponse {
     this.data,
   });
 
-  int status;
+  String status;
   List<Data> data;
 
   factory StoreResponse.fromJson(Map<String, dynamic> json) => StoreResponse(
@@ -86,7 +86,6 @@ class Product {
     this.note,
     this.uniqueId,
     this.storeId,
-    this.isRemove,
     this.userId,
     this.removable
   });
@@ -109,7 +108,6 @@ class Product {
   String note;
   String uniqueId;
   int storeId;
-  bool isRemove;
   int userId;
   bool removable;
 
@@ -131,7 +129,6 @@ class Product {
     note: json["note"],
     uniqueId: json["uniqueId"],
     storeId: json["storeId"],
-    isRemove: json["isRemove"] == null ? false : json["isRemove"],
     userId: json["userId"],
     removable: json["removable"] == null ? false : json["removable"]
   );
@@ -154,7 +151,6 @@ class Product {
     "note": note,
     "uniqueId": uniqueId,
     "storeId": storeId,
-    "isRemove": isRemove,
     "userId": userId,
     "removable": removable
   };

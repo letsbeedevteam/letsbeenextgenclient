@@ -7,6 +7,7 @@ abstract class AuthModelContract {
   void onFacebookSignInRequest(OnSocialSignInRequest listener) {}
   void onKakaoSignInRequest(OnSocialSignInRequest listener) {}
   void onAppleSignInRequest(OnSocialSignInRequest listener) {}
+  void onCloseSubscription() {}
 }
 
 abstract class AuthViewContract extends BaseView {
@@ -18,6 +19,7 @@ abstract class AuthPresenterContract {
   void facebookSignIn() {}
   void kakaoSignIn() {}
   void appleSignIn() {}
+  void closeSubscriptions() {}
 }
 
 // LISTENER

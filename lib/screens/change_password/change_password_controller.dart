@@ -1,10 +1,14 @@
 
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
 import 'package:letsbeeclient/models/change_pass_request.dart';
+import 'package:letsbeeclient/models/change_pass_response.dart';
+import 'package:letsbeeclient/models/fogot_pass_response.dart';
 import 'package:letsbeeclient/models/forgot_password_request.dart';
 import 'package:letsbeeclient/services/api_service.dart';
 
@@ -28,7 +32,17 @@ class ChangePasswordController extends GetxController {
   var isShowRepeatPass = false.obs;
 
   var isForgotPas = false.obs;
-  
+
+  StreamSubscription<ForgotPassResponse> forgotPassSub;
+  StreamSubscription<ChangePasswordResponse> changePassSub;
+
+  @override
+  void onClose() {
+    forgotPassSub?.cancel();
+    changePassSub?.cancel();
+    super.onClose();
+  }
+
   @override
   void onInit() {
     argument != null ? isForgotPas(true) : isForgotPas(false);
@@ -52,9 +66,9 @@ class ChangePasswordController extends GetxController {
         newPassword: newPassController.text
       );
 
-      _apiService.customerForgotPassword(request: request).then((response) {
+      forgotPassSub = _apiService.customerForgotPassword(request: request).asStream().listen((response) {
       
-        if (response.status == 200) {
+        if (response.status == Config.OK) {
           _sucessPopUp();
         } else {
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
@@ -62,7 +76,7 @@ class ChangePasswordController extends GetxController {
 
         isLoading(false);
         
-      }).catchError((onError) {
+      })..onError((onError) {
         isLoading(false);
         print('Forgot pass error: $onError');
         errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
@@ -97,9 +111,9 @@ class ChangePasswordController extends GetxController {
           confirmPassword: repeatPassController.text
         );
 
-        _apiService.customerChangePassword(request: request).then((response) {
+        changePassSub = _apiService.customerChangePassword(request: request).asStream().listen((response) {
           
-          if (response.status == 200) {
+          if (response.status == Config.OK) {
             successSnackBarTop(message: tr('updatedSuccessfully'));
             oldPassController.clear();
             newPassController.clear();
@@ -110,7 +124,7 @@ class ChangePasswordController extends GetxController {
 
           isLoading(false);
           
-        }).catchError((onError) {
+        })..onError((onError) {
           isLoading(false);
           print('Change pass error: $onError');
           errorSnackbarTop(title: tr('oops'), message: tr('somethingWentWrong'));
