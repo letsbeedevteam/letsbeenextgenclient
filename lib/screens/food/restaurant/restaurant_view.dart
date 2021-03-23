@@ -66,7 +66,7 @@ class RestaurantPage extends GetView<RestaurantController> {
                                 builder: (cart) {
                                   final filtered = cart.updatedProducts.call().where((data) => data.storeId == controller.store.call().id && data.userId == controller.box.read(Config.USER_ID));
                                   return controller.argument['status'] == "open" ? GestureDetector(
-                                    onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: controller.store.call().id),
+                                    onTap: () => Get.toNamed(Config.CART_ROUTE, arguments: {'storeId': controller.store.call().id}),
                                     child: Container(
                                       margin: EdgeInsets.only(right: 10),
                                       child: Stack(

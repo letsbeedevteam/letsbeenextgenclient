@@ -12,6 +12,8 @@ class WebController extends GetxController {
   final ApiService apiService = Get.find();
   final argument = Get.arguments;
 
+  WebViewController webViewController;
+
   var isLoading = true.obs;
   var isCancelPaymentLoading = false.obs;
   
@@ -19,6 +21,8 @@ class WebController extends GetxController {
 
   var orderId = 0.obs;
   var storeId = 0.obs;
+
+  var hasError = false.obs;
 
   @override
   void onInit() {

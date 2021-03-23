@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
+import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/food/cart/cart_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_controller.dart';
@@ -53,7 +54,13 @@ class AddressController extends GetxController {
 
     if (box.read(Config.USER_ADDRESS_ID) != data.id) {
       if(box.hasData(Config.PRODUCTS)) {
+       
+       if (listProductFromJson(box.read(Config.PRODUCTS)).isEmpty) {
+        updateSelectedAddress(data, false);
+       } else {
         addresssDialog(data);
+       }
+
       } else {
         updateSelectedAddress(data, false);
       }

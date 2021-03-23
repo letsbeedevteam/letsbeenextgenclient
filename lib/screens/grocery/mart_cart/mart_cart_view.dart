@@ -8,6 +8,7 @@ import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/screens/grocery/mart_cart/mart_cart_controller.dart';
 import 'package:loading_gifs/loading_gifs.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class MartCartPage extends GetView<MartCartController> {
 
@@ -57,7 +58,7 @@ class MartCartPage extends GetView<MartCartController> {
                       onPressed: () => _.refreshDeliveryFee(),
                   ) : Container()
                 ],
-              ) : _scrollView(controller);
+              ) : _scrollView();
             },
           )
         ),
@@ -119,192 +120,188 @@ class MartCartPage extends GetView<MartCartController> {
     );
   }
 
-  Widget _scrollView(MartCartController _) {
-    final activeCart = _.updatedProducts.call().where((data) => data.storeId == _.storeId.call());
-    return RefreshIndicator(
-      onRefresh: () => controller.refreshDeliveryFee(),
+  Widget _header() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDeliverTo(),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+        ),
+      ],
+    );
+  }
+
+  Widget _footer() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              physics: _.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
-              child: Container(
-                margin: EdgeInsets.only(top: 10),
-                child: Column(
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${tr('subTotal')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                  Text('₱${(controller.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                ],
+              ),
+              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${tr('deliveryFee')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                  Text('₱${controller.deliveryFee.call().toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Divider(thickness: 1, color:  Colors.grey.shade200),
+              ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildDeliverTo(),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('${tr('orderSummary')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
-                          IgnorePointer(
-                            ignoring: _.isPaymentLoading.call(),
-                            child: SizedBox(
-                              height: 30,
-                              child: RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                color: Color(Config.LETSBEE_COLOR),
-                                child: _.isEdit.call() ? Text(tr('cancel'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)) : Text(tr('edit'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                                onPressed: controller.setEdit,
-                              )
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(children: activeCart.map((e) => _buildMenuItem(e, _)).toList())
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('${tr('subTotal')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                  Text('₱${(_.subTotal.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                                ],
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('${tr('deliveryFee')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                  Text('₱${controller.deliveryFee.call().toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                child: Divider(thickness: 1, color:  Colors.grey.shade200),
-                              ),
-                              Container(
-                                alignment: Alignment.bottomCenter,
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('${tr('total')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                    Text('₱${(_.totalPrice.call() + controller.deliveryFee.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                          _buildNoteToRider()
-                        ],
-                      ),
-                    )
+                    Text('${tr('total')}:', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                    Text('₱${(controller.totalPrice.call() + controller.deliveryFee.call()).toStringAsFixed(2)}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15))
                   ],
                 ),
-              ),
-            ),
+              )
+            ],
           ),
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(10),
-            child: IgnorePointer(
-              ignoring: _.isPaymentLoading.call(),
-              child: Container(
-                width: Get.width,
-                child: RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(_.isEdit.call() ? tr('done') : _.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
-                  ),
-                  onPressed: () => _.isEdit.call() ? _.setEdit() : paymentBottomsheet(activeCart.first.storeId)
-                ),
-              ),
-            ),
-          )
+          _buildNoteToRider()
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem(Product product, MartCartController _) {
-    return IgnorePointer(
-      ignoring: !_.isEdit.call(),
-      child: GestureDetector(
-        onTap: () => _bottomSheet(product),
-        child: Container(
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: controller.isEdit.call() ? Colors.grey.shade300 : Color(Config.WHITE),
-                                  blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
-                                  offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
-                                )
-                              ]
-                            ),
-                            curve: Curves.easeInOut,
-                            child: Container(
-                              padding: _.isEdit.call() ? EdgeInsets.all(5) : EdgeInsets.zero,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // GestureDetector(child: Icon(Icons.error_outline, color: Colors.red), onTap: () => print('Show dialog')),
-                                      Expanded(
-                                        child: Container(
-                                          child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
-                                        ),
-                                      ),
-                                      Text('₱${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          ),
-                        ),
-                        _.isEdit.call() ? Padding(padding: EdgeInsets.only(left: 5)) : Container(),
-                        AnimatedSwitcher(
-                          duration: Duration(milliseconds: 100),
-                          child: controller.isEdit.call() ? 
-                          GestureDetector(key: UniqueKey(), child: Icon(Icons.cancel_outlined, color: Colors.black), onTap: () {
-                            deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId);
-                          }) : Container(key: UniqueKey())
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5),
-                      child: Divider(thickness: 1, color: Colors.grey.shade200),
-                    ),
-                  ],
+  Widget _scrollView() {
+    return RefreshIndicator(
+      onRefresh: () => controller.refreshDeliveryFee(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Obx(() {
+            return Expanded(
+              child: SingleChildScrollView(
+                physics: controller.updatedProducts.call().isEmpty ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: [
+                      _header(),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: Column(children: controller.updatedProducts.call().map((e) => _buildMenuItem(e)).toList())
+                      ),
+                      _footer()
+                    ],
+                  ),
                 ),
-              )
+              ),
+            );
+          }),
+          Obx(() {
+            return Container(
+              color: Colors.white,
+              padding: EdgeInsets.all(10),
+              child: IgnorePointer(
+                ignoring: controller.isPaymentLoading.call(),
+                child: Container(
+                  width: Get.width,
+                  child: RaisedButton(
+                    color: Color(Config.LETSBEE_COLOR),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(controller.isPaymentLoading.call() ? tr('orderProcessing') : tr('placeOrder'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+                    ),
+                    onPressed: () => paymentBottomsheet(controller.updatedProducts.call().first.storeId)
+                  ),
+                ),
+              ),
+            );
+          })
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(Product product) {
+    return GestureDetector(
+      onTap: () => _bottomSheet(product),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Slidable(
+          actionPane: SlidableScrollActionPane(),
+          actionExtentRatio: 0.25,
+          secondaryActions: [
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(left: 20, bottom: 5),
+              height: Get.height,
+              child: IconSlideAction(
+                caption: tr('delete'),
+                color: Colors.red,
+                icon: Icons.delete,
+                onTap: () => deleteDialog(menu: '${product.quantity}x ${product.name}', uniqueId: product.uniqueId),
+              ),
+            )
+          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 500),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: controller.isEdit.call() ? Colors.grey.shade200 : Color(Config.WHITE),
+                        boxShadow: [
+                          BoxShadow(
+                            color: controller.isEdit.call() ? Colors.grey.shade300 : Color(Config.WHITE),
+                            blurRadius: controller.isEdit.call() ? 1.0 : 0.0,
+                            offset: controller.isEdit.call() ? Offset(2.0, 4.0) : Offset(0.0, 0.0)
+                          )
+                        ]
+                      ),
+                      curve: Curves.easeInOut,
+                      child: Container(
+                        padding: controller.isEdit.call() ? EdgeInsets.all(5) : EdgeInsets.zero,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    child: Text('${product.quantity}x ${product.name}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15)),
+                                  ),
+                                ),
+                                Text('₱${(double.tryParse(product.customerPrice) * product.quantity).toStringAsFixed(2)}' , style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 14))
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 15),
+                child: Divider(thickness: 1, color: Colors.grey.shade200),
+              ),
             ],
           ),
         ),
