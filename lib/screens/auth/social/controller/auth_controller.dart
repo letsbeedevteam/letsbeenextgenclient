@@ -39,11 +39,21 @@ class AuthController extends GetxController implements AuthViewContract {
   void onInit() {
     _presenter = AuthPresenter(controller: this);
 
-    if (_box.hasData(Config.LANGUAGE)) {
-      language(_box.read(Config.LANGUAGE));
-    } else {
-      language('EN');
+    language(_box.hasData(Config.LANGUAGE) ? _box.read(Config.LANGUAGE) : 'EN');
+    isRememberMe(_box.hasData(Config.IS_REMEMBER_ME) ? _box.read(Config.IS_REMEMBER_ME) : false);
+
+    if(_box.hasData(Config.USER_EMAIL) && _box.hasData(Config.USER_PASSWORD)) {
+      
+      if (isRememberMe.call()) {
+        emailController.text = _box.read(Config.USER_EMAIL);
+        passwordController.text = _box.read(Config.USER_PASSWORD);
+        passwordController.selectedText();
+      } else {
+        _box.remove(Config.USER_EMAIL);
+        _box.remove(Config.USER_PASSWORD);
+      } 
     }
+
     super.onInit();
   }
 
@@ -52,6 +62,7 @@ class AuthController extends GetxController implements AuthViewContract {
     isFacebookLoading(false);
     isKakaoLoading(false);
     isLoading(false);
+    setRememberMe(false);
     signInSub?.cancel();
     _presenter.closeSubscriptions();
   });
@@ -61,9 +72,15 @@ class AuthController extends GetxController implements AuthViewContract {
     isFacebookLoading(false);
     isKakaoLoading(false);
     isLoading(false);
+    setRememberMe(false);
     signInSub?.cancel();
     _presenter.closeSubscriptions();
   });
+
+  setRememberMe(bool isRememberMe) {
+    this.isRememberMe(isRememberMe);
+    _box.write(Config.IS_REMEMBER_ME, this.isRememberMe.call());
+  }
 
   @override
   void onClose() {
@@ -94,6 +111,11 @@ class AuthController extends GetxController implements AuthViewContract {
         signInSub = _apiService.customerSignIn(email: emailController.text, password: passwordController.text).asStream().listen((response) {
           if (response.status == Config.OK) {
             
+            if(isRememberMe.call()) {
+              _box.write(Config.USER_EMAIL, emailController.text);
+              _box.write(Config.USER_PASSWORD, passwordController.text);
+            }
+
             _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson()).whenComplete(() {
               emailController.clear();

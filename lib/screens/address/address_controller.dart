@@ -94,7 +94,10 @@ class AddressController extends GetxController {
 
   updateSelectedAddress(AddressData data, bool dismiss) async {
     
-    await box.remove(Config.PRODUCTS).then((data) => DashboardController.to.updateCart());
+    final list = listProductFromJson(box.read(Config.PRODUCTS));
+    list.removeWhere((data) => data.userId == box.read(Config.USER_ID));
+    box.write(Config.PRODUCTS, listProductToJson(list));
+    DashboardController.to.updateCart();
    
     DashboardController.to
     ..updateCurrentLocation(data)
