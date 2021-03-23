@@ -103,20 +103,23 @@ class HomePage extends GetView<DashboardController> {
                 onPressed: () => _searchBottomsheet(),
               ),
             ),
-            // Container(
-            //   margin: EdgeInsets.only(top: 10),
-            //   height: 80,
-            //   child: ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     children: [
-            //       _buildCategory(title: 'Filipino'),
-            //       _buildCategory(title: 'Korean'),
-            //       _buildCategory(title: 'Protein'),
-            //       _buildCategory(title: 'Chinese'),
-            //       _buildCategory(title: 'Vietnamese'),
-            //     ]
-            //   ),
-            // ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              height: 80,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _buildCategory(title: 'Filipino', imgPath: Config.PNG_PATH + 'fil.png'),
+                  _buildCategory(title: 'Korean', imgPath: Config.PNG_PATH + 'kor.png'),
+                  _buildCategory(title: 'Chinese', imgPath: Config.PNG_PATH + 'chi.png'),
+                  _buildCategory(title: 'Fast Food', imgPath: Config.PNG_PATH + 'fast.png'),
+                  _buildCategory(title: 'Cafe', imgPath: Config.PNG_PATH + 'coffee.png'),
+                  _buildCategory(title: 'Japanese', imgPath: Config.PNG_PATH + 'jap.png'),
+                  _buildCategory(title: 'Asian', imgPath: Config.PNG_PATH + 'asian.png'),
+                  _buildCategory(title: 'Western', imgPath: Config.PNG_PATH + 'west.png'),
+                ]
+              ),
+            ),
             controller.recentRestaurants.call().isEmpty ? Container() : Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,24 +170,24 @@ class HomePage extends GetView<DashboardController> {
     );
   }
 
-  // Widget _buildCategory({String title}) {
-  //   return GestureDetector(
-  //     child: Container(
-  //       margin: EdgeInsets.symmetric(horizontal: 5),
-  //       child: Column(
-  //         children: [
-  //           Container(
-  //             margin: EdgeInsets.only(left: 10, right: 10),
-  //             child: Image.asset(Config.PNG_PATH + 'fil.png', height: 50, width: 50),
-  //           ),
-  //           Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-  //           Expanded(child: Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)))
-  //         ],
-  //       ),
-  //     ),
-  //     onTap: () => print('Category'),
-  //   );
-  // }
+  Widget _buildCategory({String title, String imgPath}) {
+    return GestureDetector(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Image.asset(imgPath, height: 40, width: 40),
+            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+            Expanded(child: Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black)))
+          ],
+        ),
+      ),
+      onTap: () => controller.fetchSearchRestaurant(title),
+    );
+  }
 
   Widget _loadingPage() {
     return Container(
@@ -329,10 +332,11 @@ class HomePage extends GetView<DashboardController> {
             ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               child: Container(
+                height: 130,
                 margin: EdgeInsets.only(bottom: 5),
                 alignment: Alignment.center,
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) {
-                  return error.toString().contains(restaurant?.photoUrl) ? Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5);
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) {
+                  return error.toString().contains(restaurant?.photoUrl) ? Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5);
                 }) ,
               ),
             ),
