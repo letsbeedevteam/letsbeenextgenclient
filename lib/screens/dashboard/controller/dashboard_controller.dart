@@ -302,6 +302,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
+  goToActiveOrder(ActiveOrderData data) {
+    activeOrderData(data);
+    Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
+  }
+
   goToRiderLocationPage() => Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
 
   fetchActiveOrders() {
@@ -343,7 +348,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
             message = tr('orderDeclined').replaceAll('{}', name);
-            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message, payload: activeOrderDataToJson(order));
 
             if(Get.currentRoute == Config.DASHBOARD_ROUTE) {
               if (Get.isDialogOpen) Get.back();
@@ -370,17 +375,19 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
             message = tr('orderAccepted').replaceAll('{}', name);
-            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message, payload: activeOrderDataToJson(order));
           }
             break;
           case 'rider-accepted': {
+            final order = ActiveOrderData.fromJson(response['data']);
             message = tr('riderAccept');
-            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message, payload: activeOrderDataToJson(order));
           }
             break;
           case 'rider-picked-up': {
+            final order = ActiveOrderData.fromJson(response['data']);
             message = tr('riderPickUp');
-            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message, payload: activeOrderDataToJson(order));
           }
             break;
           case 'delivered': {
@@ -388,7 +395,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
             final name = order.activeStore.locationName == null || order.activeStore.locationName == '' ? order.activeStore.name : '${order.activeStore.name} - ${order.activeStore.locationName}';
 
             message = tr('orderDelivered').replaceAll('{}', name);
-            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message);
+            pushNotificationService.showNotification(title: 'Hi ${box.read(Config.USER_NAME)}!', body: message, payload: activeOrderDataToJson(order));
 
             // if (Get.currentRoute == Config.ACTIVE_ORDER_ROUTE) Get.back(closeOverlays: true);
 

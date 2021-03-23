@@ -5,8 +5,10 @@
 import 'dart:convert';
 
 ActiveOrder activeOrderFromJson(String str) => ActiveOrder.fromJson(json.decode(str));
-
 String activeOrderToJson(ActiveOrder data) => json.encode(data.toJson());
+
+ActiveOrderData activeOrderDataFromJson(String str) => ActiveOrderData.fromJson(json.decode(str));
+String activeOrderDataToJson(ActiveOrderData data) => json.encode(data.toJson());
 
 class ActiveOrder {
     ActiveOrder({
@@ -67,7 +69,7 @@ class ActiveOrderData {
 
     factory ActiveOrderData.fromJson(Map<String, dynamic> json) => ActiveOrderData(
         products: json["products"] == null ?  List<ActiveOrderProduct>() : List<ActiveOrderProduct>.from(json["products"].map((x) => ActiveOrderProduct.fromJson(x))),
-        activeStore: ActiveStore.fromJson(json["store"]),
+        activeStore: json["store"] == null ? null : ActiveStore.fromJson(json["store"]),
         rider: json["rider"] == null || json["rider"] == 'null' ? null : Rider.fromJson(json['rider']),
         user: json["user"] == null || json["user"] == 'null' ? null : User.fromJson(json['user']),
         fee: Fee.fromJson(json["fee"]),

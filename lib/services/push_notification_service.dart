@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/models/chat_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 
@@ -39,21 +40,23 @@ class PushNotificationService extends GetxService {
   }
 
   Future onSelectionNotification(String payload) async {
-    // switch (payload) {
-    //   case 'rider-chat':
-        // DashboardController.to..tapped(4)..tabController.index = 0..goToChatPage();
-        // DashboardController.to..goToChatPage(fromNotificartion: true);
-        // break;
-      // case 'active-order':
-      //   DashboardController.to..tapped(4)..tabController.index = 0;
-      //   break;
-    // }
-
-    final chatData = chatDataFromJson(payload);
-
+    
     if (payload != null) {
-      DashboardController.to.goToChatPage(fromNotificartion: true, data: chatData);
-    }
+
+      // print(chatDataFromJson(payload).id);
+
+      // try {
+
+      //   final activeOrderData = activeOrderDataFromJson(payload);
+      //   DashboardController.to.goToActiveOrder(activeOrderData);     
+
+      // } catch (e) {
+      //   print('LOL: $e');
+      //   final chatData = chatDataFromJson(payload);
+      //   DashboardController.to.goToChatPage(fromNotificartion: true, data: chatData);   
+
+      // } 
+    } 
   }
 
   Future<void> showNotification({@required String title, @required String body, String payload}) async {
