@@ -35,6 +35,12 @@ class RiderLocationController extends GetxController {
   final dashboardController = DashboardController.to;
 
   @override
+  void onClose() {
+    _socketService.socket.off('rider-location');
+    super.onClose();
+  }
+
+  @override
   void onInit() {
     setupIcon();
     activeOrderData(arguments);
