@@ -118,8 +118,10 @@ class AuthController extends GetxController implements AuthViewContract {
 
             _box.write(Config.SOCIAL_LOGIN_TYPE, Config.EMAIL);
             Get.toNamed(Config.VERIFY_NUMBER_ROUTE, arguments: response.data.toJson()).whenComplete(() {
-              emailController.clear();
-              passwordController.clear();
+              if(!isRememberMe.call()) {
+                emailController.clear();
+                passwordController.clear();
+              }
               dismissKeyboard(Get.context);
             });
 
