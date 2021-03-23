@@ -43,19 +43,23 @@ class PushNotificationService extends GetxService {
     
     if (payload != null) {
 
-      // print(chatDataFromJson(payload).id);
+      try {
 
-      // try {
+        final activeOrderData = activeOrderDataFromJson(payload);
+        final data = DashboardController.to.activeOrders.call().data.singleWhere((data) => data.id == activeOrderData.id);
+        DashboardController.to.activeOrderData(data);
+        if (data.status == 'rider-picked-up') {
+          DashboardController.to.goToRiderLocationPage();     
+        } else {
+          DashboardController.to.goToActiveOrder();     
+        }
 
-      //   final activeOrderData = activeOrderDataFromJson(payload);
-      //   DashboardController.to.goToActiveOrder(activeOrderData);     
+      } catch (e) {
+        
+        final chatData = chatDataFromJson(payload);
+        DashboardController.to.goToChatPage(fromNotificartion: true, data: chatData);   
 
-      // } catch (e) {
-      //   print('LOL: $e');
-      //   final chatData = chatDataFromJson(payload);
-      //   DashboardController.to.goToChatPage(fromNotificartion: true, data: chatData);   
-
-      // } 
+      } 
     } 
   }
 

@@ -302,10 +302,7 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
-  goToActiveOrder(ActiveOrderData data) {
-    activeOrderData(data);
-    Get.toNamed(Config.CHAT_ROUTE, arguments: activeOrderData.call());
-  }
+  goToActiveOrder() => Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
 
   goToRiderLocationPage() => Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
 
