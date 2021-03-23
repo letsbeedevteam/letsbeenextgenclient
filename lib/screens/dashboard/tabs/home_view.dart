@@ -332,10 +332,11 @@ class HomePage extends GetView<DashboardController> {
             ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               child: Container(
+                height: 130,
                 margin: EdgeInsets.only(bottom: 5),
                 alignment: Alignment.center,
-                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) {
-                  return error.toString().contains(restaurant?.photoUrl) ? Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, height: 130, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5);
+                child: FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5, imageErrorBuilder: (context, error, stackTrace) {
+                  return error.toString().contains(restaurant?.photoUrl) ? Center(child: Container(height: 130, child: Icon(Icons.image_not_supported_outlined, size: 35))) : FadeInImage.assetNetwork(placeholder: cupertinoActivityIndicatorSmall, width: Get.width, image: restaurant?.photoUrl, fit: BoxFit.cover, placeholderScale: 5);
                 }) ,
               ),
             ),
