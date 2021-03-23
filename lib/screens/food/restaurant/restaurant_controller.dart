@@ -138,7 +138,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
     
     if(box.hasData(Config.PRODUCTS)) {
 
-      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id);
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id && data.userId == box.read(Config.USER_ID));
 
       var hasNotSelectedChoice = false;
 
@@ -170,7 +170,7 @@ class RestaurantController extends GetxController with SingleGetTickerProviderMi
                 
                 final products = listProductFromJson(box.read(Config.PRODUCTS));
                 CartController.to.updatedProducts.call().assignAll(products);
-                CartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId);
+                CartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId && data.userId == box.read(Config.USER_ID));
                 box.write(Config.PRODUCTS, listProductToJson(CartController.to.updatedProducts.call()));
                 Get.back();
                 addToCart(product);

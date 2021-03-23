@@ -102,7 +102,7 @@ class AuthPage extends GetView<AuthController> {
                   Obx(() {
                     return Switch(
                       value: controller.isRememberMe.call(),
-                      onChanged: (isStatus) => controller.isRememberMe(!controller.isRememberMe.call()),
+                      onChanged: (isStatus) => controller.setRememberMe(isStatus),
                       activeTrackColor: Color(Config.LETSBEE_COLOR),
                       activeColor: Colors.white,
                     );

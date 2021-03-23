@@ -112,7 +112,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
     
     if (box.hasData(Config.PRODUCTS)) {
 
-      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id);
+      final products = listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.storeId != store.call().id && data.userId == box.read(Config.USER_ID));
 
       if (products.isNotEmpty) {
         print('REMOVE THE PREVIOUS CART FIRST');
@@ -132,7 +132,7 @@ class MartController extends GetxController with SingleGetTickerProviderMixin {
               
               final products = listProductFromJson(box.read(Config.PRODUCTS));
               MartCartController.to.updatedProducts.call().assignAll(products);
-              MartCartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId);
+              MartCartController.to.updatedProducts.call().removeWhere((data) => data.storeId != product.storeId && data.userId == box.read(Config.USER_ID));
               box.write(Config.PRODUCTS, listProductToJson(MartCartController.to.updatedProducts.call()));
               Get.back();
               addToCart(product);

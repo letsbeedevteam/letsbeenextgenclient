@@ -1,8 +1,8 @@
 class Config {
 
   // Base URLs
-  // static const BASE_URL = 'https://quiet-meadow-89567.herokuapp.com'; // develop
-  static const BASE_URL = 'http://18.166.234.218:8080'; // staging
+  static const BASE_URL = 'http://192.168.0.100:8000'; // develop
+  // static const BASE_URL = 'http://18.166.234.218:8080'; // staging
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -34,12 +34,14 @@ class Config {
   static const USER_ADDRESS_ID = 'user_address_id';
   static const USER_NAME = 'user_name';
   static const USER_EMAIL = 'user_email';
+  static const USER_PASSWORD = 'user_password';
   static const USER_TOKEN = 'user_token';
   static const USER_MOBILE_NUMBER = 'user_mobile_number';
   static const USER_CURRENT_NAME_OF_LOCATION = 'user_current_name_of_location';
   static const USER_CURRENT_LATITUDE = 'user_latitude';
   static const USER_CURRENT_LONGITUDE = 'user_longitude'; 
   static const USER_CURRENT_ADDRESS = 'user_current_address';
+  static const IS_REMEMBER_ME = 'is_remember_me';
   static const NOTE_TO_RIDER = 'note_to_rider';
   static const PRODUCTS = 'products';
   static const LANGUAGE = 'language';
