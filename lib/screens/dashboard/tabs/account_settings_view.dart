@@ -224,10 +224,13 @@ class AccountSettingsPage extends GetView<DashboardController> {
           padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
           child: Text(tr('becomeRider'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
         ),
-        Container(
-          width: Get.width,
-          padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
-          child: Text(tr('termsConditions'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+        GestureDetector(
+          onTap: () => Get.toNamed(Config.TERMS_CONDITIONS_ROUTE),
+          child: Container(
+            width: Get.width,
+            padding: const EdgeInsets.only(left: 15 ,right: 15, top: 20),
+            child: Text(tr('termsConditions'), style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500)),
+          ),
         ),
         GestureDetector(
           onTap: () => _logoutModal(),

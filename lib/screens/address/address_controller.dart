@@ -55,7 +55,7 @@ class AddressController extends GetxController {
     if (box.read(Config.USER_ADDRESS_ID) != data.id) {
       if(box.hasData(Config.PRODUCTS)) {
        
-       if (listProductFromJson(box.read(Config.PRODUCTS)).isEmpty) {
+       if (listProductFromJson(box.read(Config.PRODUCTS)).where((data) => data.userId == box.read(Config.USER_ID)).isEmpty) {
         updateSelectedAddress(data, false);
        } else {
         addresssDialog(data);

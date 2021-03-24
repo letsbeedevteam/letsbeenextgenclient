@@ -109,14 +109,14 @@ class HomePage extends GetView<DashboardController> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildCategory(title: 'Filipino', imgPath: Config.PNG_PATH + 'fil.png'),
-                  _buildCategory(title: 'Korean', imgPath: Config.PNG_PATH + 'kor.png'),
-                  _buildCategory(title: 'Chinese', imgPath: Config.PNG_PATH + 'chi.png'),
-                  _buildCategory(title: 'Fast Food', imgPath: Config.PNG_PATH + 'fast.png'),
-                  _buildCategory(title: 'Cafe', imgPath: Config.PNG_PATH + 'coffee.png'),
-                  _buildCategory(title: 'Japanese', imgPath: Config.PNG_PATH + 'jap.png'),
-                  _buildCategory(title: 'Asian', imgPath: Config.PNG_PATH + 'asian.png'),
-                  _buildCategory(title: 'Western', imgPath: Config.PNG_PATH + 'west.png'),
+                  _buildCategory(title: tr('filipino'), imgPath: Config.PNG_PATH + 'fil.png'),
+                  _buildCategory(title: tr('korean'), imgPath: Config.PNG_PATH + 'kor.png'),
+                  _buildCategory(title: tr('chinese'), imgPath: Config.PNG_PATH + 'chi.png'),
+                  _buildCategory(title: tr('fastfood'), imgPath: Config.PNG_PATH + 'fast.png'),
+                  _buildCategory(title: tr('cafe'), imgPath: Config.PNG_PATH + 'coffee.png'),
+                  _buildCategory(title: tr('japanese'), imgPath: Config.PNG_PATH + 'jap.png'),
+                  _buildCategory(title: tr('asian'), imgPath: Config.PNG_PATH + 'asian.png'),
+                  _buildCategory(title: tr('western'), imgPath: Config.PNG_PATH + 'west.png'),
                 ]
               ),
             ),

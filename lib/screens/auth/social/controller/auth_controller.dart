@@ -62,7 +62,6 @@ class AuthController extends GetxController implements AuthViewContract {
     isFacebookLoading(false);
     isKakaoLoading(false);
     isLoading(false);
-    setRememberMe(false);
     signInSub?.cancel();
     _presenter.closeSubscriptions();
   });
@@ -72,7 +71,6 @@ class AuthController extends GetxController implements AuthViewContract {
     isFacebookLoading(false);
     isKakaoLoading(false);
     isLoading(false);
-    setRememberMe(false);
     signInSub?.cancel();
     _presenter.closeSubscriptions();
   });

@@ -111,7 +111,8 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
               children: [
                 Column(
                   children: [
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                    Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                    Text('${tr('orderPlacedAt')} ' + DateFormat('hh:mm a').format(controller.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                     _buildStatus(controller),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Container(height: 1, color: Colors.grey.shade200),
@@ -384,8 +385,6 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'store-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _.activeOrderData.call().activeStore.type == 'restaurant' ? 
-          Text('${tr('orderPlacedAt')} ' + DateFormat('hh:mm a').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)) : Container(),
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),
@@ -410,8 +409,6 @@ class ActiveOnGoingPage extends GetView<DashboardController> {
       case 'rider-accepted': return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _.activeOrderData.call().activeStore.type == 'mart' ? 
-          Text('${tr('orderPlacedAt')} ' + DateFormat('hh:mm a').format(_.activeOrderData.call().createdAt.toUtc().toLocal()), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)) : Container(),
           Container(
             height: 180,
             margin: EdgeInsets.only(bottom: 30),

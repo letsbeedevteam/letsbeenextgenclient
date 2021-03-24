@@ -89,15 +89,21 @@ class SignUpController extends GetxController implements AuthViewContract {
 
         if (confirmPasswordController.text == passwordController.text) {
             
-          signUpEmail(emailController.text);
-          signUpPassword(passwordController.text);
+          if (isAgreeTerms.call()) {
+            errorSnackbarTop(title: tr('oops'), message: tr('readTermsConditions'), milliseconds: 1000);
+          } else {
 
-          Get.toNamed(Config.USER_DETAILS_ROUTE).whenComplete(() {
-            isShowConfirmPassword(false);
-            isShowPassword(false);
-            dismissKeyboard(Get.context);
-            if (signUpEmail.call().isNotEmpty || signUpPassword.call().isNotEmpty) clear();
-          });
+            signUpEmail(emailController.text);
+            signUpPassword(passwordController.text);
+
+            Get.toNamed(Config.USER_DETAILS_ROUTE).whenComplete(() {
+              isShowConfirmPassword(false);
+              isShowPassword(false);
+              isAgreeTerms(false);
+              dismissKeyboard(Get.context);
+              if (signUpEmail.call().isNotEmpty || signUpPassword.call().isNotEmpty) clear();
+            });
+          }
 
         } else {
           isLoading(false);
