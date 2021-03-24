@@ -442,11 +442,11 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
         if (reasonController.text.trim().isEmpty) {
           errorSnackbarTop(title: tr('oops'), message: tr('specifyYourReason'));
         } else {
-          cancelOrderRequest();
+          cancelOrderRequest(reasonController.text.trim());
         }
 
       } else {
-        cancelOrderRequest();
+        cancelOrderRequest(reason.call());
       }
 
     } else {
@@ -454,13 +454,13 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
     }
   }
 
-  cancelOrderRequest() {
+  cancelOrderRequest(String reason) {
     isCancelOrderLoading(true);
     
-    apiService.cancelOrder(orderId: activeOrderData.value.id, note: reasonController.text.trim()).then((response) {
+    apiService.cancelOrder(orderId: activeOrderData.value.id, note: reason).then((response) {
       if(response.status == Config.OK) {
         reasonController.clear();
-        reason.nil();
+        this.reason.nil();
         activeOrderData.nil();
         fetchActiveOrders();
         Get.back(closeOverlays: true);

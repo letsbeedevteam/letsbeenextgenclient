@@ -34,9 +34,9 @@ class WebViewPage extends GetView<WebController> {
               return controller.isPaymentSuccess.call() ? Padding(
                 padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 10.0),
                 child: RaisedButton(
-                  color: Color(Config.LETSBEE_COLOR),
+                  color: Colors.grey.shade200,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)
+                    borderRadius: BorderRadius.circular(5)
                   ),
                   onPressed: () => controller.goBackToRestoPage(),
                   child: Text(tr('done'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
@@ -57,6 +57,9 @@ class WebViewPage extends GetView<WebController> {
                     controller.webViewController = webViewController;
                   },
                   gestureNavigationEnabled: true,
+                  onPageStarted: (url) {
+                    controller..isLoading(false)..hasError(false);
+                  },
                   onPageFinished: (url) {
                     print('print: $url');
                     if (url.contains('payment') || url.contains('https://bux.ph/test/xendit/')) {

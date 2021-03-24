@@ -57,7 +57,7 @@ class AuthController extends GetxController implements AuthViewContract {
     super.onInit();
   }
 
-  goToSignUp() => Get.toNamed(Config.SIGNUP_ROUTE).whenComplete(() {
+  goToSignUp() => Get.toNamed(Config.SIGNUP_ROUTE).then((data) {
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);
@@ -67,7 +67,7 @@ class AuthController extends GetxController implements AuthViewContract {
     _presenter.closeSubscriptions();
   });
 
-  goToForgotPassword() =>  Get.toNamed(Config.FORGOT_PASS_ROUTE).whenComplete(() {
+  goToForgotPassword() =>  Get.toNamed(Config.FORGOT_PASS_ROUTE).then((data) {
     isGoogleLoading(false);
     isFacebookLoading(false);
     isKakaoLoading(false);
@@ -84,7 +84,7 @@ class AuthController extends GetxController implements AuthViewContract {
 
   @override
   void onClose() {
-    signInSub.cancel();
+    signInSub?.cancel();
     _presenter.closeSubscriptions();
     super.onClose();
   }
