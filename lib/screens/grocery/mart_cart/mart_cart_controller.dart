@@ -44,6 +44,8 @@ class MartCartController extends GetxController {
   
   static MartCartController get to => Get.find();
 
+  final dashboard = DashboardController.to;
+
   @override
   void onInit() {
     // cart.nil();
@@ -78,7 +80,7 @@ class MartCartController extends GetxController {
     });
     isEdit(false);
     Get.back(closeOverlays: true);
-    DashboardController.to.updateCart();
+    dashboard.updateCart();
     return true;
   }
 
@@ -117,7 +119,6 @@ class MartCartController extends GetxController {
         isPaymentLoading(false);
 
         if(response.status == Config.OK) {
-          DashboardController.to.fetchActiveOrders();
 
           if (response.status == Config.INVALID) {
             errorSnackbarTop(title: tr('oops'), message: tr('storeClosed'));
@@ -125,12 +126,12 @@ class MartCartController extends GetxController {
             noteToRider.clear();
             if (response.paymentUrl == null) {
               print('NO URL');
-             
-              clearCart(storeId);
-              DashboardController.to..fetchActiveOrders()..updateCart();
 
               Get.back(closeOverlays: true);
-              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
+              
+              dashboard.fetchActiveOrders(activeOrderid: response.data.id, function: () {
+                clearCart(storeId);
+              });
 
             } else {
               print('GO TO WEBVIEW: ${response.paymentUrl}');

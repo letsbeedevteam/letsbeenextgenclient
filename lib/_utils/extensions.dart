@@ -42,9 +42,9 @@ void alertSnackBarTop({String title ,String message}) {
     Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 1)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.warning, color: Colors.orange), margin: EdgeInsets.all(5), borderRadius: 4, duration: Duration(milliseconds: 800));
 }
 
-void errorSnackbarTop({String title ,String message}) {
+void errorSnackbarTop({String title ,String message, int milliseconds}) {
   if (!Get.isSnackbarOpen) 
-    Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 1)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.all(5), borderRadius: 4, duration: Duration(milliseconds: 800));
+    Get.snackbar(title, message, boxShadows: [BoxShadow(color: Colors.black, blurRadius: 1)], backgroundColor: Colors.white, snackPosition: SnackPosition.TOP, icon: Icon(Icons.error, color: Colors.red), margin: EdgeInsets.all(5), borderRadius: 4, duration: Duration(milliseconds: milliseconds == null ? 800 : milliseconds));
 }
 
 void successSnackBarTop({String title , String message, int seconds, SnackbarStatusCallback status}) {

@@ -13,6 +13,7 @@ import 'package:letsbeeclient/models/edit_address_response.dart';
 import 'package:letsbeeclient/models/get_address_response.dart';
 import 'package:letsbeeclient/models/new_address_request.dart';
 import 'package:letsbeeclient/models/new_address_response.dart';
+import 'package:letsbeeclient/models/store_response.dart';
 import 'package:letsbeeclient/screens/address/address_controller.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
@@ -110,7 +111,18 @@ class MapController extends GetxController {
         errorSnackbarTop(title: tr('oops'), message: tr('inputFields'));
       } else {
         userCurrentAddress(addressDetails.text.trim());
-        addAddress();
+
+        if(_box.hasData(Config.PRODUCTS)) {
+       
+          if (listProductFromJson(_box.read(Config.PRODUCTS)).where((data) => data.userId == _box.read(Config.USER_ID)).isEmpty) {
+            addAddress(false);
+          } else {
+            addresssDialog();
+          }
+
+        } else {
+          addAddress(false);
+        }
       }
 
     } else if (argument['type'] == Config.EDIT_NEW_ADDRESS) {
@@ -127,7 +139,7 @@ class MapController extends GetxController {
         errorSnackbarTop(title: tr('oops'), message: tr('inputAddressDetail'));
       } else {
         userCurrentAddress(addressDetails.text.trim());
-        addAddress();
+        addAddress(false);
       }
     }
   }
@@ -228,7 +240,7 @@ class MapController extends GetxController {
     return true;
   }
 
-  void addAddress() {
+  void addAddress(bool isRemoveCart) {
     dismissKeyboard(Get.context);
 
     isAddAddressLoading(true);
@@ -255,6 +267,13 @@ class MapController extends GetxController {
         _box.write(Config.NOTE_TO_RIDER, response.data.note);
         
         if (argument['type'] == Config.ADD_NEW_ADDRESS) {
+          
+           if(isRemoveCart) {
+            final list = listProductFromJson(_box.read(Config.PRODUCTS));
+            list.removeWhere((data) => data.userId == _box.read(Config.USER_ID));
+            _box.write(Config.PRODUCTS, listProductToJson(list));
+            DashboardController.to.updateCart();
+          }
 
           DashboardController.to
           ..isSelectedLocation(true)
@@ -265,7 +284,7 @@ class MapController extends GetxController {
           AddressController.to.refreshAddress();
           Get.back(closeOverlays: true);
           successSnackBarTop(message: tr('addedSuccessfully'));
-          
+
         } else {
           _box.write(Config.IS_LOGGED_IN, true);
           Get.offAllNamed(Config.DASHBOARD_ROUTE);
@@ -283,6 +302,34 @@ class MapController extends GetxController {
       print('Error add new address: $handleError');
     });
   }
+
+  addresssDialog() => Get.defaultDialog(
+    title: tr('alertAddressMessage'),
+    backgroundColor: Color(Config.WHITE),
+    titleStyle: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
+    radius: 8,
+    content: Container(),
+    confirm: RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10)
+      ),
+      color: const Color(Config.LETSBEE_COLOR),
+      onPressed: () {
+        addAddress(true);
+        Get.back();
+      },
+      child: Text(tr('yes'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+    ),
+    cancel: RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10)
+      ),
+      color: const Color(Config.LETSBEE_COLOR),
+      onPressed: () => Get.back(),
+      child: Text(tr('no'), style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
+    ),
+    barrierDismissible: false
+  );
 
   void editAddress() {
     dismissKeyboard(Get.context);

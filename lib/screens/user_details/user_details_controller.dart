@@ -46,9 +46,7 @@ class UserDetailsController extends GetxController {
 
   void goBackToSignIn() => Get.offAllNamed(Config.AUTH_ROUTE);
 
-  void sendCode() {
-    isLoading(true);
-    
+  void sendCode() {    
     if (argument != null) {
       socialSignUp();
     } else {
@@ -61,14 +59,16 @@ class UserDetailsController extends GetxController {
     if (nameController.text.isNotEmpty || numberController.text.isNotEmpty) {
 
       if (numberController.text.length == 10) {
+      
+        isLoading(true);
 
-      final request = SocialSignUpRequest(
-        token: data.call().token,
-        name: nameController.text,
-        cellphoneNumber: '0${numberController.text}'
-      );
+        final request = SocialSignUpRequest(
+          token: data.call().token,
+          name: nameController.text,
+          cellphoneNumber: '0${numberController.text}'
+        );
 
-      signUpSub = _apiService.customerSocialSignUp(socialSignUp: request).asStream().listen((response) {
+        signUpSub = _apiService.customerSocialSignUp(socialSignUp: request).asStream().listen((response) {
           if (response.status == Config.OK) {
             final data = SignInData(
               token: response.data.token,
@@ -106,6 +106,8 @@ class UserDetailsController extends GetxController {
           confirmPassword: SignUpController.to.signUpPassword.call(),
           cellphoneNumber: '0${numberController.text}'
         );
+
+        isLoading(true);
 
         signUpSub = _apiService.customerSignUp(signUp: request).asStream().listen((response) {
           if (response.status == Config.OK) {

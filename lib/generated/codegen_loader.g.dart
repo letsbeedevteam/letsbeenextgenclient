@@ -186,7 +186,7 @@ class CodegenLoader extends AssetLoader{
   "sending": "전송중...",
   "customer": "레츠비 고객",
   "you": "고객님",
-  "noActiveOrder": "’배달중인 제품이 없습니다.’",
+  "noActiveOrder": "배달중인 제품이 없습니다.",
   "orderHasBeenDeclined": "가맹점이 고객님의 주문을 취소하였습니다.",
   "orderDeclined": "고객님의 {} 주문이 취소되었습니다.",
   "orderAccepted": "고객님의 {} 주문이 수락되었습니다.",
@@ -398,7 +398,7 @@ static const Map<String,dynamic> en_US = {
   "sending": "Sending...",
   "customer": "Let's Bee Customer",
   "you": "You",
-  "noActiveOrder": "'No Active Order'",
+  "noActiveOrder": "No Active Order",
   "orderHasBeenDeclined": "Your order has been declined",
   "orderDeclined": "Your order in {} has been declined",
   "orderAccepted": "Your order in {} has been accepted",
@@ -442,7 +442,16 @@ static const Map<String,dynamic> en_US = {
   "signingOut": "Signing Out...",
   "alertCartMessage": "You already selected different restaurant/mart. If you continue, your cart selection will be removed.",
   "alertAddressMessage": "By changing your current location, you will lose your selections inside the cart. Would you like to continue?",
-  "orderPlacedAt": "Order placed at"
+  "orderPlacedAt": "Order placed at",
+  "filipino": "Filipino",
+  "korean": "Korean",
+  "chinese": "Chinese",
+  "fastfood": "Fast Food",
+  "cafe": "Cafe",
+  "japanese": "Japanese",
+  "asian": "Asian",
+  "western": "Western",
+  "readTermsConditions": "Please read and agree the terms and conditions"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"ko_KR": ko_KR, "en_US": en_US};
 }

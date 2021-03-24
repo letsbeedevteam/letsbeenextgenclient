@@ -58,6 +58,8 @@ class CartController extends GetxController {
 
   StreamSubscription<CreateOrderResponse> createOrderSub;
   StreamSubscription<GetDeliveryFeeResponse> deliveryFeeSub;
+
+  final dashboard = DashboardController.to;
   
   @override
   void onInit() {
@@ -83,7 +85,7 @@ class CartController extends GetxController {
     });
     isEdit(false);
     Get.back(closeOverlays: true);
-    DashboardController.to.updateCart();
+    dashboard.updateCart();
     return true;
   }
 
@@ -119,16 +121,12 @@ class CartController extends GetxController {
           } else {
             if (response.paymentUrl == null) {
               print('NO URL');
-              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
-
-              clearCart(storeId);
-
-              DashboardController.to..fetchActiveOrders()..updateCart();
-
+              
               Get.back(closeOverlays: true);
-              successSnackBarTop(title: tr('yay'), message: tr('successOrder'));
-
-
+              dashboard.fetchActiveOrders(activeOrderid: response.data.id, function: () {
+                clearCart(storeId);
+              });
+              
             } else {
               // paymentSnackBarTop(title: 'Processing..', message: 'Please wait..');
               print('GO TO WEBVIEW: ${response.paymentUrl}');

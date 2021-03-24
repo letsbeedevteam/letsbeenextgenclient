@@ -306,18 +306,29 @@ class DashboardController extends GetxController with SingleGetTickerProviderMix
 
   goToRiderLocationPage() => Get.toNamed(Config.RIDER_LOCATION_ROUTE, arguments: activeOrderData.call());
 
-  fetchActiveOrders() {
+  fetchActiveOrders({int activeOrderid = 0, Function function}) {
     onGoingMessage(tr('loading'));
     socketService.socket?.emitWithAck('active-orders', '', ack: (response) {
-      'Active orders: $response'.printWrapped();
-      activeOrders(ActiveOrder.fromJson(response));
-      if (activeOrders.call().status == Config.OK) {
-        onGoingMessage(tr('noActiveOrder'));
-        if (activeOrders.call().data.isEmpty) {
+      'Active orders: $response'.printWrapped();      
+      if (response['status'] == Config.OK) {
+        
+        activeOrders(ActiveOrder.fromJson(response));
+
+        if (activeOrders.call().data.isEmpty){
+          onGoingMessage(tr('noActiveOrder'));
           activeOrders.nil();
         } else {
+          
           activeOrders(ActiveOrder.fromJson(response));
           activeOrders.call().data.sort((b, a) => a.id.compareTo(b.id));
+
+          if (activeOrderid != 0) {
+            activeOrderData(activeOrders.call().data.singleWhere((data) => data.id == activeOrderid));
+            Get.toNamed(Config.ACTIVE_ORDER_ROUTE).then((data) {
+              function();
+              updateCart();
+            });
+          }
         }
       } else {
         activeOrders.nil();
