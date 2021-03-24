@@ -1,8 +1,8 @@
 class Config {
 
   // Base URLs
-  static const BASE_URL = 'http://192.168.0.100:8000'; // develop
-  // static const BASE_URL = 'http://18.166.234.218:8080'; // staging
+  // static const BASE_URL = 'http://192.168.0.100:8000'; // develop
+  static const BASE_URL = 'http://18.166.234.218:8080'; // staging
 
   static const CUSTOMER_NAMESPACE = '/customer';
 
@@ -28,6 +28,7 @@ class Config {
   static const ACCOUNT_INFO_ROUTE = '/account_info';
   static const CHANGE_PASS_ROUTE = '/change_pass';
   static const FORGOT_PASS_ROUTE = '/forgot_pass';
+  static const TERMS_CONDITIONS_ROUTE = '/terms_and_conditions';
 
   // Storage keys
   static const USER_ID = 'user_id';

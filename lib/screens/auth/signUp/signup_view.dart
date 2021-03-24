@@ -80,7 +80,7 @@ class SignUpPage extends GetView<SignUpController>  {
                        TextSpan(
                          text: tr('termsConditions'), 
                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Color(Config.YELLOW_TEXT_COLOR)),
-                         recognizer: TapGestureRecognizer()..onTap = () => print('Terms and conditions')
+                         recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed(Config.TERMS_CONDITIONS_ROUTE)
                         ),
                     ]
                   ),

@@ -38,6 +38,7 @@ import 'package:letsbeeclient/screens/history/history_view.dart';
 import 'package:letsbeeclient/screens/rider_location/rider_location_view.dart';
 import 'package:letsbeeclient/screens/setup_location/map_view.dart';
 import 'package:letsbeeclient/screens/splash/splash_view.dart';
+import 'package:letsbeeclient/screens/terms_and_conditions/terms_conditions_view.dart';
 import 'package:letsbeeclient/screens/user_details/user_details_view.dart';
 import 'package:letsbeeclient/screens/verify_number/verify_number_view.dart';
 import 'package:letsbeeclient/screens/webview/web_view.dart';
@@ -64,4 +65,5 @@ routes() => [
   GetPage(name: Config.ACCOUNT_INFO_ROUTE, page: () => AccountInfoPage(), binding: AccountInfoBind()),
   GetPage(name: Config.CHANGE_PASS_ROUTE, page: () => ChangePasswordPage(), binding: ChangePassBind()),
   GetPage(name: Config.FORGOT_PASS_ROUTE, page: () => ForgotPasswordPage(), binding: ForgotPassBind()),
+  GetPage(name: Config.TERMS_CONDITIONS_ROUTE, page: () => TermsAndConditionsPage()),
 ];

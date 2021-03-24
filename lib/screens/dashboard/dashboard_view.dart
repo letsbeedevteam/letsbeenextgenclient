@@ -242,9 +242,8 @@ class DashboardPage extends GetView<DashboardController> {
   Widget _buildActiveOrderList(ActiveOrderData data) {
     return GestureDetector(
       onTap: () {
-        Get.back();
         controller.activeOrderData(data);
-        Get.toNamed(Config.ACTIVE_ORDER_ROUTE);
+        Get.toNamed(Config.ACTIVE_ORDER_ROUTE, preventDuplicates: false);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -312,28 +311,28 @@ class DashboardPage extends GetView<DashboardController> {
 
   _activeOrderDialog() {
     Get.bottomSheet(
-      Obx(() {
-        return Container(
-          margin: EdgeInsets.only(top: 20),
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              automaticallyImplyLeading: false,
-              title: Text(tr('yourOrders'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
-              centerTitle: true,
-              bottom: PreferredSize(
-                child: Container(height: 1, color: Colors.grey.shade200),
-                preferredSize: Size.fromHeight(4.0)
-              ),
-              actions: [
-                IconButton(icon: RotatedBox(
-                  quarterTurns: 3,
-                  child: Icon(Icons.chevron_left),
-                ), onPressed: () => Get.back())
-              ],
+      Container(
+        margin: EdgeInsets.only(top: 20),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            title: Text(tr('yourOrders'), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+            centerTitle: true,
+            bottom: PreferredSize(
+              child: Container(height: 1, color: Colors.grey.shade200),
+              preferredSize: Size.fromHeight(4.0)
             ),
-            body: Container(
+            actions: [
+              IconButton(icon: RotatedBox(
+                quarterTurns: 3,
+                child: Icon(Icons.chevron_left),
+              ), onPressed: () => Get.back())
+            ],
+          ),
+          body: Obx(() {
+            return Container(
               child: controller.activeOrders.call() == null ? Container(
                 child: Center(child: Text(controller.onGoingMessage.call(), style: TextStyle(fontSize: 18, color: Colors.black)))
               ) : Scrollbar(
@@ -343,12 +342,12 @@ class DashboardPage extends GetView<DashboardController> {
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      }),
+            );
+          }),
+        ),
+      ),
       backgroundColor: Color(Config.WHITE),
-      isScrollControlled: true
+      isScrollControlled: true,
     );
   }
 }

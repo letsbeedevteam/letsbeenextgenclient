@@ -107,7 +107,7 @@ class HistoryDetailPage extends GetView<HistoryDetailController> {
                   Column(
                     children: _.data.call().products.map((e) => _buildMenu(e)).toList(),
                   ),
-                  _.data.call().reason == null ? Container() : Container(
+                  _.data.call().reason.isEmpty ? Container() : Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,

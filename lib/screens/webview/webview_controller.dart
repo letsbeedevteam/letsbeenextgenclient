@@ -3,13 +3,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get.dart';
 import 'package:letsbeeclient/_utils/config.dart';
 import 'package:letsbeeclient/_utils/extensions.dart';
+import 'package:letsbeeclient/models/active_order_response.dart';
 import 'package:letsbeeclient/screens/dashboard/controller/dashboard_controller.dart';
 import 'package:letsbeeclient/services/api_service.dart';
+import 'package:letsbeeclient/services/socket_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebController extends GetxController {
 
   final ApiService apiService = Get.find();
+  final SocketService socketService = Get.find();
   final argument = Get.arguments;
 
   WebViewController webViewController;
@@ -24,17 +27,31 @@ class WebController extends GetxController {
 
   var hasError = false.obs;
 
+  final dashboard = DashboardController.to;
+
   @override
   void onInit() {
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     orderId(argument['order_id']);
     storeId(argument['store_id']);
+
+    socketService.socket?.on('order', (response) {
+      if (response['status'] == Config.OK) {
+        if(response['code'] == 'paid') {
+          dashboard.activeOrderData(ActiveOrderData.fromJson(response['data']));
+          goBackToRestoPage();
+          dashboard.goToActiveOrder();
+        }
+      }
+    });
+
     super.onInit();
   }
 
   @override
   void onClose() {
     isPaymentSuccess(false);
+    socketService.socket.off('order');
     super.onClose();
   }
 
